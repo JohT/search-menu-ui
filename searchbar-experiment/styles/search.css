@@ -1,0 +1,59 @@
+* {
+  box-sizing: border-box;
+}
+
+/* The container for searchbar and searchresults needed to position the dropdown content */
+.searcharea {
+  position: relative;
+  display: inline-block;
+}
+
+.searchinput {
+  
+  /* "https://img.icons8.com/android/24/000000/search.png"/> */
+  background-image: url("/images/searchicon-small.png");
+  background-position: 0.5em center;
+  background-repeat: no-repeat;
+  width: 100%;
+  font-size: 16px;
+  padding: 12px 20px 12px 40px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.searchresult {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  z-index: 1;
+}
+
+.searchmatches {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.show {
+  display: block;
+}
+
+.searchmatches li {
+  /* border: 1px solid #ddd; */
+  margin-top: -1px; /* Prevent double borders */
+  background-color: #f6f6f6;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px;
+  color: black;
+  display: block;
+}
+
+.searchmatches :hover:not(.header) {
+  background-color: #9db7ff
+}

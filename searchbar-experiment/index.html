@@ -1,0 +1,33 @@
+</html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <link rel="stylesheet" href="styles/search.css" type="text/css" media="screen" />
+    <link href="https://fonts.googleapis.com/css?family=Baumans|Open+Sans&display=swap" rel="stylesheet" />
+
+    <title>search ui experiment</title>
+  </head>
+  <body>
+    <h2>search ui experiment</h2>
+
+    <div id="searcharea">
+      <input type="text" id="searchbar" class="searchinput" placeholder="Type to search" title="Type to search" />
+      <div id="searchresult" class="searchresult">
+        <ul id="searchmatches" class="searchmatches"></ul>
+      </div>
+    </div>
+    <h4>Some other content....</h4>
+    <script src="js/createPolyfill.js"></script>
+    <!--
+    <script src="js/addEventListener.js"></script>
+    <script src="js/es5-shim.min.js"></script>
+    <script src="js/es6-shim.min.js"></script>
+    -->
+    <script src="js/fetch.umd.js"></script>
+    <script src="js/search.js"></script>
+  </body>
+</html>
