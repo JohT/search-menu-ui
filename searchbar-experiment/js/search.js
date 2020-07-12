@@ -19,7 +19,10 @@ var searchbar = searchbar || {};
 searchbar.SearchbarUI = (function () {
   var search = document.getElementById("searchbar");
   addEvent("input", search, function (event) {
-    updateSearch(event.currentTarget.value);
+    updateSearch(getEventTarget(event).value);
+  });
+  addEvent("keyup", search, function (event) {
+    updateSearch(getEventTarget(event).value);
   });
   addEvent("focusin", search, function (event) {
     showResults();
@@ -28,7 +31,7 @@ searchbar.SearchbarUI = (function () {
     hideResults();
   });
   addEvent("keypress", document.body, function (event) {
-    if (event.key == "Escape") {
+    if (event.key == "Escape" || event.keyCode == 27) {
       hideResults();
     }
   });
@@ -45,7 +48,9 @@ searchbar.SearchbarUI = (function () {
   }
 
   function getSearchResults(searchText) {
-    httpGetJson("../data/state_capitals.json", getHttpRequest(), function (jsonResult) {
+    httpGetJson("../data/state_capitals.json", getHttpRequest(), function (
+      jsonResult
+    ) {
       displayResults(filterResults(jsonResult, searchText));
     });
   }
@@ -60,7 +65,8 @@ searchbar.SearchbarUI = (function () {
   function displayResults(jsonResults) {
     var matchlist = document.getElementById("searchmatches");
     jsonResults.forEach(function (entry) {
-      matchlist.innerHTML += "<li>" + entry.name + " (" + entry.abbr + ")" + "</li> ";
+      matchlist.innerHTML +=
+        "<li>" + entry.name + " (" + entry.abbr + ")" + "</li> ";
     });
   }
 
@@ -85,11 +91,22 @@ searchbar.SearchbarUI = (function () {
   }
 
   function addEvent(eventName, element, eventHandler) {
-    if (element.addEventListener) element.addEventListener(eventName, eventHandler, false);
+    if (element.addEventListener)
+      element.addEventListener(eventName, eventHandler, false);
     else if (element.attachEvent) {
       element.attachEvent("on" + eventName, eventHandler);
     } else {
       element["on" + eventName] = eventHandler;
+    }
+  }
+
+  function getEventTarget(event) {
+    if (typeof event.currentTarget !== "undefined") {
+      return event.currentTarget;
+    } else if (typeof event.srcElement !== "undefined") {
+      return event.srcElement;
+    } else {
+      throw new Error("Event doesn't contain bounded element: " + event);
     }
   }
 
