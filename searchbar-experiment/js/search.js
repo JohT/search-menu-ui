@@ -18,22 +18,19 @@ var searchbar = searchbar || {};
  */
 searchbar.SearchbarUI = (function () {
   var search = document.getElementById("searchbar");
-  addEvent("input", search, function (event) {
-    updateSearch(getEventTarget(event).value);
-  });
   addEvent("keyup", search, function (event) {
-    updateSearch(getEventTarget(event).value);
+    if (event.key == "Escape" || event.keyCode == 27) {
+      getEventTarget(event).value = "";
+      hideResults();
+    } else {
+      updateSearch(getEventTarget(event).value);
+    }
   });
   addEvent("focusin", search, function (event) {
     showResults();
   });
   addEvent("focusout", search, function (event) {
     hideResults();
-  });
-  addEvent("keypress", document.body, function (event) {
-    if (event.key == "Escape" || event.keyCode == 27) {
-      hideResults();
-    }
   });
 
   function updateSearch(searchText) {
@@ -48,9 +45,7 @@ searchbar.SearchbarUI = (function () {
   }
 
   function getSearchResults(searchText) {
-    httpGetJson("../data/state_capitals.json", getHttpRequest(), function (
-      jsonResult
-    ) {
+    httpGetJson("../data/state_capitals.json", getHttpRequest(), function (jsonResult) {
       displayResults(filterResults(jsonResult, searchText));
     });
   }
@@ -65,8 +60,7 @@ searchbar.SearchbarUI = (function () {
   function displayResults(jsonResults) {
     var matchlist = document.getElementById("searchmatches");
     jsonResults.forEach(function (entry) {
-      matchlist.innerHTML +=
-        "<li>" + entry.name + " (" + entry.abbr + ")" + "</li> ";
+      matchlist.innerHTML += "<li>" + entry.name + " (" + entry.abbr + ")" + "</li> ";
     });
   }
 
@@ -91,8 +85,7 @@ searchbar.SearchbarUI = (function () {
   }
 
   function addEvent(eventName, element, eventHandler) {
-    if (element.addEventListener)
-      element.addEventListener(eventName, eventHandler, false);
+    if (element.addEventListener) element.addEventListener(eventName, eventHandler, false);
     else if (element.attachEvent) {
       element.attachEvent("on" + eventName, eventHandler);
     } else {
