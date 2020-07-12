@@ -1,5 +1,7 @@
 "use strict";
 
+var search = {}
+
 var search = document.getElementById("searchbar");
 addEvent("input", search, function (element, event) {
   updateSearch(element.currentTarget.value);
@@ -20,25 +22,6 @@ function updateSearch(searchText) {
   }
   showResults();
   getSearchResults(searchText);
-}
-
-function getSearchResultsWithFetch(searchText) {
-  var matchlist = document.getElementById("searchmatches");
-  var regex = new RegExp("^" + searchText, "gi");
-  fetch("../data/state_capitals.json")
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (data) {
-      return data.filter(function (entry) {
-        return entry.name.match(regex) || entry.abbr.match(regex);
-      });
-    })
-    .then(function (data) {
-      data.forEach(function (entry) {
-        matchlist.innerHTML += "<li>" + entry.name + " (" + entry.abbr + ")" + "</li> ";
-      });
-    });
 }
 
 function getSearchResults(searchText) {
@@ -82,8 +65,7 @@ function removeClass(classToRemove, element) {
 }
 
 function addEvent(eventName, element, eventHandler) {
-  if (element.addEventListener)
-    element.addEventListener(eventName, eventHandler, false);
+  if (element.addEventListener) element.addEventListener(eventName, eventHandler, false);
   else if (element.attachEvent) {
     element.attachEvent("on" + eventName, eventHandler);
   } else {
@@ -118,3 +100,22 @@ function getHttpRequest() {
   // Microsoft.XMLHTTP points to Msxml2.XMLHTTP and is redundant
   throw new Error("This browser does not support XMLHttpRequest.");
 }
+
+// function getSearchResultsWithFetch(searchText) {
+//   var matchlist = document.getElementById("searchmatches");
+//   var regex = new RegExp("^" + searchText, "gi");
+//   fetch("../data/state_capitals.json")
+//     .then(function (response) {
+//       return response.json();
+//     })
+//     .then(function (data) {
+//       return data.filter(function (entry) {
+//         return entry.name.match(regex) || entry.abbr.match(regex);
+//       });
+//     })
+//     .then(function (data) {
+//       data.forEach(function (entry) {
+//         matchlist.innerHTML += "<li>" + entry.name + " (" + entry.abbr + ")" + "</li> ";
+//       });
+//     });
+// }
