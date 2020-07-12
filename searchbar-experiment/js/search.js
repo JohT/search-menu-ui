@@ -1,16 +1,21 @@
 "use strict";
 
-var search = {}
+var searchbar = {}
 
 var search = document.getElementById("searchbar");
-addEvent("input", search, function (element, event) {
-  updateSearch(element.currentTarget.value);
+addEvent("input", search, function (event) {
+  updateSearch(event.currentTarget.value);
 });
-addEvent("focusin", search, function (element, event) {
+addEvent("focusin", search, function (event) {
   showResults();
 });
-addEvent("focusout", search, function (element, event) {
+addEvent("focusout", search, function (event) {
   hideResults();
+});
+addEvent("keypress", document.body, function (event) {
+  if(event.key == "Escape"){
+    hideResults();
+  }
 });
 
 function updateSearch(searchText) {
