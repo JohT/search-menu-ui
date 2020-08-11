@@ -1,0 +1,13 @@
+{
+    "error": {
+        "root_cause": [
+            {
+                "type": "illegal_argument_exception",
+                "reason": "The msearch request must be terminated by a newline [\n]"
+            }
+        ],
+        "type": "illegal_argument_exception",
+        "reason": "The msearch request must be terminated by a newline [\n]"
+    },
+    "status": 400
+}

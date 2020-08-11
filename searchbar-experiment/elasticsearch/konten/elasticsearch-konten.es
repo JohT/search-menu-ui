@@ -34,7 +34,11 @@ PUT /konten
                 "type": "keyword",
                 "normalizer": "namen_normalizer"
             },
-            "produkt": {
+            "produktkennung": {
+                "type": "keyword",
+                "normalizer": "namen_normalizer"
+            },
+            "waehrungskennung": {
                 "type": "keyword",
                 "normalizer": "namen_normalizer"
             },
@@ -114,14 +118,12 @@ PUT /konten
     }
 }
 
-
 //test analyzer
 POST konten/_analyze
 {
   "analyzer": "namen_analyzer",
   "text":     "1234 AT1234 Jack Bauer Kim Bauer"
 }
-
 
 GET konten/_stats
 
@@ -135,11 +137,12 @@ PUT konten/_doc/99912345678901
     "kundennummer": "00001234567",
     "mandantennummer": "999",
     "geschaeftsart": "Giro",
-    "produkt": "Gehaltskonto",
+    "produktkennung": "GEHALT",
     "neuanlagedatum": "2020-08-08",
     "aktualisierungsdatum": "2020-08-08T08:31:30Z",
     "verfuegungsberechtigt": "Hans Mustermann",
     "betreuerkennung": "SARCON",
+    "waehrungskennung": "EUR",
     "tags": [
         "aktiv",
         "online"
@@ -153,12 +156,13 @@ PUT konten/_doc/99912345678902
     "kundennummer": "00001234568",
     "mandantennummer": "999",
     "geschaeftsart": "Giro",
-    "produkt": "Kommerzkonto",
+    "produktkennung": "KOMMERZ",
     "neuanlagedatum": "2020-08-08",
     "aktualisierungsdatum": "2020-08-08T08:37:30Z",
     "verfuegungsberechtigt": "Romed Giner",
     "inhaber": "Giner KG",
     "betreuerkennung": "KLAKLE",
+    "waehrungskennung": "EUR",
     "tags": [
         "aktiv",
         "online"
@@ -172,11 +176,12 @@ PUT konten/_doc/99912345678903
     "kundennummer": "00001234569",
     "mandantennummer": "999",
     "geschaeftsart": "Darlehen",
-    "produkt": "Wohnbaudarlehen",
+    "produktkennung": "WOHNBAU",
     "neuanlagedatum": "2020-08-08",
     "aktualisierungsdatum": "2020-08-08T08:42:30Z",
     "verfuegungsberechtigt": "Carlo Solér",
     "betreuerkennung": "SARCON",
+    "waehrungskennung": "EUR",
     "tags": [
         "gelöscht",
         "endfällig",
@@ -191,11 +196,12 @@ PUT konten/_doc/99912345678904
     "kundennummer": "00001234569",
     "mandantennummer": "999",
     "geschaeftsart": "Giro",
-    "produkt": "Privatkonto",
+    "produktkennung": "PRIVKON",
     "neuanlagedatum": "2020-08-08",
     "aktualisierungsdatum": "2020-08-08T08:58:30Z",
     "verfuegungsberechtigt": "Romed Giner",
     "betreuerkennung": "KLAKLE",
+    "waehrungskennung": "EUR",
     "tags": [
         "aktiv"
     ]
@@ -208,11 +214,12 @@ PUT konten/_doc/99912345678905
     "kundennummer": "00001234570",
     "mandantennummer": "999",
     "geschaeftsart": "Darlehen",
-    "produkt": "Privatkredit",
+    "produktkennung": "PRIVKRE",
     "neuanlagedatum": "2020-08-08",
     "aktualisierungsdatum": "2020-08-08T14:20:30Z",
     "verfuegungsberechtigt": "Klara Klammer",
     "betreuerkennung": "KLAKLE",
+    "waehrungskennung": "CHF",
     "tags": [
         "aktiv",
         "kurzfristig"
@@ -226,11 +233,12 @@ PUT konten/_doc/99912345678906
     "kundennummer": "00000000001",
     "mandantennummer": "888",
     "geschaeftsart": "Darlehen",
-    "produkt": "Privatkredit",
+    "produktkennung": "PRIVKRE",
     "neuanlagedatum": "2020-08-08",
     "aktualisierungsdatum": "2020-08-08T18:36:30Z",
     "verfuegungsberechtigt": "Michael Mair",
     "betreuerkennung": "MARSOM",
+    "waehrungskennung": "EUR",
     "tags": [
         "aktiv",
         "kurzfristig"
@@ -244,11 +252,12 @@ PUT konten/_doc/99912345678907
     "kundennummer": "00001234571",
     "mandantennummer": "999",
     "geschaeftsart": "Giro",
-    "produkt": "Treuhandkonto",
+    "produktkennung": "TREUHND",
     "neuanlagedatum": "2020-08-09",
     "aktualisierungsdatum": "2020-08-09T08:20:30Z",
     "verfuegungsberechtigt": "Carlo Martinez",
     "betreuerkennung": "SARCON",
+    "waehrungskennung": "EUR",
     "tags": [
         "aktiv"
     ]
@@ -261,11 +270,12 @@ PUT konten/_doc/99912345678908
     "kundennummer": "00001234572",
     "mandantennummer": "999",
     "geschaeftsart": "Giro",
-    "produkt": "Gehaltskonto",
+    "produktkennung": "GEHALT",
     "neuanlagedatum": "2020-08-09",
     "aktualisierungsdatum": "2020-08-09T08:22:30Z",
     "verfuegungsberechtigt": "Carmen Martin",
     "betreuerkennung": "KLAKLE",
+    "waehrungskennung": "EUR",
     "tags": [
         "aktiv"
     ]
@@ -321,7 +331,17 @@ GET konten/_search
                 },
                 {
                     "match": {
-                        "betreuer": "SARCON"
+                        "betreuerkennung": "SARCON"
+                    }
+                },
+                {
+                    "match": {
+                        "produktkennung": "GEHALT"
+                    }
+                },
+                {
+                    "match": {
+                        "waehrungskennung": "EUR"
                     }
                 }
             ]
@@ -405,7 +425,17 @@ GET konten/_search/template
                     },
                     {
                         "match": {
-                            "betreuer": "{{betreuer}}"
+                            "betreuerkennung": "{{betreuerkennung}}"
+                        }
+                    },
+                    {
+                        "match": {
+                            "produktkennung": "{{produktkennung}}"
+                        }
+                    },
+                    {
+                        "match": {
+                            "waehrungskennung": "{{waehrungskennung}}{{^waehrungskennung}}EUR{{/waehrungskennung}}"
                         }
                     }
                 ]
@@ -432,7 +462,9 @@ GET konten/_search/template
     "params": {
         "konto_prefix": "AT",
         "mandantennummer": 999,
-        "betreuer": "SARCON"
+        "betreuerkennung": "SARCON"
+        //,"waehrungskennung": "EUR" //optional, default= EUR
+        //,"produktkennung": "KOMMERZ" //Optional
         //,"geschaeftsart": "Giro"
         //,"kundennummer": "00001234570",
     }
@@ -488,8 +520,18 @@ POST _scripts/konto_search_as_you_type_v1
                         },
                         {
                             "match": {
-                                "betreuer": "{{betreuer}}"
+                                "betreuerkennung": "{{betreuerkennung}}"
                             }
+                        },
+                        {
+                            "match": {
+                                "produktkennung": "{{produktkennung}}"
+                            }
+                        },
+                        {
+                        "match": {
+                            "waehrungskennung": "{{waehrungskennung}}{{^waehrungskennung}}EUR{{/waehrungskennung}}"
+                        }
                         }
                     ]
                 }
@@ -520,11 +562,13 @@ GET konten/_search/template?filter_path=hits.total.value,hits.hits._source,hits.
 {
     "id": "konto_search_as_you_type_v1",
     "params": {
-        "konto_prefix": "car",
+        "konto_prefix": "AT",
         "mandantennummer": 999,
-        "betreuer": "SARCON"
-        //,"geschaeftsart": "darlehen" //optional, default:giro
-        //,"kundennummer": "00001234570", //optional
+        "betreuerkennung": "SARCON"
+        //,"waehrungskennung": "EUR" //optional, default= EUR
+        //,"produktkennung": "KOMMERZ" //Optional
+        //,"geschaeftsart": "Giro"
+        //,"kundennummer": "00001234570",
     }
 }
 
@@ -542,7 +586,44 @@ POST _scripts/konto_tags_v1
                 "tags": {
                     "terms": {
                         "field": "tags",
-                        "size": 100
+                        "size": "{{konto_aggregations_size}}",
+                        "include": "{{konto_aggregations_prefix}}.*"
+                    }
+                },
+                "geschaeftsart": {
+                    "terms": {
+                        "field": "geschaeftsart",
+                        "size": "{{konto_aggregations_size}}",
+                        "include": "{{konto_aggregations_prefix}}.*"
+                    }
+                },
+                "waehrungskennung": {
+                    "terms": {
+                        "field": "waehrungskennung",
+                        "size": "{{konto_aggregations_size}}",
+                        "include": "{{konto_aggregations_prefix}}.*"
+                    }
+                    // ,"aggs": {
+                    //     "example": {
+                    //         "top_hits": {
+                    //             "_source":["waehrungskennung"],
+                    //             "size": 1
+                    //         }
+                    //     }
+                    // }
+                },
+                "betreuerkennung": {
+                    "terms": {
+                        "field": "betreuerkennung",
+                        "size": "{{konto_aggregations_size}}",
+                        "include": "{{konto_aggregations_prefix}}.*"
+                    }
+                },
+                "produktkennung": {
+                    "terms": {
+                        "field": "produktkennung",
+                        "size": "{{konto_aggregations_size}}",
+                        "include": "{{konto_aggregations_prefix}}.*"
                     }
                 }
             }
@@ -550,10 +631,15 @@ POST _scripts/konto_tags_v1
     }
 }
 
+
 //execute stored search template script - konto_tags_v1
-GET konten/_search/template?filter_path=aggregations.tags.buckets.key,aggregations.tags.buckets.doc_count
+GET konten/_search/template//?filter_path=aggregations.*.buckets
 {
-    "id": "konto_tags_v1"
+    "id": "konto_tags_v1",
+    "params": {
+        "konto_aggregations_prefix": "",
+        "konto_aggregations_size": 10
+    }
 }
 
 
