@@ -6,22 +6,25 @@ PUT /konten
     "mappings": {
         "properties": {
             "iban": {
-                "type": "keyword"
+                "type": "keyword",
+                "normalizer": "namen_normalizer",
+                "copy_to": "bezeichnung"
             },
             "kontonummer": {
-                "type": "long",
+                "type": "keyword",
+                "copy_to": "bezeichnung",
                 "fields": {
-                     "keyword": { 
-                         "type": "keyword"
-                     }
+                    "number": {
+                        "type": "long"
+                    }
                 }
             },
             "kundennummer": {
-                "type": "long",
+                "type": "keyword",
                 "fields": {
-                     "keyword": { 
-                         "type": "keyword"
-                     }
+                    "number": {
+                        "type": "long"
+                    }
                 }
             },
             "mandantennummer": {
@@ -51,20 +54,19 @@ PUT /konten
             },
             "verfuegungsberechtigt": {
                 "type": "text",
-                "analyzer": "namen_analyzer",
-                "term_vector": "with_positions_offsets",
-                "fields": {
-                    "shingles": { 
-                        "type": "search_as_you_type"
-                    }
-                }
+                "copy_to": "bezeichnung"
             },
             "inhaber": {
                 "type": "text",
+                "copy_to": "bezeichnung"
+            },
+            "bezeichnung": {
+                "type": "text",
                 "analyzer": "namen_analyzer",
                 "term_vector": "with_positions_offsets",
+                "store": true,
                 "fields": {
-                    "shingles": { 
+                    "shingles": {
                         "type": "search_as_you_type"
                     }
                 }
@@ -111,6 +113,15 @@ PUT /konten
         }
     }
 }
+
+
+//test analyzer
+POST konten/_analyze
+{
+  "analyzer": "namen_analyzer",
+  "text":     "1234 AT1234 Jack Bauer Kim Bauer"
+}
+
 
 GET konten/_stats
 
@@ -274,28 +285,23 @@ GET konten/_search
 
 //search as you type for "konten"
 //?filter_path=hits.total.value,hits.hits._source
+//?stored_fields=true
 GET konten/_search
 {
+    "size": "20",
     "query": {
         "bool": {
             "must": [
                 {
                     "multi_match": {
-                        "query": "kl",
+                        "query": "at42",
                         "type": "bool_prefix",
                         "fields": [
-                            "verfuegungsberechtigt^3",
-                            "verfuegungsberechtigt.shingles^3",
-                            "verfuegungsberechtigt.shingles._2gram^3",
-                            "verfuegungsberechtigt.shingles._3gram^3",
-                            "verfuegungsberechtigt.shingles._index_prefix^3",
-                            "inhaber^2",
-                            "inhaber.shingles^2",
-                            "inhaber.shingles._2gram^2",
-                            "inhaber.shingles._3gram^2",
-                            "inhaber.shingles._index_prefix^2",
-                            "kontonummer.keyword",
-                            "iban"
+                            "bezeichnung",
+                            "bezeichnung.shingles",
+                            "bezeichnung.shingles._2gram",
+                            "bezeichnung.shingles._3gram",
+                            "bezeichnung.shingles._index_prefix"
                         ]
                     }
                 },
@@ -322,6 +328,7 @@ GET konten/_search
         }
     },
     "highlight": {
+        "require_field_match": false,
         "fields": [
             {
                 "verfuegungsberechtigt": {}
@@ -330,7 +337,7 @@ GET konten/_search
                 "inhaber": {}
             },
             {
-                "kontonummer.keyword": {}
+                "kontonummer": {}
             },
             {
                 "iban": {}
@@ -338,7 +345,6 @@ GET konten/_search
         ]
     }
 }
-
 
 // Suche alle Tags
 GET konten/_search?filter_path=aggregations.tags.buckets.key,aggregations.tags.buckets.doc_count
@@ -358,6 +364,7 @@ GET konten/_search?filter_path=aggregations.tags.buckets.key,aggregations.tags.b
 GET konten/_search/template
 {
     "source": {
+        "size": 20,
         "query": {
             "bool": {
                 "must": [
@@ -366,18 +373,11 @@ GET konten/_search/template
                             "query": "{{konto_prefix}}",
                             "type": "bool_prefix",
                             "fields": [
-                                "verfuegungsberechtigt^3",
-                                "verfuegungsberechtigt.shingles^3",
-                                "verfuegungsberechtigt.shingles._2gram^3",
-                                "verfuegungsberechtigt.shingles._3gram^3",
-                                "verfuegungsberechtigt.shingles._index_prefix^3",
-                                "inhaber^2",
-                                "inhaber.shingles^2",
-                                "inhaber.shingles._2gram^2",
-                                "inhaber.shingles._3gram^2",
-                                "inhaber.shingles._index_prefix^2",
-                                "kontonummer.keyword",
-                                "iban"
+                                "bezeichnung",
+                                "bezeichnung.shingles",
+                                "bezeichnung.shingles._2gram",
+                                "bezeichnung.shingles._3gram",
+                                "bezeichnung.shingles._index_prefix"
                             ]
                         }
                     },
@@ -400,7 +400,7 @@ GET konten/_search/template
                 "should": [
                     {
                         "match": {
-                            "geschaeftsart": "Giro"
+                            "geschaeftsart": "{{geschaeftsart}}{{^geschaeftsart}}giro{{/geschaeftsart}}"
                         }
                     },
                     {
@@ -412,15 +412,16 @@ GET konten/_search/template
             }
         },
         "highlight": {
+            "require_field_match": false,
             "fields": [
                 {
                     "verfuegungsberechtigt": {}
-                },
+                },   
                 {
                     "inhaber": {}
                 },
                 {
-                    "kontonummer.keyword": {}
+                    "kontonummer": {}
                 },
                 {
                     "iban": {}
@@ -429,9 +430,10 @@ GET konten/_search/template
         }
     },
     "params": {
-        "konto_prefix": "ma",
+        "konto_prefix": "AT",
         "mandantennummer": 999,
         "betreuer": "SARCON"
+        //,"geschaeftsart": "Giro"
         //,"kundennummer": "00001234570",
     }
 }
@@ -445,6 +447,7 @@ POST _scripts/konto_search_as_you_type_v1
     "script": {
         "lang": "mustache",
         "source": {
+            "size": 20,
             "query": {
                 "bool": {
                     "must": [
@@ -453,25 +456,18 @@ POST _scripts/konto_search_as_you_type_v1
                                 "query": "{{konto_prefix}}",
                                 "type": "bool_prefix",
                                 "fields": [
-                                    "verfuegungsberechtigt^3",
-                                    "verfuegungsberechtigt.shingles^3",
-                                    "verfuegungsberechtigt.shingles._2gram^3",
-                                    "verfuegungsberechtigt.shingles._3gram^3",
-                                    "verfuegungsberechtigt.shingles._index_prefix^3",
-                                    "inhaber^2",
-                                    "inhaber.shingles^2",
-                                    "inhaber.shingles._2gram^2",
-                                    "inhaber.shingles._3gram^2",
-                                    "inhaber.shingles._index_prefix^2",
-                                    "kontonummer.keyword",
-                                    "iban"
+                                    "bezeichnung",
+                                    "bezeichnung.shingles",
+                                    "bezeichnung.shingles._2gram",
+                                    "bezeichnung.shingles._3gram",
+                                    "bezeichnung.shingles._index_prefix"
                                 ]
                             }
                         },
                         {
                             "match": {
                                 "mandantennummer": {
-                                    "query": "{{mandantennummer}}{{^mandantennummer}}-1{{/mandantennummer}}"
+                                    "query": "{{mandantennummer}}"
                                 }
                             }
                         },
@@ -487,7 +483,7 @@ POST _scripts/konto_search_as_you_type_v1
                     "should": [
                         {
                             "match": {
-                                "geschaeftsart": "Giro"
+                                "geschaeftsart": "{{geschaeftsart}}{{^geschaeftsart}}giro{{/geschaeftsart}}"
                             }
                         },
                         {
@@ -499,6 +495,7 @@ POST _scripts/konto_search_as_you_type_v1
                 }
             },
             "highlight": {
+                "require_field_match": false,
                 "fields": [
                     {
                         "verfuegungsberechtigt": {}
@@ -507,7 +504,7 @@ POST _scripts/konto_search_as_you_type_v1
                         "inhaber": {}
                     },
                     {
-                        "kontonummer.keyword": {}
+                        "kontonummer": {}
                     },
                     {
                         "iban": {}
@@ -523,9 +520,10 @@ GET konten/_search/template?filter_path=hits.total.value,hits.hits._source,hits.
 {
     "id": "konto_search_as_you_type_v1",
     "params": {
-        "konto_prefix": "kl",
+        "konto_prefix": "car",
         "mandantennummer": 999,
         "betreuer": "SARCON"
+        //,"geschaeftsart": "darlehen" //optional, default:giro
         //,"kundennummer": "00001234570", //optional
     }
 }
@@ -598,7 +596,8 @@ PUT /highlighttest
         "type": "text",
         "fields": {
           "shingles": { 
-            "type": "search_as_you_type"
+            "type": "search_as_you_type",
+            "term_vector": "with_positions_offsets"
           },
           "ngrams": {
             "type": "text",
@@ -635,7 +634,10 @@ GET highlighttest/_search
   "highlight" : {
     "fields" : [
       {
-        "plain_text.ngrams": { } 
+        "plain_text.ngrams": { 
+            "type" : "fvh"
+            //,"matched_fields": ["plain_text.ngrams",  "plain_text.shingles", "plain_text.shingles._2gram", "plain_text.shingles._3gram", "plain_text.shingles._index_prefix"]
+        } 
       }
     ]
   }
