@@ -1,0 +1,250 @@
+{
+    "responses": [
+        {
+            "hits": {
+                "total": {
+                    "value": 7
+                },
+                "hits": [
+                    {
+                        "_source": {
+                            "iban": "AT424321012345678901",
+                            "kontonummer": "12345678901",
+                            "kundennummer": "00001234567",
+                            "mandantennummer": "999",
+                            "geschaeftsart": "Giro",
+                            "produktkennung": "GEHALT",
+                            "neuanlagedatum": "2020-08-08",
+                            "aktualisierungsdatum": "2020-08-08T08:31:30Z",
+                            "verfuegungsberechtigt": "Hans Mustermann",
+                            "betreuerkennung": "SARCON",
+                            "waehrungskennung": "EUR",
+                            "tags": [
+                                "aktiv",
+                                "online"
+                            ]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "iban": "AT424321012345678907",
+                            "kontonummer": "12345678907",
+                            "kundennummer": "00001234571",
+                            "mandantennummer": "999",
+                            "geschaeftsart": "Giro",
+                            "produktkennung": "TREUHND",
+                            "neuanlagedatum": "2020-08-09",
+                            "aktualisierungsdatum": "2020-08-09T08:20:30Z",
+                            "verfuegungsberechtigt": "Carlo Martinez",
+                            "betreuerkennung": "SARCON",
+                            "waehrungskennung": "EUR",
+                            "tags": [
+                                "aktiv"
+                            ]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "iban": "AT424321012345678903",
+                            "kontonummer": "12345678903",
+                            "kundennummer": "00001234569",
+                            "mandantennummer": "999",
+                            "geschaeftsart": "Darlehen",
+                            "produktkennung": "WOHNBAU",
+                            "neuanlagedatum": "2020-08-08",
+                            "aktualisierungsdatum": "2020-08-08T08:42:30Z",
+                            "verfuegungsberechtigt": "Carlo Solér",
+                            "betreuerkennung": "SARCON",
+                            "waehrungskennung": "EUR",
+                            "tags": [
+                                "gelöscht",
+                                "endfällig",
+                                "langfristig"
+                            ]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "iban": "AT424321012345678902",
+                            "kontonummer": "12345678902",
+                            "kundennummer": "00001234568",
+                            "mandantennummer": "999",
+                            "geschaeftsart": "Giro",
+                            "produktkennung": "KOMMERZ",
+                            "neuanlagedatum": "2020-08-08",
+                            "aktualisierungsdatum": "2020-08-08T08:37:30Z",
+                            "verfuegungsberechtigt": "Romed Giner",
+                            "inhaber": "Giner KG",
+                            "betreuerkennung": "KLAKLE",
+                            "waehrungskennung": "EUR",
+                            "tags": [
+                                "aktiv",
+                                "online"
+                            ]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "iban": "AT424321012345678904",
+                            "kontonummer": "12345678904",
+                            "kundennummer": "00001234569",
+                            "mandantennummer": "999",
+                            "geschaeftsart": "Giro",
+                            "produktkennung": "PRIVKON",
+                            "neuanlagedatum": "2020-08-08",
+                            "aktualisierungsdatum": "2020-08-08T08:58:30Z",
+                            "verfuegungsberechtigt": "Romed Giner",
+                            "betreuerkennung": "KLAKLE",
+                            "waehrungskennung": "EUR",
+                            "tags": [
+                                "aktiv"
+                            ]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "iban": "AT424321012345678908",
+                            "kontonummer": "12345678908",
+                            "kundennummer": "00001234572",
+                            "mandantennummer": "999",
+                            "geschaeftsart": "Giro",
+                            "produktkennung": "GEHALT",
+                            "neuanlagedatum": "2020-08-09",
+                            "aktualisierungsdatum": "2020-08-09T08:22:30Z",
+                            "verfuegungsberechtigt": "Carmen Martin",
+                            "betreuerkennung": "KLAKLE",
+                            "waehrungskennung": "EUR",
+                            "tags": [
+                                "aktiv"
+                            ]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "iban": "AT424321012345678905",
+                            "kontonummer": "12345678905",
+                            "kundennummer": "00001234570",
+                            "mandantennummer": "999",
+                            "geschaeftsart": "Darlehen",
+                            "produktkennung": "PRIVKRE",
+                            "neuanlagedatum": "2020-08-08",
+                            "aktualisierungsdatum": "2020-08-08T14:20:30Z",
+                            "verfuegungsberechtigt": "Klara Klammer",
+                            "betreuerkennung": "KLAKLE",
+                            "waehrungskennung": "CHF",
+                            "tags": [
+                                "aktiv",
+                                "kurzfristig"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "hits": {
+                "total": {
+                    "value": 8
+                }
+            },
+            "aggregations": {
+                "geschaeftsart": {
+                    "buckets": [
+                        {
+                            "key": "giro",
+                            "doc_count": 5
+                        },
+                        {
+                            "key": "darlehen",
+                            "doc_count": 3
+                        }
+                    ]
+                },
+                "betreuerkennung": {
+                    "buckets": [
+                        {
+                            "key": "klakle",
+                            "doc_count": 4
+                        },
+                        {
+                            "key": "sarcon",
+                            "doc_count": 3
+                        },
+                        {
+                            "key": "marsom",
+                            "doc_count": 1
+                        }
+                    ]
+                },
+                "waehrungskennung": {
+                    "buckets": [
+                        {
+                            "key": "eur",
+                            "doc_count": 7
+                        },
+                        {
+                            "key": "chf",
+                            "doc_count": 1
+                        }
+                    ]
+                },
+                "produktkennung": {
+                    "buckets": [
+                        {
+                            "key": "gehalt",
+                            "doc_count": 2
+                        },
+                        {
+                            "key": "privkre",
+                            "doc_count": 2
+                        },
+                        {
+                            "key": "kommerz",
+                            "doc_count": 1
+                        },
+                        {
+                            "key": "privkon",
+                            "doc_count": 1
+                        },
+                        {
+                            "key": "treuhnd",
+                            "doc_count": 1
+                        },
+                        {
+                            "key": "wohnbau",
+                            "doc_count": 1
+                        }
+                    ]
+                },
+                "tags": {
+                    "buckets": [
+                        {
+                            "key": "aktiv",
+                            "doc_count": 7
+                        },
+                        {
+                            "key": "kurzfristig",
+                            "doc_count": 2
+                        },
+                        {
+                            "key": "online",
+                            "doc_count": 2
+                        },
+                        {
+                            "key": "endfällig",
+                            "doc_count": 1
+                        },
+                        {
+                            "key": "gelöscht",
+                            "doc_count": 1
+                        },
+                        {
+                            "key": "langfristig",
+                            "doc_count": 1
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

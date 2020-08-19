@@ -9,7 +9,6 @@
 }
 
 .searchinput {
-  
   /* "https://img.icons8.com/android/24/000000/search.png"/> */
   background-image: url("/images/searchicon-small.png");
   background-position: 0.5em center;
@@ -22,7 +21,7 @@
 }
 
 /* Dropdown Content (Hidden by Default) */
-.searchresult {
+.searchresults {
   display: none;
   position: absolute;
   background-color: #f1f1f1;
@@ -33,27 +32,36 @@
   z-index: 1;
 }
 
-.searchmatches {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
 .show {
   display: block;
 }
 
-.searchmatches li {
+.searchresultentries {
+  padding: 0;
+  margin: 0;
+}
+
+.searchresultentries li {
   /* border: 1px solid #ddd; */
   margin-top: -1px; /* Prevent double borders */
   background-color: #f6f6f6;
-  padding: 12px;
+  padding: 10px;
   text-decoration: none;
-  font-size: 18px;
+  font-size: 15px;
   color: black;
   display: block;
+  list-style-type: none;
 }
 
-.searchmatches :hover:not(.header) {
+.searchfilters li {
+  background-color: #dae1f8;
+}
+
+.searchresultentries :hover:not(.header) {
   background-color: #9db7ff
+}
+
+.searchresultentries :focus {
+  background-color: #9db7ff;
+  outline: 0;
 }
