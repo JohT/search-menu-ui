@@ -20,6 +20,7 @@ var searchbar = searchbar || {};
  * @property {string} resultTypeIdPrefix - id prefix for result/match entries (followed by "-" and their index) (default="result")
  * @property {string} filterTypeIdPrefix - id prefix for filter entries (followed by "-" and their index) (default="filter")
  * @property {string} resultElementTag - tag of the result/filter entries (default="li")
+ * @property {string} inactiveFilterClass - css class name for an inactive filter entry (default="inactivefilter")
  */
 
 /**
@@ -39,6 +40,7 @@ searchbar.SearchbarAPI = (function () {
     resultTypeIdPrefix: "result",
     filterTypeIdPrefix: "filter",
     resultElementTag: "li",
+    inactiveFilterClass: "inactivefilter",
   };
 
   /**
@@ -76,6 +78,10 @@ searchbar.SearchbarAPI = (function () {
     },
     resultElementTag: function (elementTag) {
       config.resultElementTag = elementTag;
+      return this;
+    },
+    inactiveFilterClass: function (classname) {
+      config.inactiveFilterClass = classname;
       return this;
     },
     start: function () {
@@ -168,8 +174,24 @@ searchbar.SearchbarUI = (function () {
     var resultElement = addListElement(entry.name + " (" + entry.abbr + ")", i, config.resultTypeIdPrefix);
     matchlist.appendChild(resultElement);
 
-    addEvent("mousedown", resultElement, handleEventWithConfig(config, chooseSearchResult));
+    onResultEntrySelected(resultElement, handleEventWithConfig(config, selectSearchResultAsFilter));
     addResultEntryEventHandlers(resultElement, config);
+  }
+
+  /**
+   * @param {Element} element to add event handlers
+   * @param {SearchbarConfig} config search configuration
+   */
+  function addResultEntryEventHandlers(element, config) {
+    onArrowDownKey(element, handleEventWithConfig(config, focusNextSearchResult));
+    onArrowUpKey(element, handleEventWithConfig(config, focusPreviousSearchResult));
+    onEscapeKey(element, handleEventWithConfig(config, focusSearchInput));
+  }
+
+  function onResultEntrySelected(resultElement, handler) {
+    addEvent("mousedown", resultElement, handler);
+    onEnterKey(resultElement, handler);
+    onSpaceKey(resultElement, handler);
   }
 
   /**
@@ -236,23 +258,26 @@ searchbar.SearchbarUI = (function () {
     previous.focus();
   }
 
-  function chooseSearchResult(event, config) {
+  function selectSearchResultAsFilter(event, config) {
     var filterElements = getListElementCountOfType(config.filterTypeIdPrefix);
     var filterElement = addListElement(event.currentTarget.innerText, filterElements + 1, config.filterTypeIdPrefix);
     addResultEntryEventHandlers(filterElement, config);
+    onResultEntrySelected(filterElement, handleEventWithConfig(config, toggleFilterEntry));
 
     var searchfilters = document.getElementById(config.filtersElementId);
     searchfilters.appendChild(filterElement);
   }
 
   /**
-   * @param {Element} element to add event handlers
-   * @param {SearchbarConfig} config search configuration
+   * Toggles a filter to inactive and vice versa.
    */
-  function addResultEntryEventHandlers(element, config) {
-    onArrowDownKey(element, handleEventWithConfig(config, focusNextSearchResult));
-    onArrowUpKey(element, handleEventWithConfig(config, focusPreviousSearchResult));
-    onEscapeKey(element, handleEventWithConfig(config, focusSearchInput));
+  function toggleFilterEntry(event, config) {
+    var filterElement = getEventTarget(event);
+    if (hasClass(config.inactiveFilterClass, filterElement)) {
+      removeClass(config.inactiveFilterClass, filterElement);
+    } else {
+      addClass(config.inactiveFilterClass, filterElement);
+    }
   }
 
   /**
@@ -342,6 +367,22 @@ searchbar.SearchbarUI = (function () {
     });
   }
 
+  function onEnterKey(element, eventHandler) {
+    addEvent("keydown", element, function (event) {
+      if (event.key == "Enter" || keyCodeOf(event) == 13) {
+        eventHandler(event);
+      }
+    });
+  }
+
+  function onSpaceKey(element, eventHandler) {
+    addEvent("keydown", element, function (event) {
+      if (event.key == " " || event.key == "Spacebar" || keyCodeOf(event) == 32) {
+        eventHandler(event);
+      }
+    });
+  }
+
   function onArrowUpKey(element, eventHandler) {
     addEvent("keydown", element, function (event) {
       if (event.key == "ArrowUp" || keyCodeOf(event) == 38) {
@@ -394,29 +435,6 @@ searchbar.SearchbarUI = (function () {
       element.selectionStart = element.selectionEnd = element.value.length;
     }
   }
-
-  // TODO delete
-  // /**
-  //  * Selects the given range of text inside an input element.
-  //  * @param {Element} element
-  //  * @param {number} start
-  //  * @param {number} end
-  //  * {@see https://www.vishalon.net/blog/javascript-getting-and-setting-caret-position-in-textarea}
-  //  */
-  // function setCaretPosition(element, start, end) {
-  //   if (element.setSelectionRange) {
-  //     // IE >= 9 and other browsers
-  //     element.focus();
-  //     element.setSelectionRange(start, end);
-  //   } else if (element.createTextRange) {
-  //     // IE < 9
-  //     var range = element.createTextRange();
-  //     range.collapse(true);
-  //     range.moveEnd("character", end);
-  //     range.moveStart("character", start);
-  //     range.select();
-  //   }
-  // }
 
   function httpGetJson(url, httpRequest, onJsonResultReceived) {
     httpRequest.onreadystatechange = function () {

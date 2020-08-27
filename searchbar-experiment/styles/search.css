@@ -57,6 +57,10 @@
   background-color: #dae1f8;
 }
 
+.filter.inactivefilter {
+  background-color: #cacaca;
+}
+
 .searchresultentries :hover:not(.header) {
   background-color: #9db7ff
 }
