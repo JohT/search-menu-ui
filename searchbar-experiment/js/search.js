@@ -12,6 +12,7 @@ var searchbar = searchbar || {};
 
 /**
  * @typedef {Object} SearchbarConfig
+ * @property {string} searchAreaElementId - id of the whole search area (default="searcharea")
  * @property {string} inputElementId - id of the search input field (default="searchbar")
  * @property {string} resultsElementId - id of the element (div) that contains matches and filters (default="searchresults")
  * @property {string} matchesElementId - id of the element (ul) that contains the matches/suggestions (default="searchmatches")
@@ -21,6 +22,7 @@ var searchbar = searchbar || {};
  * @property {string} filterTypeIdPrefix - id prefix for filter entries (followed by "-" and their index) (default="filter")
  * @property {string} resultElementTag - tag of the result/filter entries (default="li")
  * @property {string} inactiveFilterClass - css class name for an inactive filter entry (default="inactivefilter")
+ * @property {string} timeoutOnBlur - timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
  */
 
 /**
@@ -32,6 +34,7 @@ searchbar.SearchbarAPI = (function () {
   "use strict";
 
   var config = {
+    searchAreaElementId: "searcharea",
     inputElementId: "searchbar",
     resultsElementId: "searchresults",
     matchesElementId: "searchmatches",
@@ -41,6 +44,7 @@ searchbar.SearchbarAPI = (function () {
     filterTypeIdPrefix: "filter",
     resultElementTag: "li",
     inactiveFilterClass: "inactivefilter",
+    timeoutOnBlur: 700,
   };
 
   /**
@@ -48,6 +52,10 @@ searchbar.SearchbarAPI = (function () {
    * @scope searchbar.SearchbarAPI
    */
   return {
+    searchAreaElementId: function (id) {
+      config.searchAreaElementId = id;
+      return this;
+    },
     inputElementId: function (id) {
       config.inputElementId = id;
       return this;
@@ -84,6 +92,10 @@ searchbar.SearchbarAPI = (function () {
       config.inactiveFilterClass = classname;
       return this;
     },
+    timeoutOnBlur: function (ms) {
+      config.timeoutOnBlur = ms;
+      return this;
+    },
     start: function () {
       return new searchbar.SearchbarUI(config);
     },
@@ -113,6 +125,8 @@ searchbar.SearchbarUI = (function () {
   var instance = function (config) {
     this.config = config;
     this.currentSearchText = "";
+    this.focusOutTimer = null;
+
     var search = document.getElementById(config.inputElementId);
     onEscapeKey(search, function (event) {
       getEventTarget(event).value = "";
@@ -129,11 +143,21 @@ searchbar.SearchbarUI = (function () {
         this.currentSearchText = newSearchText;
       }
     });
-    addEvent("focusin", search, function (event) {
-      showResults(config);
+
+    var searchareaElement = document.getElementById(config.searchAreaElementId);
+    addEvent("focusin", searchareaElement, function (event) {
+      var searchInputElement = document.getElementById(config.inputElementId);
+      if (searchInputElement.value !== "") {
+        if (this.focusOutTimer != null) {
+          clearTimeout(this.focusOutTimer);
+        }
+        showResults(config);
+      }
     });
-    addEvent("focusout", search, function (event) {
-      //hideResults(config);
+    addEvent("focusout", searchareaElement, function (event) {
+      this.focusOutTimer = setTimeout(function () {
+        hideResults(config);
+      }, config.timeoutOnBlur);
     });
   };
 
@@ -214,7 +238,7 @@ searchbar.SearchbarUI = (function () {
   }
 
   function preventDefaultEventHandling(inputevent) {
-    inputevent.preventDefault ? inputevent.preventDefault() : event.returnValue = false;
+    inputevent.preventDefault ? inputevent.preventDefault() : (event.returnValue = false);
   }
 
   function focusFirstResult(event, config) {

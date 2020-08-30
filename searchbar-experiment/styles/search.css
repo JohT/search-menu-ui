@@ -54,18 +54,19 @@
 }
 
 .searchfilters li {
-  background-color: #dae1f8;
+  background-color: #befdce;
 }
 
 .filter.inactivefilter {
   background-color: #cacaca;
+  text-decoration: line-through;
 }
 
-.searchresultentries :hover:not(.header) {
+.searchresultentries :hover:not(.inactivefilter) {
   background-color: #9db7ff
 }
 
-.searchresultentries :focus {
+.searchresultentries :focus:not(.inactivefilter) {
   background-color: #9db7ff;
   outline: 0;
 }
