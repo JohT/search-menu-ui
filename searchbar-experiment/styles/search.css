@@ -62,11 +62,29 @@
   text-decoration: line-through;
 }
 
-.searchresultentries :hover:not(.inactivefilter) {
-  background-color: #9db7ff
+.searchresultentries.searchmatches .result:hover {
+  background-color: #b7cafd
 }
 
-.searchresultentries :focus:not(.inactivefilter) {
+.searchresultentries.searchmatches .result:focus {
   background-color: #9db7ff;
+  outline: 0;
+}
+
+.searchresultentries.searchfilters .filter:hover {
+  background-color: #a1fcb8;
+}
+
+.searchresultentries.searchfilters .filter:focus {
+  background-color: #8ffcaa;
+  outline: 0;
+}
+
+.searchresultentries.searchfilters .filter.inactivefilter:hover {
+  background-color: #aaaaaa;
+}
+
+.searchresultentries.searchfilters .filter.inactivefilter:focus {
+  background-color: #949494;
   outline: 0;
 }
