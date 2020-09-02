@@ -22,7 +22,8 @@ var searchbar = searchbar || {};
  * @property {string} filterTypeIdPrefix - id prefix for filter entries (followed by "-" and their index) (default="filter")
  * @property {string} resultElementTag - tag of the result/filter entries (default="li")
  * @property {string} inactiveFilterClass - css class name for an inactive filter entry (default="inactivefilter")
- * @property {string} timeoutOnBlur - timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
+ * @property {string} waitBeforeClose - timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
+ * @property {string} waitBeforeSearch - time in milliseconds to wait until typing is finisdhed and search starts (default=500)
  */
 
 /**
@@ -44,7 +45,8 @@ searchbar.SearchbarAPI = (function () {
     filterTypeIdPrefix: "filter",
     resultElementTag: "li",
     inactiveFilterClass: "inactivefilter",
-    timeoutOnBlur: 700,
+    waitBeforeClose: 700,
+    waitBeforeSearch: 500,
   };
 
   /**
@@ -92,8 +94,12 @@ searchbar.SearchbarAPI = (function () {
       config.inactiveFilterClass = classname;
       return this;
     },
-    timeoutOnBlur: function (ms) {
-      config.timeoutOnBlur = ms;
+    waitBeforeClose: function (ms) {
+      config.waitBeforeClose = ms;
+      return this;
+    },
+    waitBeforeSearch: function (ms) {
+      config.waitBeforeSearch = ms;
       return this;
     },
     start: function () {
@@ -126,6 +132,7 @@ searchbar.SearchbarUI = (function () {
     this.config = config;
     this.currentSearchText = "";
     this.focusOutTimer = null;
+    this.waitBeforeSearchTimer = null;
 
     var search = document.getElementById(config.inputElementId);
     onEscapeKey(search, function (event) {
@@ -134,14 +141,16 @@ searchbar.SearchbarUI = (function () {
     });
     onArrowDownKey(search, handleEventWithConfig(config, focusFirstResult));
     addEvent("keyup", search, function (event) {
-      var newSearchText = getEventTarget(event).value;
-      if (newSearchText !== this.currentSearchText || this.currentSearchText === "") {
-        //Timer starten bzw. zuruecksetzen, Status "Warten bis fertig getippt"
-        //Bei Ablauf vom Timer nochmals "newSearchText !== this.currentSearchText" pruefen
-        //Dann suche starten
-        updateSearch(newSearchText, config);
-        this.currentSearchText = newSearchText;
+      if (this.waitBeforeSearchTimer !== null) {
+        clearTimeout(this.waitBeforeSearchTimer);
       }
+      var newSearchText = getEventTarget(event).value;
+      this.waitBeforeSearchTimer = setTimeout(function () {
+        if (newSearchText !== this.currentSearchText || this.currentSearchText === "") {
+          updateSearch(newSearchText, config);
+          this.currentSearchText = newSearchText;
+        }
+      }, config.waitBeforeSearch);
     });
 
     var searchareaElement = document.getElementById(config.searchAreaElementId);
@@ -157,7 +166,7 @@ searchbar.SearchbarUI = (function () {
     addEvent("focusout", searchareaElement, function (event) {
       this.focusOutTimer = setTimeout(function () {
         hideResults(config);
-      }, config.timeoutOnBlur);
+      }, config.waitBeforeClose);
     });
   };
 
