@@ -642,6 +642,12 @@ GET konten/_search/template//?filter_path=aggregations.*.buckets
     }
 }
 
+// Needs to be executed using postman until multi-line-json are supported here
+GET _msearch/template?filter_path=responses.hits.total.value,responses.hits.hits._source,responses.hits.hits.highlight,hits.responses.hits.highlight,responses.aggregations.*.buckets
+{"index": "konten"}
+{"id": "konto_search_as_you_type_v1", "params":{"konto_prefix":"at", "mandantennummer":999,"betreuerkennung":"SARCON"}}
+{"index": "konten"}
+{"id": "konto_tags_v1", "params":{"konto_aggregations_prefix": "", "konto_aggregations_size": 10}}
 
 
 

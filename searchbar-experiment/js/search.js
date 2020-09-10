@@ -185,9 +185,14 @@ searchbar.SearchbarUI = (function () {
     httpGetJson(config.searchURI, getHttpRequest(), function (jsonResult) {
       displayResults(filterResults(jsonResult, searchText), config);
     });
+    //TODO delete these 3 lines when experiment finished
+    httpGetJson("../data/KontenMultiSearchTemplateResponse.json", getHttpRequest(), function (jsonResult) {
+      resultparser.Tools.introspectJson(jsonResult);
+    });
   }
 
   function filterResults(jsonResults, searchText) {
+    //TODO FIXME secure searchText input
     var regex = new RegExp("^" + searchText, "gi");
     return jsonResults.filter(function (entry) {
       return entry.name.match(regex) || entry.abbr.match(regex);

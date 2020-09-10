@@ -23,6 +23,14 @@
                                 "aktiv",
                                 "online"
                             ]
+                        },
+                        "highlight": {
+                            "kontonummer": [
+                                "<em>12345678901</em>"
+                            ],
+                            "iban": [
+                                "<em>AT424321012345678901</em>"
+                            ]
                         }
                     },
                     {
@@ -40,6 +48,14 @@
                             "waehrungskennung": "EUR",
                             "tags": [
                                 "aktiv"
+                            ]
+                        },
+                        "highlight": {
+                            "kontonummer": [
+                                "<em>12345678907</em>"
+                            ],
+                            "iban": [
+                                "<em>AT424321012345678907</em>"
                             ]
                         }
                     },
@@ -61,6 +77,14 @@
                                 "endfällig",
                                 "langfristig"
                             ]
+                        },
+                        "highlight": {
+                            "kontonummer": [
+                                "<em>12345678903</em>"
+                            ],
+                            "iban": [
+                                "<em>AT424321012345678903</em>"
+                            ]
                         }
                     },
                     {
@@ -81,6 +105,14 @@
                                 "aktiv",
                                 "online"
                             ]
+                        },
+                        "highlight": {
+                            "kontonummer": [
+                                "<em>12345678902</em>"
+                            ],
+                            "iban": [
+                                "<em>AT424321012345678902</em>"
+                            ]
                         }
                     },
                     {
@@ -98,6 +130,14 @@
                             "waehrungskennung": "EUR",
                             "tags": [
                                 "aktiv"
+                            ]
+                        },
+                        "highlight": {
+                            "kontonummer": [
+                                "<em>12345678904</em>"
+                            ],
+                            "iban": [
+                                "<em>AT424321012345678904</em>"
                             ]
                         }
                     },
@@ -117,6 +157,14 @@
                             "tags": [
                                 "aktiv"
                             ]
+                        },
+                        "highlight": {
+                            "kontonummer": [
+                                "<em>12345678908</em>"
+                            ],
+                            "iban": [
+                                "<em>AT424321012345678908</em>"
+                            ]
                         }
                     },
                     {
@@ -135,6 +183,14 @@
                             "tags": [
                                 "aktiv",
                                 "kurzfristig"
+                            ]
+                        },
+                        "highlight": {
+                            "kontonummer": [
+                                "<em>12345678905</em>"
+                            ],
+                            "iban": [
+                                "<em>AT424321012345678905</em>"
                             ]
                         }
                     }
