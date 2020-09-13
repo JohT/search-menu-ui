@@ -19,7 +19,7 @@ var resultparser = resultparser || {};
  * @typedef {Object} PropertyStructureDescription
  * @property {string} type - "summary"(default) for the list overview. "detail" when a summary is selected. "filter" for field/value pair results that can be selected as search parameters.
  * @property {string} category - name of the category. Default = "". Could contain a symbol character or a short domain name. (e.g. "city")
- * @property {string} propertyPatternMode - "equal"(default): propertyname is equal to pattern. "prefix": property name starts with pattern. "template" allows variables like "{{fieldname}}".
+ * @property {string} propertyPatternMode - "equal"(default): propertyname is equal to pattern. "template" allows variables like "{{fieldname}}".
  * @property {string} propertyPattern - property name pattern (without array indizes) to match
  * @property {propertyNameFunction} getDisplayNameForPropertyName - display name for the property. ""(default) last property name element with upper case first letter.
  * @property {propertyNameFunction} getFilterNameForPropertyName - filter property name. "" (default) last property name element.
@@ -32,8 +32,6 @@ var resultparser = resultparser || {};
  */
 resultparser.PropertyStructureDescription = (function () {
   "use strict";
-
-  var doubleCurlyBracketsRegEx = new RegExp("\\{\\{\\w+\\}\\}", "gi");
 
   var description = {
     type: "summary",
@@ -69,9 +67,6 @@ resultparser.PropertyStructureDescription = (function () {
     if (description.propertyPatternMode === "equal") {
       return propertyNameWithoutArrayIndizes === description.propertyPattern;
     }
-    if (description.propertyPatternMode === "prefix") {
-      return propertyNameWithoutArrayIndizes.startsWith(description.propertyPattern);
-    }
     if (isTemplatePatternMode()) {
       return templateModePatternRegex().exec(propertyNameWithoutArrayIndizes);
     }
@@ -79,9 +74,16 @@ resultparser.PropertyStructureDescription = (function () {
   }
 
   function templateModePatternRegex() {
-    // TODO propertyPattern is used as regex -> should be further secured
-    var pattern = description.propertyPattern.replace(doubleCurlyBracketsRegEx, "([-\\w]+)");
+    var placeholderInDoubleCurlyBracketsRegEx = new RegExp("\\\\\\{\\\\\\{[-\\w]+\\\\\\}\\\\\\}", "gi");
+    var pattern = escapeCharsForRegEx(description.propertyPattern);
+    pattern = pattern.replace(placeholderInDoubleCurlyBracketsRegEx, "([-\\w]+)");
+    pattern = "^" + pattern;
     return new RegExp(pattern, "i");
+  }
+
+  function escapeCharsForRegEx(characters) {
+    var nonWordCharactersRegEx = new RegExp("([^-\\w])", "gi");
+    return characters.replace(nonWordCharactersRegEx, "\\$1");
   }
 
   function isSpecifiedString(value) {
@@ -188,8 +190,8 @@ resultparser.Tools = (function () {
     // );
     // console.log("merged:");
     // console.log(merged);
-    // console.log("details:");
-    // console.log(extractDetails(fillInArrayValues(flattenToArray(jsonData))));
+    console.log("details:");
+    console.log(extractDetails(fillInArrayValues(flattenToArray(jsonData))));
     console.log("filters:");
     console.log(extractFilters(fillInArrayValues(flattenToArray(jsonData))));
     return jsonData;
@@ -220,8 +222,8 @@ resultparser.Tools = (function () {
   function extractDetails(flattenedData) {
     var description = resultparser.PropertyStructureDescription.type("detail")
       .category("Konto")
-      .propertyPatternMode("prefix")
-      .propertyPattern("responses.hits.hits._source")
+      .propertyPatternMode("template")
+      .propertyPattern("responses.hits.hits._source.{{fieldname}}")
       .build();
     return extractEntriesByDescription(flattenedData, description);
   }
