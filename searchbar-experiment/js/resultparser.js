@@ -19,7 +19,7 @@ var resultparser = resultparser || {};
  * @typedef {Object} PropertyStructureDescription
  * @property {string} type - "summary"(default) for the list overview. "detail" when a summary is selected. "filter" for field/value pair results that can be selected as search parameters.
  * @property {string} category - name of the category. Default = "". Could contain a symbol character or a short domain name. (e.g. "city")
- * @property {string} propertyPatternMode - "equal"(default): propertyname is equal to pattern. "prefix": property name starts with pattern.
+ * @property {string} propertyPatternMode - "equal"(default): propertyname is equal to pattern. "prefix": property name starts with pattern. "template" allows variables like "{{fieldname}}".
  * @property {string} propertyPattern - property name pattern (without array indizes) to match
  * @property {propertyNameFunction} getDisplayNameForPropertyName - display name for the property. ""(default) last property name element with upper case first letter.
  * @property {propertyNameFunction} getFilterNameForPropertyName - filter property name. "" (default) last property name element.
@@ -33,6 +33,8 @@ var resultparser = resultparser || {};
 resultparser.PropertyStructureDescription = (function () {
   "use strict";
 
+  var doubleCurlyBracketsRegEx = new RegExp("\\{\\{\\w+\\}\\}", "gi");
+
   var description = {
     type: "summary",
     category: "",
@@ -42,6 +44,10 @@ resultparser.PropertyStructureDescription = (function () {
     getFilterNameForPropertyName: null,
     matchesPropertyName: matchesPropertyName,
   };
+
+  function isTemplatePatternMode() {
+    return description.propertyPatternMode === "template";
+  }
 
   function rigthMostPropertyNameElement(propertyname) {
     var regularExpression = new RegExp("(\\w+)$", "gi");
@@ -66,7 +72,24 @@ resultparser.PropertyStructureDescription = (function () {
     if (description.propertyPatternMode === "prefix") {
       return propertyNameWithoutArrayIndizes.startsWith(description.propertyPattern);
     }
+    if (isTemplatePatternMode()) {
+      return templateModePatternRegex().exec(propertyNameWithoutArrayIndizes);
+    }
     return false;
+  }
+
+  function templateModePatternRegex() {
+    // TODO propertyPattern is used as regex -> should be further secured
+    var pattern = description.propertyPattern.replace(doubleCurlyBracketsRegEx, "([-\\w]+)");
+    return new RegExp(pattern, "i");
+  }
+
+  function isSpecifiedString(value) {
+    return typeof value === "string" && value != null && value != "";
+  }
+
+  function isNotSpecified(value) {
+    return typeof value !== "string" || value == null || value == "";
   }
 
   /**
@@ -92,27 +115,49 @@ resultparser.PropertyStructureDescription = (function () {
       return this;
     },
     displayPropertyName: function (value) {
-      if (typeof value != "string" || value == null || value == "") {
-        description.getDisplayNameForPropertyName = function (propertyname) {
-          return upperCaseFirstLetter(rigthMostPropertyNameElement(propertyname));
-        };
-      } else {
+      if (isSpecifiedString(value)) {
         description.getDisplayNameForPropertyName = function (propertyname) {
           return value;
         };
+        return this;
       }
+      if (isTemplatePatternMode()) {
+        var regex = templateModePatternRegex();
+        description.getDisplayNameForPropertyName = function (propertyname) {
+          var match = regex.exec(propertyname);
+          if (match && match[1] != "") {
+            return upperCaseFirstLetter(match[1]);
+          }
+          return value;
+        };
+        return this;
+      }
+      description.getDisplayNameForPropertyName = function (propertyname) {
+        return upperCaseFirstLetter(rigthMostPropertyNameElement(propertyname));
+      };
       return this;
     },
     filterPropertyName: function (value) {
-      if (typeof value != "string" || value == null || value == "") {
-        description.getFilterNameForPropertyName = function (propertyname) {
-          return rigthMostPropertyNameElement(propertyname);
-        };
-      } else {
+      if (isSpecifiedString(value)) {
         description.getFilterNameForPropertyName = function (propertyname) {
           return value;
         };
+        return this;
       }
+      if (isTemplatePatternMode()) {
+        var regex = templateModePatternRegex();
+        description.getFilterNameForPropertyName = function (propertyname) {
+          var match = regex.exec(propertyname);
+          if (match && match[1] != "") {
+            return match[1];
+          }
+          return value;
+        };
+        return this;
+      }
+      description.getFilterNameForPropertyName = function (propertyname) {
+        return rigthMostPropertyNameElement(propertyname);
+      };
       return this;
     },
     build: function () {
@@ -132,21 +177,21 @@ resultparser.Tools = (function () {
 
   //TODO Only to try out
   function introspectJson(jsonData) {
-    console.log("summaries");
-    console.log(extractSummaries(flattenToArray(jsonData)));
-    console.log("highlighted");
-    console.log(extractHighlighted(flattenToArray(jsonData)));
-    var merged = mergeFlattenedData(
-      extractSummaries(flattenToArray(jsonData)),
-      extractHighlighted(flattenToArray(jsonData)),
-      getIdAndDisplayName
-    );
-    console.log("merged:");
-    console.log(merged);
-    console.log("details:");
-    console.log(extractDetails(flattenToArray(jsonData)));
-    console.log("fillInArrays:");
-    console.log(fillInArrayValues(flattenToArray(jsonData)));
+    // console.log("summaries");
+    // console.log(extractSummaries(fillInArrayValues(flattenToArray(jsonData))));
+    // console.log("highlighted");
+    // console.log(extractHighlighted(fillInArrayValues(flattenToArray(jsonData))));
+    // var merged = mergeFlattenedData(
+    //   extractSummaries(fillInArrayValues(flattenToArray(jsonData))),
+    //   extractHighlighted(fillInArrayValues(flattenToArray(jsonData))),
+    //   getIdAndDisplayName
+    // );
+    // console.log("merged:");
+    // console.log(merged);
+    // console.log("details:");
+    // console.log(extractDetails(fillInArrayValues(flattenToArray(jsonData))));
+    console.log("filters:");
+    console.log(extractFilters(fillInArrayValues(flattenToArray(jsonData))));
     return jsonData;
   }
 
@@ -173,10 +218,21 @@ resultparser.Tools = (function () {
   }
 
   function extractDetails(flattenedData) {
-    var description = resultparser.PropertyStructureDescription.type("details")
+    var description = resultparser.PropertyStructureDescription.type("detail")
       .category("Konto")
       .propertyPatternMode("prefix")
       .propertyPattern("responses.hits.hits._source")
+      .build();
+    return extractEntriesByDescription(flattenedData, description);
+  }
+
+  // responses[1].aggregations.betreuerkennung.buckets[0].doc_count: 4
+  // responses[1].aggregations.betreuerkennung.buckets[0].key: "klakle"
+  function extractFilters(flattenedData) {
+    var description = resultparser.PropertyStructureDescription.type("filter")
+      .category("Konto")
+      .propertyPatternMode("template")
+      .propertyPattern("responses.aggregations.{{fieldname}}.buckets.key")
       .build();
     return extractEntriesByDescription(flattenedData, description);
   }
