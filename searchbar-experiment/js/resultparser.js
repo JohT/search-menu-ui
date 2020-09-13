@@ -280,7 +280,7 @@ resultparser.Tools = (function () {
       }
     }
     for (var index = 0; index < entriesToMerge.length; index++) {
-      var entry = entries[index];
+      var entry = entriesToMerge[index];
       merged.push(entry);
     }
     return merged;
