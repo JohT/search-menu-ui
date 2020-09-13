@@ -43,6 +43,10 @@ resultparser.PropertyStructureDescription = (function () {
     matchesPropertyName: matchesPropertyName,
   };
 
+  function isEuqalPatternMode() {
+    return description.propertyPatternMode === "equal";
+  }
+
   function isTemplatePatternMode() {
     return description.propertyPatternMode === "template";
   }
@@ -64,7 +68,7 @@ resultparser.PropertyStructureDescription = (function () {
   }
 
   function matchesPropertyName(propertyNameWithoutArrayIndizes) {
-    if (description.propertyPatternMode === "equal") {
+    if (isEuqalPatternMode()) {
       return propertyNameWithoutArrayIndizes === description.propertyPattern;
     }
     if (isTemplatePatternMode()) {
@@ -124,8 +128,9 @@ resultparser.PropertyStructureDescription = (function () {
         return this;
       }
       if (isTemplatePatternMode()) {
-        var regex = templateModePatternRegex();
         description.getDisplayNameForPropertyName = function (propertyname) {
+          //TODO create only once? Beware stateful regex behavior and bug with subsequent execs.
+          var regex = templateModePatternRegex(); 
           var match = regex.exec(propertyname);
           if (match && match[1] != "") {
             return upperCaseFirstLetter(match[1]);
@@ -147,8 +152,9 @@ resultparser.PropertyStructureDescription = (function () {
         return this;
       }
       if (isTemplatePatternMode()) {
-        var regex = templateModePatternRegex();
         description.getFilterNameForPropertyName = function (propertyname) {
+          //TODO create only once? Beware stateful regex behavior and bug with subsequent execs.
+          var regex = templateModePatternRegex();
           var match = regex.exec(propertyname);
           if (match && match[1] != "") {
             return match[1];
@@ -179,17 +185,17 @@ resultparser.Tools = (function () {
 
   //TODO Only to try out
   function introspectJson(jsonData) {
-    // console.log("summaries");
-    // console.log(extractSummaries(fillInArrayValues(flattenToArray(jsonData))));
-    // console.log("highlighted");
-    // console.log(extractHighlighted(fillInArrayValues(flattenToArray(jsonData))));
-    // var merged = mergeFlattenedData(
-    //   extractSummaries(fillInArrayValues(flattenToArray(jsonData))),
-    //   extractHighlighted(fillInArrayValues(flattenToArray(jsonData))),
-    //   getIdAndDisplayName
-    // );
-    // console.log("merged:");
-    // console.log(merged);
+    console.log("summaries");
+    console.log(extractSummaries(fillInArrayValues(flattenToArray(jsonData))));
+    console.log("highlighted");
+    console.log(extractHighlighted(fillInArrayValues(flattenToArray(jsonData))));
+    var merged = mergeFlattenedData(
+      extractSummaries(fillInArrayValues(flattenToArray(jsonData))),
+      extractHighlighted(fillInArrayValues(flattenToArray(jsonData))),
+      getIdAndDisplayName
+    );
+    console.log("merged:");
+    console.log(merged);
     console.log("details:");
     console.log(extractDetails(fillInArrayValues(flattenToArray(jsonData))));
     console.log("filters:");
