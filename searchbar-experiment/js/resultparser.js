@@ -11,6 +11,23 @@
 var resultparser = resultparser || {};
 
 /**
+ * @typedef {Object} FlattenedEntry
+ * @property {string} category - category of the result using a short name or e.g. a symbol character
+ * @property {string} type - type of the result from PropertyStructureDescription-type
+ * @property {string} id - array indizes in hierarchical order separated by points, e.g. "0.0"
+ * @property {string} displayName - display name extracted from the point separated hierarchical property name, e.g. "Name"
+ * @property {string} filterName - filter field name extracted from the point separated hierarchical property name, e.g. "name"
+ * @property {string} value - the (single) value of the "flattened" property, e.g. "Smith"
+ * @property {string} propertyNamesWithArrayIndizes - the "original" flattened property name in hierarchical order separated by points, e.g. "responses[0].hits.hits[0]._source.name"
+ * @property {string} propertyNameWithoutArrayIndizes - same as propertyNamesWithArrayIndizes but without array indizes, e.g. "responses.hits.hits._source.name"
+ */
+
+/**
+ * @callback idOfElementFunction
+ *  @param {FlattenedEntry} entry
+ */
+
+/**
  * @callback propertyNameFunction
  *  @param {string} propertyname
  */
@@ -23,6 +40,9 @@ var resultparser = resultparser || {};
  * @property {string} propertyPattern - property name pattern (without array indizes) to match
  * @property {propertyNameFunction} getDisplayNameForPropertyName - display name for the property. ""(default) last property name element with upper case first letter.
  * @property {propertyNameFunction} getFilterNameForPropertyName - filter property name. "" (default) last property name element.
+ * @property {string} groupName - name of the property, that contains grouped entries. Default="group".
+ * @property {string} groupPattern - pattern that descibes how to group using {{variables}}. Deault="" (no grouping)
+ * @property {idOfElementFunction} getGroupId - function, that returns an id for the element (parameter) based on the groupPattern.
  */
 
 /**
@@ -33,21 +53,106 @@ var resultparser = resultparser || {};
 resultparser.PropertyStructureDescription = (function () {
   "use strict";
 
-  var description = {
-    type: "summary",
-    category: "",
-    propertyPatternMode: "equal",
-    propertyPattern: "",
-    getDisplayNameForPropertyName: null,
-    getFilterNameForPropertyName: null,
-    matchesPropertyName: matchesPropertyName,
-  };
+  /**
+   * Constructor function and container for everything, that needs to exist per instance.
+   */
+  function Instance() {
+    this.description = {
+      type: "summary",
+      category: "",
+      propertyPatternMode: "equal",
+      propertyPattern: "",
+      getDisplayNameForPropertyName: null,
+      getFilterNameForPropertyName: null,
+      matchesPropertyName: null,
+      groupName: "group",
+      groupPattern: "",
+      getGroupId: null,
+    };
+    this.type = function (value) {
+      this.description.type = value;
+      return this;
+    };
+    this.category = function (value) {
+      this.description.category = value;
+      return this;
+    };
+    this.propertyPatternMode = function (value) {
+      this.description.propertyPatternMode = value;
+      return this;
+    };
+    this.propertyPattern = function (value) {
+      this.description.propertyPattern = value;
+      return this;
+    };
+    this.displayPropertyName = function (value) {
+      if (isSpecifiedString(value)) {
+        this.description.getDisplayNameForPropertyName = function (propertyname) {
+          return value;
+        };
+        return this;
+      }
+      if (isTemplatePatternMode(this.description)) {
+        var patternToMatch = this.description.propertyPattern; // closure (closed over) parameter
+        this.description.getDisplayNameForPropertyName = upperCaseFirstLetterForFunction(extractNameUsingTemplatePattern(patternToMatch));
+      } else {
+        this.description.getDisplayNameForPropertyName = upperCaseFirstLetterForFunction(extractNameUsingRightMostPropertyNameElement());
+      }
+      return this;
+    };
+    this.filterPropertyName = function (value) {
+      if (isSpecifiedString(value)) {
+        this.description.getFilterNameForPropertyName = function (propertyname) {
+          return value;
+        };
+        return this;
+      }
+      if (isTemplatePatternMode(this.description)) {
+        var patternToMatch = this.description.propertyPattern; // closure (closed over) parameter
+        this.description.getFilterNameForPropertyName = extractNameUsingTemplatePattern(patternToMatch);
+      } else {
+        this.description.getFilterNameForPropertyName = extractNameUsingRightMostPropertyNameElement();
+      }
+      return this;
+    };
+    this.groupName = function (value) {
+      this.description.groupName = value;
+      return this;
+    };
+    this.groupPattern = function (value) {
+      this.description.groupPattern = value;
+      return this;
+    };
+    this.build = function () {
+      if (isTemplatePatternMode(this.description)) {
+        var propertyPatternToMatch = this.description.propertyPattern; // closure (closed over) parameter
+        this.description.matchesPropertyName = function (propertyNameWithoutArrayIndizes) {
+          return templateModePatternRegexForPattern(propertyPatternToMatch).exec(propertyNameWithoutArrayIndizes);
+        };
+      } else {
+        var propertyPatternToCompare = this.description.propertyPattern; // closure (closed over) parameter
+        this.description.matchesPropertyName = function (propertyNameWithoutArrayIndizes) {
+          return propertyNameWithoutArrayIndizes === propertyPatternToCompare;
+        };
+      }
+      if (this.description.getDisplayNameForPropertyName == null) {
+        this.displayPropertyName("");
+      }
+      if (this.description.getFilterNameForPropertyName == null) {
+        this.filterPropertyName("");
+      }
+      if (this.description.getGroupId == null) {
+        this.groupPattern("");
+      }
+      return this.description;
+    };
+  }
 
-  function isEuqalPatternMode() {
+  function isEuqalPatternMode(description) {
     return description.propertyPatternMode === "equal";
   }
 
-  function isTemplatePatternMode() {
+  function isTemplatePatternMode(description) {
     return description.propertyPatternMode === "template";
   }
 
@@ -67,19 +172,36 @@ resultparser.PropertyStructureDescription = (function () {
     return value;
   }
 
-  function matchesPropertyName(propertyNameWithoutArrayIndizes) {
-    if (isEuqalPatternMode()) {
-      return propertyNameWithoutArrayIndizes === description.propertyPattern;
-    }
-    if (isTemplatePatternMode()) {
-      return templateModePatternRegex().exec(propertyNameWithoutArrayIndizes);
-    }
-    return false;
+  function upperCaseFirstLetterForFunction(nameExtractFunction) {
+    return function (propertyname) {
+      return upperCaseFirstLetter(nameExtractFunction(propertyname));
+    };
   }
 
-  function templateModePatternRegex() {
+  function extractNameUsingTemplatePattern(propertyPattern) {
+    return function (propertyname) {
+      var regex = templateModePatternRegexForPattern(propertyPattern);
+      var match = regex.exec(propertyname);
+      if (match && match[1] != "") {
+        return match[1];
+      }
+      return value;
+    };
+  }
+
+  function extractNameUsingRightMostPropertyNameElement() {
+    return function (propertyname) {
+      return rigthMostPropertyNameElement(propertyname);
+    };
+  }
+
+  function templateModePatternRegex(description) {
+    return templateModePatternRegexForPattern(description.propertyPattern);
+  }
+
+  function templateModePatternRegexForPattern(propertyPatternToUse) {
     var placeholderInDoubleCurlyBracketsRegEx = new RegExp("\\\\\\{\\\\\\{[-\\w]+\\\\\\}\\\\\\}", "gi");
-    var pattern = escapeCharsForRegEx(description.propertyPattern);
+    var pattern = escapeCharsForRegEx(propertyPatternToUse);
     pattern = pattern.replace(placeholderInDoubleCurlyBracketsRegEx, "([-\\w]+)");
     pattern = "^" + pattern;
     return new RegExp(pattern, "i");
@@ -102,82 +224,7 @@ resultparser.PropertyStructureDescription = (function () {
    * Public interface
    * @scope resultparser.PropertyStructureDescription
    */
-  return {
-    //TODO assertions (type should bei "summary" or "detail" or "filter" -> fail otherwise)
-    type: function (value) {
-      description.type = value;
-      return this;
-    },
-    category: function (value) {
-      description.category = value;
-      return this;
-    },
-    propertyPatternMode: function (value) {
-      description.propertyPatternMode = value;
-      return this;
-    },
-    propertyPattern: function (value) {
-      description.propertyPattern = value;
-      return this;
-    },
-    displayPropertyName: function (value) {
-      if (isSpecifiedString(value)) {
-        description.getDisplayNameForPropertyName = function (propertyname) {
-          return value;
-        };
-        return this;
-      }
-      if (isTemplatePatternMode()) {
-        description.getDisplayNameForPropertyName = function (propertyname) {
-          //TODO create only once? Beware stateful regex behavior and bug with subsequent execs.
-          var regex = templateModePatternRegex(); 
-          var match = regex.exec(propertyname);
-          if (match && match[1] != "") {
-            return upperCaseFirstLetter(match[1]);
-          }
-          return value;
-        };
-        return this;
-      }
-      description.getDisplayNameForPropertyName = function (propertyname) {
-        return upperCaseFirstLetter(rigthMostPropertyNameElement(propertyname));
-      };
-      return this;
-    },
-    filterPropertyName: function (value) {
-      if (isSpecifiedString(value)) {
-        description.getFilterNameForPropertyName = function (propertyname) {
-          return value;
-        };
-        return this;
-      }
-      if (isTemplatePatternMode()) {
-        description.getFilterNameForPropertyName = function (propertyname) {
-          //TODO create only once? Beware stateful regex behavior and bug with subsequent execs.
-          var regex = templateModePatternRegex();
-          var match = regex.exec(propertyname);
-          if (match && match[1] != "") {
-            return match[1];
-          }
-          return value;
-        };
-        return this;
-      }
-      description.getFilterNameForPropertyName = function (propertyname) {
-        return rigthMostPropertyNameElement(propertyname);
-      };
-      return this;
-    },
-    build: function () {
-      if (description.getDisplayNameForPropertyName == null) {
-        this.displayPropertyName("");
-      }
-      if (description.getFilterNameForPropertyName == null) {
-        this.filterPropertyName("");
-      }
-      return description;
-    },
-  };
+  return Instance;
 })();
 
 resultparser.Tools = (function () {
@@ -200,6 +247,11 @@ resultparser.Tools = (function () {
     console.log(extractDetails(fillInArrayValues(flattenToArray(jsonData))));
     console.log("filters:");
     console.log(extractFilters(fillInArrayValues(flattenToArray(jsonData))));
+
+    console.log("groupIdForFilters:");
+    var groupPattern = "id={{id}},id0={{id[0]}},id1={{id[1]}},id2={{id[1]}},type={{type}},filterName={{filterName}},displayName={{displayName}},category={{category}},value={{value}},property={{propertyNameWithoutArrayIndizes}}";
+    console.log(applyGroupPattern(extractFilters(fillInArrayValues(flattenToArray(jsonData))), groupPattern));
+
     return jsonData;
   }
 
@@ -208,7 +260,8 @@ resultparser.Tools = (function () {
   }
 
   function extractSummaries(flattenedData) {
-    var description = resultparser.PropertyStructureDescription.type("summary")
+    var description = new resultparser.PropertyStructureDescription()
+      .type("summary")
       .category("Konto")
       .propertyPatternMode("equal")
       .propertyPattern("responses.hits.hits._source.kontonummer")
@@ -217,7 +270,8 @@ resultparser.Tools = (function () {
   }
 
   function extractHighlighted(flattenedData) {
-    var description = resultparser.PropertyStructureDescription.type("summary")
+    var description = new resultparser.PropertyStructureDescription()
+      .type("summary")
       .category("Konto")
       .propertyPatternMode("equal")
       .propertyPattern("responses.hits.hits.highlight.kontonummer")
@@ -226,7 +280,8 @@ resultparser.Tools = (function () {
   }
 
   function extractDetails(flattenedData) {
-    var description = resultparser.PropertyStructureDescription.type("detail")
+    var description = new resultparser.PropertyStructureDescription()
+      .type("detail")
       .category("Konto")
       .propertyPatternMode("template")
       .propertyPattern("responses.hits.hits._source.{{fieldname}}")
@@ -237,18 +292,14 @@ resultparser.Tools = (function () {
   // responses[1].aggregations.betreuerkennung.buckets[0].doc_count: 4
   // responses[1].aggregations.betreuerkennung.buckets[0].key: "klakle"
   function extractFilters(flattenedData) {
-    var description = resultparser.PropertyStructureDescription.type("filter")
+    var description = new resultparser.PropertyStructureDescription()
+      .type("filter")
       .category("Konto")
       .propertyPatternMode("template")
-      .propertyPattern("responses.aggregations.{{fieldname}}.buckets.key")
+      .propertyPattern("responses.aggregations.{{filterName}}.buckets.key")
       .build();
     return extractEntriesByDescription(flattenedData, description);
   }
-
-  /**
-   * @callback idOfElementFunction
-   *  @param {FlattenedEntry} entry
-   */
 
   /**
    * Takes two arrays of objects, e.g. [{id: B, value: 2},{id: C, value: 3}]
@@ -304,18 +355,6 @@ resultparser.Tools = (function () {
   }
 
   /**
-   * @typedef {Object} FlattenedEntry
-   * @property {string} category - category of the result using a short name or e.g. a symbol character
-   * @property {string} type - type of the result from PropertyStructureDescription-type
-   * @property {string} id - array indizes in hierarchical order separated by points, e.g. "0.0"
-   * @property {string} displayName - display name extracted from the point separated hierarchical property name, e.g. "Name"
-   * @property {string} filterName - filter field name extracted from the point separated hierarchical property name, e.g. "name"
-   * @property {string} value - the (single) value of the "flattened" property, e.g. "Smith"
-   * @property {string} propertyNamesWithArrayIndizes - the "original" flattened property name in hierarchical order separated by points, e.g. "responses[0].hits.hits[0]._source.name"
-   * @property {string} propertyNameWithoutArrayIndizes - same as propertyNamesWithArrayIndizes but without array indizes, e.g. "responses.hits.hits._source.name"
-   */
-
-  /**
    * Extracts entries out of "flattened" JSON data and provides an array of objects.
    * @param {Object[]} flattenedData - flattened json from search query result
    * @param {string} flattenedData[].name - name of the property in hierarchical order separated by points
@@ -333,18 +372,51 @@ resultparser.Tools = (function () {
       var propertyNameWithoutArrayIndizes = entry.name.replace(removeArrayBracketsRegEx, "");
       if (description.matchesPropertyName(propertyNameWithoutArrayIndizes)) {
         filtered.push({
+          //TODO builder for this structure (FlattenedEntry)
           category: description.category,
           type: description.type,
-          id: indizes,
+          id: indizes.pointDelimited,
           displayName: description.getDisplayNameForPropertyName(propertyNameWithoutArrayIndizes),
           filterName: description.getFilterNameForPropertyName(propertyNameWithoutArrayIndizes),
           value: entry.value,
-          propertyNamesWithArrayIndizes: entry.name,
-          propertyNamesWithoutArrayIndizes: propertyNameWithoutArrayIndizes,
+          propertyNameWithArrayIndizes: entry.name,
+          propertyNameWithoutArrayIndizes: propertyNameWithoutArrayIndizes,
+          replaceVariables: function (stringContainingVariables, entry) {
+            var idVariableWithArrayIndex = new RegExp("\\{\\{id\\[(\\d+)\\]\\}\\}", "gi");
+            var idVariables = indizesOfWithRegex(stringContainingVariables, idVariableWithArrayIndex);
+
+            var replaced = stringContainingVariables;
+
+            for (var varPos = 0; varPos < idVariables.numberArray.length; varPos++) {
+              var idIndex = idVariables.numberArray[varPos];
+              replaced = replaced.replace("{{id[" + idIndex + "]}}", indizes.numberArray[varPos]);
+            }
+
+            replaced = replaced.replace("{{id}}", entry.id);
+            replaced = replaced.replace("{{category}}", entry.category);
+            replaced = replaced.replace("{{type}}", entry.type);
+            replaced = replaced.replace("{{displayName}}", entry.displayName);
+            replaced = replaced.replace("{{filterName}}", entry.filterName);
+            replaced = replaced.replace("{{value}}", entry.value);
+            replaced = replaced.replace("{{propertyNamesWithArrayIndizes}}", entry.propertyNamesWithArrayIndizes);
+            replaced = replaced.replace("{{propertyNameWithoutArrayIndizes}}", entry.propertyNameWithoutArrayIndizes);
+            return replaced;
+          },
         });
       }
     });
     return filtered;
+  }
+
+  //TODO work in progress, experimental:
+  function applyGroupPattern(flattenedData, groupPattern) {
+    var result = [];
+    for (var index = 0; index < flattenedData.length; index++) {
+      var element = flattenedData[index];
+      element.groupId = element.replaceVariables(groupPattern, element);
+      result.push(element);
+    }
+    return result;
   }
 
   /**
@@ -386,25 +458,44 @@ resultparser.Tools = (function () {
   }
 
   /**
-   * Returns "1.12.123" for "results[1].hits.hits[12].aggregates[123]".
+   * @typedef {Object} ExctractedIndizes
+   * @property {string} pointDelimited - bracket indizes separated by points
+   * @property {number[]} numberArray as array of numbers
+   */
+
+  /**
+   * Returns "1.12.123" and [1,12,123] for "results[1].hits.hits[12].aggregates[123]".
    *
    * @param {String} fullPropertyName
-   * @return {String} array indizes of the property separated by points
+   * @return {ExctractedIndizes} extracted indizes in different representations
    */
   function indizesOf(fullPropertyName) {
     var arrayBracketsRegEx = new RegExp("\\[(\\d+)\\]", "gi");
-    var result = "";
+    return indizesOfWithRegex(fullPropertyName, arrayBracketsRegEx);
+  }
+
+  /**
+   * Returns "1.12.123" and [1,12,123] for "results[1].hits.hits[12].aggregates[123]".
+   *
+   * @param {string} fullPropertyName
+   * @param {RegExp} regexWithOneNumberGroup
+   * @return {ExctractedIndizes} extracted indizes in different representations
+   */
+  function indizesOfWithRegex(fullPropertyName, regexWithOneNumberGroup) {
+    var pointDelimited = "";
+    var numberArray = [];
     var match;
     do {
-      match = arrayBracketsRegEx.exec(fullPropertyName);
+      match = regexWithOneNumberGroup.exec(fullPropertyName);
       if (match) {
-        if (result.length > 0) {
-          result += ".";
+        if (pointDelimited.length > 0) {
+          pointDelimited += ".";
         }
-        result += match[1];
+        pointDelimited += match[1];
+        numberArray.push(parseInt(match[1]));
       }
     } while (match);
-    return result;
+    return { pointDelimited: pointDelimited, numberArray: numberArray };
   }
 
   //Modded version of:
