@@ -86,33 +86,15 @@ resultparser.PropertyStructureDescription = (function () {
       return this;
     };
     this.displayPropertyName = function (value) {
+      this.description.getDisplayNameForPropertyName = createNameExtractFunction(value, this.description);
       if (isSpecifiedString(value)) {
-        this.description.getDisplayNameForPropertyName = function (propertyname) {
-          return value;
-        };
         return this;
       }
-      if (isTemplatePatternMode(this.description)) {
-        var patternToMatch = this.description.propertyPattern; // closure (closed over) parameter
-        this.description.getDisplayNameForPropertyName = upperCaseFirstLetterForFunction(extractNameUsingTemplatePattern(patternToMatch));
-      } else {
-        this.description.getDisplayNameForPropertyName = upperCaseFirstLetterForFunction(extractNameUsingRightMostPropertyNameElement());
-      }
+      this.description.getDisplayNameForPropertyName = upperCaseFirstLetterForFunction(this.description.getDisplayNameForPropertyName);
       return this;
     };
     this.filterPropertyName = function (value) {
-      if (isSpecifiedString(value)) {
-        this.description.getFilterNameForPropertyName = function (propertyname) {
-          return value;
-        };
-        return this;
-      }
-      if (isTemplatePatternMode(this.description)) {
-        var patternToMatch = this.description.propertyPattern; // closure (closed over) parameter
-        this.description.getFilterNameForPropertyName = extractNameUsingTemplatePattern(patternToMatch);
-      } else {
-        this.description.getFilterNameForPropertyName = extractNameUsingRightMostPropertyNameElement();
-      }
+      this.description.getFilterNameForPropertyName = createNameExtractFunction(value, this.description);
       return this;
     };
     this.groupName = function (value) {
@@ -124,17 +106,7 @@ resultparser.PropertyStructureDescription = (function () {
       return this;
     };
     this.build = function () {
-      if (isTemplatePatternMode(this.description)) {
-        var propertyPatternToMatch = this.description.propertyPattern; // closure (closed over) parameter
-        this.description.matchesPropertyName = function (propertyNameWithoutArrayIndizes) {
-          return templateModePatternRegexForPattern(propertyPatternToMatch).exec(propertyNameWithoutArrayIndizes);
-        };
-      } else {
-        var propertyPatternToCompare = this.description.propertyPattern; // closure (closed over) parameter
-        this.description.matchesPropertyName = function (propertyNameWithoutArrayIndizes) {
-          return propertyNameWithoutArrayIndizes === propertyPatternToCompare;
-        };
-      }
+      this.description.matchesPropertyName = createFunctionMatchesPropertyName(this.description);
       if (this.description.getDisplayNameForPropertyName == null) {
         this.displayPropertyName("");
       }
@@ -145,6 +117,32 @@ resultparser.PropertyStructureDescription = (function () {
         this.groupPattern("");
       }
       return this.description;
+    };
+  }
+
+  function createNameExtractFunction(value, description) {
+    if (isSpecifiedString(value)) {
+      return function (propertyname) {
+        return value;
+      };
+    }
+    if (isTemplatePatternMode(description)) {
+      var patternToMatch = description.propertyPattern; // closure (closed over) parameter
+      return extractNameUsingTemplatePattern(patternToMatch);
+    }
+    return extractNameUsingRightMostPropertyNameElement();
+  }
+
+  function createFunctionMatchesPropertyName(description) {
+    if (isTemplatePatternMode(description)) {
+      var propertyPatternToMatch = description.propertyPattern; // closure (closed over) parameter
+      return function (propertyNameWithoutArrayIndizes) {
+        return templateModePatternRegexForPattern(propertyPatternToMatch).exec(propertyNameWithoutArrayIndizes);
+      };
+    }
+    var propertyPatternToCompare = description.propertyPattern; // closure (closed over) parameter
+    return function (propertyNameWithoutArrayIndizes) {
+      return propertyNameWithoutArrayIndizes === propertyPatternToCompare;
     };
   }
 
@@ -249,7 +247,8 @@ resultparser.Tools = (function () {
     console.log(extractFilters(fillInArrayValues(flattenToArray(jsonData))));
 
     console.log("groupIdForFilters:");
-    var groupPattern = "id={{id}},id0={{id[0]}},id1={{id[1]}},id2={{id[1]}},type={{type}},filterName={{filterName}},displayName={{displayName}},category={{category}},value={{value}},property={{propertyNameWithoutArrayIndizes}}";
+    var groupPattern =
+      "id={{id}},id0={{id[0]}},id1={{id[1]}},id2={{id[1]}},type={{type}},filterName={{filterName}},displayName={{displayName}},category={{category}},value={{value}},property={{propertyNameWithoutArrayIndizes}}";
     console.log(applyGroupPattern(extractFilters(fillInArrayValues(flattenToArray(jsonData))), groupPattern));
 
     return jsonData;
