@@ -20,6 +20,8 @@ var resultparser = resultparser || {};
  * @property {string} value - the (single) value of the "flattened" property, e.g. "Smith"
  * @property {string} propertyNamesWithArrayIndizes - the "original" flattened property name in hierarchical order separated by points, e.g. "responses[0].hits.hits[0]._source.name"
  * @property {string} propertyNameWithoutArrayIndizes - same as propertyNamesWithArrayIndizes but without array indizes, e.g. "responses.hits.hits._source.name"
+ * @property {string} groupName - name of the property, that contains grouped entries. Default="group".
+ * @property {string} groupPattern - pattern that descibes how to group using {{variables}}. Deault="" (no grouping)
  */
 
 /**
@@ -44,6 +46,8 @@ var resultparser = resultparser || {};
  * @property {string} groupPattern - pattern that descibes how to group using {{variables}}. Deault="" (no grouping)
  * @property {idOfElementFunction} getGroupId - function, that returns an id for the element (parameter) based on the groupPattern.
  */
+
+// TODO idPattern to distinguish between results of main array index 0, 1, 2 ....
 
 /**
  * PropertyStructureDescription
@@ -247,6 +251,9 @@ resultparser.Tools = (function () {
       "id={{id}},id0={{id[0]}},id1={{id[1]}},id2={{id[1]}},type={{type}},fieldName={{fieldName}},displayName={{displayName}},category={{category}},value={{value}},property={{propertyNameWithoutArrayIndizes}}";
     console.log(applyGroupPattern(extractFilters(fillInArrayValues(flattenToArray(jsonData))), groupPattern));
 
+    console.log("grouped:");
+    console.log(groupFlattenedData(extractFilters(fillInArrayValues(flattenToArray(jsonData)))));
+
     return jsonData;
   }
 
@@ -292,6 +299,8 @@ resultparser.Tools = (function () {
       .category("Konto")
       .propertyPatternMode("template")
       .propertyPattern("responses.aggregations.{{fieldName}}.buckets.key")
+      .groupName("options")
+      .groupPattern("{{id[0]}}--{{type}}--{{category}}--{{fieldName}}")
       .build();
     return extractEntriesByDescription(flattenedData, description);
   }
@@ -350,6 +359,33 @@ resultparser.Tools = (function () {
   }
 
   /**
+   * Converts the given elements into an object, that provides these
+   * entries by their id. For example, [{id: A, value: 1}] becomes
+   * result['A'] = 1. Furthermore, this function creates a group property
+   * and collects all "duplicates" in it. 
+   * 
+   * @param {FlattenedEntry[]} elements of FlattenedEntry elements
+   * @param {idOfElementFunction} groupIdOfElementFunction returns the group id of an FlattenedEntry
+   * @return {FlattenedEntry[] entries indexed by id
+   */
+  function groupById(elements, groupIdOfElementFunction) {
+    var groupedResult = new Object();
+    for (var index = 0; index < elements.length; index++) {
+      var element = elements[index];
+      var groupId = groupIdOfElementFunction(element);
+      if (groupId === "") {
+        continue;
+      }
+      if (!groupedResult[groupId]) {
+        groupedResult[groupId] = element;
+        groupedResult[groupId].group = [];
+      }
+      groupedResult[groupId].group.push(element);
+    }
+    return groupedResult;
+  }
+
+  /**
    * Extracts entries out of "flattened" JSON data and provides an array of objects.
    * @param {Object[]} flattenedData - flattened json from search query result
    * @param {string} flattenedData[].name - name of the property in hierarchical order separated by points
@@ -376,7 +412,10 @@ resultparser.Tools = (function () {
           value: entry.value,
           propertyNameWithArrayIndizes: entry.name,
           propertyNameWithoutArrayIndizes: propertyNameWithoutArrayIndizes,
+          groupName: description.groupName,
+          groupPattern: description.groupPattern,
           replaceVariables: function (stringContainingVariables, entry) {
+            //TODO Refactoring
             var idVariableWithArrayIndex = new RegExp("\\{\\{id\\[(\\d+)\\]\\}\\}", "gi");
             var idVariables = indizesOfWithRegex(stringContainingVariables, idVariableWithArrayIndex);
 
@@ -412,6 +451,15 @@ resultparser.Tools = (function () {
       result.push(element);
     }
     return result;
+  }
+
+  //TODO work in progress, experimental:
+  function groupFlattenedData(flattenedData) {
+    var result = [];
+
+   return groupById(flattenedData, function (entry) {
+      return entry.replaceVariables(entry.groupPattern, entry);
+    });
   }
 
   /**
