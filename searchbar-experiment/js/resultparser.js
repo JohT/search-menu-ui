@@ -16,7 +16,7 @@ var resultparser = resultparser || {};
  * @property {string} type - type of the result from PropertyStructureDescription-type
  * @property {string} id - array indizes in hierarchical order separated by points, e.g. "0.0"
  * @property {string} displayName - display name extracted from the point separated hierarchical property name, e.g. "Name"
- * @property {string} filterName - filter field name extracted from the point separated hierarchical property name, e.g. "name"
+ * @property {string} fieldName - field name extracted from the point separated hierarchical property name, e.g. "name"
  * @property {string} value - the (single) value of the "flattened" property, e.g. "Smith"
  * @property {string} propertyNamesWithArrayIndizes - the "original" flattened property name in hierarchical order separated by points, e.g. "responses[0].hits.hits[0]._source.name"
  * @property {string} propertyNameWithoutArrayIndizes - same as propertyNamesWithArrayIndizes but without array indizes, e.g. "responses.hits.hits._source.name"
@@ -39,7 +39,7 @@ var resultparser = resultparser || {};
  * @property {string} propertyPatternMode - "equal"(default): propertyname is equal to pattern. "template" allows variables like "{{fieldname}}".
  * @property {string} propertyPattern - property name pattern (without array indizes) to match
  * @property {propertyNameFunction} getDisplayNameForPropertyName - display name for the property. ""(default) last property name element with upper case first letter.
- * @property {propertyNameFunction} getFilterNameForPropertyName - filter property name. "" (default) last property name element.
+ * @property {propertyNameFunction} getFieldNameForPropertyName - field name for the property. "" (default) last property name element.
  * @property {string} groupName - name of the property, that contains grouped entries. Default="group".
  * @property {string} groupPattern - pattern that descibes how to group using {{variables}}. Deault="" (no grouping)
  * @property {idOfElementFunction} getGroupId - function, that returns an id for the element (parameter) based on the groupPattern.
@@ -62,12 +62,11 @@ resultparser.PropertyStructureDescription = (function () {
       category: "",
       propertyPatternMode: "equal",
       propertyPattern: "",
-      getDisplayNameForPropertyName: null,
-      getFilterNameForPropertyName: null,
-      matchesPropertyName: null,
       groupName: "group",
       groupPattern: "",
-      getGroupId: null,
+      getDisplayNameForPropertyName: null,
+      getFieldNameForPropertyName: null,
+      matchesPropertyName: null,
     };
     this.type = function (value) {
       this.description.type = value;
@@ -93,8 +92,8 @@ resultparser.PropertyStructureDescription = (function () {
       this.description.getDisplayNameForPropertyName = upperCaseFirstLetterForFunction(this.description.getDisplayNameForPropertyName);
       return this;
     };
-    this.filterPropertyName = function (value) {
-      this.description.getFilterNameForPropertyName = createNameExtractFunction(value, this.description);
+    this.fieldName = function (value) {
+      this.description.getFieldNameForPropertyName = createNameExtractFunction(value, this.description);
       return this;
     };
     this.groupName = function (value) {
@@ -110,11 +109,8 @@ resultparser.PropertyStructureDescription = (function () {
       if (this.description.getDisplayNameForPropertyName == null) {
         this.displayPropertyName("");
       }
-      if (this.description.getFilterNameForPropertyName == null) {
-        this.filterPropertyName("");
-      }
-      if (this.description.getGroupId == null) {
-        this.groupPattern("");
+      if (this.description.getFieldNameForPropertyName == null) {
+        this.fieldName("");
       }
       return this.description;
     };
@@ -248,7 +244,7 @@ resultparser.Tools = (function () {
 
     console.log("groupIdForFilters:");
     var groupPattern =
-      "id={{id}},id0={{id[0]}},id1={{id[1]}},id2={{id[1]}},type={{type}},filterName={{filterName}},displayName={{displayName}},category={{category}},value={{value}},property={{propertyNameWithoutArrayIndizes}}";
+      "id={{id}},id0={{id[0]}},id1={{id[1]}},id2={{id[1]}},type={{type}},fieldName={{fieldName}},displayName={{displayName}},category={{category}},value={{value}},property={{propertyNameWithoutArrayIndizes}}";
     console.log(applyGroupPattern(extractFilters(fillInArrayValues(flattenToArray(jsonData))), groupPattern));
 
     return jsonData;
@@ -295,7 +291,7 @@ resultparser.Tools = (function () {
       .type("filter")
       .category("Konto")
       .propertyPatternMode("template")
-      .propertyPattern("responses.aggregations.{{filterName}}.buckets.key")
+      .propertyPattern("responses.aggregations.{{fieldName}}.buckets.key")
       .build();
     return extractEntriesByDescription(flattenedData, description);
   }
@@ -376,7 +372,7 @@ resultparser.Tools = (function () {
           type: description.type,
           id: indizes.pointDelimited,
           displayName: description.getDisplayNameForPropertyName(propertyNameWithoutArrayIndizes),
-          filterName: description.getFilterNameForPropertyName(propertyNameWithoutArrayIndizes),
+          fieldName: description.getFieldNameForPropertyName(propertyNameWithoutArrayIndizes),
           value: entry.value,
           propertyNameWithArrayIndizes: entry.name,
           propertyNameWithoutArrayIndizes: propertyNameWithoutArrayIndizes,
@@ -395,7 +391,7 @@ resultparser.Tools = (function () {
             replaced = replaced.replace("{{category}}", entry.category);
             replaced = replaced.replace("{{type}}", entry.type);
             replaced = replaced.replace("{{displayName}}", entry.displayName);
-            replaced = replaced.replace("{{filterName}}", entry.filterName);
+            replaced = replaced.replace("{{fieldName}}", entry.fieldName);
             replaced = replaced.replace("{{value}}", entry.value);
             replaced = replaced.replace("{{propertyNamesWithArrayIndizes}}", entry.propertyNamesWithArrayIndizes);
             replaced = replaced.replace("{{propertyNameWithoutArrayIndizes}}", entry.propertyNameWithoutArrayIndizes);
