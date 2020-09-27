@@ -25,7 +25,7 @@ var resultparser = resultparser || {};
  */
 
 /**
- * @callback idOfElementFunction
+ * @callback stringFieldOfElementFunction
  *  @param {FlattenedEntry} entry
  */
 
@@ -43,8 +43,8 @@ var resultparser = resultparser || {};
  * @property {propertyNameFunction} getDisplayNameForPropertyName - display name for the property. ""(default) last property name element with upper case first letter.
  * @property {propertyNameFunction} getFieldNameForPropertyName - field name for the property. "" (default) last property name element.
  * @property {string} groupName - name of the property, that contains grouped entries. Default="group".
- * @property {string} groupPattern - pattern that descibes how to group using {{variables}}. Deault="" (no grouping)
- * @property {idOfElementFunction} getGroupId - function, that returns an id for the element (parameter) based on the groupPattern.
+ * @property {string} groupPattern - Pattern that descibes how to group entries. "groupName" defines the name of this group. A pattern may contain variables in double curly brackets {{variable}}.
+ * @property {string} deduplicationPattern - Pattern to use to remove duplicate entries. A pattern may contain variables in double curly brackets {{variable}}.
  */
 
 // TODO idPattern to distinguish between results of main array index 0, 1, 2 ....
@@ -68,6 +68,7 @@ resultparser.PropertyStructureDescription = (function () {
       propertyPattern: "",
       groupName: "group",
       groupPattern: "",
+      deduplicationPattern: "",
       getDisplayNameForPropertyName: null,
       getFieldNameForPropertyName: null,
       matchesPropertyName: null,
@@ -104,8 +105,18 @@ resultparser.PropertyStructureDescription = (function () {
       this.description.groupName = value;
       return this;
     };
+    /**
+     * Pattern that descibes how to group entries. "groupName" defines the name of this group. A pattern may contain variables in double curly brackets {{variable}}.
+     */
     this.groupPattern = function (value) {
       this.description.groupPattern = value;
+      return this;
+    };
+    /**
+     * Pattern to use to remove duplicate entries. A pattern may contain variables in double curly brackets {{variable}}.
+     */
+    this.deduplicationPattern = function (value) {
+      this.description.deduplicationPattern = value;
       return this;
     };
     this.build = function () {
@@ -234,31 +245,38 @@ resultparser.Tools = (function () {
     console.log(extractSummaries(fillInArrayValues(flattenToArray(jsonData))));
     console.log("highlighted");
     console.log(extractHighlighted(fillInArrayValues(flattenToArray(jsonData))));
+    console.log("old merged:");
     var merged = mergeFlattenedData(
       extractSummaries(fillInArrayValues(flattenToArray(jsonData))),
       extractHighlighted(fillInArrayValues(flattenToArray(jsonData))),
       getIdAndDisplayName
     );
-    console.log("merged:");
     console.log(merged);
-    console.log("details:");
-    console.log(extractDetails(fillInArrayValues(flattenToArray(jsonData))));
-    console.log("filters:");
-    console.log(extractFilters(fillInArrayValues(flattenToArray(jsonData))));
+    console.log("deduplicated:");
+    console.log(deduplicateFlattenedData(
+      extractSummaries(fillInArrayValues(flattenToArray(jsonData))),
+      extractHighlighted(fillInArrayValues(flattenToArray(jsonData))),
+    ));
+    // console.log("details:");
+    // console.log(extractDetails(fillInArrayValues(flattenToArray(jsonData))));
+    console.log("grouped details:");
+    console.log(groupFlattenedData(extractDetails(fillInArrayValues(flattenToArray(jsonData)))));
+    // console.log("filters:");
+    // console.log(extractFilters(fillInArrayValues(flattenToArray(jsonData))));
 
-    console.log("groupIdForFilters:");
-    var groupPattern =
-      "id={{id}},id0={{id[0]}},id1={{id[1]}},id2={{id[1]}},type={{type}},fieldName={{fieldName}},displayName={{displayName}},category={{category}},value={{value}},property={{propertyNameWithoutArrayIndizes}}";
-    console.log(applyGroupPattern(extractFilters(fillInArrayValues(flattenToArray(jsonData))), groupPattern));
+    // console.log("groupIdForFilters:");
+    // var groupPattern =
+    //   "id={{id}},id0={{id[0]}},id1={{id[1]}},id2={{id[1]}},type={{type}},fieldName={{fieldName}},displayName={{displayName}},category={{category}},value={{value}},property={{propertyNameWithoutArrayIndizes}}";
+    // console.log(applyGroupPattern(extractFilters(fillInArrayValues(flattenToArray(jsonData))), groupPattern));
 
-    console.log("grouped:");
+    console.log("grouped filters:");
     console.log(groupFlattenedData(extractFilters(fillInArrayValues(flattenToArray(jsonData)))));
 
     return jsonData;
   }
 
   function getIdAndDisplayName(entry) {
-    return entry.category + "-" + entry.type + "-" + entry.id + "-" + entry.filterName;
+    return entry.category + "-" + entry.type + "-" + entry.id + "-" + entry.fieldName;
   }
 
   function extractSummaries(flattenedData) {
@@ -267,6 +285,7 @@ resultparser.Tools = (function () {
       .category("Konto")
       .propertyPatternMode("equal")
       .propertyPattern("responses.hits.hits._source.kontonummer")
+      .deduplicationPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}--{{fieldname}}")
       .build();
     return extractEntriesByDescription(flattenedData, description);
   }
@@ -277,6 +296,7 @@ resultparser.Tools = (function () {
       .category("Konto")
       .propertyPatternMode("equal")
       .propertyPattern("responses.hits.hits.highlight.kontonummer")
+      .deduplicationPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}--{{fieldname}}")
       .build();
     return extractEntriesByDescription(flattenedData, description);
   }
@@ -287,6 +307,8 @@ resultparser.Tools = (function () {
       .category("Konto")
       .propertyPatternMode("template")
       .propertyPattern("responses.hits.hits._source.{{fieldname}}")
+      .groupName("details")
+      .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
       .build();
     return extractEntriesByDescription(flattenedData, description);
   }
@@ -322,7 +344,7 @@ resultparser.Tools = (function () {
    *
    * @param {FlattenedEntry[]} entries
    * @param {FlattenedEntry[]} entriesToMerge
-   * @param {idOfElementFunction} idOfElementFunction returns the id of an FlattenedEntry
+   * @param {stringFieldOfElementFunction} idOfElementFunction returns the id of an FlattenedEntry
    */
   function mergeFlattenedData(entries, entriesToMerge, idOfElementFunction) {
     var entriesById = asIdBasedObject(entries, idOfElementFunction);
@@ -342,11 +364,38 @@ resultparser.Tools = (function () {
   }
 
   /**
+   * Takes two arrays of objects, e.g. [{id: B, value: 2},{id: C, value: 3}]
+   * and [{id: A, value: 1},{id: B, value: 4}] and merges them into one:
+   * [{id: C, value: 3},{id: A, value: 1},{id: B, value: 4}]
+   *
+   * Entries with the same id ("duplicates") will be overwritten.
+   * Only the last element with the same id remains. The order is
+   * determined by the order of the array elements, whereas the first
+   * array comes before the second one. This means, that entries with the
+   * same id in the second array overwrite entries in the first array,
+   * and entries occuring later in the array overwrite earlier ones,
+   * if they have the same id.
+   *
+   * The id is extracted from every element using their deduplication pattern (if available). 
+   *
+   * @param {FlattenedEntry[]} entries
+   * @param {FlattenedEntry[]} entriesToMerge
+   * @param {stringFieldOfElementFunction} idOfElementFunction returns the id of an FlattenedEntry
+   * @see mergeFlattenedData
+   */
+  function deduplicateFlattenedData(entries, entriesToMerge) {
+    var idOfElementFunction = function(entry) {
+      return entry.replaceVariables(entry.deduplicationPattern, entry);
+    };
+    return mergeFlattenedData(entries, entriesToMerge, idOfElementFunction);
+  }
+
+  /**
    * Converts the given elements to an object, that provides these
    * entries by their id. For example, [{id: A, value: 1}] becomes
    * result['A'] = 1.
    * @param {FlattenedEntry[]} elements of FlattenedEntry elements
-   * @param {idOfElementFunction} idOfElementFunction returns the id of an FlattenedEntry
+   * @param {stringFieldOfElementFunction} idOfElementFunction returns the id of an FlattenedEntry
    * @return {FlattenedEntry[] entries indexed by id
    */
   function asIdBasedObject(elements, idOfElementFunction) {
@@ -361,14 +410,15 @@ resultparser.Tools = (function () {
   /**
    * Converts the given elements into an object, that provides these
    * entries by their id. For example, [{id: A, value: 1}] becomes
-   * result['A'] = 1. Furthermore, this function creates a group property
-   * and collects all "duplicates" in it. 
-   * 
+   * result['A'] = 1. Furthermore, this function creates a group property (with the name )
+   * and collects all related elements (specified by their group pattern) in it.
+   *
    * @param {FlattenedEntry[]} elements of FlattenedEntry elements
-   * @param {idOfElementFunction} groupIdOfElementFunction returns the group id of an FlattenedEntry
+   * @param {stringFieldOfElementFunction} groupNameOfElementFunction function, that returns the name of the group property that will be created inside the "main" element.
+   * @param {stringFieldOfElementFunction} groupIdOfElementFunction returns the group id of an FlattenedEntry
    * @return {FlattenedEntry[] entries indexed by id
    */
-  function groupById(elements, groupIdOfElementFunction) {
+  function groupById(elements, groupIdOfElementFunction, groupNameOfElementFunction) {
     var groupedResult = new Object();
     for (var index = 0; index < elements.length; index++) {
       var element = elements[index];
@@ -376,11 +426,15 @@ resultparser.Tools = (function () {
       if (groupId === "") {
         continue;
       }
+      var groupName = groupNameOfElementFunction(element);
+      if (groupName == null || groupName === "") {
+        continue;
+      }
       if (!groupedResult[groupId]) {
         groupedResult[groupId] = element;
-        groupedResult[groupId].group = [];
+        groupedResult[groupId][groupName] = [];
       }
-      groupedResult[groupId].group.push(element);
+      groupedResult[groupId][groupName].push(element);
     }
     return groupedResult;
   }
@@ -404,6 +458,7 @@ resultparser.Tools = (function () {
       if (description.matchesPropertyName(propertyNameWithoutArrayIndizes)) {
         filtered.push({
           //TODO builder for this structure (FlattenedEntry)
+          //TODO full description object as one entry?
           category: description.category,
           type: description.type,
           id: indizes.pointDelimited,
@@ -414,6 +469,7 @@ resultparser.Tools = (function () {
           propertyNameWithoutArrayIndizes: propertyNameWithoutArrayIndizes,
           groupName: description.groupName,
           groupPattern: description.groupPattern,
+          deduplicationPattern: description.deduplicationPattern,
           replaceVariables: function (stringContainingVariables, entry) {
             //TODO Refactoring
             var idVariableWithArrayIndex = new RegExp("\\{\\{id\\[(\\d+)\\]\\}\\}", "gi");
@@ -455,11 +511,15 @@ resultparser.Tools = (function () {
 
   //TODO work in progress, experimental:
   function groupFlattenedData(flattenedData) {
-    var result = [];
-
-   return groupById(flattenedData, function (entry) {
-      return entry.replaceVariables(entry.groupPattern, entry);
-    });
+    return groupById(
+      flattenedData,
+      function (entry) {
+        return entry.replaceVariables(entry.groupPattern, entry);
+      },
+      function (entry) {
+        return entry.groupName;
+      }
+    );
   }
 
   /**
