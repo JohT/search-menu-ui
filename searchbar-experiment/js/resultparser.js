@@ -5,7 +5,8 @@
 
 /**
  * resultparser namespace declaration.
- * It contains all functions for the "search as you type" feature.
+ * It contains all functions to convert a JSON into enumerated list entries.
+ * Workflow: JSON -> flatten -> mark and identify -> add array fields -> deduplicate -> group -> flatten again
  * @default {}
  */
 var resultparser = resultparser || {};
@@ -22,6 +23,7 @@ var resultparser = resultparser || {};
  * @property {string} propertyNameWithoutArrayIndizes - same as propertyNamesWithArrayIndizes but without array indizes, e.g. "responses.hits.hits._source.name"
  * @property {string} groupName - name of the property, that contains grouped entries. Default="group".
  * @property {string} groupPattern - pattern that descibes how to group using {{variables}}. Deault="" (no grouping)
+ * @property {string} groupDestinationPattern - Pattern that descibes where the group should be moved to. Default=""=Group will not be moved. A pattern may contain variables in double curly brackets {{variable}}.
  */
 
 /**
@@ -44,6 +46,7 @@ var resultparser = resultparser || {};
  * @property {propertyNameFunction} getFieldNameForPropertyName - field name for the property. "" (default) last property name element.
  * @property {string} groupName - name of the property, that contains grouped entries. Default="group".
  * @property {string} groupPattern - Pattern that descibes how to group entries. "groupName" defines the name of this group. A pattern may contain variables in double curly brackets {{variable}}.
+ * @property {string} groupDestinationPattern - Pattern that descibes where the group should be moved to. Default=""=Group will not be moved. A pattern may contain variables in double curly brackets {{variable}}.
  * @property {string} deduplicationPattern - Pattern to use to remove duplicate entries. A pattern may contain variables in double curly brackets {{variable}}.
  */
 
@@ -68,6 +71,7 @@ resultparser.PropertyStructureDescription = (function () {
       propertyPattern: "",
       groupName: "group",
       groupPattern: "",
+      groupDestinationPattern: "",
       deduplicationPattern: "",
       getDisplayNameForPropertyName: null,
       getFieldNameForPropertyName: null,
@@ -106,14 +110,24 @@ resultparser.PropertyStructureDescription = (function () {
       return this;
     };
     /**
-     * Pattern that descibes how to group entries. "groupName" defines the name of this group. A pattern may contain variables in double curly brackets {{variable}}.
+     * Pattern that descibes how to group entries. "groupName" defines the name of this group. 
+     * A pattern may contain variables in double curly brackets {{variable}}.
      */
     this.groupPattern = function (value) {
       this.description.groupPattern = value;
       return this;
     };
     /**
+     * Pattern that descibes where the group should be moved to. Default=""=Group will not be moved.
+     * A pattern may contain variables in double curly brackets {{variable}}.
+     */
+    this.groupDestinationPattern = function (value) {
+      this.description.groupDestinationPattern = value;
+      return this;
+    };
+    /**
      * Pattern to use to remove duplicate entries. A pattern may contain variables in double curly brackets {{variable}}.
+     * A pattern may contain variables in double curly brackets {{variable}}.
      */
     this.deduplicationPattern = function (value) {
       this.description.deduplicationPattern = value;
@@ -145,15 +159,19 @@ resultparser.PropertyStructureDescription = (function () {
   }
 
   function createFunctionMatchesPropertyName(description) {
+    var propertyPatternToMatch = description.propertyPattern; // closure (closed over) parameter
+    if (!isSpecifiedString(propertyPatternToMatch)) {
+      return function (propertyNameWithoutArrayIndizes) {
+        return false; // Without a propertyPattern, no property will match (deactivated mark/identify).
+      };
+    }
     if (isTemplatePatternMode(description)) {
-      var propertyPatternToMatch = description.propertyPattern; // closure (closed over) parameter
       return function (propertyNameWithoutArrayIndizes) {
         return templateModePatternRegexForPattern(propertyPatternToMatch).exec(propertyNameWithoutArrayIndizes);
       };
     }
-    var propertyPatternToCompare = description.propertyPattern; // closure (closed over) parameter
     return function (propertyNameWithoutArrayIndizes) {
-      return propertyNameWithoutArrayIndizes === propertyPatternToCompare;
+      return propertyNameWithoutArrayIndizes === propertyPatternToMatch;
     };
   }
 
@@ -272,6 +290,12 @@ resultparser.Tools = (function () {
     console.log("grouped filters:");
     console.log(groupFlattenedData(extractFilters(fillInArrayValues(flattenToArray(jsonData)))));
 
+    console.log("object assign two grouped objects:");
+    var groupedHighlights = groupFlattenedData(extractHighlighted(fillInArrayValues(flattenToArray(jsonData))))
+    var groupedDetails = groupFlattenedData(extractDetails(fillInArrayValues(flattenToArray(jsonData))))
+    var joinedHighlightsAndDetails = Object.assign(groupedHighlights, groupedDetails);
+    console.log(applyGroupDestinationPattern(joinedHighlightsAndDetails));
+
     return jsonData;
   }
 
@@ -285,6 +309,8 @@ resultparser.Tools = (function () {
       .category("Konto")
       .propertyPatternMode("equal")
       .propertyPattern("responses.hits.hits._source.kontonummer")
+      .groupName("summaries")
+      .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
       .deduplicationPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}--{{fieldname}}")
       .build();
     return extractEntriesByDescription(flattenedData, description);
@@ -296,6 +322,8 @@ resultparser.Tools = (function () {
       .category("Konto")
       .propertyPatternMode("equal")
       .propertyPattern("responses.hits.hits.highlight.kontonummer")
+      .groupName("summaries")
+      .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
       .deduplicationPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}--{{fieldname}}")
       .build();
     return extractEntriesByDescription(flattenedData, description);
@@ -309,6 +337,7 @@ resultparser.Tools = (function () {
       .propertyPattern("responses.hits.hits._source.{{fieldname}}")
       .groupName("details")
       .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
+      .groupDestinationPattern("Konto--summary--{{id[0]}}--{{id[1]}}")
       .build();
     return extractEntriesByDescription(flattenedData, description);
   }
@@ -469,6 +498,7 @@ resultparser.Tools = (function () {
           propertyNameWithoutArrayIndizes: propertyNameWithoutArrayIndizes,
           groupName: description.groupName,
           groupPattern: description.groupPattern,
+          groupDestinationPattern: description.groupDestinationPattern,
           deduplicationPattern: description.deduplicationPattern,
           replaceVariables: function (stringContainingVariables, entry) {
             //TODO Refactoring
@@ -507,6 +537,27 @@ resultparser.Tools = (function () {
       result.push(element);
     }
     return result;
+  }
+
+  function applyGroupDestinationPattern(groupedObject) {
+    var keys = Object.keys(groupedObject);
+    var keysToDelete = [];
+    for (var index = 0; index < keys.length; index++) {
+      var key = keys[index];
+      var entry = groupedObject[key];
+      if (entry.groupDestinationPattern != "") {
+        var destinationKey = entry.replaceVariables(entry.groupDestinationPattern, entry);
+        if (groupedObject[destinationKey] != null) {
+          groupedObject[destinationKey][entry.groupName] = entry[entry.groupName];
+          keysToDelete.push(key);
+        } //TODO ? else log "No object with destinationKey found"
+      }
+    }
+    for (var index = 0; index < keysToDelete.length; index++) {
+      var keyToDelete = keysToDelete[index];
+      delete groupedObject[keyToDelete];
+    }
+    return groupedObject;
   }
 
   //TODO work in progress, experimental:
