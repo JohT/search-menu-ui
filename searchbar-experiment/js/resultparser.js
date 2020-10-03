@@ -11,25 +11,7 @@
  */
 var resultparser = resultparser || {};
 
-/**
- * @typedef {Object} FlattenedEntry
- * @property {string} category - category of the result using a short name or e.g. a symbol character
- * @property {string} type - type of the result from PropertyStructureDescription-type
- * @property {string} id - array indizes in hierarchical order separated by points, e.g. "0.0"
- * @property {string} displayName - display name extracted from the point separated hierarchical property name, e.g. "Name"
- * @property {string} fieldName - field name extracted from the point separated hierarchical property name, e.g. "name"
- * @property {string} value - the (single) value of the "flattened" property, e.g. "Smith"
- * @property {string} propertyNamesWithArrayIndizes - the "original" flattened property name in hierarchical order separated by points, e.g. "responses[0].hits.hits[0]._source.name"
- * @property {string} propertyNameWithoutArrayIndizes - same as propertyNamesWithArrayIndizes but without array indizes, e.g. "responses.hits.hits._source.name"
- * @property {string} groupName - name of the property, that contains grouped entries. Default="group".
- * @property {string} groupPattern - pattern that descibes how to group using {{variables}}. Deault="" (no grouping)
- * @property {string} groupDestinationPattern - Pattern that descibes where the group should be moved to. Default=""=Group will not be moved. A pattern may contain variables in double curly brackets {{variable}}.
- */
 
-/**
- * @callback stringFieldOfElementFunction
- *  @param {FlattenedEntry} entry
- */
 
 /**
  * @callback propertyNameFunction
@@ -63,7 +45,7 @@ resultparser.PropertyStructureDescription = (function () {
   /**
    * Constructor function and container for everything, that needs to exist per instance.
    */
-  function Instance() {
+  function PropertyStructureDescriptionInstance() {
     this.description = {
       type: "summary",
       category: "",
@@ -98,7 +80,9 @@ resultparser.PropertyStructureDescription = (function () {
       if (isSpecifiedString(value)) {
         return this;
       }
-      this.description.getDisplayNameForPropertyName = removeArrayValuePropertyPostfixFunction(this.description.getDisplayNameForPropertyName);
+      this.description.getDisplayNameForPropertyName = removeArrayValuePropertyPostfixFunction(
+        this.description.getDisplayNameForPropertyName
+      );
       this.description.getDisplayNameForPropertyName = upperCaseFirstLetterForFunction(this.description.getDisplayNameForPropertyName);
       return this;
     };
@@ -209,7 +193,7 @@ resultparser.PropertyStructureDescription = (function () {
   function removeArrayValuePropertyPostfixFunction(nameExtractFunction) {
     return function (propertyname) {
       var name = nameExtractFunction(propertyname);
-      name = (name != null)? name : "";
+      name = name != null ? name : "";
       return name.replace("_comma_separated_values", "");
     };
   }
@@ -260,7 +244,174 @@ resultparser.PropertyStructureDescription = (function () {
    * Public interface
    * @scope resultparser.PropertyStructureDescription
    */
-  return Instance;
+  return PropertyStructureDescriptionInstance;
+})();
+
+/**
+ * @typedef {Object} DescribedEntryInstance
+ * @property {string} category - category of the result from the PropertyStructureDescription using a short name or e.g. a symbol character
+ * @property {string} type - type of the result from PropertyStructureDescription
+ * @property {string} displayName - display name extracted from the point separated hierarchical property name, e.g. "Name"
+ * @property {string} fieldName - field name extracted from the point separated hierarchical property name, e.g. "name"
+ * @property {string} _identifier - internal structure for identifier. Avoid using it ourside since it may change.
+ * @property {string} _identifier.id - array indizes in hierarchical order separated by points, e.g. "0.0"
+ * @property {string} _identifier.value - the (single) value of the "flattened" property, e.g. "Smith"
+ * @property {string} _identifier.propertyNamesWithArrayIndizes - the "original" flattened property name in hierarchical order separated by points, e.g. "responses[0].hits.hits[0]._source.name"
+ * @property {string} _identifier.propertyNameWithoutArrayIndizes - same as propertyNamesWithArrayIndizes but without array indizes, e.g. "responses.hits.hits._source.name"
+ * @property {string} _description - PropertyStructureDescription for internal use. Avoid using it ourside since it may change.
+ */
+
+//TODO document _identifier.groupId,....
+
+/**
+ * @callback stringFieldOfElementFunction
+ *  @param {DescribedEntryInstance} entry
+ */
+
+/**
+ * DescribedEntry
+ *
+ * @namespace
+ */
+resultparser.DescribedEntry = (function () {
+  "use strict";
+
+  var removeArrayBracketsRegEx = new RegExp("\\[\\d+\\]", "gi");
+
+  /**
+   * Constructor function and container for everything, that needs to exist per instance.
+   */
+  function DescribedEntryInstance(entry, description) {
+    var indizes = indizesOf(entry.name);
+    var propertyNameWithoutArrayIndizes = entry.name.replace(removeArrayBracketsRegEx, "");
+
+    this.category = description.category;
+    this.type = description.type;
+    this.displayName = description.getDisplayNameForPropertyName(propertyNameWithoutArrayIndizes);
+    this.fieldName = description.getFieldNameForPropertyName(propertyNameWithoutArrayIndizes);
+    this.value = entry.value;
+    this._description = description;
+
+    this._identifier = {
+      id: indizes.pointDelimited,
+      propertyNameWithArrayIndizes: entry.name,
+      propertyNameWithoutArrayIndizes: propertyNameWithoutArrayIndizes,
+      groupId: "",
+      groupDestinationId: "",
+      deduplicationId: "",
+    };
+
+    this._identifier.groupId = replaceVariablesOfAll(
+      replaceIndexVariables(description.groupPattern, indizes, "id"), 
+      this, 
+      this._description,
+      this._identifier
+    );
+    this._identifier.groupDestinationId = replaceVariablesOfAll(
+      replaceIndexVariables(description.groupDestinationPattern, indizes, "id"),
+      this,
+      this._description,
+      this._identifier
+    );
+    this._identifier.deduplicationId = replaceVariablesOfAll(
+      replaceIndexVariables(description.deduplicationPattern, indizes, "id"),
+      this,
+      this._description,
+      this._identifier
+    );
+  }
+
+  /**
+   * Returns "1.12.123" and [1,12,123] for "results[1].hits.hits[12].aggregates[123]".
+   *
+   * @param {String} fullPropertyName
+   * @return {ExctractedIndizes} extracted indizes in different representations
+   */
+  function indizesOf(fullPropertyName) {
+    var arrayBracketsRegEx = new RegExp("\\[(\\d+)\\]", "gi");
+    return indizesOfWithRegex(fullPropertyName, arrayBracketsRegEx);
+  }
+
+  /**
+   * Returns "1.12.123" and [1,12,123] for "results[1].hits.hits[12].aggregates[123]".
+   *
+   * @param {string} fullPropertyName
+   * @param {RegExp} regexWithOneNumberGroup
+   * @return {ExctractedIndizes} extracted indizes in different representations
+   */
+  function indizesOfWithRegex(fullPropertyName, regexWithOneNumberGroup) {
+    var pointDelimited = "";
+    var numberArray = [];
+    var match;
+    do {
+      match = regexWithOneNumberGroup.exec(fullPropertyName);
+      if (match) {
+        if (pointDelimited.length > 0) {
+          pointDelimited += ".";
+        }
+        pointDelimited += match[1];
+        numberArray.push(parseInt(match[1]));
+      }
+    } while (match);
+    return { pointDelimited: pointDelimited, numberArray: numberArray };
+  }
+
+  /**
+   * Replaces all indexed variables in double curly brackets, e.g. {{property[2]}},
+   * with the value of indizes, e.g. value of index 2 of [1,12,123] is 123, and the given propertyname.
+   */
+  function replaceIndexVariables(stringContainingVariables, indizes, propertyname) {
+    var replaced = stringContainingVariables;
+    var indexedVariableWithArrayIndex = new RegExp("\\{\\{" + propertyname + "\\[(\\d+)\\]\\}\\}", "gi");
+    var indexedVariables = indizesOfWithRegex(stringContainingVariables, indexedVariableWithArrayIndex);
+    for (var varPos = 0; varPos < indexedVariables.numberArray.length; varPos++) {
+      var idIndex = indexedVariables.numberArray[varPos];
+      replaced = replaced.replace("{{" + propertyname + "[" + idIndex + "]}}", indizes.numberArray[varPos]);
+    }
+    return replaced;
+  }
+
+  /**
+   * Replaces all variables in double curly brackets, e.g. {{property}},
+   * with the value of that property from all (var args) source objects.
+   *
+   * Supported property types: string, number, boolean
+   * Sub-Objects will be ignored.
+   */
+  function replaceVariablesOfAll(stringContainingVariables, varArgs) {
+    var replaced = stringContainingVariables;
+    for (var index = 1; index < arguments.length; index++) {
+      var nextSource = arguments[index];
+      replaced = replaceVariables(replaced, nextSource);
+    }
+    return replaced;
+  }
+
+  /**
+   * Replaces all variables in double curly brackets, e.g. {{property}},
+   * with the value of that property from the source object.
+   *
+   * Supported property types: string, number, boolean
+   * Sub-Objects will be ignored.
+   */
+  function replaceVariables(stringContainingVariables, sourceDataObject) {
+    var replaced = stringContainingVariables;
+    var propertyNames = Object.keys(sourceDataObject);
+    for (var propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex++) {
+      var propertyName = propertyNames[propertyIndex];
+      var propertyValue = sourceDataObject[propertyName];
+      if (typeof propertyValue === "string" || typeof propertyValue === "number" || typeof propertyValue === "boolean") {
+        replaced = replaced.replace("{{" + propertyName + "}}", propertyValue);
+      }
+    }
+    return replaced;
+  }
+
+  /**
+   * Public interface
+   * @scope resultparser.DescribedEntry
+   */
+  return DescribedEntryInstance;
 })();
 
 resultparser.Tools = (function () {
@@ -272,12 +423,6 @@ resultparser.Tools = (function () {
     // console.log(extractSummaries(fillInArrayValues(flattenToArray(jsonData))));
     // console.log("highlighted");
     // console.log(extractHighlighted(fillInArrayValues(flattenToArray(jsonData))));
-    // console.log("old merged:");
-    // var merged = mergeFlattenedData(
-    //   extractSummaries(fillInArrayValues(flattenToArray(jsonData))),
-    //   extractHighlighted(fillInArrayValues(flattenToArray(jsonData))),
-    //   getIdAndDisplayName
-    // );
     // console.log(merged);
     // console.log("deduplicated:");
     // console.log(
@@ -313,10 +458,6 @@ resultparser.Tools = (function () {
     return jsonData;
   }
 
-  function getIdAndDisplayName(entry) {
-    return entry.category + "-" + entry.type + "-" + entry.id + "-" + entry.fieldName;
-  }
-
   /**
    * "Assembly line", that takes the jsonData and processes it using all given descriptions (in their given order).
    * Workflow: JSON -> flatten -> mark and identify -> add array fields -> deduplicate -> group -> flatten again
@@ -329,15 +470,15 @@ resultparser.Tools = (function () {
     processedData = fillInArrayValues(processedData);
 
     // Mark, identify and harmonize the flattened data by applying one description after another in their given order.
-    var harmonizedData = [];
+    var describedData = [];
     for (var descriptionIndex = 0; descriptionIndex < descriptions.length; descriptionIndex++) {
       var description = descriptions[descriptionIndex];
       // Filter all entries that match the current description and enrich them with it
       var dataWithDescription = extractEntriesByDescription(processedData, description);
       // Remove duplicate entries where a deduplicationPattern is described
-      harmonizedData = deduplicateFlattenedData(harmonizedData, dataWithDescription);
+      describedData = deduplicateFlattenedData(describedData, dataWithDescription);
     }
-    processedData = harmonizedData;
+    processedData = describedData;
 
     // Group entries where a groupPattern is described
     processedData = groupFlattenedData(processedData);
@@ -345,7 +486,8 @@ resultparser.Tools = (function () {
     // Move group entries where a groupDestinationPattern is described
     processedData = applyGroupDestinationPattern(processedData);
 
-    return processedData;
+    // Turns the grouped object back into an array of DescribedEntryInstance-Objects
+    return propertiesAsArray(processedData);
   }
 
   function summariesDescription() {
@@ -425,9 +567,9 @@ resultparser.Tools = (function () {
    *
    * The id is extracted from every element using the given function.
    *
-   * @param {FlattenedEntry[]} entries
-   * @param {FlattenedEntry[]} entriesToMerge
-   * @param {stringFieldOfElementFunction} idOfElementFunction returns the id of an FlattenedEntry
+   * @param {DescribedEntryInstance[]} entries
+   * @param {DescribedEntryInstance[]} entriesToMerge
+   * @param {stringFieldOfElementFunction} idOfElementFunction returns the id of an DescribedEntryInstance
    */
   function mergeFlattenedData(entries, entriesToMerge, idOfElementFunction) {
     var entriesById = asIdBasedObject(entries, idOfElementFunction);
@@ -464,9 +606,9 @@ resultparser.Tools = (function () {
    *
    * The id is extracted from every element using their deduplication pattern (if available).
    *
-   * @param {FlattenedEntry[]} entries
-   * @param {FlattenedEntry[]} entriesToMerge
-   * @param {stringFieldOfElementFunction} idOfElementFunction returns the id of an FlattenedEntry
+   * @param {DescribedEntryInstance[]} entries
+   * @param {DescribedEntryInstance[]} entriesToMerge
+   * @param {stringFieldOfElementFunction} idOfElementFunction returns the id of an DescribedEntryInstance
    * @see mergeFlattenedData
    */
   function deduplicateFlattenedData(entries, entriesToMerge) {
@@ -474,7 +616,7 @@ resultparser.Tools = (function () {
       return entriesToMerge;
     }
     var idOfElementFunction = function (entry) {
-      return entry.replaceVariables(entry.deduplicationPattern);
+      return entry._identifier.deduplicationId;
     };
     return mergeFlattenedData(entries, entriesToMerge, idOfElementFunction);
   }
@@ -483,9 +625,9 @@ resultparser.Tools = (function () {
    * Converts the given elements to an object, that provides these
    * entries by their id. For example, [{id: A, value: 1}] becomes
    * result['A'] = 1.
-   * @param {FlattenedEntry[]} elements of FlattenedEntry elements
-   * @param {stringFieldOfElementFunction} idOfElementFunction returns the id of an FlattenedEntry
-   * @return {FlattenedEntry[] entries indexed by id
+   * @param {DescribedEntryInstance[]} elements of DescribedEntryInstance elements
+   * @param {stringFieldOfElementFunction} idOfElementFunction returns the id of an DescribedEntryInstance
+   * @return {DescribedEntryInstance[] entries indexed by id
    */
   function asIdBasedObject(elements, idOfElementFunction) {
     var idIndexedObject = new Object();
@@ -498,23 +640,23 @@ resultparser.Tools = (function () {
 
   /**
    * Converts the given elements into an object, that provides these
-   * entries by their id (determined by the entry's groupPattern). 
-   * For example, [{id: A, value: 1}] becomes result['A'] = 1. 
-   * 
+   * entries by their id (determined by the entry's groupPattern).
+   * For example, [{id: A, value: 1}] becomes result['A'] = 1.
+   *
    * Furthermore, this function creates a group property (determined by the entry's groupName)
    * and collects all related elements (specified by their group pattern) in it.
-   * 
-   * @param {FlattenedEntry[]} elements of FlattenedEntry elements
-   * @return {FlattenedEntry[] entries indexed by id
+   *
+   * @param {DescribedEntryInstance[]} elements of DescribedEntryInstance elements
+   * @return {DescribedEntryInstance[] entries indexed by id
    */
   function groupFlattenedData(flattenedData) {
     return groupById(
       flattenedData,
       function (entry) {
-        return entry.replaceVariables(entry.groupPattern);
+        return entry._identifier.groupId;
       },
       function (entry) {
-        return entry.groupName;
+        return entry._description.groupName;
       }
     );
   }
@@ -525,10 +667,10 @@ resultparser.Tools = (function () {
    * result['A'] = 1. Furthermore, this function creates a group property (with the name )
    * and collects all related elements (specified by their group pattern) in it.
    *
-   * @param {FlattenedEntry[]} elements of FlattenedEntry elements
+   * @param {DescribedEntryInstance[]} elements of DescribedEntryInstance elements
    * @param {stringFieldOfElementFunction} groupNameOfElementFunction function, that returns the name of the group property that will be created inside the "main" element.
-   * @param {stringFieldOfElementFunction} groupIdOfElementFunction returns the group id of an FlattenedEntry
-   * @return {FlattenedEntry[] entries indexed by id
+   * @param {stringFieldOfElementFunction} groupIdOfElementFunction returns the group id of an DescribedEntryInstance
+   * @return {DescribedEntryInstance[] entries indexed by id
    */
   function groupById(elements, groupIdOfElementFunction, groupNameOfElementFunction) {
     var groupedResult = new Object();
@@ -557,7 +699,7 @@ resultparser.Tools = (function () {
    * @param {string} flattenedData[].name - name of the property in hierarchical order separated by points
    * @param {string} flattenedData[].value - value of the property as string
    * @param {PropertyStructureDescription} - description of structure of the entries that should be extracted
-   * @return {FlattenedEntry}
+   * @return {DescribedEntryInstance}
    */
   function extractEntriesByDescription(flattenedData, description) {
     var removeArrayBracketsRegEx = new RegExp("\\[\\d+\\]", "gi");
@@ -568,46 +710,8 @@ resultparser.Tools = (function () {
       var indizes = indizesOf(entry.name);
       var propertyNameWithoutArrayIndizes = entry.name.replace(removeArrayBracketsRegEx, "");
       if (description.matchesPropertyName(propertyNameWithoutArrayIndizes)) {
-        filtered.push({
-          //TODO builder for this structure (FlattenedEntry)
-          //TODO full description object as one entry?
-          id: indizes.pointDelimited,
-          category: description.category,
-          type: description.type,
-          displayName: description.getDisplayNameForPropertyName(propertyNameWithoutArrayIndizes),
-          fieldName: description.getFieldNameForPropertyName(propertyNameWithoutArrayIndizes),
-          value: entry.value,
-          propertyNameWithArrayIndizes: entry.name,
-          propertyNameWithoutArrayIndizes: propertyNameWithoutArrayIndizes,
-          groupName: description.groupName,
-          groupPattern: description.groupPattern,
-          groupDestinationPattern: description.groupDestinationPattern,
-          deduplicationPattern: description.deduplicationPattern,
-          // groupId: this.replaceVariables(description.groupPattern),
-          // groupDestinationId: this.replaceVariables(description.groupDestinationPattern),
-          // deduplicationId: this.replaceVariables(description.deduplicationPattern),
-          replaceVariables: function (stringContainingVariables) {
-            //TODO Refactoring
-            var replaced = stringContainingVariables;
-            
-            var idVariableWithArrayIndex = new RegExp("\\{\\{id\\[(\\d+)\\]\\}\\}", "gi");
-            var idVariables = indizesOfWithRegex(stringContainingVariables, idVariableWithArrayIndex);
-            for (var varPos = 0; varPos < idVariables.numberArray.length; varPos++) {
-              var idIndex = idVariables.numberArray[varPos];
-              replaced = replaced.replace("{{id[" + idIndex + "]}}", indizes.numberArray[varPos]);
-            }
-
-            var propertyNames = Object.keys(this)
-            for (var propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex++) {
-              var propertyName = propertyNames[propertyIndex];
-              var propertyValue = this[propertyName];
-              if (typeof propertyValue === "string") {
-                replaced = replaced.replace("{{" + propertyName + "}}", propertyValue);
-              }
-            }
-            return replaced;
-          },
-        });
+        var descibedEntry = new resultparser.DescribedEntry(entry, description);
+        filtered.push(descibedEntry);
       }
     });
     return filtered;
@@ -619,10 +723,10 @@ resultparser.Tools = (function () {
     for (var index = 0; index < keys.length; index++) {
       var key = keys[index];
       var entry = groupedObject[key];
-      if (entry.groupDestinationPattern != "") {
-        var destinationKey = entry.replaceVariables(entry.groupDestinationPattern);
+      if (entry._description.groupDestinationPattern != "") {
+        var destinationKey = entry._identifier.groupDestinationId;
         if (groupedObject[destinationKey] != null) {
-          groupedObject[destinationKey][entry.groupName] = entry[entry.groupName];
+          groupedObject[destinationKey][entry._description.groupName] = entry[entry._description.groupName];
           keysToDelete.push(key);
         } //TODO ? else log "No object with destinationKey found"
       }
@@ -712,6 +816,17 @@ resultparser.Tools = (function () {
       }
     } while (match);
     return { pointDelimited: pointDelimited, numberArray: numberArray };
+  }
+
+  function propertiesAsArray(groupedData) {
+    var result = [];
+    var propertyNames = Object.keys(groupedData);
+    for (var propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex++) {
+      var propertyName = propertyNames[propertyIndex];
+      var propertyValue = groupedData[propertyName];
+      result.push(propertyValue);
+    }
+    return result;
   }
 
   //Modded version of:
