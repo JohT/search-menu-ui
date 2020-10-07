@@ -57,7 +57,7 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
       deduplicationPattern: "",
       getDisplayNameForPropertyName: null,
       getFieldNameForPropertyName: null,
-      matchesPropertyName: null,
+      matchesPropertyName: null
     };
     this.type = function (value) {
       this.description.type = value;
@@ -295,7 +295,7 @@ resultparser.DescribedEntryCreator = (function () {
       propertyNameWithoutArrayIndizes: propertyNameWithoutArrayIndizes,
       groupId: "",
       groupDestinationId: "",
-      deduplicationId: "",
+      deduplicationId: ""
     };
 
     this._identifier.groupId = replaceVariablesOfAll(
@@ -778,6 +778,6 @@ resultparser.Tools = (function () {
    * @scope resultparser.Tools
    */
   return {
-    introspectJson: introspectJson,
+    introspectJson: introspectJson
   };
 })();
