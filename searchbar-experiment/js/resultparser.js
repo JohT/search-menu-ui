@@ -11,8 +11,6 @@
  */
 var resultparser = resultparser || {};
 
-
-
 /**
  * @callback propertyNameFunction
  *  @param {string} propertyname
@@ -32,7 +30,11 @@ var resultparser = resultparser || {};
  * @property {string} deduplicationPattern - Pattern to use to remove duplicate entries. A pattern may contain variables in double curly brackets {{variable}}.
  */
 
-// TODO idPattern to distinguish between results of main array index 0, 1, 2 ....
+// Further feature requests:
+// TODO idPattern to distinguish/filter between results of main array index 0, 1, 2 ....
+// TODO summary->urls->overview=http....,detail=http.... 
+// TODO resolve values containing {{variables}}
+// TODO resolve {{variables}} using all fields inside an DescribedEntry, including custom groups e.g. {{summaries.iban}}
 
 /**
  * PropertyStructureDescriptionBuilder
