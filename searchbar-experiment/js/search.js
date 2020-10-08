@@ -46,7 +46,7 @@ searchbar.SearchbarAPI = (function () {
     resultElementTag: "li",
     inactiveFilterClass: "inactivefilter",
     waitBeforeClose: 700,
-    waitBeforeSearch: 500
+    waitBeforeSearch: 500,
   };
 
   /**
@@ -104,7 +104,7 @@ searchbar.SearchbarAPI = (function () {
     },
     start: function () {
       return new searchbar.SearchbarUI(config);
-    }
+    },
   };
 })();
 
@@ -354,7 +354,7 @@ searchbar.SearchbarUI = (function () {
       index: extractedIndex,
       previousId: extractedType + "-" + (extractedIndex - 1),
       nextId: extractedType + "-" + (extractedIndex + 1),
-      isFirstElement: extractedIndex <= 1
+      isFirstElement: extractedIndex <= 1,
     };
   }
 
@@ -469,8 +469,16 @@ searchbar.SearchbarUI = (function () {
   }
 
   function moveCursorToEndOf(element) {
-    if (typeof element.selectionStart === "number" && typeof element.selectionEnd === "number") {
+    if (typeof element.setSelectionRange === "function") {
+      element.setSelectionRange(element.value.length, element.value.length);
+    } else if (typeof element.selectionStart === "number" && typeof element.selectionEnd === "number") {
       element.selectionStart = element.selectionEnd = element.value.length;
+    } else if (typeof e.createTextRange === "function") {
+      var range = element.createTextRange();
+      range.collapse(true);
+      range.moveEnd("character", element.value.length);
+      range.moveStart("character", element.value.length);
+      range.select();
     }
   }
 
