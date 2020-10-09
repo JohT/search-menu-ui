@@ -18,7 +18,7 @@ var resultparser = resultparser || {};
 
 /**
  * @typedef {Object} PropertyStructureDescription
- * @property {string} type - "summary"(default) for the list overview. "detail" when a summary is selected. "filter" for field/value pair results that can be selected as search parameters.
+ * @property {string} type - ""(default). Some examples: "summary" for e.g. a list overview. "detail" e.g. when a summary is selected. "filter" e.g. for field/value pair results that can be selected as search parameters.
  * @property {string} category - name of the category. Default = "". Could contain a symbol character or a short domain name. (e.g. "city")
  * @property {string} propertyPatternMode - "equal"(default): propertyname is equal to pattern. "template" allows variables like "{{fieldname}}".
  * @property {string} propertyPattern - property name pattern (without array indizes) to match
@@ -31,10 +31,11 @@ var resultparser = resultparser || {};
  */
 
 // Further feature requests:
-// TODO idPattern to distinguish/filter between results of main array index 0, 1, 2 ....
-// TODO summary->urls->overview=http....,detail=http.... 
-// TODO resolve values containing {{variables}}
-// TODO resolve {{variables}} using all fields inside an DescribedEntry, including custom groups e.g. {{summaries.iban}}
+// TODO (should) idPattern to distinguish/filter between results of main array index 0, 1, 2 ....
+// TODO (should) PropertyStructureDescription template mode should take not any but the {{fieldName}} variable out of the propertyPattern if present
+// TODO (tryout) summary->urls->overview=http....,detail=http.... 
+// TODO (optional) resolve values containing {{variables}}
+// TODO (optional) resolve {{variables}} using all fields inside an DescribedEntry, including custom groups e.g. {{summaries.iban}}
 
 /**
  * PropertyStructureDescriptionBuilder
@@ -49,9 +50,9 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
    */
   function PropertyStructureDescription() {
     this.description = {
-      type: "summary",
+      type: "",
       category: "",
-      propertyPatternMode: "equal",
+      propertyPatternMode: "equal", //TODO validate "equal" or "template"
       propertyPattern: "",
       groupName: "group",
       groupPattern: "",
@@ -139,6 +140,7 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
       };
     }
     if (isTemplatePatternMode(description)) {
+      //TODO extracts any variable, not only {{fieldName}} and does not work with multiple placeholders
       var patternToMatch = description.propertyPattern; // closure (closed over) parameter
       return extractNameUsingTemplatePattern(patternToMatch);
     }
@@ -154,16 +156,12 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
     }
     if (isTemplatePatternMode(description)) {
       return function (propertyNameWithoutArrayIndizes) {
-        return templateModePatternRegexForPattern(propertyPatternToMatch).exec(propertyNameWithoutArrayIndizes);
+        return templateModePatternRegexForPattern(propertyPatternToMatch).exec(propertyNameWithoutArrayIndizes) != null;
       };
     }
     return function (propertyNameWithoutArrayIndizes) {
       return propertyNameWithoutArrayIndizes === propertyPatternToMatch;
     };
-  }
-
-  function isEuqalPatternMode(description) {
-    return description.propertyPatternMode === "equal";
   }
 
   function isTemplatePatternMode(description) {
@@ -232,10 +230,6 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
 
   function isSpecifiedString(value) {
     return typeof value === "string" && value != null && value != "";
-  }
-
-  function isNotSpecified(value) {
-    return typeof value !== "string" || value == null || value == "";
   }
 
   /**
