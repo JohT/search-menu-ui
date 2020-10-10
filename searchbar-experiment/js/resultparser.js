@@ -32,8 +32,7 @@ var resultparser = resultparser || {};
 
 // Further feature requests:
 // TODO (should) idPattern to distinguish/filter between results of main array index 0, 1, 2 ....
-// TODO (should) PropertyStructureDescription template mode should take not any but the {{fieldName}} variable out of the propertyPattern if present
-// TODO (tryout) summary->urls->overview=http....,detail=http.... 
+// TODO (tryout) summary->urls->overview=http....,detail=http....
 // TODO (optional) resolve values containing {{variables}}
 // TODO (optional) resolve {{variables}} using all fields inside an DescribedEntry, including custom groups e.g. {{summaries.iban}}
 
@@ -60,7 +59,7 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
       deduplicationPattern: "",
       getDisplayNameForPropertyName: null,
       getFieldNameForPropertyName: null,
-      matchesPropertyName: null
+      matchesPropertyName: null,
     };
     this.type = function (value) {
       this.description.type = value;
@@ -140,7 +139,6 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
       };
     }
     if (isTemplatePatternMode(description)) {
-      //TODO extracts any variable, not only {{fieldName}} and does not work with multiple placeholders
       var patternToMatch = description.propertyPattern; // closure (closed over) parameter
       return extractNameUsingTemplatePattern(patternToMatch);
     }
@@ -200,7 +198,7 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
 
   function extractNameUsingTemplatePattern(propertyPattern) {
     return function (propertyname) {
-      var regex = templateModePatternRegexForPattern(propertyPattern);
+      var regex = templateModePatternRegexForPatternAndVariable(propertyPattern, "{{fieldName}}");
       var match = regex.exec(propertyname);
       if (match && match[1] != "") {
         return match[1];
@@ -217,8 +215,15 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
 
   function templateModePatternRegexForPattern(propertyPatternToUse) {
     var placeholderInDoubleCurlyBracketsRegEx = new RegExp("\\\\\\{\\\\\\{[-\\w]+\\\\\\}\\\\\\}", "gi");
+    return templateModePatternRegexForPatternAndVariable(propertyPatternToUse, placeholderInDoubleCurlyBracketsRegEx);
+  }
+
+  function templateModePatternRegexForPatternAndVariable(propertyPatternToUse, variablePattern) {
     var pattern = escapeCharsForRegEx(propertyPatternToUse);
-    pattern = pattern.replace(placeholderInDoubleCurlyBracketsRegEx, "([-\\w]+)");
+    if (typeof variablePattern === "string") {
+      variablePattern = escapeCharsForRegEx(variablePattern);
+    }
+    pattern = pattern.replace(variablePattern, "([-\\w]+)");
     pattern = "^" + pattern;
     return new RegExp(pattern, "i");
   }
@@ -291,12 +296,12 @@ resultparser.DescribedEntryCreator = (function () {
       propertyNameWithoutArrayIndizes: propertyNameWithoutArrayIndizes,
       groupId: "",
       groupDestinationId: "",
-      deduplicationId: ""
+      deduplicationId: "",
     };
 
     this._identifier.groupId = replaceVariablesOfAll(
-      replaceIndexVariables(description.groupPattern, indizes, "id"), 
-      this, 
+      replaceIndexVariables(description.groupPattern, indizes, "id"),
+      this,
       this._description,
       this._identifier
     );
@@ -675,7 +680,7 @@ resultparser.Tools = (function () {
         if (groupedObject[destinationKey] != null) {
           groupedObject[destinationKey][entry._description.groupName] = entry[entry._description.groupName];
           keysToDelete.push(key);
-        } 
+        }
       }
     }
     // delete all moved entries that had been collected by their key
@@ -774,6 +779,6 @@ resultparser.Tools = (function () {
    * @scope resultparser.Tools
    */
   return {
-    introspectJson: introspectJson
+    introspectJson: introspectJson,
   };
 })();
