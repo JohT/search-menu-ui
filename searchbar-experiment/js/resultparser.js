@@ -33,8 +33,8 @@ var resultparser = resultparser || {};
 // Further feature requests:
 // TODO (should) idPattern to distinguish/filter between results of main array index 0, 1, 2 ....
 // TODO (tryout) summary->urls->overview=http....,detail=http....
-// TODO (optional) resolve values containing {{variables}}
-// TODO (optional) resolve {{variables}} using all fields inside an DescribedEntry, including custom groups e.g. {{summaries.iban}}
+// TODO (under discussion) resolve values containing {{variables}}
+// TODO (under discussion) resolve {{variables}} using all fields inside an DescribedEntry, including custom groups e.g. {{summaries.iban}}
 
 /**
  * PropertyStructureDescriptionBuilder
@@ -364,7 +364,7 @@ resultparser.DescribedEntryCreator = (function () {
     var indexedVariables = indizesOfWithRegex(stringContainingVariables, indexedVariableWithArrayIndex);
     for (var varPos = 0; varPos < indexedVariables.numberArray.length; varPos++) {
       var idIndex = indexedVariables.numberArray[varPos];
-      replaced = replaced.replace("{{" + propertyname + "[" + idIndex + "]}}", indizes.numberArray[varPos]);
+      replaced = replaced.replace("{{" + propertyname + "[" + idIndex + "]}}", indizes.numberArray[idIndex]);
     }
     return replaced;
   }
