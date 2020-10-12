@@ -1,4 +1,4 @@
-describe("PropertyStructureDescription", function () {
+describe("resultparser.PropertyStructureDescription", function () {
   var description;
 
   beforeEach(function () {

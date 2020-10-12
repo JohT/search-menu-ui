@@ -1,4 +1,6 @@
-describe("DescribedEntry", function () {
+"use strict";
+
+describe("resultparser.DescribedEntry", function () {
   var description = new resultparser.PropertyStructureDescriptionBuilder().type("testtype").category("testcategory").build();
   var rawEntry = { name: "responses[0].hits.hits[3]._source.tag[5]", value: "inactive" };
   var describedEntry;

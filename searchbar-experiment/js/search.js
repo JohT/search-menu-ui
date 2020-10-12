@@ -187,7 +187,7 @@ searchbar.SearchbarUI = (function () {
     });
     //TODO delete these 3 lines when experiment finished
     httpGetJson("../data/KontenMultiSearchTemplateResponse.json", getHttpRequest(), function (jsonResult) {
-      resultparser.Tools.introspectJson(jsonResult);
+      resultparser.Parser.introspectJson(jsonResult);
     });
   }
 

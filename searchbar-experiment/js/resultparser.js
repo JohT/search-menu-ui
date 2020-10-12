@@ -51,7 +51,7 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
     this.description = {
       type: "",
       category: "",
-      propertyPatternMode: "equal", //TODO validate "equal" or "template"
+      propertyPatternMode: "equal", //TODO validate "equal", "template"  or refactor to boolean
       propertyPattern: "",
       groupName: "group",
       groupPattern: "",
@@ -412,20 +412,8 @@ resultparser.DescribedEntryCreator = (function () {
   return DescribedEntry;
 })();
 
-resultparser.Tools = (function () {
+resultparser.Parser = (function () {
   "use strict";
-
-  //TODO Only to try out
-  function introspectJson(jsonData) {
-    console.log("full assembly line:");
-    var allDescriptions = [];
-    allDescriptions.push(summariesDescription());
-    allDescriptions.push(highlightedDescription());
-    allDescriptions.push(detailsDescription());
-    allDescriptions.push(filtersDescription());
-    console.log(processJsonUsingDescriptions(jsonData, allDescriptions));
-    return jsonData;
-  }
 
   /**
    * "Assembly line", that takes the jsonData and processes it using all given descriptions (in their given order).
@@ -434,7 +422,6 @@ resultparser.Tools = (function () {
   function processJsonUsingDescriptions(jsonData, descriptions) {
     // "Flatten" the hierarchical input json to an array of propertynames (point spearated "folders") and values.
     var processedData = flattenToArray(jsonData);
-
     // Fill in properties ending with the name "_comma_separated_values" for array values to make it easier to display them.
     processedData = fillInArrayValues(processedData);
 
@@ -459,6 +446,19 @@ resultparser.Tools = (function () {
     return propertiesAsArray(processedData);
   }
 
+  //TODO Only to try out
+  function introspectJson(jsonData) {
+    console.log("full assembly line:");
+    var allDescriptions = [];
+    allDescriptions.push(summariesDescription());
+    allDescriptions.push(highlightedDescription());
+    allDescriptions.push(detailsDescription());
+    allDescriptions.push(filtersDescription());
+    console.log(processJsonUsingDescriptions(jsonData, allDescriptions));
+    return jsonData;
+  }
+
+  //TODO Only to try out
   function summariesDescription() {
     return new resultparser.PropertyStructureDescriptionBuilder()
       .type("summary")
@@ -471,6 +471,7 @@ resultparser.Tools = (function () {
       .build();
   }
 
+  //TODO Only to try out
   function highlightedDescription() {
     return new resultparser.PropertyStructureDescriptionBuilder()
       .type("summary")
@@ -483,6 +484,7 @@ resultparser.Tools = (function () {
       .build();
   }
 
+  //TODO Only to try out
   function detailsDescription() {
     return new resultparser.PropertyStructureDescriptionBuilder()
       .type("detail")
@@ -495,6 +497,7 @@ resultparser.Tools = (function () {
       .build();
   }
 
+  //TODO Only to try out
   function filtersDescription() {
     return new resultparser.PropertyStructureDescriptionBuilder()
       .type("filter")
@@ -526,7 +529,6 @@ resultparser.Tools = (function () {
    * @param {stringFieldOfDescribedEntryFunction} idOfElementFunction returns the id of an DescribedEntry
    */
   function mergeFlattenedData(entries, entriesToMerge, idOfElementFunction) {
-    var entriesById = asIdBasedObject(entries, idOfElementFunction);
     var entriesToMergeById = asIdBasedObject(entriesToMerge, idOfElementFunction);
     var merged = [];
     for (var index = 0; index < entries.length; index++) {
@@ -653,7 +655,7 @@ resultparser.Tools = (function () {
    * @param {string} flattenedData[].name - name of the property in hierarchical order separated by points
    * @param {string} flattenedData[].value - value of the property as string
    * @param {PropertyStructureDescription} - description of structure of the entries that should be extracted
-   * @return {DescribedEntry}
+   * @return {DescribedEntry[]}
    */
   function extractEntriesByDescription(flattenedData, description) {
     var removeArrayBracketsRegEx = new RegExp("\\[\\d+\\]", "gi");
@@ -669,6 +671,17 @@ resultparser.Tools = (function () {
     return filtered;
   }
 
+  /**
+   * Takes already grouped {@link DescribedEntry} objects and
+   * uses their "_identifier.groupDestinationId" (if exists)
+   * to move groups to the given destination.
+   *
+   * This is useful, if separatly described groups like "summary" and "detail" should be put together,
+   * so that every summery contains a group with the regarding details.
+   *
+   * @param {DescribedEntry[]} groupedObject - already grouped entries
+   * @return {DescribedEntry[]}
+   */
   function applyGroupDestinationPattern(groupedObject) {
     var keys = Object.keys(groupedObject);
     var keysToDelete = [];
@@ -734,7 +747,6 @@ resultparser.Tools = (function () {
    * @property {string} pointDelimited - bracket indizes separated by points
    * @property {number[]} numberArray as array of numbers
    */
-
   function propertiesAsArray(groupedData) {
     var result = [];
     var propertyNames = Object.keys(groupedData);
@@ -776,9 +788,10 @@ resultparser.Tools = (function () {
 
   /**
    * Public interface
-   * @scope resultparser.Tools
+   * @scope resultparser.Parser
    */
   return {
-    introspectJson: introspectJson,
+    processJsonUsingDescriptions: processJsonUsingDescriptions,
+    introspectJson: introspectJson //TODO remove when done
   };
 })();
