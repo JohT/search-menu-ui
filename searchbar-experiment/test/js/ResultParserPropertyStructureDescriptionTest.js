@@ -20,16 +20,26 @@ describe("resultparser.PropertyStructureDescription", function () {
       expect(result.category).toEqual(expectedValue);
     });
 
-    it("should contain the given propertyPatternMode", function () {
-      var expectedValue = "template";
-      var result = description.propertyPatternMode(expectedValue).build();
-      expect(result.propertyPatternMode).toEqual(expectedValue);
+    it("should contain propertyPatternTemplateMode", function () {
+      var result = description.propertyPatternTemplateMode().build();
+      expect(result.propertyPatternTemplateMode).toBeTrue();
+    });
+
+    it("should contain propertyPatternEqualMode", function () {
+      var result = description.propertyPatternEqualMode().build();
+      expect(result.propertyPatternTemplateMode).toBeFalse();
     });
 
     it("should contain the given propertyPattern", function () {
       var expectedValue = "test.property.pattern";
       var result = description.propertyPattern(expectedValue).build();
       expect(result.propertyPattern).toEqual(expectedValue);
+    });
+
+    it("should contain the given idStartsWith", function () {
+      var expectedValue = "1.";
+      var result = description.idStartsWith(expectedValue).build();
+      expect(result.idStartsWith).toEqual(expectedValue);
     });
 
     it("should contain the given groupName", function () {
@@ -75,8 +85,12 @@ describe("resultparser.PropertyStructureDescription", function () {
       expect(defaultDescription.propertyPattern).toEqual("");
     });
 
-    it("should contain the default propertyPatternMode 'equal'", function () {
-      expect(defaultDescription.propertyPatternMode).toEqual("equal");
+    it("should contain an empty idStartsWith", function () {
+      expect(defaultDescription.idStartsWith).toEqual("");
+    });
+
+    it("should contain the default propertyPatternEqualMode", function () {
+      expect(defaultDescription.propertyPatternTemplateMode).toBeFalse();
     });
 
     it("should contain the default group name 'group", function () {
@@ -128,7 +142,7 @@ describe("resultparser.PropertyStructureDescription", function () {
 
     it("should use {{fieldName}} from the propertyPattern in 'template' mode if it exists with leading uppercase character", function () {
       var pattern = "property.to.match.{{fieldName}}.postfix";
-      var result = description.propertyPatternMode("template").propertyPattern(pattern).build();
+      var result = description.propertyPatternTemplateMode().propertyPattern(pattern).build();
       expect(result.getDisplayNameForPropertyName("property.to.match.testname.postfix")).toEqual("Testname");
     });
 
@@ -174,7 +188,7 @@ describe("resultparser.PropertyStructureDescription", function () {
 
     it("should use {{fieldName}} from the propertyPattern in 'template' mode if it exists to extract the fieldName", function () {
       var pattern = "property.to.match.{{fieldName}}.postfix";
-      var result = description.propertyPatternMode("template").propertyPattern(pattern).build();
+      var result = description.propertyPatternTemplateMode().propertyPattern(pattern).build();
       expect(result.getFieldNameForPropertyName("property.to.match.testname.postfix")).toEqual("testname");
     });
 
@@ -194,45 +208,45 @@ describe("resultparser.PropertyStructureDescription", function () {
 
     it("should match equal property name in 'equal' mode", function () {
       var propertyname = "property.to.match";
-      var result = description.propertyPatternMode("equal").propertyPattern(propertyname).build();
+      var result = description.propertyPatternEqualMode().propertyPattern(propertyname).build();
       expect(result.matchesPropertyName(propertyname)).toBeTrue();
     });
 
     it("shouldn't match unequal property name in 'equal' mode", function () {
       var propertyname = "property.to.match";
-      var result = description.propertyPatternMode("equal").propertyPattern(propertyname).build();
+      var result = description.propertyPatternEqualMode().propertyPattern(propertyname).build();
       expect(result.matchesPropertyName(propertyname + ".not.equal")).toBeFalse();
     });
 
     it("should match equal property name in 'template' mode", function () {
       var propertyname = "property.to.match";
-      var result = description.propertyPatternMode("template").propertyPattern(propertyname).build();
+      var result = description.propertyPatternTemplateMode().propertyPattern(propertyname).build();
       expect(result.matchesPropertyName(propertyname)).toBeTrue();
     });
 
     it("should also match property names that starts with the given pattern in 'template' mode", function () {
       var propertyname = "property.to.match";
-      var result = description.propertyPatternMode("template").propertyPattern(propertyname).build();
+      var result = description.propertyPatternTemplateMode().propertyPattern(propertyname).build();
       expect(result.matchesPropertyName(propertyname + ".additional")).toBeTrue();
     });
 
     it("shouldn't match unequal property name in 'template' mode", function () {
       var propertyname = "property.to.match";
-      var result = description.propertyPatternMode("template").propertyPattern(propertyname).build();
+      var result = description.propertyPatternTemplateMode().propertyPattern(propertyname).build();
       expect(result.matchesPropertyName("not.equal." + propertyname)).toBeFalse();
     });
 
     it("should match a pattern containing a variable in 'template' mode", function () {
-      var pattern = "property.to.match.{{fieldName}}"
+      var pattern = "property.to.match.{{fieldName}}";
       var propertyname = "property.to.match.testfieldname";
-      var result = description.propertyPatternMode("template").propertyPattern(pattern).build();
+      var result = description.propertyPatternTemplateMode().propertyPattern(pattern).build();
       expect(result.matchesPropertyName(propertyname)).toBeTrue();
     });
 
     it("should match a pattern containing two variables in 'template' mode", function () {
-      var pattern = "property.{{any}}.match.{{fieldName}}"
+      var pattern = "property.{{any}}.match.{{fieldName}}";
       var propertyname = "property.to.match.testfieldname";
-      var result = description.propertyPatternMode("template").propertyPattern(pattern).build();
+      var result = description.propertyPatternTemplateMode().propertyPattern(pattern).build();
       expect(result.matchesPropertyName(propertyname)).toBeTrue();
     });
   });

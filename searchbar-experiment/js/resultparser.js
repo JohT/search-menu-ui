@@ -20,8 +20,9 @@ var resultparser = resultparser || {};
  * @typedef {Object} PropertyStructureDescription
  * @property {string} type - ""(default). Some examples: "summary" for e.g. a list overview. "detail" e.g. when a summary is selected. "filter" e.g. for field/value pair results that can be selected as search parameters.
  * @property {string} category - name of the category. Default = "". Could contain a symbol character or a short domain name. (e.g. "city")
- * @property {string} propertyPatternMode - "equal"(default): propertyname is equal to pattern. "template" allows variables like "{{fieldname}}".
+ * @property {boolean} propertyPatternTemplateMode - "false"(default): propertyname needs to be equal to the pattern. "true" allows variables like "{{fieldname}}" inside the pattern.
  * @property {string} propertyPattern - property name pattern (without array indizes) to match
+ * @property {string} idStartsWith - ""(default) matches all ids. String that needs to match the beginning of the id. E.g. "1." will match id="1.3.4" but not "0.1.2". 
  * @property {propertyNameFunction} getDisplayNameForPropertyName - display name for the property. ""(default) last property name element with upper case first letter.
  * @property {propertyNameFunction} getFieldNameForPropertyName - field name for the property. "" (default) last property name element.
  * @property {string} groupName - name of the property, that contains grouped entries. Default="group".
@@ -31,10 +32,7 @@ var resultparser = resultparser || {};
  */
 
 // Further feature requests:
-// TODO (should) idPattern to distinguish/filter between results of main array index 0, 1, 2 ....
 // TODO (tryout) summary->urls->overview=http....,detail=http....
-// TODO (under discussion) resolve values containing {{variables}}
-// TODO (under discussion) resolve {{variables}} using all fields inside an DescribedEntry, including custom groups e.g. {{summaries.iban}}
 
 /**
  * PropertyStructureDescriptionBuilder
@@ -51,15 +49,16 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
     this.description = {
       type: "",
       category: "",
-      propertyPatternMode: "equal", //TODO validate "equal", "template"  or refactor to boolean
+      propertyPatternTemplateMode: false,
       propertyPattern: "",
+      idStartsWith: "",
       groupName: "group",
       groupPattern: "",
       groupDestinationPattern: "",
       deduplicationPattern: "",
       getDisplayNameForPropertyName: null,
       getFieldNameForPropertyName: null,
-      matchesPropertyName: null,
+      matchesPropertyName: null
     };
     this.type = function (value) {
       this.description.type = value;
@@ -69,12 +68,35 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
       this.description.category = value;
       return this;
     };
-    this.propertyPatternMode = function (value) {
-      this.description.propertyPatternMode = value;
+    /**
+     * "propertyPattern" need to match exactly if this mode is activated.
+     *  It clears propertyPatternTemplateMode which means "equal" mode.
+     */
+    this.propertyPatternEqualMode = function () {
+      this.description.propertyPatternTemplateMode = false;
+      return this;
+    };
+    /**
+     * "propertyPattern" can contain variables like {{fieldName}} and
+     * doesn't need to match the propertyname exactly. If the "propertyPattern"
+     * is shorter than the propertyname, it also matches when the propertyname
+     * starts with the "propertyPattern".
+     */
+    this.propertyPatternTemplateMode = function () {
+      this.description.propertyPatternTemplateMode = true;
       return this;
     };
     this.propertyPattern = function (value) {
       this.description.propertyPattern = value;
+      return this;
+    };
+    /**
+     *  String that needs to match the beginning of the id.
+     *  E.g. "1." will match id="1.3.4" but not "0.1.2".
+     *  Default is "" which will match every id.
+     */
+    this.idStartsWith = function (value) {
+      this.description.idStartsWith = value;
       return this;
     };
     this.displayPropertyName = function (value) {
@@ -138,7 +160,7 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
         return value;
       };
     }
-    if (isTemplatePatternMode(description)) {
+    if (description.propertyPatternTemplateMode) {
       var patternToMatch = description.propertyPattern; // closure (closed over) parameter
       return extractNameUsingTemplatePattern(patternToMatch);
     }
@@ -152,7 +174,7 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
         return false; // Without a propertyPattern, no property will match (deactivated mark/identify).
       };
     }
-    if (isTemplatePatternMode(description)) {
+    if (description.propertyPatternTemplateMode) {
       return function (propertyNameWithoutArrayIndizes) {
         return templateModePatternRegexForPattern(propertyPatternToMatch).exec(propertyNameWithoutArrayIndizes) != null;
       };
@@ -160,10 +182,6 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
     return function (propertyNameWithoutArrayIndizes) {
       return propertyNameWithoutArrayIndizes === propertyPatternToMatch;
     };
-  }
-
-  function isTemplatePatternMode(description) {
-    return description.propertyPatternMode === "template";
   }
 
   function rigthMostPropertyNameElement(propertyname) {
@@ -289,6 +307,7 @@ resultparser.DescribedEntryCreator = (function () {
     this.fieldName = description.getFieldNameForPropertyName(propertyNameWithoutArrayIndizes);
     this.value = entry.value;
     this._description = description;
+    this.isMatchingId = (description.idStartsWith == "")? true : indizes.pointDelimited.startsWith(description.idStartsWith);
 
     this._identifier = {
       id: indizes.pointDelimited,
@@ -296,9 +315,8 @@ resultparser.DescribedEntryCreator = (function () {
       propertyNameWithoutArrayIndizes: propertyNameWithoutArrayIndizes,
       groupId: "",
       groupDestinationId: "",
-      deduplicationId: "",
+      deduplicationId: ""
     };
-
     this._identifier.groupId = replaceVariablesOfAll(
       replaceIndexVariables(description.groupPattern, indizes, "id"),
       this,
@@ -463,7 +481,7 @@ resultparser.Parser = (function () {
     return new resultparser.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("Konto")
-      .propertyPatternMode("equal")
+      .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.kontonummer")
       .groupName("summaries")
       .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
@@ -476,7 +494,7 @@ resultparser.Parser = (function () {
     return new resultparser.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("Konto")
-      .propertyPatternMode("equal")
+      .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits.highlight.kontonummer")
       .groupName("summaries")
       .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
@@ -489,7 +507,7 @@ resultparser.Parser = (function () {
     return new resultparser.PropertyStructureDescriptionBuilder()
       .type("detail")
       .category("Konto")
-      .propertyPatternMode("template")
+      .propertyPatternTemplateMode()
       .propertyPattern("responses.hits.hits._source.{{fieldName}}")
       .groupName("details")
       .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
@@ -502,7 +520,7 @@ resultparser.Parser = (function () {
     return new resultparser.PropertyStructureDescriptionBuilder()
       .type("filter")
       .category("Konto")
-      .propertyPatternMode("template")
+      .propertyPatternTemplateMode()
       .propertyPattern("responses.aggregations.{{fieldName}}.buckets.key")
       .groupName("options")
       .groupPattern("{{id[0]}}--{{type}}--{{category}}--{{fieldName}}")
@@ -665,7 +683,9 @@ resultparser.Parser = (function () {
       var propertyNameWithoutArrayIndizes = entry.name.replace(removeArrayBracketsRegEx, "");
       if (description.matchesPropertyName(propertyNameWithoutArrayIndizes)) {
         var descibedEntry = new resultparser.DescribedEntryCreator(entry, description);
-        filtered.push(descibedEntry);
+        if (descibedEntry.isMatchingId) {
+          filtered.push(descibedEntry);
+        }
       }
     });
     return filtered;

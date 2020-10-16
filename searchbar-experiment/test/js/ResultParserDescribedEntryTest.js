@@ -45,7 +45,6 @@ describe("resultparser.DescribedEntry", function () {
       rawEntry.name = "responses[0].hits.hits[3]._source.tag[5]";
       expect(describedEntry.displayName).toEqual(expectedValue);
     });
-
   });
 
   describe("is created with the description and", function () {
@@ -61,6 +60,16 @@ describe("resultparser.DescribedEntry", function () {
 
     it("should contain the category of the description", function () {
       expect(describedEntry.category).toEqual("testcategory");
+    });
+
+    it("should have a matching id by default", function () {
+      expect(describedEntry.isMatchingId).toBeTrue();
+    });
+
+    it("shouldn't have a matching id when described prefix doesn't match", function () {
+      description.idStartsWith = "5.";
+      describedEntry = new resultparser.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.isMatchingId).toBeFalse();
     });
 
   });
