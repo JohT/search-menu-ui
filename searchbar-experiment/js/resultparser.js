@@ -22,7 +22,7 @@ var resultparser = resultparser || {};
  * @property {string} category - name of the category. Default = "". Could contain a symbol character or a short domain name. (e.g. "city")
  * @property {boolean} propertyPatternTemplateMode - "false"(default): propertyname needs to be equal to the pattern. "true" allows variables like "{{fieldname}}" inside the pattern.
  * @property {string} propertyPattern - property name pattern (without array indizes) to match
- * @property {string} idStartsWith - ""(default) matches all ids. String that needs to match the beginning of the id. E.g. "1." will match id="1.3.4" but not "0.1.2". 
+ * @property {string} idStartsWith - ""(default) matches all ids. String that needs to match the beginning of the id. E.g. "1." will match id="1.3.4" but not "0.1.2".
  * @property {propertyNameFunction} getDisplayNameForPropertyName - display name for the property. ""(default) last property name element with upper case first letter.
  * @property {propertyNameFunction} getFieldNameForPropertyName - field name for the property. "" (default) last property name element.
  * @property {string} groupName - name of the property, that contains grouped entries. Default="group".
@@ -107,7 +107,9 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
       this.description.getDisplayNameForPropertyName = removeArrayValuePropertyPostfixFunction(
         this.description.getDisplayNameForPropertyName
       );
-      this.description.getDisplayNameForPropertyName = upperCaseFirstLetterForFunction(this.description.getDisplayNameForPropertyName);
+      this.description.getDisplayNameForPropertyName = upperCaseFirstLetterForFunction(
+        this.description.getDisplayNameForPropertyName
+      );
       return this;
     };
     this.fieldName = function (value) {
@@ -416,7 +418,11 @@ resultparser.DescribedEntryCreator = (function () {
     for (var propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex++) {
       var propertyName = propertyNames[propertyIndex];
       var propertyValue = sourceDataObject[propertyName];
-      if (typeof propertyValue === "string" || typeof propertyValue === "number" || typeof propertyValue === "boolean") {
+      if (
+        typeof propertyValue === "string" ||
+        typeof propertyValue === "number" ||
+        typeof propertyValue === "boolean"
+      ) {
         replaced = replaced.replace("{{" + propertyName + "}}", propertyValue);
       }
     }
