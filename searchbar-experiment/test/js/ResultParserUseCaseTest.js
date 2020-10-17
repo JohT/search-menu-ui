@@ -205,5 +205,35 @@ describe("resultparser.Parser (use case)", function () {
       );
     });
 
+    it("all detail fields of one accountnumber should belong to it and should be equal to the test data", function () {
+      forEachEntryMatching(
+        function (entry) {
+          return (entry.type === "summary") && (entry.value === "<em>12345678905</em>");
+        },
+        function (entry) {
+          atLeastOneEntryAsserted = true;
+          var index; 
+          var detailField;
+          var detailFields = {};
+          for (index = 0; index < entry.details.length; index += 1) {
+            detailField = entry.details[index];
+            detailFields[detailField.fieldName] = detailField.value;
+          }
+          expect(detailFields.iban).toEqual("AT424321012345678905");
+          expect(detailFields.accountnumber).toEqual("12345678905");
+          expect(detailFields.customernumber).toEqual("00001234570");
+          expect(detailFields.tenantnumber).toEqual("999");
+          expect(detailFields.accounttype).toEqual("loan");
+          expect(detailFields.productidentifier).toEqual("priloa");
+          expect(detailFields.creationdate).toEqual("2020-08-08");
+          expect(detailFields.lastchangetimestamp).toEqual("2020-08-08T14:20:30Z");
+          expect(detailFields.name).toEqual("Clare Klammer");
+          expect(detailFields.currency).toEqual("CHF");
+          expect(detailFields.tags_comma_separated_values).toEqual("active, short-term");
+        }
+      );
+    });
+
+
   });
 });

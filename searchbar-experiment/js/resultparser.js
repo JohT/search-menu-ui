@@ -307,7 +307,7 @@ resultparser.DescribedEntryCreator = (function () {
     this.fieldName = description.getFieldNameForPropertyName(propertyNameWithoutArrayIndizes);
     this.value = entry.value;
     this._description = description;
-    this.isMatchingId = (description.idStartsWith == "")? true : indizes.pointDelimited.startsWith(description.idStartsWith);
+    this.isMatchingId = indizes.pointDelimited.startsWith(description.idStartsWith);
 
     this._identifier = {
       id: indizes.pointDelimited,

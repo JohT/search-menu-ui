@@ -1,16 +1,19 @@
 "use strict";
 
 describe("resultparser.DescribedEntry", function () {
-  var description = new resultparser.PropertyStructureDescriptionBuilder().type("testtype").category("testcategory").build();
-  var rawEntry = { name: "responses[0].hits.hits[3]._source.tag[5]", value: "inactive" };
+  var description;
+  var rawEntry;
   var describedEntry;
 
   beforeEach(function () {
-    describedEntry = new resultparser.DescribedEntryCreator(rawEntry, description);
   });
 
   describe("is created with the raw entry and", function () {
-    beforeEach(function () {});
+    beforeEach(function () {
+      rawEntry = { name: "responses[0].hits.hits[3]._source.tag[5]", value: "inactive" };
+      description = new resultparser.PropertyStructureDescriptionBuilder().type("testtype").category("testcategory").build();
+      describedEntry = new resultparser.DescribedEntryCreator(rawEntry, description);
+    });
 
     it("should contain the raw property name", function () {
       var expectedValue = rawEntry.name;
@@ -48,7 +51,11 @@ describe("resultparser.DescribedEntry", function () {
   });
 
   describe("is created with the description and", function () {
-    beforeEach(function () {});
+    beforeEach(function () {
+      rawEntry = { name: "responses[0].hits.hits[3]._source.tag[5]", value: "inactive" };
+      description = new resultparser.PropertyStructureDescriptionBuilder().type("testtype").category("testcategory").build();
+      describedEntry = new resultparser.DescribedEntryCreator(rawEntry, description);
+    });
 
     it("should contain the description as internal property", function () {
       expect(describedEntry._description).toEqual(description);
@@ -66,6 +73,13 @@ describe("resultparser.DescribedEntry", function () {
       expect(describedEntry.isMatchingId).toBeTrue();
     });
 
+    it("should have a matching id when described prefix matches", function () {
+      description.idStartsWith = "1.3";
+      rawEntry.name = "responses[1].hits.hits[3]._source.tag[5]";
+      describedEntry = new resultparser.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.isMatchingId).toBeTrue();
+    });
+
     it("shouldn't have a matching id when described prefix doesn't match", function () {
       description.idStartsWith = "5.";
       describedEntry = new resultparser.DescribedEntryCreator(rawEntry, description);
@@ -75,7 +89,11 @@ describe("resultparser.DescribedEntry", function () {
   });
 
   describe("resolves all pattern of the description while creation and ", function () {
-    beforeEach(function () {});
+    beforeEach(function () {
+      rawEntry = { name: "responses[0].hits.hits[3]._source.tag[5]", value: "inactive" };
+      description = new resultparser.PropertyStructureDescriptionBuilder().type("testtype").category("testcategory").build();
+      describedEntry = new resultparser.DescribedEntryCreator(rawEntry, description);
+    });
 
     it("should contain the group id derived from the groupPattern", function () {
       var expectedValue = "testtype-testcategory";
@@ -107,4 +125,4 @@ describe("resultparser.DescribedEntry", function () {
 
   });
 
-})
+});
