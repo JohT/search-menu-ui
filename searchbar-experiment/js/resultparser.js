@@ -470,69 +470,6 @@ resultparser.Parser = (function () {
     return propertiesAsArray(processedData);
   }
 
-  //TODO Only to try out
-  function introspectJson(jsonData) {
-    console.log("full assembly line:");
-    var allDescriptions = [];
-    allDescriptions.push(summariesDescription());
-    allDescriptions.push(highlightedDescription());
-    allDescriptions.push(detailsDescription());
-    allDescriptions.push(filtersDescription());
-    console.log(processJsonUsingDescriptions(jsonData, allDescriptions));
-    return jsonData;
-  }
-
-  //TODO Only to try out
-  function summariesDescription() {
-    return new resultparser.PropertyStructureDescriptionBuilder()
-      .type("summary")
-      .category("Konto")
-      .propertyPatternEqualMode()
-      .propertyPattern("responses.hits.hits._source.kontonummer")
-      .groupName("summaries")
-      .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
-      .deduplicationPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}--{{fieldName}}")
-      .build();
-  }
-
-  //TODO Only to try out
-  function highlightedDescription() {
-    return new resultparser.PropertyStructureDescriptionBuilder()
-      .type("summary")
-      .category("Konto")
-      .propertyPatternEqualMode()
-      .propertyPattern("responses.hits.hits.highlight.kontonummer")
-      .groupName("summaries")
-      .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
-      .deduplicationPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}--{{fieldName}}")
-      .build();
-  }
-
-  //TODO Only to try out
-  function detailsDescription() {
-    return new resultparser.PropertyStructureDescriptionBuilder()
-      .type("detail")
-      .category("Konto")
-      .propertyPatternTemplateMode()
-      .propertyPattern("responses.hits.hits._source.{{fieldName}}")
-      .groupName("details")
-      .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
-      .groupDestinationPattern("Konto--summary--{{id[0]}}--{{id[1]}}")
-      .build();
-  }
-
-  //TODO Only to try out
-  function filtersDescription() {
-    return new resultparser.PropertyStructureDescriptionBuilder()
-      .type("filter")
-      .category("Konto")
-      .propertyPatternTemplateMode()
-      .propertyPattern("responses.aggregations.{{fieldName}}.buckets.key")
-      .groupName("options")
-      .groupPattern("{{id[0]}}--{{type}}--{{category}}--{{fieldName}}")
-      .build();
-  }
-
   /**
    * Takes two arrays of objects, e.g. [{id: B, value: 2},{id: C, value: 3}]
    * and [{id: A, value: 1},{id: B, value: 4}] and merges them into one:
@@ -817,7 +754,6 @@ resultparser.Parser = (function () {
    * @scope resultparser.Parser
    */
   return {
-    processJsonUsingDescriptions: processJsonUsingDescriptions,
-    introspectJson: introspectJson //TODO remove when done
+    processJsonUsingDescriptions: processJsonUsingDescriptions
   };
 })();
