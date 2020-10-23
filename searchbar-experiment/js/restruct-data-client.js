@@ -15,55 +15,55 @@ restruct.Data = (function () {
     allDescriptions.push(highlightedDescription());
     allDescriptions.push(detailsDescription());
     allDescriptions.push(filtersDescription());
-    var restructured = resultparser.Parser.processJsonUsingDescriptions(jsonData, allDescriptions);
+    var restructured = datarestructor.Restructor.processJsonUsingDescriptions(jsonData, allDescriptions);
     console.log(restructured);
     return jsonData;
   }
 
   function summariesDescription() {
-    return new resultparser.PropertyStructureDescriptionBuilder()
+    return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("Konto")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.kontonummer")
       .groupName("summaries")
-      .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
-      .deduplicationPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}--{{fieldName}}")
+      .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+      .deduplicationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}--{{fieldName}}")
       .build();
   }
 
   function highlightedDescription() {
-    return new resultparser.PropertyStructureDescriptionBuilder()
+    return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("Konto")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits.highlight.kontonummer")
       .groupName("summaries")
-      .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
-      .deduplicationPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}--{{fieldName}}")
+      .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+      .deduplicationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}--{{fieldName}}")
       .build();
   }
 
   function detailsDescription() {
-    return new resultparser.PropertyStructureDescriptionBuilder()
+    return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("detail")
       .category("Konto")
       .propertyPatternTemplateMode()
       .propertyPattern("responses.hits.hits._source.{{fieldName}}")
       .groupName("details")
-      .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
-      .groupDestinationPattern("Konto--summary--{{id[0]}}--{{id[1]}}")
+      .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+      .groupDestinationPattern("Konto--summary--{{index[0]}}--{{index[1]}}")
       .build();
   }
 
   function filtersDescription() {
-    return new resultparser.PropertyStructureDescriptionBuilder()
+    return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("filter")
       .category("Konto")
       .propertyPatternTemplateMode()
       .propertyPattern("responses.aggregations.{{fieldName}}.buckets.key")
       .groupName("options")
-      .groupPattern("{{id[0]}}--{{type}}--{{category}}--{{fieldName}}")
+      .groupPattern("{{index[0]}}--{{type}}--{{category}}--{{fieldName}}")
       .build();
   }
 

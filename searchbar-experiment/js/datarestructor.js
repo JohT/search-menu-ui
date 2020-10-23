@@ -1,15 +1,15 @@
 /**
- * @fileOverview resultparser for the web search client
+ * @fileOverview datarestructor for the web search client
  * @version ${project.version}
  */
 
 /**
- * resultparser namespace declaration.
+ * datarestructor namespace declaration.
  * It contains all functions to convert a JSON into enumerated list entries.
  * Workflow: JSON -> flatten -> mark and identify -> add array fields -> deduplicate -> group -> flatten again
  * @default {}
  */
-var resultparser = resultparser || {};
+var datarestructor = datarestructor || {};
 
 /**
  * @callback propertyNameFunction
@@ -21,13 +21,13 @@ var resultparser = resultparser || {};
  * @property {string} type - ""(default). Some examples: "summary" for e.g. a list overview. "detail" e.g. when a summary is selected. "filter" e.g. for field/value pair results that can be selected as search parameters.
  * @property {string} category - name of the category. Default = "". Could contain a symbol character or a short domain name. (e.g. "city")
  * @property {boolean} propertyPatternTemplateMode - "false"(default): propertyname needs to be equal to the pattern. "true" allows variables like "{{fieldname}}" inside the pattern.
- * @property {string} propertyPattern - property name pattern (without array indizes) to match
- * @property {string} idStartsWith - ""(default) matches all ids. String that needs to match the beginning of the id. E.g. "1." will match id="1.3.4" but not "0.1.2".
+ * @property {string} propertyPattern - property name pattern (without array indices) to match
+ * @property {string} indexStartsWith - ""(default) matches all ids. String that needs to match the beginning of the id. E.g. "1." will match id="1.3.4" but not "0.1.2".
  * @property {propertyNameFunction} getDisplayNameForPropertyName - display name for the property. ""(default) last property name element with upper case first letter.
  * @property {propertyNameFunction} getFieldNameForPropertyName - field name for the property. "" (default) last property name element.
  * @property {string} groupName - name of the property, that contains grouped entries. Default="group".
- * @property {string} groupPattern - Pattern that descibes how to group entries. "groupName" defines the name of this group. A pattern may contain variables in double curly brackets {{variable}}.
- * @property {string} groupDestinationPattern - Pattern that descibes where the group should be moved to. Default=""=Group will not be moved. A pattern may contain variables in double curly brackets {{variable}}.
+ * @property {string} groupPattern - Pattern that describes how to group entries. "groupName" defines the name of this group. A pattern may contain variables in double curly brackets {{variable}}.
+ * @property {string} groupDestinationPattern - Pattern that describes where the group should be moved to. Default=""=Group will not be moved. A pattern may contain variables in double curly brackets {{variable}}.
  * @property {string} deduplicationPattern - Pattern to use to remove duplicate entries. A pattern may contain variables in double curly brackets {{variable}}.
  */
 
@@ -39,7 +39,7 @@ var resultparser = resultparser || {};
  *
  * @namespace
  */
-resultparser.PropertyStructureDescriptionBuilder = (function () {
+datarestructor.PropertyStructureDescriptionBuilder = (function () {
   "use strict";
 
   /**
@@ -51,7 +51,7 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
       category: "",
       propertyPatternTemplateMode: false,
       propertyPattern: "",
-      idStartsWith: "",
+      indexStartsWith: "",
       groupName: "group",
       groupPattern: "",
       groupDestinationPattern: "",
@@ -95,8 +95,8 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
      *  E.g. "1." will match id="1.3.4" but not "0.1.2".
      *  Default is "" which will match every id.
      */
-    this.idStartsWith = function (value) {
-      this.description.idStartsWith = value;
+    this.indexStartsWith = function (value) {
+      this.description.indexStartsWith = value;
       return this;
     };
     this.displayPropertyName = function (value) {
@@ -172,17 +172,17 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
   function createFunctionMatchesPropertyName(description) {
     var propertyPatternToMatch = description.propertyPattern; // closure (closed over) parameter
     if (!isSpecifiedString(propertyPatternToMatch)) {
-      return function (propertyNameWithoutArrayIndizes) {
+      return function (propertyNameWithoutArrayIndices) {
         return false; // Without a propertyPattern, no property will match (deactivated mark/identify).
       };
     }
     if (description.propertyPatternTemplateMode) {
-      return function (propertyNameWithoutArrayIndizes) {
-        return templateModePatternRegexForPattern(propertyPatternToMatch).exec(propertyNameWithoutArrayIndizes) != null;
+      return function (propertyNameWithoutArrayIndices) {
+        return templateModePatternRegexForPattern(propertyPatternToMatch).exec(propertyNameWithoutArrayIndices) != null;
       };
     }
-    return function (propertyNameWithoutArrayIndizes) {
-      return propertyNameWithoutArrayIndizes === propertyPatternToMatch;
+    return function (propertyNameWithoutArrayIndices) {
+      return propertyNameWithoutArrayIndices === propertyPatternToMatch;
     };
   }
 
@@ -259,7 +259,7 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
 
   /**
    * Public interface
-   * @scope resultparser.PropertyStructureDescriptionBuilder
+   * @scope datarestructor.PropertyStructureDescriptionBuilder
    */
   return PropertyStructureDescription;
 })();
@@ -270,14 +270,16 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
  * @property {string} type - type of the result from PropertyStructureDescription
  * @property {string} displayName - display name extracted from the point separated hierarchical property name, e.g. "Name"
  * @property {string} fieldName - field name extracted from the point separated hierarchical property name, e.g. "name"
- * @property {Object} _identifier - internal structure for identifier. Avoid using it ourside since it may change.
- * @property {string} _identifier.id - array indizes in hierarchical order separated by points, e.g. "0.0"
+ * @property {string} value - content of the field
+ * @property {boolean} isMatchingIndex - true, when _identifier.index matches the described "indexStartsWith"
+ * @property {Object} _identifier - internal structure for identifier. Avoid using it outside since it may change.
+ * @property {string} _identifier.index - array indices in hierarchical order separated by points, e.g. "0.0"
  * @property {string} _identifier.value - the (single) value of the "flattened" property, e.g. "Smith"
- * @property {string} _identifier.propertyNamesWithArrayIndizes - the "original" flattened property name in hierarchical order separated by points, e.g. "responses[0].hits.hits[0]._source.name"
- * @property {string} _identifier.propertyNameWithoutArrayIndizes - same as propertyNamesWithArrayIndizes but without array indizes, e.g. "responses.hits.hits._source.name"
+ * @property {string} _identifier.propertyNameWithArrayIndices - the "original" flattened property name in hierarchical order separated by points, e.g. "responses[0].hits.hits[0]._source.name"
+ * @property {string} _identifier.propertyNameWithoutArrayIndices - same as propertyNamesWithArrayIndices but without array indices, e.g. "responses.hits.hits._source.name"
  * @property {string} _identifier.groupId - Contains the resolved groupPattern from the PropertyStructureDescription. Entries with the same id will be grouped into the "groupName" of the PropertyStructureDescription.
  * @property {string} _identifier.groupDestinationId - Contains the resolved groupDestinationPattern from the PropertyStructureDescription. Entries with this id will be moved to the given destination group.
- * @property {string} _identifier.deduplicationId - Contains the resolved deduplicationPattern from the PropertyStructureDescription. Entries with the same id will be considert to be a duplicate and hence removed.
+ * @property {string} _identifier.deduplicationId - Contains the resolved deduplicationPattern from the PropertyStructureDescription. Entries with the same id will be considered to be a duplicate and hence removed.
  * @property {Object} _description - PropertyStructureDescription for internal use. Avoid using it outside since it may change.
  */
 
@@ -291,7 +293,7 @@ resultparser.PropertyStructureDescriptionBuilder = (function () {
  *
  * @namespace
  */
-resultparser.DescribedEntryCreator = (function () {
+datarestructor.DescribedEntryCreator = (function () {
   "use strict";
 
   var removeArrayBracketsRegEx = new RegExp("\\[\\d+\\]", "gi");
@@ -300,39 +302,39 @@ resultparser.DescribedEntryCreator = (function () {
    * Constructor function and container for everything, that needs to exist per instance.
    */
   function DescribedEntry(entry, description) {
-    var indizes = indizesOf(entry.name);
-    var propertyNameWithoutArrayIndizes = entry.name.replace(removeArrayBracketsRegEx, "");
+    var indices = indicesOf(entry.name);
+    var propertyNameWithoutArrayIndices = entry.name.replace(removeArrayBracketsRegEx, "");
 
     this.category = description.category;
     this.type = description.type;
-    this.displayName = description.getDisplayNameForPropertyName(propertyNameWithoutArrayIndizes);
-    this.fieldName = description.getFieldNameForPropertyName(propertyNameWithoutArrayIndizes);
+    this.displayName = description.getDisplayNameForPropertyName(propertyNameWithoutArrayIndices);
+    this.fieldName = description.getFieldNameForPropertyName(propertyNameWithoutArrayIndices);
     this.value = entry.value;
+    this.isMatchingIndex = indices.pointDelimited.startsWith(description.indexStartsWith);
     this._description = description;
-    this.isMatchingId = indizes.pointDelimited.startsWith(description.idStartsWith);
 
     this._identifier = {
-      id: indizes.pointDelimited,
-      propertyNameWithArrayIndizes: entry.name,
-      propertyNameWithoutArrayIndizes: propertyNameWithoutArrayIndizes,
+      index: indices.pointDelimited,
+      propertyNameWithArrayIndices: entry.name,
+      propertyNameWithoutArrayIndices: propertyNameWithoutArrayIndices,
       groupId: "",
       groupDestinationId: "",
       deduplicationId: ""
     };
     this._identifier.groupId = replaceVariablesOfAll(
-      replaceIndexVariables(description.groupPattern, indizes, "id"),
+      replaceIndexVariables(description.groupPattern, indices, "index"),
       this,
       this._description,
       this._identifier
     );
     this._identifier.groupDestinationId = replaceVariablesOfAll(
-      replaceIndexVariables(description.groupDestinationPattern, indizes, "id"),
+      replaceIndexVariables(description.groupDestinationPattern, indices, "index"),
       this,
       this._description,
       this._identifier
     );
     this._identifier.deduplicationId = replaceVariablesOfAll(
-      replaceIndexVariables(description.deduplicationPattern, indizes, "id"),
+      replaceIndexVariables(description.deduplicationPattern, indices, "index"),
       this,
       this._description,
       this._identifier
@@ -343,11 +345,11 @@ resultparser.DescribedEntryCreator = (function () {
    * Returns "1.12.123" and [1,12,123] for "results[1].hits.hits[12].aggregates[123]".
    *
    * @param {String} fullPropertyName
-   * @return {ExctractedIndizes} extracted indizes in different representations
+   * @return {ExtractedIndices} extracted indices in different representations
    */
-  function indizesOf(fullPropertyName) {
+  function indicesOf(fullPropertyName) {
     var arrayBracketsRegEx = new RegExp("\\[(\\d+)\\]", "gi");
-    return indizesOfWithRegex(fullPropertyName, arrayBracketsRegEx);
+    return indicesOfWithRegex(fullPropertyName, arrayBracketsRegEx);
   }
 
   /**
@@ -355,9 +357,9 @@ resultparser.DescribedEntryCreator = (function () {
    *
    * @param {string} fullPropertyName
    * @param {RegExp} regexWithOneNumberGroup
-   * @return {ExctractedIndizes} extracted indizes in different representations
+   * @return {ExtractedIndices} extracted indices in different representations
    */
-  function indizesOfWithRegex(fullPropertyName, regexWithOneNumberGroup) {
+  function indicesOfWithRegex(fullPropertyName, regexWithOneNumberGroup) {
     var pointDelimited = "";
     var numberArray = [];
     var match;
@@ -376,15 +378,17 @@ resultparser.DescribedEntryCreator = (function () {
 
   /**
    * Replaces all indexed variables in double curly brackets, e.g. {{property[2]}},
-   * with the value of indizes, e.g. value of index 2 of [1,12,123] is 123, and the given propertyname.
+   * with the value of indices, e.g. value of index 2 of [1,12,123] is 123, and the given propertyname.
    */
-  function replaceIndexVariables(stringContainingVariables, indizes, propertyname) {
+  function replaceIndexVariables(stringContainingVariables, indices, propertyname) {
     var replaced = stringContainingVariables;
     var indexedVariableWithArrayIndex = new RegExp("\\{\\{" + propertyname + "\\[(\\d+)\\]\\}\\}", "gi");
-    var indexedVariables = indizesOfWithRegex(stringContainingVariables, indexedVariableWithArrayIndex);
-    for (var varPos = 0; varPos < indexedVariables.numberArray.length; varPos++) {
-      var idIndex = indexedVariables.numberArray[varPos];
-      replaced = replaced.replace("{{" + propertyname + "[" + idIndex + "]}}", indizes.numberArray[idIndex]);
+    var indexedVariables = indicesOfWithRegex(stringContainingVariables, indexedVariableWithArrayIndex);
+    var varPos = 0;
+    var idIndex = 0;
+    for (varPos = 0; varPos < indexedVariables.numberArray.length; varPos++) {
+      idIndex = indexedVariables.numberArray[varPos];
+      replaced = replaced.replace("{{" + propertyname + "[" + idIndex + "]}}", indices.numberArray[idIndex]);
     }
     return replaced;
   }
@@ -398,8 +402,10 @@ resultparser.DescribedEntryCreator = (function () {
    */
   function replaceVariablesOfAll(stringContainingVariables, varArgs) {
     var replaced = stringContainingVariables;
-    for (var index = 1; index < arguments.length; index++) {
-      var nextSource = arguments[index];
+    var index = 1;
+    var nextSource = "";
+    for (index = 1; index < arguments.length; index++) {
+      nextSource = arguments[index];
       replaced = replaceVariables(replaced, nextSource);
     }
     return replaced;
@@ -415,9 +421,12 @@ resultparser.DescribedEntryCreator = (function () {
   function replaceVariables(stringContainingVariables, sourceDataObject) {
     var replaced = stringContainingVariables;
     var propertyNames = Object.keys(sourceDataObject);
-    for (var propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex++) {
-      var propertyName = propertyNames[propertyIndex];
-      var propertyValue = sourceDataObject[propertyName];
+    var propertyIndex = 0;
+    var propertyName = "";
+    var propertyValue = "";
+    for (propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex++) {
+      propertyName = propertyNames[propertyIndex];
+      propertyValue = sourceDataObject[propertyName];
       if (
         typeof propertyValue === "string" ||
         typeof propertyValue === "number" ||
@@ -431,12 +440,12 @@ resultparser.DescribedEntryCreator = (function () {
 
   /**
    * Public interface
-   * @scope resultparser.DescribedEntryCreator
+   * @scope datarestructor.DescribedEntryCreator
    */
   return DescribedEntry;
 })();
 
-resultparser.Parser = (function () {
+datarestructor.Restructor = (function () {
   "use strict";
 
   /**
@@ -480,7 +489,7 @@ resultparser.Parser = (function () {
    * determined by the order of the array elements, whereas the first
    * array comes before the second one. This means, that entries with the
    * same id in the second array overwrite entries in the first array,
-   * and entries occuring later in the array overwrite earlier ones,
+   * and entries that occur later in the array overwrite earlier ones,
    * if they have the same id.
    *
    * The id is extracted from every element using the given function.
@@ -623,10 +632,10 @@ resultparser.Parser = (function () {
     var filtered = [];
 
     flattenedData.filter(function (entry) {
-      var propertyNameWithoutArrayIndizes = entry.name.replace(removeArrayBracketsRegEx, "");
-      if (description.matchesPropertyName(propertyNameWithoutArrayIndizes)) {
-        var descibedEntry = new resultparser.DescribedEntryCreator(entry, description);
-        if (descibedEntry.isMatchingId) {
+      var propertyNameWithoutArrayIndices = entry.name.replace(removeArrayBracketsRegEx, "");
+      if (description.matchesPropertyName(propertyNameWithoutArrayIndices)) {
+        var descibedEntry = new datarestructor.DescribedEntryCreator(entry, description);
+        if (descibedEntry.isMatchingIndex) {
           filtered.push(descibedEntry);
         }
       }
@@ -706,8 +715,8 @@ resultparser.Parser = (function () {
   }
 
   /**
-   * @typedef {Object} ExctractedIndizes
-   * @property {string} pointDelimited - bracket indizes separated by points
+   * @typedef {Object} ExtractedIndices
+   * @property {string} pointDelimited - bracket indices separated by points
    * @property {number[]} numberArray as array of numbers
    */
   function propertiesAsArray(groupedData) {
@@ -751,7 +760,7 @@ resultparser.Parser = (function () {
 
   /**
    * Public interface
-   * @scope resultparser.Parser
+   * @scope datarestructor.Restructor
    */
   return {
     processJsonUsingDescriptions: processJsonUsingDescriptions

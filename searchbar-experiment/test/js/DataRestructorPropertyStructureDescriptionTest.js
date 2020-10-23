@@ -1,8 +1,8 @@
-describe("resultparser.PropertyStructureDescription", function () {
+describe("datarestructor.PropertyStructureDescription", function () {
   var description;
 
   beforeEach(function () {
-    description = new resultparser.PropertyStructureDescriptionBuilder();
+    description = new datarestructor.PropertyStructureDescriptionBuilder();
   });
 
   describe("is created by the builder and", function () {
@@ -36,10 +36,10 @@ describe("resultparser.PropertyStructureDescription", function () {
       expect(result.propertyPattern).toEqual(expectedValue);
     });
 
-    it("should contain the given idStartsWith", function () {
+    it("should contain the given indexStartsWith", function () {
       var expectedValue = "1.";
-      var result = description.idStartsWith(expectedValue).build();
-      expect(result.idStartsWith).toEqual(expectedValue);
+      var result = description.indexStartsWith(expectedValue).build();
+      expect(result.indexStartsWith).toEqual(expectedValue);
     });
 
     it("should contain the given groupName", function () {
@@ -85,8 +85,8 @@ describe("resultparser.PropertyStructureDescription", function () {
       expect(defaultDescription.propertyPattern).toEqual("");
     });
 
-    it("should contain an empty idStartsWith", function () {
-      expect(defaultDescription.idStartsWith).toEqual("");
+    it("should contain an empty indexStartsWith", function () {
+      expect(defaultDescription.indexStartsWith).toEqual("");
     });
 
     it("should contain the default propertyPatternEqualMode", function () {
@@ -117,7 +117,7 @@ describe("resultparser.PropertyStructureDescription", function () {
     it("should contain the directly set display name", function () {
       var expectedValue = "testDisplayName";
       var result = description.displayPropertyName(expectedValue).build();
-      expect(result.getDisplayNameForPropertyName("property.doesnt.matter.here")).toEqual(expectedValue);
+      expect(result.getDisplayNameForPropertyName("property.doesn't.matter.here")).toEqual(expectedValue);
     });
 
     it("should automatically contain the simple display name when fieldName is null", function () {
@@ -163,7 +163,7 @@ describe("resultparser.PropertyStructureDescription", function () {
     it("should contain the directly set field name", function () {
       var expectedValue = "test-field-name";
       var result = description.fieldName(expectedValue).build();
-      expect(result.getFieldNameForPropertyName("property.doesnt.matter.here")).toEqual(expectedValue);
+      expect(result.getFieldNameForPropertyName("property.doesn't.matter.here")).toEqual(expectedValue);
     });
 
     it("should automatically contain the simple property name when fieldName is null", function () {

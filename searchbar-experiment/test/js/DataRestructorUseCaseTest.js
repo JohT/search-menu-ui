@@ -1,18 +1,18 @@
 "use strict";
 
-describe("resultparser.Parser (use case)", function () {
+describe("datarestructor.Restructor (use case)", function () {
   var jsonData;
-  var parserUnderTest;
+  var restructorUnderTest;
 
   beforeEach(function () {
     jsonData = testdata.UserCase.getJson();
-    parserUnderTest = resultparser.Parser;
+    restructorUnderTest = datarestructor.Restructor;
   });
 
   //strictly speaking, this is not a unit test. It could be seen as integration test.
-  //It shows an example on how to use the resultparser.
+  //It shows an example on how to use the datarestructor.
   describe("processes JSON using descriptions based on a complete use case", function () {
-    var parserResults;
+    var restructorResults;
     var atLeastOneEntryAsserted;
 
     beforeEach(function () {
@@ -22,7 +22,7 @@ describe("resultparser.Parser (use case)", function () {
       descriptions.push(highlightedDescription());
       descriptions.push(detailsDescription());
       descriptions.push(filtersDescription());
-      parserResults = parserUnderTest.processJsonUsingDescriptions(jsonData, descriptions);
+      restructorResults = restructorUnderTest.processJsonUsingDescriptions(jsonData, descriptions);
     });
 
     afterEach(function () {
@@ -30,57 +30,61 @@ describe("resultparser.Parser (use case)", function () {
     });
 
     function summariesDescription() {
-      return new resultparser.PropertyStructureDescriptionBuilder()
+      return new datarestructor.PropertyStructureDescriptionBuilder()
         .type("summary")
         .category("account")
         .propertyPatternEqualMode()
         .propertyPattern("responses.hits.hits._source.accountnumber")
         .groupName("summaries")
-        .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
-        .deduplicationPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}--{{fieldName}}")
+        .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+        .deduplicationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}--{{fieldName}}")
+        .indexStartsWith("0.")
         .build();
     }
 
     function highlightedDescription() {
-      return new resultparser.PropertyStructureDescriptionBuilder()
+      return new datarestructor.PropertyStructureDescriptionBuilder()
         .type("summary")
         .category("account")
         .propertyPatternEqualMode()
         .propertyPattern("responses.hits.hits.highlight.accountnumber")
         .groupName("summaries")
-        .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
-        .deduplicationPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}--{{fieldName}}")
+        .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+        .deduplicationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}--{{fieldName}}")
+        .indexStartsWith("0.")
         .build();
     }
 
     function detailsDescription() {
-      return new resultparser.PropertyStructureDescriptionBuilder()
+      return new datarestructor.PropertyStructureDescriptionBuilder()
         .type("detail")
         .category("account")
         .propertyPatternTemplateMode()
         .propertyPattern("responses.hits.hits._source.{{fieldName}}")
         .groupName("details")
-        .groupPattern("{{category}}--{{type}}--{{id[0]}}--{{id[1]}}")
-        .groupDestinationPattern("account--summary--{{id[0]}}--{{id[1]}}")
+        .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+        .groupDestinationPattern("account--summary--{{index[0]}}--{{index[1]}}")
+        .indexStartsWith("0.")
         .build();
     }
 
     function filtersDescription() {
-      return new resultparser.PropertyStructureDescriptionBuilder()
+      return new datarestructor.PropertyStructureDescriptionBuilder()
         .type("filter")
         .category("account")
         .propertyPatternTemplateMode()
         .propertyPattern("responses.aggregations.{{fieldName}}.buckets.key")
         .groupName("options")
-        .groupPattern("{{id[0]}}--{{type}}--{{category}}--{{fieldName}}")
+        .groupPattern("{{index[0]}}--{{type}}--{{category}}--{{fieldName}}")
+        .indexStartsWith("1.")
         .build();
     }
 
     function forEachEntry(callback) {
-      expect(parserResults.length).toBeGreaterThan(3);
+      expect(restructorResults.length).toBeGreaterThan(3);
       var index = 0;
-      for (index = 0; index < parserResults.length; index += 1) {
-        callback(parserResults[index]);
+      for (index = 0; index < restructorResults.length; index += 1) {
+        callback(restructorResults[index]);
       }
     }
 
@@ -178,7 +182,7 @@ describe("resultparser.Parser (use case)", function () {
           atLeastOneEntryAsserted = true;
           expect(entry.value).toContain("<em>");
           expect(entry.value).toContain("</em>");
-          expect(entry._identifier.propertyNameWithoutArrayIndizes).toContain(".highlight.");
+          expect(entry._identifier.propertyNameWithoutArrayIndices).toContain(".highlight.");
         }
       );
     });
