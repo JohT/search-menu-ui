@@ -283,13 +283,13 @@ GET sites/_search
 }
 
 // Suche alle Tags
-GET sites/_search?filter_path=aggregations.tags.buckets.key,aggregations.tags.buckets.doc_count
+GET sites/_search?filter_path=aggregations.felder.buckets*
 {
     "size": 0,
     "aggs": {
-        "tags": {
+        "felder": {
             "terms": {
-                "field": "tags",
+                "field": "felder",
                 "size": 100
             }
         }
@@ -306,14 +306,20 @@ GET sites/_search/template
                 "must": [
                     {
                         "multi_match": {
-                            "query": "{{konto_prefix}}",
+                            "query": "{{site_prefix}}",
                             "type": "bool_prefix",
                             "fields": [
-                                "bezeichnung",
-                                "bezeichnung.shingles",
-                                "bezeichnung.shingles._2gram",
-                                "bezeichnung.shingles._3gram",
-                                "bezeichnung.shingles._index_prefix"
+                                "name",
+                                "name.shingles",
+                                "name.shingles._2gram",
+                                "name.shingles._3gram",
+                                "name.shingles._index_prefix",
+                                "feldnamen",
+                                "feldnamen.shingles",
+                                "feldnamen.shingles._2gram",
+                                "feldnamen.shingles._3gram",
+                                "feldnamen.shingles._index_prefix",
+                                "felder"
                             ]
                         }
                     },
@@ -323,35 +329,12 @@ GET sites/_search/template
                                 "query": "{{mandantennummer}}"
                             }
                         }
-                    },
-                    {
-                        "range": {
-                            "kundennummer": {
-                                "gte": "{{kundennummer}}{{^kundennummer}}0{{/kundennummer}}",
-                                "lte": "{{kundennummer}}{{^kundennummer}}99999999999{{/kundennummer}}"
-                            }
-                        }
                     }
                 ],
                 "should": [
                     {
                         "match": {
                             "geschaeftsart": "{{geschaeftsart}}{{^geschaeftsart}}giro{{/geschaeftsart}}"
-                        }
-                    },
-                    {
-                        "match": {
-                            "betreuerkennung": "{{betreuerkennung}}"
-                        }
-                    },
-                    {
-                        "match": {
-                            "produktkennung": "{{produktkennung}}"
-                        }
-                    },
-                    {
-                        "match": {
-                            "waehrungskennung": "{{waehrungskennung}}{{^waehrungskennung}}EUR{{/waehrungskennung}}"
                         }
                     }
                 ]
@@ -361,28 +344,21 @@ GET sites/_search/template
             "require_field_match": false,
             "fields": [
                 {
-                    "verfuegungsberechtigt": {}
-                },   
-                {
-                    "inhaber": {}
-                },
-                {
-                    "kontonummer": {}
-                },
-                {
-                    "iban": {}
-                }
+                "name": {}
+            },
+            {
+                "feldnamen": {}
+            },
+            {
+                "felder": {}
+            }
             ]
         }
     },
     "params": {
-        "konto_prefix": "AT",
+        "site_prefix": "über",
         "mandantennummer": 999,
-        "betreuerkennung": "SARCON"
-        //,"waehrungskennung": "EUR" //optional, default= EUR
-        //,"produktkennung": "KOMMERZ" //Optional
-        //,"geschaeftsart": "Giro"
-        //,"kundennummer": "00001234570",
+        "geschaeftsart": "Giro"
     }
 }
 
@@ -401,14 +377,20 @@ POST _scripts/konto_search_as_you_type_v1
                     "must": [
                         {
                             "multi_match": {
-                                "query": "{{konto_prefix}}",
+                                "query": "{{site_prefix}}",
                                 "type": "bool_prefix",
                                 "fields": [
-                                    "bezeichnung",
-                                    "bezeichnung.shingles",
-                                    "bezeichnung.shingles._2gram",
-                                    "bezeichnung.shingles._3gram",
-                                    "bezeichnung.shingles._index_prefix"
+                                    "name",
+                                    "name.shingles",
+                                    "name.shingles._2gram",
+                                    "name.shingles._3gram",
+                                    "name.shingles._index_prefix",
+                                    "feldnamen",
+                                    "feldnamen.shingles",
+                                    "feldnamen.shingles._2gram",
+                                    "feldnamen.shingles._3gram",
+                                    "feldnamen.shingles._index_prefix",
+                                    "felder"
                                 ]
                             }
                         },
@@ -418,14 +400,6 @@ POST _scripts/konto_search_as_you_type_v1
                                     "query": "{{mandantennummer}}"
                                 }
                             }
-                        },
-                        {
-                            "range": {
-                                "kundennummer": {
-                                    "gte": "{{kundennummer}}{{^kundennummer}}0{{/kundennummer}}",
-                                    "lte": "{{kundennummer}}{{^kundennummer}}99999999999{{/kundennummer}}"
-                                }
-                            }
                         }
                     ],
                     "should": [
@@ -433,21 +407,6 @@ POST _scripts/konto_search_as_you_type_v1
                             "match": {
                                 "geschaeftsart": "{{geschaeftsart}}{{^geschaeftsart}}giro{{/geschaeftsart}}"
                             }
-                        },
-                        {
-                            "match": {
-                                "betreuerkennung": "{{betreuerkennung}}"
-                            }
-                        },
-                        {
-                            "match": {
-                                "produktkennung": "{{produktkennung}}"
-                            }
-                        },
-                        {
-                        "match": {
-                            "waehrungskennung": "{{waehrungskennung}}{{^waehrungskennung}}EUR{{/waehrungskennung}}"
-                        }
                         }
                     ]
                 }
@@ -456,16 +415,13 @@ POST _scripts/konto_search_as_you_type_v1
                 "require_field_match": false,
                 "fields": [
                     {
-                        "verfuegungsberechtigt": {}
+                        "name": {}
                     },
                     {
-                        "inhaber": {}
+                        "feldnamen": {}
                     },
                     {
-                        "kontonummer": {}
-                    },
-                    {
-                        "iban": {}
+                        "felder": {}
                     }
                 ]
             }
@@ -478,13 +434,9 @@ GET sites/_search/template?filter_path=hits.total.value,hits.hits._source,hits.h
 {
     "id": "konto_search_as_you_type_v1",
     "params": {
-        "konto_prefix": "AT",
+        "site_prefix": "über",
         "mandantennummer": 999,
-        "betreuerkennung": "SARCON"
-        //,"waehrungskennung": "EUR" //optional, default= EUR
-        //,"produktkennung": "KOMMERZ" //Optional
-        //,"geschaeftsart": "Giro"
-        //,"kundennummer": "00001234570",
+        "geschaeftsart": "Giro"
     }
 }
 
