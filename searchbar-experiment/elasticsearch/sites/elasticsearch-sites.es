@@ -1,95 +1,82 @@
 // index setup, analyzer, searches, etc. for Konten (accounts)
-DELETE /konten
+DELETE /sites
 
-PUT /konten
+PUT /sites
 {
     "mappings": {
         "properties": {
-            "iban": {
-                "type": "keyword",
-                "normalizer": "namen_normalizer",
-                "copy_to": "bezeichnung" // copy to common "search as you type" field
-            },
-            "kontonummer": {
-                "type": "keyword",
-                "copy_to": "bezeichnung", // copy to common "search as you type" field
-                "fields": {
-                    "number": {
-                        "type": "long"
-                    }
-                }
-            },
-            "kundennummer": {
-                "type": "keyword",
-                "fields": {
-                    "number": {
-                        "type": "long"
-                    }
-                }
-            },
             "mandantennummer": {
                 "type": "keyword"
             },
+            "domain": {
+                "type": "keyword",
+                "normalizer": "namen_normalizer"
+            },            
             "geschaeftsart": {
                 "type": "keyword",
                 "normalizer": "namen_normalizer"
-            },
-            "produktkennung": {
-                "type": "keyword",
-                "normalizer": "namen_normalizer"
-            },
-            "waehrungskennung": {
-                "type": "keyword",
-                "normalizer": "namen_normalizer"
-            },
-            "betreuerkennung": {
-                "type": "keyword",
-                "normalizer": "lowercase_normalizer"
-            },
-            "tags": {
-                "type": "keyword",
-                "normalizer": "lowercase_normalizer"
-            },
-            "neuanlagedatum": {
-                "type": "date"
-            },
-            "aktualisierungsdatum": {
-                "type": "date"
-            },
-            "verfuegungsberechtigt": {
+            },            
+            "name": {
                 "type": "text",
-                "copy_to": "bezeichnung" // copy to common "search as you type" field
-            },
-            "inhaber": {
-                "type": "text",
-                "copy_to": "bezeichnung" // copy to common "search as you type" field
-            },
-            // Performance boost option that contains all search as you type contents in one property
-            "bezeichnung": {
-                "type": "text",
-                "analyzer": "namen_analyzer",
+                "analyzer": "german_decompound_analzer",
                 "term_vector": "with_positions_offsets", // for highlighting
-                "store": true,
                 "fields": {
                     "shingles": {
                         "type": "search_as_you_type"
                     }
                 }
+                //"copy_to": "suchbegriffe" // copy to common "search as you type" field
+            },
+            "feldnamen": {
+                "type": "text",
+                "analyzer": "german_decompound_analzer",
+                "term_vector": "with_positions_offsets", // for highlighting
+                "fields": {
+                    "shingles": {
+                        "type": "search_as_you_type"
+                    }
+                }
+                //"copy_to": "suchbegriffe" // copy to common "search as you type" field
+            },
+            "felder": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+            },
+            "urltemplate": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+            },
+            // Performance boost option that contains all search as you type contents in one property
+            // "suchbegriffe": {
+            //     "type": "text",
+            //     "analyzer": "namen_analyzer",
+            //     "term_vector": "with_positions_offsets", // for highlighting
+            //     "store": true,
+            //     "fields": {
+            //         "shingles": {
+            //             "type": "search_as_you_type"
+            //         }
+            //     }
+            // },
+            "neuanlagedatum": {
+                "type": "date"
+            },
+            "aktualisierungsdatum": {
+                "type": "date"
             }
         }
     },
     "settings": {
         "analysis": {
             "analyzer": {
-                "namen_analyzer": {
+                "german_decompound_analzer": {
                     "type": "custom",
                     "tokenizer": "standard",
-                    "char_filter": [
-                        "html_strip"
-                    ],
                     "filter": [
                         "lowercase",
-                        "asciifolding"
+                        "german_decompounder",
+                        "german_normalization",
+                        "german_stemmer"
                     ]
                 }
             },
@@ -108,11 +95,17 @@ PUT /konten
                     ]
                 }
             },
-            "tokenizer": {
-                "ngrams": {
-                    "type": "ngram",
-                    "min_gram": 3,
-                    "max_gram": 4
+            "filter": {
+                "german_decompounder": {
+                    "type": "hyphenation_decompounder",
+                    "word_list_path": "./analysis/dictionary/dictionary-de.txt",
+                    "hyphenation_patterns_path": "./analysis/hyphenation/de_DR.xml",
+                    "only_longest_match": true,
+                    "min_subword_size": 4
+                },
+                "german_stemmer": {
+                    "type": "stemmer",
+                    "language": "light_german"
                 }
             }
         }
@@ -120,170 +113,103 @@ PUT /konten
 }
 
 //test analyzer
-POST konten/_analyze
+POST sites/_analyze
 {
-  "analyzer": "namen_analyzer",
-  "text":     "1234 AT1234 Jack Bauer Kim Bauer"
+  "analyzer": "german_decompound_analzer",
+  "text":     "Jack Bauer Kim Bauer Kontoübersicht"
 }
 
-GET konten/_stats
-
-GET konten
-
-// Testkonten
-PUT konten/_doc/99912345678901
+// Test german analyzer
+POST _analyze
 {
-    "iban": "AT424321012345678901",
-    "kontonummer": "12345678901",
-    "kundennummer": "00001234567",
+    "tokenizer": "standard",
+    "filter": [
+        "lowercase",
+        {
+            "type": "hyphenation_decompounder",
+            "hyphenation_patterns_path": "./analysis/hyphenation/de_DR.xml",
+            "word_list_path": "./analysis/dictionary/dictionary-de.txt",
+            "only_longest_match": true,
+            "min_subword_size": 4
+        },
+        "german_normalization",
+        {
+            "type":       "stemmer",
+            "language":   "light_german"
+        }
+    ],
+    "text": "Kontoübersicht"
+}
+
+
+GET sites/_stats
+
+GET sites
+
+// Test-Sites
+PUT sites/_doc/default
+{
     "mandantennummer": "999",
+    "domain": "Konto",
     "geschaeftsart": "Giro",
-    "produktkennung": "GEHALT",
-    "neuanlagedatum": "2020-08-08",
-    "aktualisierungsdatum": "2020-08-08T08:31:30Z",
-    "verfuegungsberechtigt": "Hans Mustermann",
-    "betreuerkennung": "SARCON",
-    "waehrungskennung": "EUR",
-    "tags": [
-        "aktiv",
-        "online"
-    ]
+    "name": "Kontoübersicht",
+    "feldnamen": [
+        "iban",
+        "produkt",
+        "bezeichnung"
+    ],
+    "felder": [
+        "iban",
+        "prod",
+        "bez"
+    ],
+    "urltemplate": "https://httpbin.org/get?type=overview?account={{kontonummer}}",
+    "neuanlagedatum": "2020-10-31",
+    "aktualisierungsdatum": "2020-10-31T08:53:30Z"
 }
 
-PUT konten/_doc/99912345678902
+POST sites/_doc
 {
-    "iban": "AT424321012345678902",
-    "kontonummer": "12345678902",
-    "kundennummer": "00001234568",
     "mandantennummer": "999",
+    "domain": "Konto",
     "geschaeftsart": "Giro",
-    "produktkennung": "KOMMERZ",
-    "neuanlagedatum": "2020-08-08",
-    "aktualisierungsdatum": "2020-08-08T08:37:30Z",
-    "verfuegungsberechtigt": "Romed Giner",
-    "inhaber": "Giner KG",
-    "betreuerkennung": "KLAKLE",
-    "waehrungskennung": "EUR",
-    "tags": [
-        "aktiv",
-        "online"
-    ]
+    "name": "Habenzinsen",
+    "feldnamen": [
+        "habenzinssatz",
+        "bonuszinssatz",
+        "zinsanpassung"
+    ],
+    "felder": [
+        "hab",
+        "bon",
+        "zan"
+    ],
+    "urltemplate": "https://httpbin.org/get?type=interest?account={{kontonummer}}",
+    "neuanlagedatum": "2020-10-31",
+    "aktualisierungsdatum": "2020-10-31T09:06:30Z"
 }
 
-PUT konten/_doc/99912345678903
+POST sites/_doc
 {
-    "iban": "AT424321012345678903",
-    "kontonummer": "12345678903",
-    "kundennummer": "00001234569",
     "mandantennummer": "999",
-    "geschaeftsart": "Darlehen",
-    "produktkennung": "WOHNBAU",
-    "neuanlagedatum": "2020-08-08",
-    "aktualisierungsdatum": "2020-08-08T08:42:30Z",
-    "verfuegungsberechtigt": "Carlo Solér",
-    "betreuerkennung": "SARCON",
-    "waehrungskennung": "EUR",
-    "tags": [
-        "gelöscht",
-        "endfällig",
-        "langfristig"
-    ]
-}
-
-PUT konten/_doc/99912345678904
-{
-    "iban": "AT424321012345678904",
-    "kontonummer": "12345678904",
-    "kundennummer": "00001234569",
-    "mandantennummer": "999",
-    "geschaeftsart": "Giro",
-    "produktkennung": "PRIVKON",
-    "neuanlagedatum": "2020-08-08",
-    "aktualisierungsdatum": "2020-08-08T08:58:30Z",
-    "verfuegungsberechtigt": "Romed Giner",
-    "betreuerkennung": "KLAKLE",
-    "waehrungskennung": "EUR",
-    "tags": [
-        "aktiv"
-    ]
-}
-
-PUT konten/_doc/99912345678905
-{
-    "iban": "AT424321012345678905",
-    "kontonummer": "12345678905",
-    "kundennummer": "00001234570",
-    "mandantennummer": "999",
-    "geschaeftsart": "Darlehen",
-    "produktkennung": "PRIVKRE",
-    "neuanlagedatum": "2020-08-08",
-    "aktualisierungsdatum": "2020-08-08T14:20:30Z",
-    "verfuegungsberechtigt": "Klara Klammer",
-    "betreuerkennung": "KLAKLE",
-    "waehrungskennung": "CHF",
-    "tags": [
-        "aktiv",
-        "kurzfristig"
-    ]
-}
-
-PUT konten/_doc/99912345678906
-{
-    "iban": "AT424321012345678906",
-    "kontonummer": "12345678905",
-    "kundennummer": "00000000001",
-    "mandantennummer": "888",
-    "geschaeftsart": "Darlehen",
-    "produktkennung": "PRIVKRE",
-    "neuanlagedatum": "2020-08-08",
-    "aktualisierungsdatum": "2020-08-08T18:36:30Z",
-    "verfuegungsberechtigt": "Michael Mair",
-    "betreuerkennung": "MARSOM",
-    "waehrungskennung": "EUR",
-    "tags": [
-        "aktiv",
-        "kurzfristig"
-    ]
-}
-
-PUT konten/_doc/99912345678907
-{
-    "iban": "AT424321012345678907",
-    "kontonummer": "12345678907",
-    "kundennummer": "00001234571",
-    "mandantennummer": "999",
-    "geschaeftsart": "Giro",
-    "produktkennung": "TREUHND",
-    "neuanlagedatum": "2020-08-09",
-    "aktualisierungsdatum": "2020-08-09T08:20:30Z",
-    "verfuegungsberechtigt": "Carlo Martinez",
-    "betreuerkennung": "SARCON",
-    "waehrungskennung": "EUR",
-    "tags": [
-        "aktiv"
-    ]
-}
-
-PUT konten/_doc/99912345678908
-{
-    "iban": "AT424321012345678908",
-    "kontonummer": "12345678908",
-    "kundennummer": "00001234572",
-    "mandantennummer": "999",
-    "geschaeftsart": "Giro",
-    "produktkennung": "GEHALT",
-    "neuanlagedatum": "2020-08-09",
-    "aktualisierungsdatum": "2020-08-09T08:22:30Z",
-    "verfuegungsberechtigt": "Carmen Martin",
-    "betreuerkennung": "KLAKLE",
-    "waehrungskennung": "EUR",
-    "tags": [
-        "aktiv"
-    ]
+    "domain": "Kunde",
+    "name": "Kundenübersicht",
+    "feldnamen": [
+        "kontonummer",
+        "produkt",
+        "name"
+    ],
+    "felder": [
+        "kto",
+        "prod",
+        "nam"
+    ],
+    "urltemplate": "https://httpbin.org/get?type=interest?customer={{kundennummer}}",
+    "neuanlagedatum": "2020-10-31"
 }
 
 // alle konten eines mandanten
-GET konten/_search
+GET sites/_search
 {
     "query": {
         "match": {
@@ -294,10 +220,11 @@ GET konten/_search
     }
 }
 
-//search as you type for "konten"
+//TODO
+//search as you type for "sites"
 //?filter_path=hits.total.value,hits.hits._source
 //?stored_fields=true
-GET konten/_search
+GET sites/_search
 {
     "size": "20",
     "query": {
@@ -305,14 +232,20 @@ GET konten/_search
             "must": [
                 {
                     "multi_match": {
-                        "query": "at42",
+                        "query": "pro",
                         "type": "bool_prefix",
                         "fields": [
-                            "bezeichnung",
-                            "bezeichnung.shingles",
-                            "bezeichnung.shingles._2gram",
-                            "bezeichnung.shingles._3gram",
-                            "bezeichnung.shingles._index_prefix"
+                            "name",
+                            "name.shingles",
+                            "name.shingles._2gram",
+                            "name.shingles._3gram",
+                            "name.shingles._index_prefix",
+                            "feldnamen",
+                            "feldnamen.shingles",
+                            "feldnamen.shingles._2gram",
+                            "feldnamen.shingles._3gram",
+                            "feldnamen.shingles._index_prefix",
+                            "felder"
                         ]
                     }
                 },
@@ -329,21 +262,6 @@ GET konten/_search
                     "match": {
                         "geschaeftsart": "Giro"
                     }
-                },
-                {
-                    "match": {
-                        "betreuerkennung": "SARCON"
-                    }
-                },
-                {
-                    "match": {
-                        "produktkennung": "GEHALT"
-                    }
-                },
-                {
-                    "match": {
-                        "waehrungskennung": "EUR"
-                    }
                 }
             ]
         }
@@ -352,23 +270,20 @@ GET konten/_search
         "require_field_match": false,
         "fields": [
             {
-                "verfuegungsberechtigt": {}
+                "name": {}
             },
             {
-                "inhaber": {}
+                "feldnamen": {}
             },
             {
-                "kontonummer": {}
-            },
-            {
-                "iban": {}
+                "felder": {}
             }
         ]
     }
 }
 
 // Suche alle Tags
-GET konten/_search?filter_path=aggregations.tags.buckets.key,aggregations.tags.buckets.doc_count
+GET sites/_search?filter_path=aggregations.tags.buckets.key,aggregations.tags.buckets.doc_count
 {
     "size": 0,
     "aggs": {
@@ -382,7 +297,7 @@ GET konten/_search?filter_path=aggregations.tags.buckets.key,aggregations.tags.b
 }
 
 // test search template script
-GET konten/_search/template
+GET sites/_search/template
 {
     "source": {
         "size": 20,
@@ -559,7 +474,7 @@ POST _scripts/konto_search_as_you_type_v1
 }
 
 //run stored search template script with given parameters and filtered response
-GET konten/_search/template?filter_path=hits.total.value,hits.hits._source,hits.hits.highlight
+GET sites/_search/template?filter_path=hits.total.value,hits.hits._source,hits.hits.highlight
 {
     "id": "konto_search_as_you_type_v1",
     "params": {
@@ -634,7 +549,7 @@ POST _scripts/konto_tags_v1
 
 
 //execute stored search template script - konto_tags_v1
-GET konten/_search/template//?filter_path=aggregations.*.buckets
+GET sites/_search/template//?filter_path=aggregations.*.buckets
 {
     "id": "konto_tags_v1",
     "params": {
