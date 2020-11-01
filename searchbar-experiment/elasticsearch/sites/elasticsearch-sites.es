@@ -362,11 +362,55 @@ GET sites/_search/template
     }
 }
 
+
 // delete search template script
-DELETE _scripts/konto_search_as_you_type_v1
+DELETE _scripts/sites_default_v1
 
 // store search template script
-POST _scripts/konto_search_as_you_type_v1
+POST _scripts/sites_default_v1
+{
+    "script": {
+        "lang": "mustache",
+        "source": {
+            "size": 1,
+            "query": {
+                 "bool": {
+                    "must": [
+                        {
+                            "ids" : {
+                                "values" : ["default"]
+                            }
+                        },
+                        {
+                            "match": {
+                                "mandantennummer": {
+                                    "query": "{{mandantennummer}}"
+                                }
+                            }
+                        }
+                    ]
+                 }
+            }
+        }
+    }
+}
+
+//run stored search template script with given parameters and filtered response
+GET sites/_search/template?filter_path=hits.hits._source
+{
+    "id": "sites_default_v1",
+    "params": {
+        "mandantennummer": 999
+    }
+}
+
+
+
+// delete search template script
+DELETE _scripts/sites_search_as_you_type_v1
+
+// store search template script
+POST _scripts/sites_search_as_you_type_v1
 {
     "script": {
         "lang": "mustache",
@@ -432,7 +476,7 @@ POST _scripts/konto_search_as_you_type_v1
 //run stored search template script with given parameters and filtered response
 GET sites/_search/template?filter_path=hits.total.value,hits.hits._source,hits.hits.highlight
 {
-    "id": "konto_search_as_you_type_v1",
+    "id": "sites_search_as_you_type_v1",
     "params": {
         "site_prefix": "über",
         "mandantennummer": 999,
@@ -440,58 +484,22 @@ GET sites/_search/template?filter_path=hits.total.value,hits.hits._source,hits.h
     }
 }
 
-// delete search template script - konto_tags_v1
-DELETE _scripts/konto_tags_v1
+// delete search template script - sites_felder_v1
+DELETE _scripts/sites_felder_v1
 
-// store search template script - konto_tags_v1
-POST _scripts/konto_tags_v1
+// store search template script - sites_felder_v1
+POST _scripts/sites_felder_v1
 {
     "script": {
         "lang": "mustache",
         "source": {
             "size": 0,
             "aggs": {
-                "tags": {
+                "felder": {
                     "terms": {
-                        "field": "tags",
-                        "size": "{{konto_aggregations_size}}",
-                        "include": "{{konto_aggregations_prefix}}.*"
-                    }
-                },
-                "geschaeftsart": {
-                    "terms": {
-                        "field": "geschaeftsart",
-                        "size": "{{konto_aggregations_size}}",
-                        "include": "{{konto_aggregations_prefix}}.*"
-                    }
-                },
-                "waehrungskennung": {
-                    "terms": {
-                        "field": "waehrungskennung",
-                        "size": "{{konto_aggregations_size}}",
-                        "include": "{{konto_aggregations_prefix}}.*"
-                    }
-                    // ,"aggs": {
-                    //     "example": {
-                    //         "top_hits": {
-                    //             "_source":["waehrungskennung"],
-                    //             "size": 1
-                    //         }
-                    //     }
-                    // }
-                },
-                "betreuerkennung": {
-                    "terms": {
-                        "field": "betreuerkennung",
-                        "size": "{{konto_aggregations_size}}",
-                        "include": "{{konto_aggregations_prefix}}.*"
-                    }
-                },
-                "produktkennung": {
-                    "terms": {
-                        "field": "produktkennung",
-                        "size": "{{konto_aggregations_size}}",
-                        "include": "{{konto_aggregations_prefix}}.*"
+                        "field": "felder",
+                        "size": "{{felder_aggregations_size}}",
+                        "include": "{{felder_aggregations_prefix}}.*"
                     }
                 }
             }
@@ -500,105 +508,21 @@ POST _scripts/konto_tags_v1
 }
 
 
-//execute stored search template script - konto_tags_v1
+//execute stored search template script - site_felder_v1
 GET sites/_search/template//?filter_path=aggregations.*.buckets
 {
-    "id": "konto_tags_v1",
+    "id": "sites_felder_v1",
     "params": {
-        "konto_aggregations_prefix": "",
-        "konto_aggregations_size": 10
+        "felder_aggregations_prefix": "p",
+        "felder_aggregations_size": 10
     }
 }
 
-// Needs to be executed using postman until multi-line-json are supported here
+// Needs to be executed using postman until multi-line-json is supported here
 GET _msearch/template?filter_path=responses.hits.total.value,responses.hits.hits._source,responses.hits.hits.highlight,hits.responses.hits.highlight,responses.aggregations.*.buckets
-{"index": "konten"}
-{"id": "konto_search_as_you_type_v1", "params":{"konto_prefix":"at", "mandantennummer":999,"betreuerkennung":"SARCON"}}
-{"index": "konten"}
-{"id": "konto_tags_v1", "params":{"konto_aggregations_prefix": "", "konto_aggregations_size": 10}}
-
-
-
-
-
-
-
-
-//
-//Example from
-//  https://stackoverflow.com/questions/59677406/how-do-i-get-elasticsearch-to-highlight-a-partial-word-from-a-search-as-you-type
-
-DELETE /highlighttest
-
-PUT /highlighttest
-{
-  "settings": {
-    "analysis": {
-      "analyzer": {
-        "partial_words" : {
-          "type": "custom",
-          "tokenizer": "ngrams", 
-          "filter": ["lowercase"]
-        }
-      },
-      "tokenizer": {
-        "ngrams": {
-          "type": "ngram",
-          "min_gram": 3,
-          "max_gram": 4
-        }
-      }
-    }
-  },
-  "mappings": {
-    "properties": {
-      "plain_text": {
-        "type": "text",
-        "fields": {
-          "shingles": { 
-            "type": "search_as_you_type",
-            "term_vector": "with_positions_offsets"
-          },
-          "ngrams": {
-            "type": "text",
-            "analyzer": "partial_words",
-            "search_analyzer": "standard",
-            "term_vector": "with_positions_offsets"
-          }
-        }
-      }
-    }
-  }
-}
-
-PUT highlighttest/_doc/1
-{
-    "plain_text": "This is some random text"
-}
-
-GET highlighttest/_search
-{
-  "query": {
-    "multi_match": {
-      "query": "rand",
-      "type": "bool_prefix",
-      "fields": [
-        "plain_text.shingles",
-        "plain_text.shingles._2gram",
-        "plain_text.shingles._3gram",
-        "plain_text.shingles._index_prefix",
-        "plain_text.ngrams"
-      ]
-    }
-  },
-  "highlight" : {
-    "fields" : [
-      {
-        "plain_text.ngrams": { 
-            "type" : "fvh"
-            //,"matched_fields": ["plain_text.ngrams",  "plain_text.shingles", "plain_text.shingles._2gram", "plain_text.shingles._3gram", "plain_text.shingles._index_prefix"]
-        } 
-      }
-    ]
-  }
-}
+{"index": "sites"}
+{"id": "sites_default_v1", "params":{"mandantennummer":999}}
+{"index": "sites"}
+{"id": "sites_search_as_you_type_v1", "params":{"site_prefix":"hab", "mandantennummer":999,"geschaeftsart":"Giro"}}
+{"index": "sites"}
+{"id": "sites_felder_v1", "params":{"felder_aggregations_prefix": "hab", "felder_aggregations_size": 10}}
