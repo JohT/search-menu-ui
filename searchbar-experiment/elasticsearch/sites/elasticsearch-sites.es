@@ -58,6 +58,9 @@ PUT /sites
             //         }
             //     }
             // },
+            "defaultsite": {
+                "type": "boolean"
+            },
             "neuanlagedatum": {
                 "type": "date"
             },
@@ -164,6 +167,7 @@ PUT sites/_doc/default
         "bez"
     ],
     "urltemplate": "https://httpbin.org/get?type=overview?account={{kontonummer}}",
+    "defaultsite": true,
     "neuanlagedatum": "2020-10-31",
     "aktualisierungsdatum": "2020-10-31T08:53:30Z"
 }
@@ -208,13 +212,25 @@ POST sites/_doc
     "neuanlagedatum": "2020-10-31"
 }
 
-// alle konten eines mandanten
+// alle sites eines mandanten
 GET sites/_search
 {
     "query": {
         "match": {
             "mandantennummer": {
                 "query": "999"
+            }
+        }
+    }
+}
+
+// default site
+GET sites/_search
+{
+    "query": {
+        "match": {
+            "defaultsite": {
+                "query": false
             }
         }
     }
@@ -377,8 +393,10 @@ POST _scripts/sites_default_v1
                  "bool": {
                     "must": [
                         {
-                            "ids" : {
-                                "values" : ["default"]
+                            "match" : {
+                                "defaultsite": {
+                                    "query": true
+                                }
                             }
                         },
                         {
@@ -442,6 +460,15 @@ POST _scripts/sites_search_as_you_type_v1
                             "match": {
                                 "mandantennummer": {
                                     "query": "{{mandantennummer}}"
+                                }
+                            }
+                        }
+                    ],
+                    "must_not": [
+                        {
+                            "match": {
+                                "defaultsite": {
+                                    "query": true
                                 }
                             }
                         }
@@ -524,5 +551,5 @@ GET _msearch/template?filter_path=responses.hits.total.value,responses.hits.hits
 {"id": "sites_default_v1", "params":{"mandantennummer":999}}
 {"index": "sites"}
 {"id": "sites_search_as_you_type_v1", "params":{"site_prefix":"hab", "mandantennummer":999,"geschaeftsart":"Giro"}}
-{"index": "sites"}
-{"id": "sites_felder_v1", "params":{"felder_aggregations_prefix": "hab", "felder_aggregations_size": 10}}
+//{"index": "sites"}
+//{"id": "sites_felder_v1", "params":{"felder_aggregations_prefix": "hab", "felder_aggregations_size": 10}}
