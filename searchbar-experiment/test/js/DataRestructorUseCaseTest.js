@@ -22,6 +22,7 @@ describe("datarestructor.Restructor (use case)", function () {
       descriptions.push(highlightedDescription());
       descriptions.push(detailsDescription());
       descriptions.push(filtersDescription());
+      descriptions.push(filterCountsDescription());
       restructorResults = restructorUnderTest.processJsonUsingDescriptions(jsonData, descriptions);
     });
 
@@ -76,6 +77,20 @@ describe("datarestructor.Restructor (use case)", function () {
         .propertyPattern("responses.aggregations.{{fieldName}}.buckets.key")
         .groupName("options")
         .groupPattern("{{index[0]}}--{{type}}--{{category}}--{{fieldName}}")
+        .indexStartsWith("1.")
+        .build();
+    }
+
+    function filterCountsDescription() {
+      return new datarestructor.PropertyStructureDescriptionBuilder()
+        .type("count")
+        .category("account")
+        .propertyPatternTemplateMode()
+        .propertyPattern("responses.aggregations.{{fieldName}}.buckets.doc_count")
+        .groupName("stats")
+        .groupPattern("{{index[0]}}--{{type}}--{{category}}--{{fieldName}}")
+        .groupDestinationPattern("{{index[0]}}--filter--{{category}}--{{fieldName}}")
+        .groupDestinationName("counts")
         .indexStartsWith("1.")
         .build();
     }
@@ -156,6 +171,56 @@ describe("datarestructor.Restructor (use case)", function () {
           for (index = 0; index < entry.options.length; index += 1) {
             atLeastOneEntryAsserted = true;
             expect(entry.options[index].displayName).toEqual(expectedDisplayName);
+          }
+        }
+      );
+    });
+
+    it("every entry in the moved & renamed group 'counts' inside type 'filter' contains a number value", function () {
+      forEachEntryMatching(
+        function (entry) {
+          return entry.type === "filter";
+        },
+        function (entry) {
+          var index = 0;
+          // For each entry in 'options' of the current filter entry
+          for (index = 0; index < entry.options.length; index += 1) {
+            atLeastOneEntryAsserted = true;
+            expect(entry.counts[index].value).toEqual(jasmine.any(Number));
+          }
+        }
+      );
+    });
+
+    it("every entry in the moved & renamed group 'counts' inside type 'filter' belongs to the same filter field name", function () {
+      forEachEntryMatching(
+        function (entry) {
+          return entry.type === "filter";
+        },
+        function (entry) {
+          var index = 0;
+          var expectedFieldName = entry.fieldName;
+          // For each entry in 'options' of the current filter entry
+          for (index = 0; index < entry.options.length; index += 1) {
+            atLeastOneEntryAsserted = true;
+            expect(entry.counts[index].fieldName).toEqual(expectedFieldName);
+          }
+        }
+      );
+    });
+
+    it("every entry in the moved & renamed group 'counts' inside type 'filter' belongs to the same filter display field name", function () {
+      forEachEntryMatching(
+        function (entry) {
+          return entry.type === "filter";
+        },
+        function (entry) {
+          var index = 0;
+          var expectedDisplayName = entry.displayName;
+          // For each entry in 'options' of the current filter entry
+          for (index = 0; index < entry.options.length; index += 1) {
+            atLeastOneEntryAsserted = true;
+            expect(entry.counts[index].displayName).toEqual(expectedDisplayName);
           }
         }
       );

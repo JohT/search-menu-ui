@@ -20,7 +20,7 @@ var datarestructor = datarestructor || {};
  * @typedef {Object} PropertyStructureDescription
  * @property {string} type - ""(default). Some examples: "summary" for e.g. a list overview. "detail" e.g. when a summary is selected. "filter" e.g. for field/value pair results that can be selected as search parameters.
  * @property {string} category - name of the category. Default = "". Could contain a symbol character or a short domain name. (e.g. "city")
- * @property {boolean} propertyPatternTemplateMode - "false"(default): propertyname needs to be equal to the pattern. "true" allows variables like "{{fieldname}}" inside the pattern.
+ * @property {boolean} propertyPatternTemplateMode - "false"(default): property name needs to be equal to the pattern. "true" allows variables like "{{fieldName}}" inside the pattern.
  * @property {string} propertyPattern - property name pattern (without array indices) to match
  * @property {string} indexStartsWith - ""(default) matches all ids. String that needs to match the beginning of the id. E.g. "1." will match id="1.3.4" but not "0.1.2".
  * @property {propertyNameFunction} getDisplayNameForPropertyName - display name for the property. ""(default) last property name element with upper case first letter.
@@ -28,11 +28,9 @@ var datarestructor = datarestructor || {};
  * @property {string} groupName - name of the property, that contains grouped entries. Default="group".
  * @property {string} groupPattern - Pattern that describes how to group entries. "groupName" defines the name of this group. A pattern may contain variables in double curly brackets {{variable}}.
  * @property {string} groupDestinationPattern - Pattern that describes where the group should be moved to. Default=""=Group will not be moved. A pattern may contain variables in double curly brackets {{variable}}.
+ * @property {string} groupDestinationName - (default=groupName) Name of the group when it had been moved to the destination.
  * @property {string} deduplicationPattern - Pattern to use to remove duplicate entries. A pattern may contain variables in double curly brackets {{variable}}.
  */
-
-// Further feature requests:
-// TODO (tryout) summary->urls->overview=http....,detail=http....
 
 /**
  * PropertyStructureDescriptionBuilder
@@ -55,6 +53,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
       groupName: "group",
       groupPattern: "",
       groupDestinationPattern: "",
+      groupDestinationName: null,
       deduplicationPattern: "",
       getDisplayNameForPropertyName: null,
       getFieldNameForPropertyName: null,
@@ -78,8 +77,8 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
     };
     /**
      * "propertyPattern" can contain variables like {{fieldName}} and
-     * doesn't need to match the propertyname exactly. If the "propertyPattern"
-     * is shorter than the propertyname, it also matches when the propertyname
+     * doesn't need to match the property name exactly. If the "propertyPattern"
+     * is shorter than the property name, it also matches when the property name
      * starts with the "propertyPattern".
      */
     this.propertyPatternTemplateMode = function () {
@@ -121,7 +120,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
       return this;
     };
     /**
-     * Pattern that descibes how to group entries. "groupName" defines the name of this group.
+     * Pattern that describes how to group entries. "groupName" defines the name of this group.
      * A pattern may contain variables in double curly brackets {{variable}}.
      */
     this.groupPattern = function (value) {
@@ -129,11 +128,19 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
       return this;
     };
     /**
-     * Pattern that descibes where the group should be moved to. Default=""=Group will not be moved.
+     * Pattern that describes where the group should be moved to. Default=""=Group will not be moved.
      * A pattern may contain variables in double curly brackets {{variable}}.
      */
     this.groupDestinationPattern = function (value) {
       this.description.groupDestinationPattern = value;
+      return this;
+    };
+    /**
+     * Name of the group when it had been moved to the destination.
+     * The default value is the groupName, which will be used when the value is not valid (null or empty)
+     */
+    this.groupDestinationName = function (value) {
+      this.description.groupDestinationName = isSpecifiedString(value) ? value : this.description.groupName;
       return this;
     };
     /**
@@ -151,6 +158,9 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
       }
       if (this.description.getFieldNameForPropertyName == null) {
         this.fieldName("");
+      }
+      if (this.description.groupDestinationName == null) {
+        this.groupDestinationName("");
       }
       return this.description;
     };
@@ -186,7 +196,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
     };
   }
 
-  function rigthMostPropertyNameElement(propertyname) {
+  function rightMostPropertyNameElement(propertyname) {
     var regularExpression = new RegExp("(\\w+)$", "gi");
     var match = propertyname.match(regularExpression);
     if (match != null) {
@@ -229,7 +239,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
 
   function extractNameUsingRightMostPropertyNameElement() {
     return function (propertyname) {
-      return rigthMostPropertyNameElement(propertyname);
+      return rightMostPropertyNameElement(propertyname);
     };
   }
 
@@ -427,11 +437,7 @@ datarestructor.DescribedEntryCreator = (function () {
     for (propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex++) {
       propertyName = propertyNames[propertyIndex];
       propertyValue = sourceDataObject[propertyName];
-      if (
-        typeof propertyValue === "string" ||
-        typeof propertyValue === "number" ||
-        typeof propertyValue === "boolean"
-      ) {
+      if (typeof propertyValue === "string" || typeof propertyValue === "number" || typeof propertyValue === "boolean") {
         replaced = replaced.replace("{{" + propertyName + "}}", propertyValue);
       }
     }
@@ -449,14 +455,22 @@ datarestructor.Restructor = (function () {
   "use strict";
 
   /**
-   * "Assembly line", that takes the jsonData and processes it using all given descriptions (in their given order).
+   * "Assembly line", that takes the jsonData and processes it using all given descriptions in their given order.
    * Workflow: JSON -> flatten -> mark and identify -> add array fields -> deduplicate -> group -> flatten again
+   * @param {object} jsonData - parsed JSON data or any other data object
+   * @param {PropertyStructureDescription[]} descriptions - already grouped entries
+   * @param {boolean} debugMode - false=default=off, true=write additional logs for detailed debugging
    */
-  function processJsonUsingDescriptions(jsonData, descriptions) {
-    // "Flatten" the hierarchical input json to an array of propertynames (point spearated "folders") and values.
+  function processJsonUsingDescriptions(jsonData, descriptions, debugMode) {
+    // "Flatten" the hierarchical input json to an array of property names (point separated "folders") and values.
     var processedData = flattenToArray(jsonData);
     // Fill in properties ending with the name "_comma_separated_values" for array values to make it easier to display them.
     processedData = fillInArrayValues(processedData);
+
+    if ((typeof debugMode === "boolean") && debugMode) {
+      console.log("flattened data with array values:");
+      console.log(processedData);
+    }
 
     // Mark, identify and harmonize the flattened data by applying one description after another in their given order.
     var describedData = [];
@@ -648,7 +662,7 @@ datarestructor.Restructor = (function () {
    * uses their "_identifier.groupDestinationId" (if exists)
    * to move groups to the given destination.
    *
-   * This is useful, if separatly described groups like "summary" and "detail" should be put together,
+   * This is useful, if separately described groups like "summary" and "detail" should be put together,
    * so that every summery contains a group with the regarding details.
    *
    * @param {DescribedEntry[]} groupedObject - already grouped entries
@@ -663,7 +677,10 @@ datarestructor.Restructor = (function () {
       if (entry._description.groupDestinationPattern != "") {
         var destinationKey = entry._identifier.groupDestinationId;
         if (groupedObject[destinationKey] != null) {
-          groupedObject[destinationKey][entry._description.groupName] = entry[entry._description.groupName];
+          var newGroup = entry[entry._description.groupName];
+          var existingGroup = groupedObject[destinationKey][entry._description.groupDestinationName]; //join if exists
+          var updatedGroup = existingGroup != null ? existingGroup.concat(newGroup) : newGroup;
+          groupedObject[destinationKey][entry._description.groupDestinationName] = updatedGroup;
           keysToDelete.push(key);
         }
       }
@@ -763,6 +780,13 @@ datarestructor.Restructor = (function () {
    * @scope datarestructor.Restructor
    */
   return {
+    /**
+     * "Assembly line", that takes the jsonData and processes it using all given descriptions in their given order.
+     * Workflow: JSON -> flatten -> mark and identify -> add array fields -> deduplicate -> group -> flatten again
+     * @param {object} jsonData - parsed JSON data or any other data object
+     * @param {PropertyStructureDescription[]} descriptions - already grouped entries
+     * @param {boolean} debugMode - false=default=off, true=write additional logs for detailed debugging
+     */
     processJsonUsingDescriptions: processJsonUsingDescriptions
   };
 })();

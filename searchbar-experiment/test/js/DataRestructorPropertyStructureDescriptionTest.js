@@ -60,6 +60,12 @@ describe("datarestructor.PropertyStructureDescription", function () {
       expect(result.groupDestinationPattern).toEqual(expectedValue);
     });
 
+    it("should contain the given groupDestinationName", function () {
+      var expectedValue = "testgroupdestinationname";
+      var result = description.groupDestinationName(expectedValue).build();
+      expect(result.groupDestinationName).toEqual(expectedValue);
+    });
+
     it("should contain the given deduplicationPattern", function () {
       var expectedValue = "test.deduplication.destination.pattern";
       var result = description.deduplicationPattern(expectedValue).build();
@@ -103,6 +109,10 @@ describe("datarestructor.PropertyStructureDescription", function () {
 
     it("should contain an empty groupDestinationPattern", function () {
       expect(defaultDescription.groupDestinationPattern).toEqual("");
+    });
+
+    it("should contain the groupName as default for groupDestinationName", function () {
+      expect(defaultDescription.groupDestinationName).toEqual("group");
     });
 
     it("should contain an empty deduplicationPattern", function () {

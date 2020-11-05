@@ -301,6 +301,88 @@
                     ]
                 }
             }
+        },
+        {
+            "hits": {
+                "total": {
+                    "value": 1
+                },
+                "hits": [
+                    {
+                        "_source": {
+                            "mandantennummer": "999",
+                            "domain": "Konto",
+                            "geschaeftsart": "Giro",
+                            "name": "Kontoübersicht",
+                            "feldnamen": [
+                                "iban",
+                                "produkt",
+                                "bezeichnung"
+                            ],
+                            "felder": [
+                                "iban",
+                                "prod",
+                                "bez"
+                            ],
+                            "urltemplate": "https://httpbin.org/get?type=overview?account={{kontonummer}}",
+                            "defaultsite": true,
+                            "neuanlagedatum": "2020-10-31",
+                            "aktualisierungsdatum": "2020-10-31T08:53:30Z"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "hits": {
+                "total": {
+                    "value": 1
+                },
+                "hits": [
+                    {
+                        "_source": {
+                            "mandantennummer": "999",
+                            "domain": "Konto",
+                            "geschaeftsart": "Giro",
+                            "name": "Habenzinsen",
+                            "feldnamen": [
+                                "habenzinssatz",
+                                "bonuszinssatz",
+                                "zinsanpassung"
+                            ],
+                            "felder": [
+                                "hab",
+                                "bon",
+                                "zan"
+                            ],
+                            "urltemplate": "https://httpbin.org/get?type=creditinterest?account={{kontonummer}}",
+                            "neuanlagedatum": "2020-10-31",
+                            "aktualisierungsdatum": "2020-10-31T09:06:30Z"
+                        }
+                    },
+                    {
+                        "_source": {
+                            "mandantennummer": "999",
+                            "domain": "Konto",
+                            "geschaeftsart": "Giro",
+                            "name": "Sollzinsen",
+                            "feldnamen": [
+                                "sollzinssatz",
+                                "sollzinsmarge",
+                                "zinsanpassung"
+                            ],
+                            "felder": [
+                                "soz",
+                                "smg",
+                                "zan"
+                            ],
+                            "urltemplate": "https://httpbin.org/get?type=debitinterest?account={{kontonummer}}",
+                            "neuanlagedatum": "2020-11-07",
+                            "aktualisierungsdatum": "2020-11-07T09:06:30Z"
+                        }
+                    }
+                ]
+            }
         }
     ]
 }
