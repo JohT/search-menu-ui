@@ -20,7 +20,7 @@ restruct.Data = (function () {
     allDescriptions.push(sitesOptionDetailsDescription());
     var restructured = datarestructor.Restructor.processJsonUsingDescriptions(jsonData, allDescriptions, false);
     console.log(restructured);
-    return jsonData;
+    return restructured;
   }
 
   function summariesDescription() {

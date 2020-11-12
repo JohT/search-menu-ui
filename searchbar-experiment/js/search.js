@@ -183,19 +183,31 @@ searchbar.SearchbarUI = (function () {
 
   function getSearchResults(searchText, config) {
     httpGetJson(config.searchURI, getHttpRequest(), function (jsonResult) {
-      displayResults(filterResults(jsonResult, searchText), config);
+      displayResults(filterResults(mapStatesDemoStructure(jsonResult), searchText), config);
     });
     //TODO delete these 3 lines when experiment finished
     httpGetJson("../data/KontenMultiSearchTemplateResponse.json", getHttpRequest(), function (jsonResult) {
-      restruct.Data.restructJson(jsonResult);
+      displayResults(restruct.Data.restructJson(jsonResult), config);
     });
   }
 
+  //TODO could be deleted when the demo/mock data of the states is not used any more or changed in structure
+  function mapStatesDemoStructure(entries) {
+    var index;
+    var element;
+    var mappedData = [];
+    for (index = 0; index < entries.length; index += 1) {
+      element = entries[index];
+      mappedData.push({ category: "State", type: "summary", displayName: element.name, fieldName: element.name, value: element.abbr });
+    }
+    return mappedData;
+  }
+
+  //TODO to be deleted when backend filters. Beware: search text is unsafely used in regex
   function filterResults(jsonResults, searchText) {
-    //TODO FIXME secure searchText input
     var regex = new RegExp("^" + searchText, "gi");
     return jsonResults.filter(function (entry) {
-      return entry.name.match(regex) || entry.abbr.match(regex);
+      return entry.displayName.match(regex) || entry.value.match(regex);
     });
   }
 
@@ -209,7 +221,8 @@ searchbar.SearchbarUI = (function () {
 
   function addResult(entry, i, config) {
     var matchlist = document.getElementById(config.matchesElementId);
-    var resultElement = addListElement(entry.name + " (" + entry.abbr + ")", i, config.resultTypeIdPrefix);
+    //TODO template based search result display
+    var resultElement = addListElement("[" + entry.category + "] " + entry.displayName + " (" + entry.value + ")", i, config.resultTypeIdPrefix);
     matchlist.appendChild(resultElement);
 
     onResultEntrySelected(resultElement, handleEventWithConfig(config, selectSearchResultAsFilter));
@@ -369,7 +382,9 @@ searchbar.SearchbarUI = (function () {
     var element = document.createElement("li");
     element.setAttribute("id", type + "-" + index);
     element.setAttribute("tabindex", "0");
-    element.appendChild(document.createTextNode(text));
+    //TODO is it safer to manually create child em tags instead of "innerHtml"?
+    //element.appendChild(document.createTextNode(text));
+    element.innerHTML = text;
     addClass(type, element);
     return element;
   }
