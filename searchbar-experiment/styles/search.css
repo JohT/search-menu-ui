@@ -21,7 +21,7 @@
 }
 
 /* Dropdown Content (Hidden by Default) */
-.searchresults {
+.searchmenu {
   display: none;
   position: absolute;
   background-color: #f1f1f1;
@@ -30,6 +30,10 @@
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   font-size: 16px;
   z-index: 1;
+}
+
+.seachdetails {
+  left: 230px; 
 }
 
 .show {
@@ -53,6 +57,11 @@
   list-style-type: none;
 }
 
+.searchresultentries em {
+  font-weight: bold;
+  font-style: normal;
+}
+
 .searchfilters li {
   background-color: #befdce;
 }
@@ -63,7 +72,7 @@
 }
 
 .searchresultentries.searchmatches .result:hover {
-  background-color: #b7cafd
+  background-color: #b7cafd;
 }
 
 .searchresultentries.searchmatches .result:focus {

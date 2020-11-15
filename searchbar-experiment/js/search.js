@@ -40,6 +40,7 @@ searchbar.SearchbarAPI = (function () {
     resultsElementId: "searchresults",
     matchesElementId: "searchmatches",
     filtersElementId: "searchfilters",
+    detailsElementId: "seachdetails",
     searchURI: "../data/state_capitals.json",
     resultTypeIdPrefix: "result",
     filterTypeIdPrefix: "filter",
@@ -72,6 +73,10 @@ searchbar.SearchbarAPI = (function () {
     },
     filtersElementId: function (id) {
       config.filtersElementId = id;
+      return this;
+    },
+    detailsElementId: function (id) {
+      config.detailsElementId = id;
       return this;
     },
     searchURI: function (uri) {
@@ -137,7 +142,7 @@ searchbar.SearchbarUI = (function () {
     var search = document.getElementById(config.inputElementId);
     onEscapeKey(search, function (event) {
       getEventTarget(event).value = "";
-      hideResults(config);
+      hideMenu(config);
     });
     onArrowDownKey(search, handleEventWithConfig(config, focusFirstResult));
     addEvent("keyup", search, function (event) {
@@ -165,7 +170,7 @@ searchbar.SearchbarUI = (function () {
     });
     addEvent("focusout", searchareaElement, function (event) {
       this.focusOutTimer = setTimeout(function () {
-        hideResults(config);
+        hideMenu(config);
       }, config.waitBeforeClose);
     });
   };
@@ -174,7 +179,7 @@ searchbar.SearchbarUI = (function () {
     var matchlist = document.getElementById(config.matchesElementId);
     matchlist.innerHTML = "";
     if (searchText.length === 0) {
-      hideResults(config);
+      hideMenu(config);
       return;
     }
     showResults(config);
@@ -212,34 +217,47 @@ searchbar.SearchbarUI = (function () {
   }
 
   function displayResults(jsonResults, config) {
-    var i = 0;
-    jsonResults.forEach(function (entry) {
-      i++;
-      addResult(entry, i, config);
-    });
+    var index = 0;
+    for (index = 0; index < jsonResults.length; index++) {
+      addResult(jsonResults[index], index, config);
+    }
   }
 
   function addResult(entry, i, config) {
     var matchlist = document.getElementById(config.matchesElementId);
     //TODO template based search result display
-    var resultElement = addListElement("[" + entry.category + "] " + entry.displayName + " (" + entry.value + ")", i, config.resultTypeIdPrefix);
+    var listElementText = "[" + entry.category + "] " + entry.displayName + " (" + entry.value + ")";
+    var resultElement = createListElement(listElementText, i, config.resultTypeIdPrefix);
     matchlist.appendChild(resultElement);
 
-    onResultEntrySelected(resultElement, handleEventWithConfig(config, selectSearchResultAsFilter));
-    addResultEntryEventHandlers(resultElement, config);
+    if (isFilterMenuEntry(entry)) {
+      addMenuEntrySelectionHandlers(resultElement, handleEventWithConfig(config, selectSearchResultAsFilter));
+    }
+    if (isMenuEntryWithFurtherDetails(entry)) {
+      addMenuEntrySelectionHandlers(resultElement, handleEventWithEntryAndConfig(entry, config, selectSearchResultToDisplayDetails));
+    }
+    addMenuNavigationHandlers(resultElement, config);
+  }
+
+  function isFilterMenuEntry(entry) {
+    return typeof entry.options !== "undefined" || entry.type === "filter";
+  }
+
+  function isMenuEntryWithFurtherDetails(entry) {
+    return typeof entry.details !== "undefined";
   }
 
   /**
    * @param {Element} element to add event handlers
    * @param {SearchbarConfig} config search configuration
    */
-  function addResultEntryEventHandlers(element, config) {
+  function addMenuNavigationHandlers(element, config) {
     onArrowDownKey(element, handleEventWithConfig(config, focusNextSearchResult));
     onArrowUpKey(element, handleEventWithConfig(config, focusPreviousSearchResult));
     onEscapeKey(element, handleEventWithConfig(config, focusSearchInput));
   }
 
-  function onResultEntrySelected(resultElement, handler) {
+  function addMenuEntrySelectionHandlers(resultElement, handler) {
     addEvent("mousedown", resultElement, handler);
     onEnterKey(resultElement, handler);
     onSpaceKey(resultElement, handler);
@@ -255,6 +273,17 @@ searchbar.SearchbarUI = (function () {
     };
   }
 
+  /**
+   * @param {DescribedEntry} entry - structured raw data of the entry
+   * @param {SearchbarConfig} config - search configuration
+   * @param {EventListener} eventHandler - event handler
+   */
+  function handleEventWithEntryAndConfig(entry, config, eventHandler) {
+    return function (event) {
+      eventHandler(event, entry, config);
+    };
+  }
+
   function focusSearchInput(event, config) {
     var resultEntry = getEventTarget(event);
     var inputElement = document.getElementById(config.inputElementId);
@@ -262,6 +291,7 @@ searchbar.SearchbarUI = (function () {
     inputElement.focus();
     moveCursorToEndOf(inputElement);
     preventDefaultEventHandling(inputElement); //skips cursor position change on key up once
+    hideDetails(config);
   }
 
   function preventDefaultEventHandling(inputevent) {
@@ -289,6 +319,7 @@ searchbar.SearchbarUI = (function () {
     }
     resultEntry.blur();
     next.focus();
+    hideDetails(config);
   }
 
   function focusPreviousSearchResult(event, config) {
@@ -307,16 +338,45 @@ searchbar.SearchbarUI = (function () {
     }
     resultEntry.blur();
     previous.focus();
+    hideDetails(config);
   }
 
   function selectSearchResultAsFilter(event, config) {
     var filterElements = getListElementCountOfType(config.filterTypeIdPrefix);
-    var filterElement = addListElement(event.currentTarget.innerText, filterElements + 1, config.filterTypeIdPrefix);
-    addResultEntryEventHandlers(filterElement, config);
-    onResultEntrySelected(filterElement, handleEventWithConfig(config, toggleFilterEntry));
+    var filterElement = createListElement(event.currentTarget.innerText, filterElements + 1, config.filterTypeIdPrefix);
+    addMenuNavigationHandlers(filterElement, config);
+    addMenuEntrySelectionHandlers(filterElement, handleEventWithConfig(config, toggleFilterEntry));
 
-    var searchfilters = document.getElementById(config.filtersElementId);
-    searchfilters.appendChild(filterElement);
+    var searchFilters = document.getElementById(config.filtersElementId);
+    searchFilters.appendChild(filterElement);
+
+    hideDetails(config);
+  }
+
+  function selectSearchResultToDisplayDetails(event, entry, config) {
+    //TODO iterate over all details instead of just the first one
+    var index = 0;
+    var detail = null;
+    var detailElementText = "";
+    var detailElement = null;
+
+    //TODO config.detailsElementId instead of hardcoded "seachdetailentries"
+    var searchEntryDetails = document.getElementById("seachdetailentries");
+    
+    //TODO remove all child entries does not work right now
+    for (index = 0; index < searchEntryDetails.childNodes.length; index+=1) {
+      searchEntryDetails.removeChild(searchEntryDetails.childNodes[index]);
+    }
+
+    for (index = 0; index < entry.details.length; index+=1) {
+      detail = entry.details[index];
+      detailElementText = detail.displayName + ": " + detail.value;
+      //TODO config.detailTypeIdPrefix instead of hardcoded "detail"
+      detailElement = createListElement(detailElementText, 0, "detail-" + index);
+      searchEntryDetails.appendChild(detailElement);
+    }
+
+    showDetails(config);
   }
 
   /**
@@ -329,6 +389,7 @@ searchbar.SearchbarUI = (function () {
     } else {
       addClass(config.inactiveFilterClass, filterElement);
     }
+    hideDetails(config);
   }
 
   /**
@@ -376,9 +437,9 @@ searchbar.SearchbarUI = (function () {
    *
    * @param {string} text inside the list element
    * @param {number} index index of the list element used for its id
-   * @param {string} type type of the list element used as prefix for its id, as classname
+   * @param {string} type type of the list element used as prefix for its id, as class name
    */
-  function addListElement(text, index, type) {
+  function createListElement(text, index, type) {
     var element = document.createElement("li");
     element.setAttribute("id", type + "-" + index);
     element.setAttribute("tabindex", "0");
@@ -389,12 +450,25 @@ searchbar.SearchbarUI = (function () {
     return element;
   }
 
+  function hideMenu(config) {
+    hideResults(config);
+    hideDetails(config);
+  }
+
   function showResults(config) {
     addClass("show", document.getElementById(config.resultsElementId));
   }
 
   function hideResults(config) {
     removeClass("show", document.getElementById(config.resultsElementId));
+  }
+
+  function showDetails(config) {
+    addClass("show", document.getElementById(config.detailsElementId));
+  }
+
+  function hideDetails(config) {
+    removeClass("show", document.getElementById(config.detailsElementId));
   }
 
   function addClass(classToAdd, element) {
