@@ -208,7 +208,7 @@ searchbar.SearchbarUI = (function () {
     return mappedData;
   }
 
-  //TODO to be deleted when backend filters. Beware: search text is unsafely used in regex
+  //TODO to be deleted when backend filters. Beware: search text is unsafely used in this regex
   function filterResults(jsonResults, searchText) {
     var regex = new RegExp("^" + searchText, "gi");
     return jsonResults.filter(function (entry) {
@@ -225,7 +225,7 @@ searchbar.SearchbarUI = (function () {
 
   function addResult(entry, i, config) {
     var matchlist = document.getElementById(config.matchesElementId);
-    //TODO template based search result display
+    //TODO template based search result display should be implemented
     var listElementText = "[" + entry.category + "] " + entry.displayName + " (" + entry.value + ")";
     var resultElement = createListElement(listElementText, i, config.resultTypeIdPrefix);
     matchlist.appendChild(resultElement);
@@ -354,29 +354,40 @@ searchbar.SearchbarUI = (function () {
   }
 
   function selectSearchResultToDisplayDetails(event, entry, config) {
-    //TODO iterate over all details instead of just the first one
-    var index = 0;
-    var detail = null;
-    var detailElementText = "";
-    var detailElement = null;
+    //TODO config.detailsElementId instead of hardcoded "seachdetailentries"
+    clearAllEntriesOfElementWithId("seachdetailentries");
 
     //TODO config.detailsElementId instead of hardcoded "seachdetailentries"
     var searchEntryDetails = document.getElementById("seachdetailentries");
-    
-    //TODO remove all child entries does not work right now
-    for (index = 0; index < searchEntryDetails.childNodes.length; index+=1) {
-      searchEntryDetails.removeChild(searchEntryDetails.childNodes[index]);
-    }
 
-    for (index = 0; index < entry.details.length; index+=1) {
-      detail = entry.details[index];
+    var detail = null;
+    var detailElementText = "";
+    var detailElement = null;
+    var detailIndex = 0;
+    for (detailIndex = 0; detailIndex < entry.details.length; detailIndex += 1) {
+      detail = entry.details[detailIndex];
       detailElementText = detail.displayName + ": " + detail.value;
       //TODO config.detailTypeIdPrefix instead of hardcoded "detail"
-      detailElement = createListElement(detailElementText, 0, "detail-" + index);
+      detailElement = createListElement(detailElementText, detailIndex, "detail");
       searchEntryDetails.appendChild(detailElement);
     }
 
     showDetails(config);
+  }
+
+  function clearAllEntriesOfElementWithId(elementId) {
+    var node = document.getElementById(elementId);
+
+    if (typeof node.cloneNode === "function" && typeof node.replaceChild === "function") {
+      // Fastest way to delete child nodes in Chrome and FireFox according to
+      // https://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
+      var cNode = node.cloneNode(false);
+      node.parentNode.replaceChild(cNode, node);
+    } else {
+      // Fastest way in IE and most browser compatible solution according to
+      // https://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
+      node.innerHTML = "";
+    }
   }
 
   /**
