@@ -37,6 +37,10 @@
   left: 250px; 
 }
 
+.seachfilteroptions {
+  left: 250px; 
+}
+
 .show {
   display: block;
 }
@@ -60,6 +64,10 @@
 
 .seachdetailentries li {
   padding: 0.2em;
+}
+
+.seachfilteroptionentries li {
+  /* padding: 1em; */
 }
 
 .searchresultentries em {
