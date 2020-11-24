@@ -11,6 +11,69 @@
 var searchbar = searchbar || {};
 
 /**
+ * @typedef {Object} SearchViewDescription Describes a part of the search view (e.g. search result details). 
+ * @property {string} viewElementId - id of the element (e.g. "div"), that contains the view with all list elements and their parent.
+ * @property {string} listParentElementId - id of the element (e.g. "ul"), that contains all list entries and is located inside the view.
+ * @property {string} listElementIdPrefix - id prefix (followed by "-" and the index number) for every list entry
+ * @property {string} listElementTag - element tag for list entries. defaults to "li".
+
+
+/**
+ * SearchViewDescription
+ * Describes a part of the search view (e.g. search result details).
+ * 
+ * @namespace
+ */
+searchbar.SearchViewDescriptionBuilder = (function () {
+  "use strict";
+
+  /**
+   * Constructor function and container for everything, that needs to exist per instance.
+   */
+  function SearchViewDescription() {
+    this.description = {
+      viewElementId: "",
+      listParentElementId: "",
+      listElementIdPrefix: "",
+      listElementTag: "li"
+    };
+    this.viewElementId = function (value) {
+      this.description.viewElementId = withDefault(value, "");
+      return this;
+    };
+    this.listParentElementId = function (value) {
+      this.description.listParentElementId = withDefault(value, "");
+      return this;
+    };
+    this.listElementIdPrefix = function (value) {
+      this.description.listElementIdPrefix = withDefault(value, "");
+      return this;
+    };
+    this.listElementTag = function (value) {
+      this.description.listElementTag = withDefault(value, "li");
+      return this;
+    };
+    this.build = function () {
+      return this.description;
+    };
+  }
+
+  function withDefault(value, defaultValue) {
+    return isSpecifiedString(value) ? value : defaultValue;
+  }
+
+  function isSpecifiedString(value) {
+    return typeof value === "string" && value != null && value != "";
+  }
+
+  /**
+   * Public interface
+   * @scope searchbar.SearchViewDescription
+   */
+  return SearchViewDescription;
+})();
+
+/**
  * @typedef {Object} SearchbarConfig
  * @property {string} searchAreaElementId - id of the whole search area (default="searcharea")
  * @property {string} inputElementId - id of the search input field (default="searchbar")
@@ -90,11 +153,13 @@ searchbar.SearchbarAPI = (function () {
       return this;
     },
     //TODO new sub type to group (view id, parent Id, id prefix, element tag)?
-    detailsElementId: function (id) { //TODO rename like filtero ptions scheme
+    detailsElementId: function (id) {
+      //TODO rename like filtero ptions scheme
       config.detailsElementId = id;
       return this;
     },
-    detailEntriesElementId: function (id) { //TODO rename like filter options scheme
+    detailEntriesElementId: function (id) {
+      //TODO rename like filter options scheme
       config.detailEntriesElementId = id;
       return this;
     },
@@ -263,7 +328,7 @@ searchbar.SearchbarUI = (function () {
 
     if (isMenuEntryWithFurtherDetails(entry)) {
       addMenuEntrySelectionHandlers(resultElement, handleEventWithEntryAndConfig(entry, config, selectSearchResultToDisplayDetails));
-    } 
+    }
     if (isMenuEntryWithOptions(entry)) {
       addMenuEntrySelectionHandlers(resultElement, handleEventWithEntryAndConfig(entry, config, selectSearchResultToDisplayOptions));
     }
@@ -283,7 +348,7 @@ searchbar.SearchbarUI = (function () {
 
   function isFilterMenuEntry(entry) {
     return (typeof entry.options !== "undefined" || entry.type === "filter") && !isMenuEntryWithOptions(entry);
-  }    
+  }
 
   /**
    * @param {Element} element to add event handlers
@@ -381,7 +446,12 @@ searchbar.SearchbarUI = (function () {
 
   function selectSearchResultAsFilter(event, config) {
     var filterElements = getListElementCountOfType(config.filterTypeIdPrefix);
-    var filterElement = createListElement(event.currentTarget.innerText, filterElements + 1, config.filterTypeIdPrefix, config.resultElementTag);
+    var filterElement = createListElement(
+      event.currentTarget.innerText,
+      filterElements + 1,
+      config.filterTypeIdPrefix,
+      config.resultElementTag
+    );
     addMenuNavigationHandlers(filterElement, config);
     addMenuEntrySelectionHandlers(filterElement, handleEventWithConfig(config, toggleFilterEntry));
 
@@ -393,16 +463,37 @@ searchbar.SearchbarUI = (function () {
 
   function selectSearchResultToDisplayDetails(event, entry, config) {
     hideSubMenus(config);
-    selectSearchResultToDisplaySubMenu(event, entry.details, config.detailsElementId, config.detailEntriesElementId, config.detailTypeIdPrefix, config.detailElementTag);
+    selectSearchResultToDisplaySubMenu(
+      event,
+      entry.details,
+      config.detailsElementId,
+      config.detailEntriesElementId,
+      config.detailTypeIdPrefix,
+      config.detailElementTag
+    );
   }
 
   function selectSearchResultToDisplayOptions(event, entry, config) {
     hideSubMenus(config);
     //TODO options id prefix and tag from config (instead of those from the details)
-    selectSearchResultToDisplaySubMenu(event, entry.options, config.filterOptionsViewElementId, config.filterOptionsParentElementId, config.detailTypeIdPrefix, config.detailElementTag);
+    selectSearchResultToDisplaySubMenu(
+      event,
+      entry.options,
+      config.filterOptionsViewElementId,
+      config.filterOptionsParentElementId,
+      config.detailTypeIdPrefix,
+      config.detailElementTag
+    );
   }
 
-  function selectSearchResultToDisplaySubMenu(event, entries, subMenuViewElementId, subMenuEntriesParentElementId, subMenuIdPrefix, subMenuElementTag) {
+  function selectSearchResultToDisplaySubMenu(
+    event,
+    entries,
+    subMenuViewElementId,
+    subMenuEntriesParentElementId,
+    subMenuIdPrefix,
+    subMenuElementTag
+  ) {
     clearAllEntriesOfElementWithId(subMenuEntriesParentElementId);
     var searchEntryDetails = document.getElementById(subMenuEntriesParentElementId);
 
