@@ -507,7 +507,37 @@ searchbar.SearchbarUI = (function () {
       subMenuElement = createListElement(subMenuEntryText, subMenuIndex, subMenuIdPrefix, subMenuElementTag);
       searchEntryDetails.appendChild(subMenuElement);
     }
-    show(subMenuViewElementId);
+    var selectedElement = getEventTarget(event);
+    var subMenuViewElement = document.getElementById(subMenuViewElementId);
+    var alignedSubMenuPosition =  (getYPositionOfElement(selectedElement) + getScrollY());
+    subMenuViewElement.style.top = alignedSubMenuPosition + "px";
+    showElement(subMenuViewElement);
+  }
+
+  /**
+   * Browser compatible Y position of the given element.
+   */
+  function getYPositionOfElement(element) {
+    var selectedElementPosition = element.getBoundingClientRect();
+    if (typeof selectedElementPosition.y !== "undefined") {
+      return selectedElementPosition.y;
+    }
+    return selectedElementPosition.top;
+  }
+
+  /**
+   * Browser compatible version of the standard "window.scrollY".
+   */
+  function getScrollY() {
+    var supportPageOffset = typeof window.pageYOffset !== "undefined";
+    if (supportPageOffset) {
+      return window.pageYOffset;
+    }
+    var isCSS1Compatible = (document.compatMode || "") === "CSS1Compat";
+    if (isCSS1Compatible) {
+      return document.documentElement.scrollTop;
+    }
+    return document.body.scrollTop;
   }
 
   function clearAllEntriesOfElementWithId(elementId) {
@@ -612,7 +642,15 @@ searchbar.SearchbarUI = (function () {
    * @param elementId - ID of the element that should be shown
    */
   function show(elementId) {
-    addClass("show", document.getElementById(elementId));
+    showElement(document.getElementById(elementId));
+  }
+
+  /**
+   * Shows the given element.
+   * @param element - element that should be shown
+   */
+  function showElement(element) {
+    addClass("show", element);
   }
 
   /**
@@ -620,7 +658,15 @@ searchbar.SearchbarUI = (function () {
    * @param elementId - ID of the element that should be hidden
    */
   function hide(elementId) {
-    removeClass("show", document.getElementById(elementId));
+    hideElement(document.getElementById(elementId));
+  }
+
+  /**
+   * Hides the given element.
+   * @param element - element that should be hidden
+   */
+  function hideElement(element) {
+    removeClass("show", element);
   }
 
   function addClass(classToAdd, element) {
