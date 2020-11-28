@@ -86,12 +86,10 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  * @property {string} resultsElementId - id of the element (div) that contains matches and filters (default="searchresults")
  * @property {string} matchesElementId - id of the element (ul) that contains the matches/suggestions (default="searchmatches")
  * @property {string} filtersElementId - id of the element (ul) that contains the selected filters (default="searchfilters")
- * @property {string} detailsElementId - id of the view (div) that contains further details for a particular result (default="seachdetails")
- * @property {string} detailEntriesElementId - id of the element (ul) that contains one detail inside <detailsElementId> (default="seachdetailentries")
+ * @property {SearchViewDescription} detailView - describes the details view
  * @property {SearchViewDescription} filterOptionsView - describes the filter options view
  * @property {string} searchURI - uri of the search query
  * @property {string} resultTypeIdPrefix - id prefix for result/match entries (followed by "-" and their index) (default="result")
- * @property {string} detailTypeIdPrefix - id prefix for detail entries (followed by "-" and their index) (default="detail")
  * @property {string} resultElementTag - tag of the result/filter entries (default="li")
  * @property {string} inactiveFilterClass - css class name for an inactive filter entry (default="inactivefilter")
  * @property {string} waitBeforeClose - timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
@@ -113,13 +111,10 @@ searchbar.SearchbarAPI = (function () {
     resultsElementId: "searchresults",
     matchesElementId: "searchmatches",
     filtersElementId: "searchfilters",
-    detailsElementId: "seachdetails",
-    detailEntriesElementId: "seachdetailentries",
+    detailView: null,
     filterOptionsView: null,
     resultTypeIdPrefix: "result",
-    detailTypeIdPrefix: "detail",
     resultElementTag: "li",
-    detailElementTag: "li",
     inactiveFilterClass: "inactivefilter",
     waitBeforeClose: 700,
     waitBeforeSearch: 500
@@ -154,35 +149,36 @@ searchbar.SearchbarAPI = (function () {
       config.filtersElementId = id;
       return this;
     },
-    //TODO new sub type to group (view id, parent Id, id prefix, element tag)?
-    detailsElementId: function (id) {
-      //TODO rename like filtero ptions scheme
-      config.detailsElementId = id;
+    detailView: function (view) {
+      config.detailView = view;
       return this;
     },
-    detailEntriesElementId: function (id) {
-      //TODO rename like filter options scheme
-      config.detailEntriesElementId = id;
-      return this;
+    defaultDetailView: function () {
+      return new searchbar.SearchViewDescriptionBuilder()
+        .viewElementId("seachdetails")
+        .listParentElementId("seachdetailentries")
+        .listEntryElementIdPrefix("detail")
+        .listEntryTextTemplate("{{displayName}}: {{value}}")
+        .build();
     },
     filterOptionsView: function (view) {
       config.filterOptionsView = view;
       return this;
     },
+    defaultFilterOptionsView: function () {
+      return new searchbar.SearchViewDescriptionBuilder()
+        .viewElementId("seachfilteroptions")
+        .listParentElementId("seachfilteroptionentries")
+        .listEntryElementIdPrefix("filter")
+        .listEntryTextTemplate("{{value}}")
+        .build();
+    },
     resultTypeIdPrefix: function (prefix) {
       config.resultTypeIdPrefix = prefix;
       return this;
     },
-    detailTypeIdPrefix: function (prefix) {
-      config.detailTypeIdPrefix = prefix;
-      return this;
-    },
     resultElementTag: function (elementTag) {
       config.resultElementTag = elementTag;
-      return this;
-    },
-    detailElementTag: function (elementTag) {
-      config.detailElementTag = elementTag;
       return this;
     },
     inactiveFilterClass: function (classname) {
@@ -199,14 +195,10 @@ searchbar.SearchbarAPI = (function () {
     },
     start: function () {
       if (config.filterOptionsView == null) {
-        this.filterOptionsView(
-          new searchbar.SearchViewDescriptionBuilder()
-            .viewElementId("seachfilteroptions")
-            .listParentElementId("seachfilteroptionentries")
-            .listEntryElementIdPrefix("filter")
-            .listEntryTextTemplate("{{value}}")
-            .build()
-        );
+        this.filterOptionsView(this.defaultFilterOptionsView());
+      }
+      if (config.defaultDetailView == null) {
+        this.detailView(this.defaultDetailView());
       }
       return new searchbar.SearchbarUI(config);
     }
@@ -470,10 +462,7 @@ searchbar.SearchbarUI = (function () {
     selectSearchResultToDisplaySubMenu(
       event,
       entry.details,
-      config.detailsElementId,
-      config.detailEntriesElementId,
-      config.detailTypeIdPrefix,
-      config.detailElementTag
+      config.detailView
     );
   }
 
@@ -482,23 +471,17 @@ searchbar.SearchbarUI = (function () {
     selectSearchResultToDisplaySubMenu(
       event,
       entry.options,
-      config.filterOptionsView.viewElementId,
-      config.filterOptionsView.listParentElementId,
-      config.filterOptionsView.listEntryElementIdPrefix,
-      config.filterOptionsView.listEntryElementTag
+      config.filterOptionsView
     );
   }
 
   function selectSearchResultToDisplaySubMenu(
     event,
     entries,
-    subMenuViewElementId,
-    subMenuEntriesParentElementId,
-    subMenuIdPrefix,
-    subMenuElementTag
+    subMenuView
   ) {
-    clearAllEntriesOfElementWithId(subMenuEntriesParentElementId);
-    var searchEntryDetails = document.getElementById(subMenuEntriesParentElementId);
+    clearAllEntriesOfElementWithId(subMenuView.listParentElementId);
+    var searchEntryDetails = document.getElementById(subMenuView.listParentElementId);
 
     var subMenuEntry = null;
     var subMenuEntryText = "";
@@ -507,11 +490,11 @@ searchbar.SearchbarUI = (function () {
     for (subMenuIndex = 0; subMenuIndex < entries.length; subMenuIndex += 1) {
       subMenuEntry = entries[subMenuIndex];
       subMenuEntryText = subMenuEntry.displayName + ": " + subMenuEntry.value; //TODO implement template feature
-      subMenuElement = createListElement(subMenuEntryText, subMenuIndex, subMenuIdPrefix, subMenuElementTag);
+      subMenuElement = createListElement(subMenuEntryText, subMenuIndex, subMenuView.listEntryElementIdPrefix, subMenuView.listEntryElementTag);
       searchEntryDetails.appendChild(subMenuElement);
     }
     var selectedElement = getEventTarget(event);
-    var subMenuViewElement = document.getElementById(subMenuViewElementId);
+    var subMenuViewElement = document.getElementById(subMenuView.viewElementId);
     var alignedSubMenuPosition = getYPositionOfElement(selectedElement) + getScrollY();
     subMenuViewElement.style.top = alignedSubMenuPosition + "px";
     showElement(subMenuViewElement);
@@ -632,11 +615,11 @@ searchbar.SearchbarUI = (function () {
 
   function hideMenu(config) {
     hide(config.resultsElementId);
-    hide(config.detailsElementId);
+    hide(config.detailView.viewElementId);
   }
 
   function hideSubMenus(config) {
-    hide(config.detailsElementId);
+    hide(config.detailView.viewElementId);
     hide(config.filterOptionsView.viewElementId);
   }
 
