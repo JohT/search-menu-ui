@@ -14,8 +14,9 @@ var searchbar = searchbar || {};
  * @typedef {Object} SearchViewDescription Describes a part of the search view (e.g. search result details). 
  * @property {string} viewElementId - id of the element (e.g. "div"), that contains the view with all list elements and their parent.
  * @property {string} listParentElementId - id of the element (e.g. "ul"), that contains all list entries and is located inside the view.
- * @property {string} listElementIdPrefix - id prefix (followed by "-" and the index number) for every list entry
- * @property {string} listElementTag - element tag for list entries. defaults to "li".
+ * @property {string} listEntryElementIdPrefix - id prefix (followed by "-" and the index number) for every list entry
+ * @property {string} listEntryElementTag - element tag for list entries. defaults to "li".
+ * @property {string} listEntryTextTemplate - template for the text of each list entry
 
 
 /**
@@ -34,8 +35,9 @@ searchbar.SearchViewDescriptionBuilder = (function () {
     this.description = {
       viewElementId: "",
       listParentElementId: "",
-      listElementIdPrefix: "",
-      listElementTag: "li"
+      listEntryElementIdPrefix: "",
+      listEntryElementTag: "li",
+      listEntryTextTemplate: "{{displayName}}: {{value}}"
     };
     this.viewElementId = function (value) {
       this.description.viewElementId = withDefault(value, "");
@@ -45,12 +47,16 @@ searchbar.SearchViewDescriptionBuilder = (function () {
       this.description.listParentElementId = withDefault(value, "");
       return this;
     };
-    this.listElementIdPrefix = function (value) {
-      this.description.listElementIdPrefix = withDefault(value, "");
+    this.listEntryElementIdPrefix = function (value) {
+      this.description.listEntryElementIdPrefix = withDefault(value, "");
       return this;
     };
-    this.listElementTag = function (value) {
-      this.description.listElementTag = withDefault(value, "li");
+    this.listEntryElementTag = function (value) {
+      this.description.listEntryElementTag = withDefault(value, "li");
+      return this;
+    };
+    this.listEntryTextTemplate = function (value) {
+      this.description.listEntryTextTemplate = withDefault(value, "{{displayName}}: {{value}");
       return this;
     };
     this.build = function () {
@@ -82,11 +88,9 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  * @property {string} filtersElementId - id of the element (ul) that contains the selected filters (default="searchfilters")
  * @property {string} detailsElementId - id of the view (div) that contains further details for a particular result (default="seachdetails")
  * @property {string} detailEntriesElementId - id of the element (ul) that contains one detail inside <detailsElementId> (default="seachdetailentries")
- * @property {string} filterOptionsViewElementId - id of the view (div) that contains filter options from search results (default="seachfilteroptions")
- * @property {string} filterOptionsParentElementId - id of the element (ul) that contains one filter option inside <filterOptionsElementId> (default="seachfilteroptionentries")
+ * @property {SearchViewDescription} filterOptionsView - describes the filter options view
  * @property {string} searchURI - uri of the search query
  * @property {string} resultTypeIdPrefix - id prefix for result/match entries (followed by "-" and their index) (default="result")
- * @property {string} filterTypeIdPrefix - id prefix for filter entries (followed by "-" and their index) (default="filter")
  * @property {string} detailTypeIdPrefix - id prefix for detail entries (followed by "-" and their index) (default="detail")
  * @property {string} resultElementTag - tag of the result/filter entries (default="li")
  * @property {string} inactiveFilterClass - css class name for an inactive filter entry (default="inactivefilter")
@@ -111,11 +115,9 @@ searchbar.SearchbarAPI = (function () {
     filtersElementId: "searchfilters",
     detailsElementId: "seachdetails",
     detailEntriesElementId: "seachdetailentries",
-    filterOptionsViewElementId: "seachfilteroptions",
-    filterOptionsParentElementId: "seachfilteroptionentries",
+    filterOptionsView: null,
     resultTypeIdPrefix: "result",
     detailTypeIdPrefix: "detail",
-    filterTypeIdPrefix: "filter",
     resultElementTag: "li",
     detailElementTag: "li",
     inactiveFilterClass: "inactivefilter",
@@ -163,12 +165,8 @@ searchbar.SearchbarAPI = (function () {
       config.detailEntriesElementId = id;
       return this;
     },
-    filterOptionsViewElementId: function (id) {
-      config.filterOptionsViewElementId = id;
-      return this;
-    },
-    filterOptionsParentElementId: function (id) {
-      config.filterOptionsParentElementId = id;
+    filterOptionsView: function (view) {
+      config.filterOptionsView = view;
       return this;
     },
     resultTypeIdPrefix: function (prefix) {
@@ -177,10 +175,6 @@ searchbar.SearchbarAPI = (function () {
     },
     detailTypeIdPrefix: function (prefix) {
       config.detailTypeIdPrefix = prefix;
-      return this;
-    },
-    filterTypeIdPrefix: function (prefix) {
-      config.filterTypeIdPrefix = prefix;
       return this;
     },
     resultElementTag: function (elementTag) {
@@ -204,6 +198,16 @@ searchbar.SearchbarAPI = (function () {
       return this;
     },
     start: function () {
+      if (config.filterOptionsView == null) {
+        this.filterOptionsView(
+          new searchbar.SearchViewDescriptionBuilder()
+            .viewElementId("seachfilteroptions")
+            .listParentElementId("seachfilteroptionentries")
+            .listEntryElementIdPrefix("filter")
+            .listEntryTextTemplate("{{value}}")
+            .build()
+        );
+      }
       return new searchbar.SearchbarUI(config);
     }
   };
@@ -414,7 +418,7 @@ searchbar.SearchbarUI = (function () {
     var next = document.getElementById(resultEntryIdProperties.nextId);
     if (next === null && resultEntryIdProperties.type === config.resultTypeIdPrefix) {
       //select first filter entry after last result/match entry
-      next = document.getElementById(config.filterTypeIdPrefix + "-1");
+      next = document.getElementById(config.filterOptionsView.listElementIdPrefix + "-1");
     }
     if (next === null) {
       //select first result/match entry after last filter entry (or whenever nothing is found)
@@ -429,7 +433,7 @@ searchbar.SearchbarUI = (function () {
     var resultEntry = getEventTarget(event);
     var resultEntryIdProperties = extractResultElementIdProperties(resultEntry.id);
     var previous = document.getElementById(resultEntryIdProperties.previousId);
-    if (previous === null && resultEntryIdProperties.type === config.filterTypeIdPrefix) {
+    if (previous === null && resultEntryIdProperties.type === config.filterOptionsView.listElementIdPrefix) {
       //select last result entry when arrow up is pressed on first filter entry
       var resultElementsCount = getListElementCountOfType(config.resultTypeIdPrefix);
       previous = document.getElementById(config.resultTypeIdPrefix + "-" + resultElementsCount);
@@ -445,11 +449,11 @@ searchbar.SearchbarUI = (function () {
   }
 
   function selectSearchResultAsFilter(event, config) {
-    var filterElements = getListElementCountOfType(config.filterTypeIdPrefix);
+    var filterElements = getListElementCountOfType(config.filterOptionsView.listElementIdPrefix);
     var filterElement = createListElement(
       event.currentTarget.innerText,
       filterElements + 1,
-      config.filterTypeIdPrefix,
+      config.filterOptionsView.listElementIdPrefix,
       config.resultElementTag
     );
     addMenuNavigationHandlers(filterElement, config);
@@ -475,14 +479,13 @@ searchbar.SearchbarUI = (function () {
 
   function selectSearchResultToDisplayOptions(event, entry, config) {
     hideSubMenus(config);
-    //TODO options id prefix and tag from config (instead of those from the details)
     selectSearchResultToDisplaySubMenu(
       event,
       entry.options,
-      config.filterOptionsViewElementId,
-      config.filterOptionsParentElementId,
-      config.detailTypeIdPrefix,
-      config.detailElementTag
+      config.filterOptionsView.viewElementId,
+      config.filterOptionsView.listParentElementId,
+      config.filterOptionsView.listEntryElementIdPrefix,
+      config.filterOptionsView.listEntryElementTag
     );
   }
 
@@ -509,7 +512,7 @@ searchbar.SearchbarUI = (function () {
     }
     var selectedElement = getEventTarget(event);
     var subMenuViewElement = document.getElementById(subMenuViewElementId);
-    var alignedSubMenuPosition =  (getYPositionOfElement(selectedElement) + getScrollY());
+    var alignedSubMenuPosition = getYPositionOfElement(selectedElement) + getScrollY();
     subMenuViewElement.style.top = alignedSubMenuPosition + "px";
     showElement(subMenuViewElement);
   }
@@ -634,7 +637,7 @@ searchbar.SearchbarUI = (function () {
 
   function hideSubMenus(config) {
     hide(config.detailsElementId);
-    hide(config.filterOptionsViewElementId);
+    hide(config.filterOptionsView.viewElementId);
   }
 
   /**
