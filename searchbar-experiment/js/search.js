@@ -489,7 +489,7 @@ searchbar.SearchbarUI = (function () {
     var subMenuIndex = 0;
     for (subMenuIndex = 0; subMenuIndex < entries.length; subMenuIndex += 1) {
       subMenuEntry = entries[subMenuIndex];
-      subMenuEntryText = subMenuEntry.displayName + ": " + subMenuEntry.value; //TODO implement template feature
+      subMenuEntryText = subMenuEntry.resolveTemplate(subMenuView.listEntryTextTemplate);
       subMenuElement = createListElement(subMenuEntryText, subMenuIndex, subMenuView.listEntryElementIdPrefix, subMenuView.listEntryElementTag);
       searchEntryDetails.appendChild(subMenuElement);
     }
