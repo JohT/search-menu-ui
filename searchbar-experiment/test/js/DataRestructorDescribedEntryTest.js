@@ -125,4 +125,56 @@ describe("datarestructor.DescribedEntry", function () {
 
   });
 
+  describe("resolves a template with variables of contained properties and ", function () {
+    beforeEach(function () {
+      rawEntry = { name: "responses[0].hits.hits[3]._source.tag[5]", value: "inactive" };
+      description = new datarestructor.PropertyStructureDescriptionBuilder().type("testtype").category("testcategory").build();
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+    });
+
+    it("should resolve variable {{type}}", function () {
+      var expectedValue = "testtype";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.resolveTemplate("{{type}}")).toEqual(expectedValue);
+    });
+
+    it("should resolve variable {{category}}", function () {
+      var expectedValue = "testcategory";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.resolveTemplate("{{category}}")).toEqual(expectedValue);
+    });
+
+    it("should resolve variable {{index}}", function () {
+      var expectedValue = "0.3.5";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.resolveTemplate("{{index}}")).toEqual(expectedValue);
+    });
+
+    it("should resolve variable {{index[1]}} with a part of the index", function () {
+      var expectedValue = "3";
+      var template = "{{index[1]}}";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.resolveTemplate(template)).toEqual(expectedValue);
+    });
+    
+    it("should resolve variable {{displayName}}", function () {
+      var expectedValue = "Tag";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.resolveTemplate("{{displayName}}")).toEqual(expectedValue);
+    });
+
+    it("should resolve variable {{fieldName}}", function () {
+      var expectedValue = "tag";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.resolveTemplate("{{fieldName}}")).toEqual(expectedValue);
+    });
+
+    it("should resolve variable {{value}}", function () {
+      var expectedValue = "inactive";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.resolveTemplate("{{value}}")).toEqual(expectedValue);
+    });
+
+  });
+
 });

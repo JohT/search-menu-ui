@@ -302,6 +302,9 @@ Additionally, single elements of the index can be used by specifying the index p
  * **fieldName** - field name extracted from the point separated hierarchical property name, e.g. "name"
  * **value** - content of the field
 
+#### Public functions
+ * **resolveTemplate** - resolves the given template string. The template may contain variables in double curly brackets. Supported variables are all properties of this object, e.g. `"{{fieldName}}"`, `"{{displayName}}"`, `"{{value}}"`. The index can also be inserted using `"{{index}}"`, parts of the index using e.g. `"{{index[1]}}"`.
+
 #### Described groups
  * **"name of described group"** as described in PropertyStructureDescription
  * **"names of moved groups"** as described in PropertyStructureDescription of another group that had been moved

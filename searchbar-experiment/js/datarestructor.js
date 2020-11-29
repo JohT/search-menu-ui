@@ -349,6 +349,16 @@ datarestructor.DescribedEntryCreator = (function () {
       this._description,
       this._identifier
     );
+   /**
+     * Resolves the given template. 
+     * The template may contain variables in double curly brackets.
+     * Supported variables are all properties of this object, e.g. "{{fieldName}}", "{{displayName}}", "{{value}}". 
+     * The index can also be inserted using "{{index}}", parts of the index using e.g. "{{index[1]}}".
+     * @param {string} template 
+     */
+    this.resolveTemplate = function(template) {
+      return replaceVariablesOfAll(replaceIndexVariables(template, indices, "index"), this,  this._identifier);
+    };
   }
 
   /**
