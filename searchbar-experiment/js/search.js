@@ -279,9 +279,10 @@ searchbar.SearchbarUI = (function () {
   }
 
   function getSearchResults(searchText, config) {
-    httpGetJson(config.searchURI, getHttpRequest(), function (jsonResult) {
-      displayResults(filterResults(mapStatesDemoStructure(jsonResult), searchText), config);
-    });
+    //TODO remove states example
+    // httpGetJson(config.searchURI, getHttpRequest(), function (jsonResult) {
+    //   displayResults(filterResults(mapStatesDemoStructure(jsonResult), searchText), config);
+    // });
     //TODO delete these 3 lines when experiment finished
     httpGetJson("../data/KontenMultiSearchTemplateResponse.json", getHttpRequest(), function (jsonResult) {
       displayResults(restruct.Data.restructJson(jsonResult), config);
@@ -482,18 +483,20 @@ searchbar.SearchbarUI = (function () {
   ) {
     clearAllEntriesOfElementWithId(subMenuView.listParentElementId);
     var searchEntryDetails = document.getElementById(subMenuView.listParentElementId);
-
+    var selectedElement = getEventTarget(event);
+    
     var subMenuEntry = null;
     var subMenuEntryText = "";
     var subMenuElement = null;
     var subMenuIndex = 0;
+    var subMenuEntryIdPrefix = selectedElement.id + "-" + subMenuView.listEntryElementIdPrefix;
     for (subMenuIndex = 0; subMenuIndex < entries.length; subMenuIndex += 1) {
       subMenuEntry = entries[subMenuIndex];
       subMenuEntryText = subMenuEntry.resolveTemplate(subMenuView.listEntryTextTemplate);
-      subMenuElement = createListElement(subMenuEntryText, subMenuIndex, subMenuView.listEntryElementIdPrefix, subMenuView.listEntryElementTag);
+      subMenuElement = createListElement(subMenuEntryText, subMenuIndex, subMenuEntryIdPrefix, subMenuView.listEntryElementTag);
       searchEntryDetails.appendChild(subMenuElement);
     }
-    var selectedElement = getEventTarget(event);
+    
     var subMenuViewElement = document.getElementById(subMenuView.viewElementId);
     var alignedSubMenuPosition = getYPositionOfElement(selectedElement) + getScrollY();
     subMenuViewElement.style.top = alignedSubMenuPosition + "px";
