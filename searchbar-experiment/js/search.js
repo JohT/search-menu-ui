@@ -312,7 +312,7 @@ searchbar.SearchbarUI = (function () {
   function displayResults(jsonResults, config) {
     var index = 0;
     for (index = 0; index < jsonResults.length; index++) {
-      addResult(jsonResults[index], index, config);
+      addResult(jsonResults[index], index + 1, config);
     }
   }
 
@@ -354,6 +354,8 @@ searchbar.SearchbarUI = (function () {
   function addMenuNavigationHandlers(element, config) {
     onArrowDownKey(element, handleEventWithConfig(config, focusNextSearchResult));
     onArrowUpKey(element, handleEventWithConfig(config, focusPreviousSearchResult));
+    onArrowRightKey(element, handleEventWithConfig(config, focusSubMenu));
+    onArrowLeftKey(element, handleEventWithConfig(config, focusMainMenu));
     onEscapeKey(element, handleEventWithConfig(config, focusSearchInput));
   }
 
@@ -439,6 +441,16 @@ searchbar.SearchbarUI = (function () {
     resultEntry.blur();
     previous.focus();
     hideSubMenus(config);
+  }
+
+  function focusSubMenu(event, config) {
+    //TODO Implementation instead of dummy "next"
+    focusNextSearchResult(event, config); 
+  }
+
+  function focusMainMenu(event, config) {
+    //TODO Implementation instead of dummy "previous"
+    focusPreviousSearchResult(event, config);
   }
 
   function selectSearchResultAsFilter(event, config) {
@@ -699,7 +711,7 @@ searchbar.SearchbarUI = (function () {
 
   function onArrowUpKey(element, eventHandler) {
     addEvent("keydown", element, function (event) {
-      if (event.key == "ArrowUp" || keyCodeOf(event) == 38) {
+      if (event.key == "ArrowUp" || event.key == "Up" || keyCodeOf(event) == 38) {
         eventHandler(event);
       }
     });
@@ -707,7 +719,23 @@ searchbar.SearchbarUI = (function () {
 
   function onArrowDownKey(element, eventHandler) {
     addEvent("keydown", element, function (event) {
-      if (event.key == "ArrowDown" || keyCodeOf(event) == 40) {
+      if (event.key == "ArrowDown" || event.key == "Down" || keyCodeOf(event) == 40) {
+        eventHandler(event);
+      }
+    });
+  }
+
+  function onArrowRightKey(element, eventHandler) {
+    addEvent("keydown", element, function (event) {
+      if (event.key == "ArrowRight" || event.key == "Right" || keyCodeOf(event) == 39) {
+        eventHandler(event);
+      }
+    });
+  }
+
+  function onArrowLeftKey(element, eventHandler) {
+    addEvent("keydown", element, function (event) {
+      if (event.key == "ArrowLeft" || event.key == "Left" || keyCodeOf(event) == 37) {
         eventHandler(event);
       }
     });
