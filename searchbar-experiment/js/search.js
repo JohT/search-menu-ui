@@ -88,9 +88,9 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  * @property {string} filtersElementId - id of the element (ul) that contains the selected filters (default="searchfilters")
  * @property {SearchViewDescription} detailView - describes the details view
  * @property {SearchViewDescription} filterOptionsView - describes the filter options view
+ * @property {SearchViewDescription} resultsView - describes the main view containing the search results
  * @property {string} searchURI - uri of the search query
  * @property {string} resultTypeIdPrefix - id prefix for result/match entries (followed by "-" and their index) (default="result")
- * @property {string} resultElementTag - tag of the result/filter entries (default="li")
  * @property {string} inactiveFilterClass - css class name for an inactive filter entry (default="inactivefilter")
  * @property {string} waitBeforeClose - timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
  * @property {string} waitBeforeSearch - time in milliseconds to wait until typing is finisdhed and search starts (default=500)
@@ -113,8 +113,8 @@ searchbar.SearchbarAPI = (function () {
     filtersElementId: "searchfilters",
     detailView: null,
     filterOptionsView: null,
+    resultsView: null,
     resultTypeIdPrefix: "result",
-    resultElementTag: "li",
     inactiveFilterClass: "inactivefilter",
     waitBeforeClose: 700,
     waitBeforeSearch: 500
@@ -153,6 +153,18 @@ searchbar.SearchbarAPI = (function () {
       config.detailView = view;
       return this;
     },
+    resultsView: function (view) {
+      config.resultsView = view;
+      return this;
+    },
+    defaultResultsView: function () {
+      return new searchbar.SearchViewDescriptionBuilder()
+        .viewElementId("searchresults")
+        .listParentElementId("searchmatches")
+        .listEntryElementIdPrefix("result")
+        .listEntryTextTemplate("{{category}} {{displayName}} ({{value}})")
+        .build();
+    },
     defaultDetailView: function () {
       return new searchbar.SearchViewDescriptionBuilder()
         .viewElementId("seachdetails")
@@ -177,10 +189,6 @@ searchbar.SearchbarAPI = (function () {
       config.resultTypeIdPrefix = prefix;
       return this;
     },
-    resultElementTag: function (elementTag) {
-      config.resultElementTag = elementTag;
-      return this;
-    },
     inactiveFilterClass: function (classname) {
       config.inactiveFilterClass = classname;
       return this;
@@ -194,6 +202,9 @@ searchbar.SearchbarAPI = (function () {
       return this;
     },
     start: function () {
+      if (config.resultsView == null) {
+        this.resultsView(this.defaultResultsView());
+      }
       if (config.filterOptionsView == null) {
         this.filterOptionsView(this.defaultFilterOptionsView());
       }
@@ -319,15 +330,17 @@ searchbar.SearchbarUI = (function () {
   function addResult(entry, i, config) {
     var matchlist = document.getElementById(config.matchesElementId);
     //TODO template based search result display should be implemented
-    var listElementText = "[" + entry.category + "] " + entry.displayName + " (" + entry.value + ")";
-    var resultElement = createListElement(listElementText, i, config.resultTypeIdPrefix, config.resultElementTag);
+    var listElementText = entry.resolveTemplate(config.resultsView.listEntryTextTemplate);
+    var listElementId = config.resultsView.listEntryElementIdPrefix + "-" + i;
+    var resultElement = createListElement(listElementText, listElementId, config.resultsView.listEntryElementIdPrefix, config.resultsView.listEntryElementTag);
     matchlist.appendChild(resultElement);
 
     if (isMenuEntryWithFurtherDetails(entry)) {
       addMenuEntrySelectionHandlers(resultElement, handleEventWithEntryAndConfig(entry, config, selectSearchResultToDisplayDetails));
     }
     if (isMenuEntryWithOptions(entry)) {
-      addMenuEntrySelectionHandlers(resultElement, handleEventWithEntryAndConfig(entry, config, selectSearchResultToDisplayOptions));
+      addMenuEntrySelectionHandlers(resultElement, handleEventWithEntryAndConfig(entry, config, selectSearchResultToDisplayFilterOptions));
+      onArrowRightKey(resultElement, handleEventWithEntryAndConfig(entry, config, selectSearchResultToDisplayFilterOptions));
     }
     if (isFilterMenuEntry(entry)) {
       addMenuEntrySelectionHandlers(resultElement, handleEventWithConfig(config, selectSearchResultAsFilter));
@@ -376,6 +389,16 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
+   * @param {SearchViewDescription} viewDescription - view description
+   * @param {EventListener} eventHandler - event handler
+   */
+  function handleEventWithView(viewDescription, eventHandler) {
+    return function (event) {
+      eventHandler(event, viewDescription);
+    };
+  }
+
+  /**
    * @param {DescribedEntry} entry - structured raw data of the entry
    * @param {SearchbarConfig} config - search configuration
    * @param {EventListener} eventHandler - event handler
@@ -402,7 +425,7 @@ searchbar.SearchbarUI = (function () {
 
   function focusFirstResult(event, config) {
     var selectedElement = getEventTarget(event);
-    var firstResult = document.getElementById(config.resultTypeIdPrefix + "-1");
+    var firstResult = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-1");
     selectedElement.blur();
     firstResult.focus();
   }
@@ -412,13 +435,13 @@ searchbar.SearchbarUI = (function () {
     var resultEntryIdProperties = extractResultElementIdProperties(resultEntry.id);
     var next = document.getElementById(resultEntryIdProperties.nextId);
     //TODO global index or numbered types to get next/previous view?
-    if (next === null && resultEntryIdProperties.type === config.resultTypeIdPrefix) {
+    if (next === null && resultEntryIdProperties.type === config.resultsView.listEntryElementIdPrefix) {
       //select first filter entry after last result/match entry
       next = document.getElementById(config.filterOptionsView.listElementIdPrefix + "-1");
     }
     if (next === null) {
       //select first result/match entry after last filter entry (or whenever nothing is found)
-      next = document.getElementById(config.resultTypeIdPrefix + "-1");
+      next = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-1");
     }
     resultEntry.blur();
     next.focus();
@@ -447,14 +470,15 @@ searchbar.SearchbarUI = (function () {
 
   function focusSubMenu(event, config) {
     //TODO for all submenu types, not only options
-    var resultEntry = getEventTarget(event);
-    var resultEntryIdProperties = extractResultElementIdProperties(resultEntry.id);
-    var firstElementOfSubMenu = document.getElementById(resultEntryIdProperties.subMenuId("filter"));
-    if (firstElementOfSubMenu != null) {
-      resultEntry.blur();
-      firstElementOfSubMenu.focus();
-      show(config.filterOptionsView.viewElementId); //TODO funktioniert nicht
-    }
+    //TODO ok, if moved to "addResult"
+    // var resultEntry = getEventTarget(event);
+    // var resultEntryIdProperties = extractResultElementIdProperties(resultEntry.id);
+    // var firstElementOfSubMenu = document.getElementById(resultEntryIdProperties.subMenuId("filter"));
+    // if (firstElementOfSubMenu != null) {
+    //   resultEntry.blur();
+    //   firstElementOfSubMenu.focus();
+    //   show(config.filterOptionsView.viewElementId);
+    // }
   }
 
   function focusMainMenu(event, config) {
@@ -466,9 +490,9 @@ searchbar.SearchbarUI = (function () {
     var filterElements = getListElementCountOfType(config.filterOptionsView.listElementIdPrefix);
     var filterElement = createListElement(
       event.currentTarget.innerText,
-      filterElements + 1,
+      config.filterOptionsView.listElementIdPrefix + "-" + (filterElements + 1),
       config.filterOptionsView.listElementIdPrefix,
-      config.resultElementTag
+      config.filterOptionsView.listEntryElementTag 
     );
     addMenuNavigationHandlers(filterElement, config);
     addMenuEntrySelectionHandlers(filterElement, handleEventWithConfig(config, toggleFilterEntry));
@@ -481,48 +505,64 @@ searchbar.SearchbarUI = (function () {
 
   function selectSearchResultToDisplayDetails(event, entry, config) {
     hideSubMenus(config);
-    selectSearchResultToDisplaySubMenu(
-      event,
-      entry.details,
-      config.detailView
-    );
+    selectSearchResultToDisplaySubMenu(event, entry.details, config.detailView);
   }
 
-  function selectSearchResultToDisplayOptions(event, entry, config) {
+  function selectSearchResultToDisplayFilterOptions(event, entry, config) {
     hideSubMenus(config);
-    selectSearchResultToDisplaySubMenu(
-      event,
-      entry.options,
-      config.filterOptionsView
-    );
+    selectSearchResultToDisplaySubMenu(event, entry.options, config.filterOptionsView);
   }
 
-  function selectSearchResultToDisplaySubMenu(
-    event,
-    entries,
-    subMenuView
-  ) {
+  function selectSearchResultToDisplaySubMenu(event, entries, subMenuView) {
     clearAllEntriesOfElementWithId(subMenuView.listParentElementId);
     var searchEntryDetails = document.getElementById(subMenuView.listParentElementId);
     var selectedElement = getEventTarget(event);
-    
+
     var subMenuEntry = null;
     var subMenuEntryText = "";
     var subMenuElement = null;
     var subMenuIndex = 0;
-    var subMenuEntryIdPrefix = selectedElement.id + "-" + subMenuView.listEntryElementIdPrefix;
+    var subMenuEntryId = selectedElement.id + "-" + subMenuView.listEntryElementIdPrefix;
+    var subMenuFirstEntry = null;
     for (subMenuIndex = 0; subMenuIndex < entries.length; subMenuIndex += 1) {
       subMenuEntry = entries[subMenuIndex];
       subMenuEntryText = subMenuEntry.resolveTemplate(subMenuView.listEntryTextTemplate);
-      subMenuElement = createListElement(subMenuEntryText, subMenuIndex + 1, subMenuEntryIdPrefix, subMenuView.listEntryElementTag);
+      subMenuEntryId = selectedElement.id + "-" + subMenuView.listEntryElementIdPrefix + "-" + (subMenuIndex + 1);
+      subMenuElement = createListElement(
+        subMenuEntryText,
+        subMenuEntryId,
+        subMenuView.listEntryElementIdPrefix,
+        subMenuView.listEntryElementTag
+      );
+      onArrowLeftKey(subMenuElement, handleEventWithView(subMenuView, returnToMainMenu));
+      if (subMenuIndex === 0) {
+        subMenuFirstEntry = subMenuElement;
+      }
       searchEntryDetails.appendChild(subMenuElement);
     }
     
     var subMenuViewElement = document.getElementById(subMenuView.viewElementId);
     var alignedSubMenuPosition = getYPositionOfElement(selectedElement) + getScrollY();
     subMenuViewElement.style.top = alignedSubMenuPosition + "px";
+    
     showElement(subMenuViewElement);
+    
+    selectedElement.blur();
+    subMenuFirstEntry.focus();
   }
+
+  /**
+   * Exit sub menu from event entry and return to main menu.
+   */
+  function returnToMainMenu(event, subMenuView) {
+    var subMenuEntryToExit = getEventTarget(event);
+    var subMenuEntryToExitProperties = extractResultElementIdProperties(subMenuEntryToExit.id);
+    var mainMenuEntryToSelect = document.getElementById(subMenuEntryToExitProperties.mainMenuId);
+    subMenuEntryToExit.blur();
+    mainMenuEntryToSelect.focus();
+    hide(subMenuView.viewElementId);
+  }
+
 
   /**
    * Browser compatible Y position of the given element.
@@ -614,7 +654,7 @@ searchbar.SearchbarUI = (function () {
       index: extractedIndex,
       previousId: extractedType + "-" + (extractedIndex - 1),
       nextId: extractedType + "-" + (extractedIndex + 1),
-      subMenuId: function(typeName) {
+      subMenuId: function (typeName) {
         return this.id + "-" + typeName + "-1";
       },
       mainMenuId: extractedType + "-" + extractedIndex,
@@ -626,24 +666,25 @@ searchbar.SearchbarUI = (function () {
    * Creates a new list element to be used for search results.
    *
    * @param {string} text inside the list element
-   * @param {number} index index of the list element used for its id
-   * @param {string} type type of the list element used as prefix for its id, as class name
+   * @param {number} id id of the list element
+   * @param {string} classname type of the list element used as prefix for its id, as class name
    * @param {string} elementTag tag (e.g. "li") for the element
    */
-  function createListElement(text, index, type, elementTag) {
+  function createListElement(text, id, classname, elementTag) {
     var element = document.createElement(elementTag);
-    element.setAttribute("id", type + "-" + index);
+    element.setAttribute("id", id);
     element.setAttribute("tabindex", "0");
     //TODO is it safer/faster to manually create child em tags instead of "innerHtml"?
     //element.appendChild(document.createTextNode(text));
     element.innerHTML = text;
-    addClass(type, element);
+    addClass(classname, element);
     return element;
   }
 
   function hideMenu(config) {
     hide(config.resultsElementId);
     hide(config.detailView.viewElementId);
+    hide(config.filterOptionsView.viewElementId);
   }
 
   function hideSubMenus(config) {

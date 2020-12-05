@@ -26,7 +26,7 @@ restruct.Data = (function () {
   function summariesDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
-      .category("Konto")
+      .category("&#128176;") //money bag symbol
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.kontonummer")
@@ -39,7 +39,7 @@ restruct.Data = (function () {
   function highlightedDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
-      .category("Konto")
+      .category("&#128176;") //money bag symbol
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits.highlight.kontonummer")
@@ -52,7 +52,7 @@ restruct.Data = (function () {
   function detailsDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("detail")
-      .category("Konto")
+      .category("&#128176;") //money bag symbol
       .indexStartsWith("0.")
       .propertyPatternTemplateMode()
       .propertyPattern("responses.hits.hits._source.{{fieldName}}")
@@ -65,7 +65,7 @@ restruct.Data = (function () {
   function filtersDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("filter")
-      .category("Konto")
+      .category("&#128176;") //money bag symbol
       .indexStartsWith("1.")
       .propertyPatternTemplateMode()
       .propertyPattern("responses.aggregations.{{fieldName}}.buckets.key")
@@ -77,7 +77,7 @@ restruct.Data = (function () {
   function sitesMainDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("main")
-      .category("Navigation")
+      .category("&#x261c;") //finger left navigation symbol
       .indexStartsWith("2.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.name")
@@ -89,7 +89,7 @@ restruct.Data = (function () {
   function sitesOptionsSummaryDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
-      .category("Navigation")
+      .category("&#x261c;") //finger left navigation symbol
       .indexStartsWith("3.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.name")
@@ -103,7 +103,7 @@ restruct.Data = (function () {
   function sitesOptionDetailsDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("details")
-      .category("Navigation")
+      .category("&#x261c;") //finger left navigation symbol
       .indexStartsWith("3.")
       .propertyPatternTemplateMode()
       .propertyPattern("responses.hits.hits._source.{{fieldName}}")
