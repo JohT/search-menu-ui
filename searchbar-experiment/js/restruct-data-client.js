@@ -65,7 +65,13 @@ restruct.Data = (function () {
   function filtersDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("filter")
-      .category("&#128176;") //money bag symbol
+      //.category("&#10729;") //Down-Pointing Triangle with Right Half Black symbol
+      //.category("&#128142;") //gem stone symbol
+      //.category("&#127993;") //bow an arrow symbol
+      //.category("&#128071;") //White Down Pointing Backhand Index symbol
+      //.category("&#128205;") //Round Pushpin symbol
+      //.category("&#128204;") //Pushpin symbol
+      .category("&#128206;") //Paperclip symbol
       .indexStartsWith("1.")
       .propertyPatternTemplateMode()
       .propertyPattern("responses.aggregations.{{fieldName}}.buckets.key")
