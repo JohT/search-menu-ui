@@ -65,6 +65,7 @@ restruct.Data = (function () {
   function filtersDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("filter")
+      //TODO delete not needed symbols
       //.category("&#10729;") //Down-Pointing Triangle with Right Half Black symbol
       //.category("&#128142;") //gem stone symbol
       //.category("&#127993;") //bow an arrow symbol

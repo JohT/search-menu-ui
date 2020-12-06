@@ -15,9 +15,9 @@ var searchbar = searchbar || {};
  * @property {string} viewElementId - id of the element (e.g. "div"), that contains the view with all list elements and their parent.
  * @property {string} listParentElementId - id of the element (e.g. "ul"), that contains all list entries and is located inside the view.
  * @property {string} listEntryElementIdPrefix - id prefix (followed by "-" and the index number) for every list entry
- * @property {string} listEntryElementTag - element tag for list entries. defaults to "li".
- * @property {string} listEntryTextTemplate - template for the text of each list entry
-
+ * @property {string} [listEntryElementTag=li] - element tag for list entries. defaults to "li".
+ * @property {string} [listEntryTextTemplate={{displayName}}: {{value}}] template for the text of each list entry
+ */
 
 /**
  * SearchViewDescription
@@ -88,18 +88,17 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  * @typedef {Object} SearchbarConfig
  * @property {string} searchAreaElementId - id of the whole search area (default="searcharea")
  * @property {string} inputElementId - id of the search input field (default="searchbar")
- * @property {string} resultsElementId - id of the element (div) that contains matches and filters (default="searchresults")
- * @property {string} matchesElementId - id of the element (ul) that contains the matches/suggestions (default="searchmatches")
  * @property {string} filtersElementId - id of the element (ul) that contains the selected filters (default="searchfilters")
  * @property {SearchViewDescription} detailView - describes the details view
  * @property {SearchViewDescription} filterOptionsView - describes the filter options view
  * @property {SearchViewDescription} resultsView - describes the main view containing the search results
  * @property {string} searchURI - uri of the search query
- * @property {string} resultTypeIdPrefix - id prefix for result/match entries (followed by "-" and their index) (default="result")
  * @property {string} inactiveFilterClass - css class name for an inactive filter entry (default="inactivefilter")
  * @property {string} waitBeforeClose - timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
  * @property {string} waitBeforeSearch - time in milliseconds to wait until typing is finisdhed and search starts (default=500)
  */
+
+//TODO {string} [listEntryElementTag=li]
 
 /**
  * Searchbar UI API
@@ -113,13 +112,10 @@ searchbar.SearchbarAPI = (function () {
     searchURI: "../data/state_capitals.json",
     searchAreaElementId: "searcharea",
     inputElementId: "searchbar",
-    resultsElementId: "searchresults",
-    matchesElementId: "searchmatches",
     filtersElementId: "searchfilters",
     detailView: null,
     filterOptionsView: null,
     resultsView: null,
-    resultTypeIdPrefix: "result",
     inactiveFilterClass: "inactivefilter",
     waitBeforeClose: 700,
     waitBeforeSearch: 500
@@ -140,14 +136,6 @@ searchbar.SearchbarAPI = (function () {
     },
     inputElementId: function (id) {
       config.inputElementId = id;
-      return this;
-    },
-    resultsElementId: function (id) {
-      config.resultsElementId = id;
-      return this;
-    },
-    matchesElementId: function (id) {
-      config.matchesElementId = id;
       return this;
     },
     filtersElementId: function (id) {
@@ -190,10 +178,6 @@ searchbar.SearchbarAPI = (function () {
         .listEntryElementIdPrefix("filter")
         .listEntryTextTemplate("{{value}}")
         .build();
-    },
-    resultTypeIdPrefix: function (prefix) {
-      config.resultTypeIdPrefix = prefix;
-      return this;
     },
     inactiveFilterClass: function (classname) {
       config.inactiveFilterClass = classname;
@@ -274,7 +258,7 @@ searchbar.SearchbarUI = (function () {
         if (this.focusOutTimer != null) {
           clearTimeout(this.focusOutTimer);
         }
-        show(config.resultsElementId);
+        show(config.resultsView.viewElementId);
       }
     });
     addEvent("focusout", searchareaElement, function (event) {
@@ -285,13 +269,13 @@ searchbar.SearchbarUI = (function () {
   };
 
   function updateSearch(searchText, config) {
-    var matchlist = document.getElementById(config.matchesElementId);
+    var matchlist = document.getElementById(config.resultsView.listParentElementId);
     matchlist.innerHTML = "";
     if (searchText.length === 0) {
       hideMenu(config);
       return;
     }
-    show(config.resultsElementId);
+    show(config.resultsView.viewElementId);
     getSearchResults(searchText, config);
   }
 
@@ -334,8 +318,7 @@ searchbar.SearchbarUI = (function () {
   }
 
   function addResult(entry, i, config) {
-    var matchlist = document.getElementById(config.matchesElementId);
-    //TODO template based search result display should be implemented
+    var matchlist = document.getElementById(config.resultsView.listParentElementId);
     var listElementText = entry.resolveTemplate(config.resultsView.listEntryTextTemplate);
     var listElementId = config.resultsView.listEntryElementIdPrefix + "-" + i;
     var resultElement = createListElement(
@@ -387,7 +370,8 @@ searchbar.SearchbarUI = (function () {
   function addSubMenuNavigationHandlers(element) {
     onArrowDownKey(element, focusNextMenuEntry);
     onArrowUpKey(element, focusPreviousMenuEntry);
-    onEscapeKey(element, focusSearchInput);
+    onArrowLeftKey(element, returnToMainMenu);
+    onEscapeKey(element, returnToMainMenu);
   }
 
   function addMenuEntrySelectionHandlers(resultElement, handler) {
@@ -403,16 +387,6 @@ searchbar.SearchbarUI = (function () {
   function handleEventWithConfig(config, eventHandler) {
     return function (event) {
       eventHandler(event, config);
-    };
-  }
-
-  /**
-   * @param {SearchViewDescription} viewDescription - view description
-   * @param {EventListener} eventHandler - event handler
-   */
-  function handleEventWithView(viewDescription, eventHandler) {
-    return function (event) {
-      eventHandler(event, viewDescription);
     };
   }
 
@@ -435,6 +409,7 @@ searchbar.SearchbarUI = (function () {
     moveCursorToEndOf(inputElement);
     preventDefaultEventHandling(inputElement); //skips cursor position change on key up once
     hideSubMenus(config);
+    return inputElement;
   }
 
   function preventDefaultEventHandling(inputevent) {
@@ -449,88 +424,75 @@ searchbar.SearchbarUI = (function () {
   }
 
   function focusNextSearchResult(event, config) {
-    var resultEntry = getEventTarget(event);
-    var resultEntryIdProperties = extractResultElementIdProperties(resultEntry.id);
-    var next = document.getElementById(resultEntryIdProperties.nextId);
-    //TODO global index or numbered types to get next/previous view?
-    if (next === null && resultEntryIdProperties.type === config.resultsView.listEntryElementIdPrefix) {
-      //select first filter entry after last result/match entry
-      next = document.getElementById(config.filterOptionsView.listEntryElementIdPrefix + "-1");
-    }
-    if (next === null) {
-      //select first result/match entry after last filter entry (or whenever nothing is found)
-      next = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-1");
-    }
-    resultEntry.blur();
-    next.focus();
+    focusNextMenuEntry(event, function (menuEntryIdProperties) {
+      var next = null;
+      if (menuEntryIdProperties.type === config.resultsView.listEntryElementIdPrefix) {
+        //select first filter entry after last result/match entry
+        //TODO Better way tp navigate from last search result to first options/filter entry?
+        next = document.getElementById(config.filterOptionsView.listEntryElementIdPrefix + "-1");
+      }
+      if (next === null) {
+        //select first result/match entry after last filter entry (or whenever nothing is found)
+        next = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-1");
+      }
+      return next;
+    });
     hideSubMenus(config);
   }
 
-  function focusNextMenuEntry(event) {
-    var resultEntry = getEventTarget(event);
-    var resultEntryIdProperties = extractResultElementIdProperties(resultEntry.id);
-    var next = document.getElementById(resultEntryIdProperties.nextId);
-    //TODO handler to insert jump points when next=null for reuse?
-    //TODO global index or numbered types to get next/previous view?
-    // if (next === null && resultEntryIdProperties.type === config.resultsView.listEntryElementIdPrefix) {
-    //   //select first filter entry after last result/match entry
-    //   next = document.getElementById(config.filterOptionsView.listEntryElementIdPrefix + "-1");
-    // }
-    // if (next === null) {
-    //   //select first result/match entry after last filter entry (or whenever nothing is found)
-    //   next = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-1");
-    // }
-    if (next === null) {
-      next = document.getElementById(resultEntryIdProperties.firstId);
+  function focusPreviousSearchResult(event, config) {
+    focusPreviousMenuEntry(event, function (menuEntryIdProperties) {
+      var previous = null;
+      if (menuEntryIdProperties.type === config.filterOptionsView.listElementIdPrefix) {
+        //select last result entry when arrow up is pressed on first filter entry
+        //TODO Better way tp navigate from first options/filter entry to last search result?
+        var resultElementsCount = getListElementCountOfType(config.resultsView.listEntryElementIdPrefix);
+        previous = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-" + resultElementsCount);
+      }
+      if (previous === null) {
+        //select input, if there is no previous entry.
+        return focusSearchInput(event, config);
+      }
+      return previous;
+    });
+    hideSubMenus(config);
+  }
+
+  function focusNextMenuEntry(event, onMissingNext) {
+    var menuEntry = getEventTarget(event);
+    var menuEntryIdProperties = extractListElementIdProperties(menuEntry.id);
+    if (menuEntryIdProperties.isSubMenu) {
+      preventDefaultEventHandling(event); //skips e.g. scrolling whole screen down when focus is inside sub menu
     }
-    if (next !== null) {
-      resultEntry.blur();
+    var next = document.getElementById(menuEntryIdProperties.nextId);
+    if (next == null && typeof onMissingNext === "function") {
+      next = onMissingNext(menuEntryIdProperties);
+    }
+    //TODO handler to insert jump points when next=null for reuse?
+    if (next == null) {
+      next = document.getElementById(menuEntryIdProperties.firstId);
+    }
+    if (next != null) {
+      menuEntry.blur();
       next.focus();
     }
   }
 
-  function focusPreviousSearchResult(event, config) {
-    var resultEntry = getEventTarget(event);
-    var resultEntryIdProperties = extractResultElementIdProperties(resultEntry.id);
-    var previous = document.getElementById(resultEntryIdProperties.previousId);
-    //TODO global index or numbered types to get next/previous view?
-    if (previous === null && resultEntryIdProperties.type === config.filterOptionsView.listElementIdPrefix) {
-      //select last result entry when arrow up is pressed on first filter entry
-      var resultElementsCount = getListElementCountOfType(config.resultTypeIdPrefix);
-      previous = document.getElementById(config.resultTypeIdPrefix + "-" + resultElementsCount);
+  function focusPreviousMenuEntry(event, onMissingPrevious) {
+    var menuEntry = getEventTarget(event);
+    var menuEntryIdProperties = extractListElementIdProperties(menuEntry.id);
+    if (menuEntryIdProperties.isSubMenu) {
+      preventDefaultEventHandling(event); //skips e.g. scrolling whole screen up when focus is inside sub menu
     }
-    if (previous === null) {
-      //select input, if there is no previous entry.
-      focusSearchInput(event, config);
-      return;
+    var previous = document.getElementById(menuEntryIdProperties.previousId);
+    if (previous == null && typeof onMissingPrevious === "function") {
+      previous = onMissingPrevious(menuEntryIdProperties);
     }
-    resultEntry.blur();
-    previous.focus();
-    hideSubMenus(config);
-  }
-
-  function focusPreviousMenuEntry(event) {
-    var resultEntry = getEventTarget(event);
-    var resultEntryIdProperties = extractResultElementIdProperties(resultEntry.id);
-    var previous = document.getElementById(resultEntryIdProperties.previousId);
-    //TODO handler to insert jump points when previous=null for reuse?
-    //TODO global index or numbered types to get next/previous view?
-    // if (previous === null && resultEntryIdProperties.type === config.filterOptionsView.listElementIdPrefix) {
-    //   //select last result entry when arrow up is pressed on first filter entry
-    //   var resultElementsCount = getListElementCountOfType(config.resultTypeIdPrefix);
-    //   previous = document.getElementById(config.resultTypeIdPrefix + "-" + resultElementsCount);
-    // }
-    // if (previous === null) {
-    //   //select input, if there is no previous entry.
-    //   focusSearchInput(event, config);
-    //   return;
-    // }
-    // TODO Implement lastId
-    // if (previous === null) {
-    //   local = document.getElementById(resultEntryIdProperties.lastId);
-    // }
-    if (previous !== null) {
-      resultEntry.blur();
+    if (previous == null) {
+      previous = document.getElementById(menuEntryIdProperties.lastId);
+    }
+    if (previous != null) {
+      menuEntry.blur();
       previous.focus();
     }
   }
@@ -583,8 +545,9 @@ searchbar.SearchbarUI = (function () {
         subMenuView.listEntryElementIdPrefix,
         subMenuView.listEntryElementTag
       );
-      onArrowLeftKey(subMenuElement, handleEventWithView(subMenuView, returnToMainMenu));
-      addSubMenuNavigationHandlers(subMenuElement);
+      if (subMenuView.isListEntrySelectable) {
+        addSubMenuNavigationHandlers(subMenuElement);
+      }
       if (subMenuIndex === 0) {
         subMenuFirstEntry = subMenuElement;
       }
@@ -606,13 +569,13 @@ searchbar.SearchbarUI = (function () {
   /**
    * Exit sub menu from event entry and return to main menu.
    */
-  function returnToMainMenu(event, subMenuView) {
+  function returnToMainMenu(event) {
     var subMenuEntryToExit = getEventTarget(event);
-    var subMenuEntryToExitProperties = extractResultElementIdProperties(subMenuEntryToExit.id);
+    var subMenuEntryToExitProperties = extractListElementIdProperties(subMenuEntryToExit.id);
     var mainMenuEntryToSelect = document.getElementById(subMenuEntryToExitProperties.mainMenuId);
     subMenuEntryToExit.blur();
     mainMenuEntryToSelect.focus();
-    hide(subMenuView.viewElementId);
+    hideViewOf(subMenuEntryToExit);
   }
 
   /**
@@ -687,6 +650,9 @@ searchbar.SearchbarUI = (function () {
    * @property {number} index - Index of the list element
    * @property {string} previousId - ID of the previous list element
    * @property {string} nextId - ID of the next list element
+   * @property {string} firstId - ID of the first list element
+   * @property {string} lastId - ID of the last list element
+   * @property {function} subMenuId - ID of the last list element
    * @property {boolean} isFirstElement - true, if it is the first element in the list
    */
   /**
@@ -696,7 +662,7 @@ searchbar.SearchbarUI = (function () {
    * @param {string} id
    * @return {ListElementIdProperties} list element id properties
    */
-  function extractResultElementIdProperties(id) {
+  function extractListElementIdProperties(id) {
     var splittedId = id.split("-");
     if (splittedId.length < 2) {
       console.log("expected at least one '-' separator inside the id " + id);
@@ -713,6 +679,7 @@ searchbar.SearchbarUI = (function () {
       previousId: idWithoutIndex + "-" + (extractedIndex - 1),
       nextId: idWithoutIndex + "-" + (extractedIndex + 1),
       firstId: idWithoutIndex + "-1",
+      lastId: idWithoutIndex + "-" + document.getElementById(id).parentElement.childNodes.length,
       subMenuId: function (typeName) {
         return id + "-" + typeName + "-1";
       },
@@ -742,7 +709,7 @@ searchbar.SearchbarUI = (function () {
   }
 
   function hideMenu(config) {
-    hide(config.resultsElementId);
+    hide(config.resultsView.viewElementId);
     hide(config.detailView.viewElementId);
     hide(config.filterOptionsView.viewElementId);
   }
@@ -774,6 +741,21 @@ searchbar.SearchbarUI = (function () {
    */
   function hide(elementId) {
     hideElement(document.getElementById(elementId));
+  }
+
+  /**
+   * Hides the view, that contains the given element.
+   * The view is identified by the existing style-class "show".
+   */
+  function hideViewOf(element) {
+    var parentElement = element;
+    while (parentElement != null) {
+      if (hasClass("show", parentElement)) {
+        hideElement(parentElement);
+        return;
+      }
+      parentElement = parentElement.parentNode;
+    }
   }
 
   /**
