@@ -37,7 +37,8 @@ searchbar.SearchViewDescriptionBuilder = (function () {
       listParentElementId: "",
       listEntryElementIdPrefix: "",
       listEntryElementTag: "li",
-      listEntryTextTemplate: "{{displayName}}: {{value}}"
+      listEntryTextTemplate: "{{displayName}}: {{value}}",
+      isListEntrySelectable: true
     };
     this.viewElementId = function (value) {
       this.description.viewElementId = withDefault(value, "");
@@ -57,6 +58,10 @@ searchbar.SearchViewDescriptionBuilder = (function () {
     };
     this.listEntryTextTemplate = function (value) {
       this.description.listEntryTextTemplate = withDefault(value, "{{displayName}}: {{value}");
+      return this;
+    };
+    this.isListEntrySelectable = function (value) {
+      this.description.isListEntrySelectable = value === true;
       return this;
     };
     this.build = function () {
@@ -171,6 +176,7 @@ searchbar.SearchbarAPI = (function () {
         .listParentElementId("seachdetailentries")
         .listEntryElementIdPrefix("detail")
         .listEntryTextTemplate("{{displayName}}: {{value}}")
+        .isListEntrySelectable(false)
         .build();
     },
     filterOptionsView: function (view) {
@@ -332,7 +338,12 @@ searchbar.SearchbarUI = (function () {
     //TODO template based search result display should be implemented
     var listElementText = entry.resolveTemplate(config.resultsView.listEntryTextTemplate);
     var listElementId = config.resultsView.listEntryElementIdPrefix + "-" + i;
-    var resultElement = createListElement(listElementText, listElementId, config.resultsView.listEntryElementIdPrefix, config.resultsView.listEntryElementTag);
+    var resultElement = createListElement(
+      listElementText,
+      listElementId,
+      config.resultsView.listEntryElementIdPrefix,
+      config.resultsView.listEntryElementTag
+    );
     matchlist.appendChild(resultElement);
 
     if (isMenuEntryWithFurtherDetails(entry)) {
@@ -367,9 +378,16 @@ searchbar.SearchbarUI = (function () {
   function addMenuNavigationHandlers(element, config) {
     onArrowDownKey(element, handleEventWithConfig(config, focusNextSearchResult));
     onArrowUpKey(element, handleEventWithConfig(config, focusPreviousSearchResult));
-    onArrowRightKey(element, handleEventWithConfig(config, focusSubMenu));
-    onArrowLeftKey(element, handleEventWithConfig(config, focusMainMenu));
     onEscapeKey(element, handleEventWithConfig(config, focusSearchInput));
+  }
+
+  /**
+   * @param {Element} element to add event handlers
+   */
+  function addSubMenuNavigationHandlers(element) {
+    onArrowDownKey(element, focusNextMenuEntry);
+    onArrowUpKey(element, focusPreviousMenuEntry);
+    onEscapeKey(element, focusSearchInput);
   }
 
   function addMenuEntrySelectionHandlers(resultElement, handler) {
@@ -437,7 +455,7 @@ searchbar.SearchbarUI = (function () {
     //TODO global index or numbered types to get next/previous view?
     if (next === null && resultEntryIdProperties.type === config.resultsView.listEntryElementIdPrefix) {
       //select first filter entry after last result/match entry
-      next = document.getElementById(config.filterOptionsView.listElementIdPrefix + "-1");
+      next = document.getElementById(config.filterOptionsView.listEntryElementIdPrefix + "-1");
     }
     if (next === null) {
       //select first result/match entry after last filter entry (or whenever nothing is found)
@@ -446,6 +464,29 @@ searchbar.SearchbarUI = (function () {
     resultEntry.blur();
     next.focus();
     hideSubMenus(config);
+  }
+
+  function focusNextMenuEntry(event) {
+    var resultEntry = getEventTarget(event);
+    var resultEntryIdProperties = extractResultElementIdProperties(resultEntry.id);
+    var next = document.getElementById(resultEntryIdProperties.nextId);
+    //TODO handler to insert jump points when next=null for reuse?
+    //TODO global index or numbered types to get next/previous view?
+    // if (next === null && resultEntryIdProperties.type === config.resultsView.listEntryElementIdPrefix) {
+    //   //select first filter entry after last result/match entry
+    //   next = document.getElementById(config.filterOptionsView.listEntryElementIdPrefix + "-1");
+    // }
+    // if (next === null) {
+    //   //select first result/match entry after last filter entry (or whenever nothing is found)
+    //   next = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-1");
+    // }
+    if (next === null) {
+      next = document.getElementById(resultEntryIdProperties.firstId);
+    }
+    if (next !== null) {
+      resultEntry.blur();
+      next.focus();
+    }
   }
 
   function focusPreviousSearchResult(event, config) {
@@ -468,22 +509,30 @@ searchbar.SearchbarUI = (function () {
     hideSubMenus(config);
   }
 
-  function focusSubMenu(event, config) {
-    //TODO for all submenu types, not only options
-    //TODO ok, if moved to "addResult"
-    // var resultEntry = getEventTarget(event);
-    // var resultEntryIdProperties = extractResultElementIdProperties(resultEntry.id);
-    // var firstElementOfSubMenu = document.getElementById(resultEntryIdProperties.subMenuId("filter"));
-    // if (firstElementOfSubMenu != null) {
-    //   resultEntry.blur();
-    //   firstElementOfSubMenu.focus();
-    //   show(config.filterOptionsView.viewElementId);
+  function focusPreviousMenuEntry(event) {
+    var resultEntry = getEventTarget(event);
+    var resultEntryIdProperties = extractResultElementIdProperties(resultEntry.id);
+    var previous = document.getElementById(resultEntryIdProperties.previousId);
+    //TODO handler to insert jump points when previous=null for reuse?
+    //TODO global index or numbered types to get next/previous view?
+    // if (previous === null && resultEntryIdProperties.type === config.filterOptionsView.listElementIdPrefix) {
+    //   //select last result entry when arrow up is pressed on first filter entry
+    //   var resultElementsCount = getListElementCountOfType(config.resultTypeIdPrefix);
+    //   previous = document.getElementById(config.resultTypeIdPrefix + "-" + resultElementsCount);
     // }
-  }
-
-  function focusMainMenu(event, config) {
-    //TODO Implementation instead of dummy "previous"
-    focusPreviousSearchResult(event, config);
+    // if (previous === null) {
+    //   //select input, if there is no previous entry.
+    //   focusSearchInput(event, config);
+    //   return;
+    // }
+    // TODO Implement lastId
+    // if (previous === null) {
+    //   local = document.getElementById(resultEntryIdProperties.lastId);
+    // }
+    if (previous !== null) {
+      resultEntry.blur();
+      previous.focus();
+    }
   }
 
   function selectSearchResultAsFilter(event, config) {
@@ -492,7 +541,7 @@ searchbar.SearchbarUI = (function () {
       event.currentTarget.innerText,
       config.filterOptionsView.listElementIdPrefix + "-" + (filterElements + 1),
       config.filterOptionsView.listElementIdPrefix,
-      config.filterOptionsView.listEntryElementTag 
+      config.filterOptionsView.listEntryElementTag
     );
     addMenuNavigationHandlers(filterElement, config);
     addMenuEntrySelectionHandlers(filterElement, handleEventWithConfig(config, toggleFilterEntry));
@@ -535,20 +584,23 @@ searchbar.SearchbarUI = (function () {
         subMenuView.listEntryElementTag
       );
       onArrowLeftKey(subMenuElement, handleEventWithView(subMenuView, returnToMainMenu));
+      addSubMenuNavigationHandlers(subMenuElement);
       if (subMenuIndex === 0) {
         subMenuFirstEntry = subMenuElement;
       }
       searchEntryDetails.appendChild(subMenuElement);
     }
-    
+
     var subMenuViewElement = document.getElementById(subMenuView.viewElementId);
     var alignedSubMenuPosition = getYPositionOfElement(selectedElement) + getScrollY();
     subMenuViewElement.style.top = alignedSubMenuPosition + "px";
-    
+
     showElement(subMenuViewElement);
-    
-    selectedElement.blur();
-    subMenuFirstEntry.focus();
+
+    if (subMenuView.isListEntrySelectable) {
+      selectedElement.blur();
+      subMenuFirstEntry.focus();
+    }
   }
 
   /**
@@ -562,7 +614,6 @@ searchbar.SearchbarUI = (function () {
     mainMenuEntryToSelect.focus();
     hide(subMenuView.viewElementId);
   }
-
 
   /**
    * Browser compatible Y position of the given element.
@@ -646,19 +697,28 @@ searchbar.SearchbarUI = (function () {
    * @return {ListElementIdProperties} list element id properties
    */
   function extractResultElementIdProperties(id) {
-    var extractedType = id.split("-")[0];
-    var extractedIndex = parseInt(id.split("-")[1]);
+    var splittedId = id.split("-");
+    if (splittedId.length < 2) {
+      console.log("expected at least one '-' separator inside the id " + id);
+    }
+    var extractedMainMenuType = splittedId[0];
+    var extractedMainMenuIndex = parseInt(splittedId[1]);
+    var extractedType = splittedId[splittedId.length - 2];
+    var extractedIndex = parseInt(splittedId[splittedId.length - 1]);
+    var idWithoutIndex = id.substring(0, id.lastIndexOf(extractedIndex) - 1);
     return {
       id: id,
       type: extractedType,
       index: extractedIndex,
-      previousId: extractedType + "-" + (extractedIndex - 1),
-      nextId: extractedType + "-" + (extractedIndex + 1),
+      previousId: idWithoutIndex + "-" + (extractedIndex - 1),
+      nextId: idWithoutIndex + "-" + (extractedIndex + 1),
+      firstId: idWithoutIndex + "-1",
       subMenuId: function (typeName) {
-        return this.id + "-" + typeName + "-1";
+        return id + "-" + typeName + "-1";
       },
-      mainMenuId: extractedType + "-" + extractedIndex,
-      isFirstElement: extractedIndex <= 1
+      mainMenuId: extractedMainMenuType + "-" + extractedMainMenuIndex,
+      isFirstElement: extractedIndex <= 1,
+      isSubMenu: splittedId.length > 2
     };
   }
 
