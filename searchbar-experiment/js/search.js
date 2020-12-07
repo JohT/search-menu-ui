@@ -11,7 +11,7 @@
 var searchbar = searchbar || {};
 
 /**
- * @typedef {Object} SearchViewDescription Describes a part of the search view (e.g. search result details). 
+ * @typedef {Object} SearchViewDescription Describes a part of the search view (e.g. search result details).
  * @property {string} viewElementId - id of the element (e.g. "div"), that contains the view with all list elements and their parent.
  * @property {string} listParentElementId - id of the element (e.g. "ul"), that contains all list entries and is located inside the view.
  * @property {string} listEntryElementIdPrefix - id prefix (followed by "-" and the index number) for every list entry
@@ -22,7 +22,7 @@ var searchbar = searchbar || {};
 /**
  * SearchViewDescription
  * Describes a part of the search view (e.g. search result details).
- * 
+ *
  * @namespace
  */
 searchbar.SearchViewDescriptionBuilder = (function () {
@@ -401,6 +401,67 @@ searchbar.SearchbarUI = (function () {
     };
   }
 
+  /**
+   * This callback will be called, if there is not next or previous menu entry to navigate to.
+   * The implementation can decide, what to do using the given id properties.
+   *
+   * @callback MenuEntryNotFoundHandler
+   * @param {ListElementIdProperties} properties of the element id
+   */
+  /**
+   * This function returns the ID for the first sub menu entry using the given type name (= name of the sub menu).
+   *
+   * @callback SubMenuId
+   * @param {string} type name of the sub menu entries
+   */
+  /**
+   * @typedef {Object} ListElementIdProperties
+   * @property {id} id - Original ID
+   * @property {string} type - Type of the list element
+   * @property {number} index - Index of the list element
+   * @property {string} previousId - ID of the previous list element
+   * @property {string} nextId - ID of the next list element
+   * @property {string} firstId - ID of the first list element
+   * @property {string} lastId - ID of the last list element
+   * @property {SubMenuId} subMenuId - Returns the ID of the first sub menu entry (with the given type name as parameter)
+   * @property {string} mainMenuId - ID of the main menu entry e.g. to leave the sub menu. Equals to the id, if it already is a main menu entry
+   * @property {boolean} isFirstElement - true, if it is the first element in the list
+   * @property {boolean} isSubMenu - true, if it is the ID of an sub menu entry
+   */
+  /**
+   * Extracts properties like type and index
+   * from the given list element id string.
+   *
+   * @param {string} id
+   * @return {ListElementIdProperties} list element id properties
+   */
+  function extractListElementIdProperties(id) {
+    var splittedId = id.split("-");
+    if (splittedId.length < 2) {
+      console.log("expected at least one '-' separator inside the id " + id);
+    }
+    var extractedMainMenuType = splittedId[0];
+    var extractedMainMenuIndex = parseInt(splittedId[1]);
+    var extractedType = splittedId[splittedId.length - 2];
+    var extractedIndex = parseInt(splittedId[splittedId.length - 1]);
+    var idWithoutIndex = id.substring(0, id.lastIndexOf(extractedIndex) - 1);
+    return {
+      id: id,
+      type: extractedType,
+      index: extractedIndex,
+      previousId: idWithoutIndex + "-" + (extractedIndex - 1),
+      nextId: idWithoutIndex + "-" + (extractedIndex + 1),
+      firstId: idWithoutIndex + "-1",
+      lastId: idWithoutIndex + "-" + document.getElementById(id).parentElement.childNodes.length,
+      subMenuId: function (typeName) {
+        return id + "-" + typeName + "-1";
+      },
+      mainMenuId: extractedMainMenuType + "-" + extractedMainMenuIndex,
+      isFirstElement: extractedIndex <= 1,
+      isSubMenu: splittedId.length > 2
+    };
+  }
+
   function focusSearchInput(event, config) {
     var resultEntry = getEventTarget(event);
     var inputElement = document.getElementById(config.inputElementId);
@@ -458,6 +519,12 @@ searchbar.SearchbarUI = (function () {
     hideSubMenus(config);
   }
 
+  /**
+   * Selects and focusses the next menu entry.
+   *
+   * @param {Event} event
+   * @param {MenuEntryNotFoundHandler} onMissingNext is called, if no "next" entry could be found.
+   */
   function focusNextMenuEntry(event, onMissingNext) {
     var menuEntry = getEventTarget(event);
     var menuEntryIdProperties = extractListElementIdProperties(menuEntry.id);
@@ -468,7 +535,6 @@ searchbar.SearchbarUI = (function () {
     if (next == null && typeof onMissingNext === "function") {
       next = onMissingNext(menuEntryIdProperties);
     }
-    //TODO handler to insert jump points when next=null for reuse?
     if (next == null) {
       next = document.getElementById(menuEntryIdProperties.firstId);
     }
@@ -478,6 +544,12 @@ searchbar.SearchbarUI = (function () {
     }
   }
 
+  /**
+   * Selects and focusses the previous menu entry.
+   *
+   * @param {Event} event
+   * @param {MenuEntryNotFoundHandler} onMissingPrevious is called, if no "previous" entry could be found.
+   */
   function focusPreviousMenuEntry(event, onMissingPrevious) {
     var menuEntry = getEventTarget(event);
     var menuEntryIdProperties = extractListElementIdProperties(menuEntry.id);
@@ -644,67 +716,21 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
-   * @typedef {Object} ListElementIdProperties
-   * @property {id} id - Original ID
-   * @property {string} type - Type of the list element
-   * @property {number} index - Index of the list element
-   * @property {string} previousId - ID of the previous list element
-   * @property {string} nextId - ID of the next list element
-   * @property {string} firstId - ID of the first list element
-   * @property {string} lastId - ID of the last list element
-   * @property {function} subMenuId - ID of the last list element
-   * @property {boolean} isFirstElement - true, if it is the first element in the list
-   */
-  /**
-   * Extracts properties like type and index
-   * from the given list element id string.
-   *
-   * @param {string} id
-   * @return {ListElementIdProperties} list element id properties
-   */
-  function extractListElementIdProperties(id) {
-    var splittedId = id.split("-");
-    if (splittedId.length < 2) {
-      console.log("expected at least one '-' separator inside the id " + id);
-    }
-    var extractedMainMenuType = splittedId[0];
-    var extractedMainMenuIndex = parseInt(splittedId[1]);
-    var extractedType = splittedId[splittedId.length - 2];
-    var extractedIndex = parseInt(splittedId[splittedId.length - 1]);
-    var idWithoutIndex = id.substring(0, id.lastIndexOf(extractedIndex) - 1);
-    return {
-      id: id,
-      type: extractedType,
-      index: extractedIndex,
-      previousId: idWithoutIndex + "-" + (extractedIndex - 1),
-      nextId: idWithoutIndex + "-" + (extractedIndex + 1),
-      firstId: idWithoutIndex + "-1",
-      lastId: idWithoutIndex + "-" + document.getElementById(id).parentElement.childNodes.length,
-      subMenuId: function (typeName) {
-        return id + "-" + typeName + "-1";
-      },
-      mainMenuId: extractedMainMenuType + "-" + extractedMainMenuIndex,
-      isFirstElement: extractedIndex <= 1,
-      isSubMenu: splittedId.length > 2
-    };
-  }
-
-  /**
    * Creates a new list element to be used for search results.
    *
    * @param {string} text inside the list element
    * @param {number} id id of the list element
-   * @param {string} classname type of the list element used as prefix for its id, as class name
+   * @param {string} className type of the list element used as prefix for its id, as class name
    * @param {string} elementTag tag (e.g. "li") for the element
    */
-  function createListElement(text, id, classname, elementTag) {
+  function createListElement(text, id, className, elementTag) {
     var element = document.createElement(elementTag);
     element.setAttribute("id", id);
     element.setAttribute("tabindex", "0");
     //TODO is it safer/faster to manually create child em tags instead of "innerHtml"?
     //element.appendChild(document.createTextNode(text));
     element.innerHTML = text;
-    addClass(classname, element);
+    addClass(className, element);
     return element;
   }
 
