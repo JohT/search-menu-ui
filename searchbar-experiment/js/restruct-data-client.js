@@ -58,7 +58,7 @@ restruct.Data = (function () {
       .propertyPattern("responses.hits.hits._source.{{fieldName}}")
       .groupName("details")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
-      .groupDestinationPattern("Konto--summary--{{index[0]}}--{{index[1]}}")
+      .groupDestinationPattern("&#128176;--summary--{{index[0]}}--{{index[1]}}")
       .build();
   }
 
