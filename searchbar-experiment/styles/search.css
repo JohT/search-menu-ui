@@ -79,7 +79,7 @@
   background-color: #befdce;
 }
 
-.filter.inactivefilter {
+.filter.inactive {
   background-color: #cacaca;
   text-decoration: line-through;
 }

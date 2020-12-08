@@ -17,6 +17,7 @@ var searchbar = searchbar || {};
  * @property {string} listEntryElementIdPrefix - id prefix (followed by "-" and the index number) for every list entry
  * @property {string} [listEntryElementTag=li] - element tag for list entries. defaults to "li".
  * @property {string} [listEntryTextTemplate={{displayName}}: {{value}}] template for the text of each list entry
+ * @property {string} [listEntryHiddenFieldsTemplate=JSON containing most important fields] template for the hidden text for each list entry
  */
 
 /**
@@ -32,12 +33,15 @@ searchbar.SearchViewDescriptionBuilder = (function () {
    * Constructor function and container for everything, that needs to exist per instance.
    */
   function SearchViewDescription() {
+    this.defaultListEntryHiddenFieldsTemplate =
+      '{"category": "{{category}}", "type": "{{type}}", "fieldName": "{{fieldName}}", "displayName": "{{displayName}}",  "value": "{{value}}" }';
     this.description = {
       viewElementId: "",
       listParentElementId: "",
       listEntryElementIdPrefix: "",
       listEntryElementTag: "li",
       listEntryTextTemplate: "{{displayName}}: {{value}}",
+      listEntryHiddenFieldsTemplate: this.defaultListEntryHiddenFieldsTemplate,
       isListEntrySelectable: true
     };
     this.viewElementId = function (value) {
@@ -58,6 +62,10 @@ searchbar.SearchViewDescriptionBuilder = (function () {
     };
     this.listEntryTextTemplate = function (value) {
       this.description.listEntryTextTemplate = withDefault(value, "{{displayName}}: {{value}");
+      return this;
+    };
+    this.listEntryHiddenFieldsTemplate = function (value) {
+      this.description.listEntryHiddenFieldsTemplate = withDefault(value, defaultListEntryHiddenFieldsTemplate);
       return this;
     };
     this.isListEntrySelectable = function (value) {
@@ -88,17 +96,14 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  * @typedef {Object} SearchbarConfig
  * @property {string} searchAreaElementId - id of the whole search area (default="searcharea")
  * @property {string} inputElementId - id of the search input field (default="searchbar")
- * @property {string} filtersElementId - id of the element (ul) that contains the selected filters (default="searchfilters")
+ * @property {SearchViewDescription} resultsView - describes the main view containing the search results
  * @property {SearchViewDescription} detailView - describes the details view
  * @property {SearchViewDescription} filterOptionsView - describes the filter options view
- * @property {SearchViewDescription} resultsView - describes the main view containing the search results
+ * @property {SearchViewDescription} filtersView - describes the filters view
  * @property {string} searchURI - uri of the search query
- * @property {string} inactiveFilterClass - css class name for an inactive filter entry (default="inactivefilter")
  * @property {string} waitBeforeClose - timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
- * @property {string} waitBeforeSearch - time in milliseconds to wait until typing is finisdhed and search starts (default=500)
+ * @property {string} waitBeforeSearch - time in milliseconds to wait until typing is finished and search starts (default=500)
  */
-
-//TODO {string} [listEntryElementTag=li]
 
 /**
  * Searchbar UI API
@@ -112,11 +117,10 @@ searchbar.SearchbarAPI = (function () {
     searchURI: "../data/state_capitals.json",
     searchAreaElementId: "searcharea",
     inputElementId: "searchbar",
-    filtersElementId: "searchfilters",
+    resultsView: null,
     detailView: null,
     filterOptionsView: null,
-    resultsView: null,
-    inactiveFilterClass: "inactivefilter",
+    filtersView: null,
     waitBeforeClose: 700,
     waitBeforeSearch: 500
   };
@@ -138,25 +142,21 @@ searchbar.SearchbarAPI = (function () {
       config.inputElementId = id;
       return this;
     },
-    filtersElementId: function (id) {
-      config.filtersElementId = id;
+    resultsView: function (view) {
+      config.resultsView = view;
       return this;
     },
     detailView: function (view) {
       config.detailView = view;
       return this;
     },
-    resultsView: function (view) {
-      config.resultsView = view;
+    filterOptionsView: function (view) {
+      config.filterOptionsView = view;
       return this;
     },
-    defaultResultsView: function () {
-      return new searchbar.SearchViewDescriptionBuilder()
-        .viewElementId("searchresults")
-        .listParentElementId("searchmatches")
-        .listEntryElementIdPrefix("result")
-        .listEntryTextTemplate("{{category}} {{displayName}} ({{value}})")
-        .build();
+    filtersView: function (view) {
+      config.filtersView = view;
+      return this;
     },
     defaultDetailView: function () {
       return new searchbar.SearchViewDescriptionBuilder()
@@ -167,9 +167,13 @@ searchbar.SearchbarAPI = (function () {
         .isListEntrySelectable(false)
         .build();
     },
-    filterOptionsView: function (view) {
-      config.filterOptionsView = view;
-      return this;
+    defaultResultsView: function () {
+      return new searchbar.SearchViewDescriptionBuilder()
+        .viewElementId("searchresults")
+        .listParentElementId("searchmatches")
+        .listEntryElementIdPrefix("result")
+        .listEntryTextTemplate("{{category}} {{displayName}} ({{value}})")
+        .build();
     },
     defaultFilterOptionsView: function () {
       return new searchbar.SearchViewDescriptionBuilder()
@@ -179,9 +183,12 @@ searchbar.SearchbarAPI = (function () {
         .listEntryTextTemplate("{{value}}")
         .build();
     },
-    inactiveFilterClass: function (classname) {
-      config.inactiveFilterClass = classname;
-      return this;
+    defaultFiltersView: function () {
+      return new searchbar.SearchViewDescriptionBuilder()
+        .viewElementId("searchresults")
+        .listParentElementId("searchfilters")
+        .listEntryElementIdPrefix("filter")
+        .build();
     },
     waitBeforeClose: function (ms) {
       config.waitBeforeClose = ms;
@@ -195,11 +202,14 @@ searchbar.SearchbarAPI = (function () {
       if (config.resultsView == null) {
         this.resultsView(this.defaultResultsView());
       }
+      if (config.defaultDetailView == null) {
+        this.detailView(this.defaultDetailView());
+      }
       if (config.filterOptionsView == null) {
         this.filterOptionsView(this.defaultFilterOptionsView());
       }
-      if (config.defaultDetailView == null) {
-        this.detailView(this.defaultDetailView());
+      if (config.filtersView == null) {
+        this.filtersView(this.defaultFiltersView());
       }
       return new searchbar.SearchbarUI(config);
     }
@@ -318,23 +328,25 @@ searchbar.SearchbarUI = (function () {
   }
 
   function addResult(entry, i, config) {
-    var matchlist = document.getElementById(config.resultsView.listParentElementId);
-    var listElementText = entry.resolveTemplate(config.resultsView.listEntryTextTemplate);
+    console.log(entry.publicFieldsJson(2)); //TODO delete this experimental line
+
+    var matchList = document.getElementById(config.resultsView.listParentElementId);
     var listElementId = config.resultsView.listEntryElementIdPrefix + "-" + i;
-    var resultElement = createListElement(
-      listElementText,
-      listElementId,
-      config.resultsView.listEntryElementIdPrefix,
-      config.resultsView.listEntryElementTag
-    );
-    matchlist.appendChild(resultElement);
+    var resultElement = createListEntryElement(entry, config.resultsView, listElementId);
+    matchList.appendChild(resultElement);
 
     if (isMenuEntryWithFurtherDetails(entry)) {
-      addMenuEntrySelectionHandlers(resultElement, handleEventWithEntryAndConfig(entry, config, selectSearchResultToDisplayDetails));
+      addMenuEntrySelectionHandlers(
+        resultElement,
+        handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails)
+      );
     }
     if (isMenuEntryWithOptions(entry)) {
-      addMenuEntrySelectionHandlers(resultElement, handleEventWithEntryAndConfig(entry, config, selectSearchResultToDisplayFilterOptions));
-      onArrowRightKey(resultElement, handleEventWithEntryAndConfig(entry, config, selectSearchResultToDisplayFilterOptions));
+      addMenuEntrySelectionHandlers(
+        resultElement,
+        handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions)
+      );
+      onArrowRightKey(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
     }
     if (isFilterMenuEntry(entry)) {
       addMenuEntrySelectionHandlers(resultElement, handleEventWithConfig(config, selectSearchResultAsFilter));
@@ -391,13 +403,13 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
-   * @param {DescribedEntry} entry - structured raw data of the entry
+   * @param {DescribedEntry[]} entries - array of structured raw data of the entry
    * @param {SearchbarConfig} config - search configuration
    * @param {EventListener} eventHandler - event handler
    */
-  function handleEventWithEntryAndConfig(entry, config, eventHandler) {
+  function handleEventWithEntriesAndConfig(entries, config, eventHandler) {
     return function (event) {
-      eventHandler(event, entry, config);
+      eventHandler(event, entries, config);
     };
   }
 
@@ -473,6 +485,11 @@ searchbar.SearchbarUI = (function () {
     return inputElement;
   }
 
+  /**
+   * Prevents the given event inside an event handler to get handled anywhere else.
+   * Pressing the arrow key up can lead to scrolling up the view. This is not useful,
+   * if the arrow key navigates the focus inside a sub menu, that is fully contained inside the current view.
+   */
   function preventDefaultEventHandling(inputevent) {
     inputevent.preventDefault ? inputevent.preventDefault() : (event.returnValue = false);
   }
@@ -569,56 +586,85 @@ searchbar.SearchbarUI = (function () {
     }
   }
 
+  //TODO use selectSearchResultAsFilter as base for filters selected from filter options.
   function selectSearchResultAsFilter(event, config) {
-    var filterElements = getListElementCountOfType(config.filterOptionsView.listElementIdPrefix);
+    var menuEntry = getEventTarget(event);
+    var filterElements = getListElementCountOfType(config.filtersView.listEntryElementIdPrefix);
     var filterElement = createListElement(
-      event.currentTarget.innerText,
-      config.filterOptionsView.listElementIdPrefix + "-" + (filterElements + 1),
-      config.filterOptionsView.listElementIdPrefix,
-      config.filterOptionsView.listEntryElementTag
+      menuEntry.innerText,
+      config.filtersView.listEntryElementIdPrefix + "-" + (filterElements + 1),
+      config.filtersView.listEntryElementIdPrefix,
+      config.filtersView.listEntryElementTag
     );
     addMenuNavigationHandlers(filterElement, config);
-    addMenuEntrySelectionHandlers(filterElement, handleEventWithConfig(config, toggleFilterEntry));
+    addMenuEntrySelectionHandlers(filterElement, toggleFilterEntry);
 
-    var searchFilters = document.getElementById(config.filtersElementId);
+    var searchFilters = document.getElementById(config.filtersView.listParentElementId);
     searchFilters.appendChild(filterElement);
 
-    hideSubMenus(config);
+    //hideSubMenus(config); //TODO previously opened sub menus like options or details need to be closed on blur
+    returnToMainMenu(event);
   }
 
-  function selectSearchResultToDisplayDetails(event, entry, config) {
-    hideSubMenus(config);
-    selectSearchResultToDisplaySubMenu(event, entry.details, config.detailView);
+  /**
+   * WIP/DRAFT
+   * Gets called when a filter option is selected and copies it into the filter view, where all selected filters are collected.
+   */
+  function selectFilterOption(event, entries, config) {
+    var selectedEntry = getEventTarget(event);
+    //var clonedEntry = node.cloneNode(true);
+    var filterElements = getListElementCountOfType(config.filtersView.listEntryElementIdPrefix);
+    //TODO subMenuElement = createListEntryElement(filterOptionEntry, config.filtersView, config.filtersView.listEntryElementIdPrefix + "-" + (filterElements + 1));
+    var filterElement = createListElement(
+      selectedEntry.innerText, //TODO use own template + innerText does not contain field name (only value)
+      config.filtersView.listEntryElementIdPrefix + "-" + (filterElements + 1),
+      config.filtersView.listEntryElementIdPrefix,
+      config.filtersView.listEntryElementTag
+    );
+    addMenuEntrySelectionHandlers(
+      filterElement,
+      handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions)
+    );
+    onArrowRightKey(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
+    addMenuNavigationHandlers(filterElement, config);
+    onSpaceKey(filterElement, toggleFilterEntry);
+
+    var searchFilters = document.getElementById(config.filtersView.listParentElementId);
+    searchFilters.appendChild(filterElement);
+
+    //hideSubMenus(config); //TODO previously opened sub menus like options or details need to be closed on blur
+    returnToMainMenu(event);
   }
 
-  function selectSearchResultToDisplayFilterOptions(event, entry, config) {
+  function selectSearchResultToDisplayDetails(event, entries, config) {
     hideSubMenus(config);
-    selectSearchResultToDisplaySubMenu(event, entry.options, config.filterOptionsView);
+    selectSearchResultToDisplaySubMenu(event, entries, config.detailView, config);
   }
 
-  function selectSearchResultToDisplaySubMenu(event, entries, subMenuView) {
+  function selectSearchResultToDisplayFilterOptions(event, entries, config) {
+    hideSubMenus(config);
+    selectSearchResultToDisplaySubMenu(event, entries, config.filterOptionsView, config);
+  }
+
+  function selectSearchResultToDisplaySubMenu(event, entries, subMenuView, config) {
     clearAllEntriesOfElementWithId(subMenuView.listParentElementId);
     var searchEntryDetails = document.getElementById(subMenuView.listParentElementId);
     var selectedElement = getEventTarget(event);
 
     var subMenuEntry = null;
-    var subMenuEntryText = "";
     var subMenuElement = null;
     var subMenuIndex = 0;
     var subMenuEntryId = selectedElement.id + "-" + subMenuView.listEntryElementIdPrefix;
     var subMenuFirstEntry = null;
     for (subMenuIndex = 0; subMenuIndex < entries.length; subMenuIndex += 1) {
       subMenuEntry = entries[subMenuIndex];
-      subMenuEntryText = subMenuEntry.resolveTemplate(subMenuView.listEntryTextTemplate);
       subMenuEntryId = selectedElement.id + "-" + subMenuView.listEntryElementIdPrefix + "-" + (subMenuIndex + 1);
-      subMenuElement = createListElement(
-        subMenuEntryText,
-        subMenuEntryId,
-        subMenuView.listEntryElementIdPrefix,
-        subMenuView.listEntryElementTag
-      );
+      subMenuElement = createListEntryElement(subMenuEntry, subMenuView, subMenuEntryId);
       if (subMenuView.isListEntrySelectable) {
         addSubMenuNavigationHandlers(subMenuElement);
+        //TODO the only config dependency here
+        //TODO should only apply to filter options
+        addMenuEntrySelectionHandlers(subMenuElement, handleEventWithEntriesAndConfig(entries, config, selectFilterOption));
       }
       if (subMenuIndex === 0) {
         subMenuFirstEntry = subMenuElement;
@@ -694,14 +740,9 @@ searchbar.SearchbarUI = (function () {
   /**
    * Toggles a filter to inactive and vice versa.
    */
-  function toggleFilterEntry(event, config) {
+  function toggleFilterEntry(event) {
     var filterElement = getEventTarget(event);
-    if (hasClass(config.inactiveFilterClass, filterElement)) {
-      removeClass(config.inactiveFilterClass, filterElement);
-    } else {
-      addClass(config.inactiveFilterClass, filterElement);
-    }
-    hideSubMenus(config);
+    toggleClass("inactive", filterElement);
   }
 
   /**
@@ -713,6 +754,19 @@ searchbar.SearchbarUI = (function () {
       return 0;
     }
     return firstListEntry.parentElement.childNodes.length;
+  }
+
+  /**
+   * Creates a new list entry element to be used for search results, filter options, details and filters.
+   *
+   * @param {DescribedEntry} entry entry data
+   * @param {SearchViewDescription} view description
+   * @param {number} id id of the list element
+   */
+  function createListEntryElement(entry, view, id) {
+    var text = entry.resolveTemplate(view.listEntryTextTemplate);
+    text += '<p id="' + id + '-fields" style="display: none">' + entry.resolveTemplate(view.listEntryHiddenFieldsTemplate) + "</p>";
+    return createListElement(text, id, view.listEntryElementIdPrefix, view.listEntryElementTag);
   }
 
   /**
@@ -730,6 +784,7 @@ searchbar.SearchbarUI = (function () {
     //TODO is it safer/faster to manually create child em tags instead of "innerHtml"?
     //element.appendChild(document.createTextNode(text));
     element.innerHTML = text;
+    //TODO add hidden element containing entry info like fieldName, displayName, value, id, type, category?
     addClass(className, element);
     return element;
   }
@@ -792,6 +847,14 @@ searchbar.SearchbarUI = (function () {
     removeClass("show", element);
   }
 
+  function toggleClass(classToToggle, element) {
+    if (hasClass(classToToggle, element)) {
+      removeClass(classToToggle, element);
+    } else {
+      addClass(classToToggle, element);
+    }
+  }
+
   function addClass(classToAdd, element) {
     removeClass(classToAdd, element);
     var separator = element.className.length > 0 ? " " : "";
@@ -805,6 +868,10 @@ searchbar.SearchbarUI = (function () {
 
   function hasClass(classToLookFor, element) {
     return element.className.indexOf(classToLookFor) >= 0;
+  }
+
+  function onFocus(element, eventHandler) {
+    addEvent("focus", element, eventHandler);
   }
 
   function onEscapeKey(element, eventHandler) {

@@ -281,7 +281,9 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
  * @property {string} displayName - display name extracted from the point separated hierarchical property name, e.g. "Name"
  * @property {string} fieldName - field name extracted from the point separated hierarchical property name, e.g. "name"
  * @property {string} value - content of the field
- * @property {boolean} isMatchingIndex - true, when _identifier.index matches the described "indexStartsWith"
+ * @property {string} resolveTemplate - function, that replaces propertyNames in double curly brackets with the values in this object.
+ * @property {string} publicFieldsJson - function, that converts the public fields including grouped sub structures to JSON.
+ * @property {boolean} _isMatchingIndex - true, when _identifier.index matches the described "indexStartsWith"
  * @property {Object} _identifier - internal structure for identifier. Avoid using it outside since it may change.
  * @property {string} _identifier.index - array indices in hierarchical order separated by points, e.g. "0.0"
  * @property {string} _identifier.value - the (single) value of the "flattened" property, e.g. "Smith"
@@ -320,7 +322,7 @@ datarestructor.DescribedEntryCreator = (function () {
     this.displayName = description.getDisplayNameForPropertyName(propertyNameWithoutArrayIndices);
     this.fieldName = description.getFieldNameForPropertyName(propertyNameWithoutArrayIndices);
     this.value = entry.value;
-    this.isMatchingIndex = indices.pointDelimited.startsWith(description.indexStartsWith);
+    this._isMatchingIndex = indices.pointDelimited.startsWith(description.indexStartsWith);
     this._description = description;
 
     this._identifier = {
@@ -349,15 +351,24 @@ datarestructor.DescribedEntryCreator = (function () {
       this._description,
       this._identifier
     );
-   /**
-     * Resolves the given template. 
+    /**
+     * Resolves the given template.
      * The template may contain variables in double curly brackets.
-     * Supported variables are all properties of this object, e.g. "{{fieldName}}", "{{displayName}}", "{{value}}". 
+     * Supported variables are all properties of this object, e.g. "{{fieldName}}", "{{displayName}}", "{{value}}".
      * The index can also be inserted using "{{index}}", parts of the index using e.g. "{{index[1]}}".
-     * @param {string} template 
+     * @param {string} template
      */
-    this.resolveTemplate = function(template) {
-      return replaceVariablesOfAll(replaceIndexVariables(template, indices, "index"), this,  this._identifier);
+    this.resolveTemplate = function (template) {
+      return replaceVariablesOfAll(replaceIndexVariables(template, indices, "index"), this, this._identifier);
+    };
+    /**
+     * Returns JSON containing all the public fields
+     * @param space — Adds indentation, white space, and line break characters to the return-value JSON text to make it easier to read.
+     */
+    this.publicFieldsJson = function (space) {
+      var propertyNames = propertyNamesWithoutObjectsAndFunctions(this);
+      var prettyPrintJsonSpace = typeof space === "number" ? space : 0;
+      return JSON.stringify(this, replacerRetainsOnlyDefinedPublicFields(propertyNames), prettyPrintJsonSpace);
     };
   }
 
@@ -452,6 +463,73 @@ datarestructor.DescribedEntryCreator = (function () {
       }
     }
     return replaced;
+  }
+
+  /**
+   * Returns an array of property names of the given object without properties of type "object".
+   */
+  function propertyNamesWithoutObjectsAndFunctions(obj) {
+    var result = [];
+    var propertyIndex;
+    var propertyName;
+    var propertyNames = Object.keys(obj);
+    for (propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex += 1) {
+      propertyName = propertyNames[propertyIndex];
+      if (typeof obj[propertyName] !== "object" && typeof obj[propertyName] !== "function") {
+        result.push(propertyName);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Returns a function, that takes two arguments and is therefore applicable to be used as "replacer" parameter for JSON.stringify.
+   * It only retains the given property names and removes everything else except for embedded "sub" objects
+   * with the same structure (and only one recursive level). These sub objects will be cloned to get rid of the circular
+   * structure that would lead to the error message "TypeError: Converting circular structure to JSON".
+   * Internal properties containing objects but beginning with an underscore in their name will also be removed.
+   *
+   * @param key name of the property to be converted to JSON or empty for the whole object.
+   * @param value value of the property to be converted to JSON.
+   * @returns function that is applicable to be used as "replacer" parameter for JSON.stringify.
+   */
+  function replacerRetainsOnlyDefinedPublicFields(propertyNames) {
+    return function (key, value) {
+      return onlyDefinedPublicFields(key, value, propertyNames);
+    };
+  }
+  /**
+   * This function takes two arguments and is therefore applicable to be used as "replacer" parameter for JSON.stringify.
+   * It removes internal properties beginning with an underscore in their name
+   * and creates new objects for grouped structures (only one recursion level) to get rid of the circular structure
+   * that would lead to the error message "TypeError: Converting circular structure to JSON".
+   *
+   * @param {string}  key name of the property to be converted to JSON or empty for the whole object.
+   * @param {string} value value of the property to be converted to JSON.
+   * @param {string[]} propertyNames array of strings containing only the public fields that will be converted to JSON.
+   */
+  function onlyDefinedPublicFields(key, value, propertyNames) {
+    if (typeof value !== "object" && propertyNames.indexOf(key) < 0 && key != "") {
+      return undefined; // Remove all properties that are not contained in the given list.
+    }
+    if (key.startsWith("_")) {
+      return undefined; //Remove all properties with a name beginning with an underscore (internal fields).
+    }
+    if (Array.isArray(value)) {
+      var index, propertyIndex;
+      var entry, clonedEntry;
+      var clonedArray = [];
+      for (index = 0; index < value.length; index += 1) {
+        entry = value[index];
+        clonedEntry = {};
+        for (propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex += 1) {
+          clonedEntry[propertyNames[propertyIndex]] = entry[propertyNames[propertyIndex]];
+        }
+        clonedArray.push(clonedEntry);
+      }
+      return clonedArray;
+    }
+    return value;
   }
 
   /**
@@ -659,7 +737,7 @@ datarestructor.Restructor = (function () {
       var propertyNameWithoutArrayIndices = entry.name.replace(removeArrayBracketsRegEx, "");
       if (description.matchesPropertyName(propertyNameWithoutArrayIndices)) {
         var descibedEntry = new datarestructor.DescribedEntryCreator(entry, description);
-        if (descibedEntry.isMatchingIndex) {
+        if (descibedEntry._isMatchingIndex) {
           filtered.push(descibedEntry);
         }
       }
