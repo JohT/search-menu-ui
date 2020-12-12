@@ -70,20 +70,20 @@ describe("datarestructor.DescribedEntry", function () {
     });
 
     it("should have a matching id by default", function () {
-      expect(describedEntry.isMatchingIndex).toBeTrue();
+      expect(describedEntry._isMatchingIndex).toBeTrue();
     });
 
     it("should have a matching id when described prefix matches", function () {
       description.indexStartsWith = "1.3";
       rawEntry.name = "responses[1].hits.hits[3]._source.tag[5]";
       describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
-      expect(describedEntry.isMatchingIndex).toBeTrue();
+      expect(describedEntry._isMatchingIndex).toBeTrue();
     });
 
     it("shouldn't have a matching id when described prefix doesn't match", function () {
       description.indexStartsWith = "5.";
       describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
-      expect(describedEntry.isMatchingIndex).toBeFalse();
+      expect(describedEntry._isMatchingIndex).toBeFalse();
     });
 
   });
@@ -175,6 +175,49 @@ describe("datarestructor.DescribedEntry", function () {
       expect(describedEntry.resolveTemplate("{{value}}")).toEqual(expectedValue);
     });
 
+  });
+
+  describe("exports public fields as JSON and ", function () {
+    beforeEach(function () {
+      rawEntry = { name: "responses[0].hits.hits[3]._source.jsontag[5]", value: "jsoninactive" };
+      description = new datarestructor.PropertyStructureDescriptionBuilder().type("jsontesttype").category("jsontestcategory").build();
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+    });
+
+    it("should contain the type", function () {
+      var expectedValue = description.type;
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.publicFieldsJson()).toContain('"type":"' + expectedValue + '"');
+    });
+
+    it("should contain the category", function () {
+      var expectedValue = description.category;
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.publicFieldsJson()).toContain('"category":"' + expectedValue + '"');
+    });
+
+    it("should contain the fieldName", function () {
+      var expectedValue = "jsontag";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.publicFieldsJson()).toContain('"fieldName":"' + expectedValue + '"');
+    });
+
+    it("should contain the displayName", function () {
+      var expectedValue = "Jsontag";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.publicFieldsJson()).toContain('"displayName":"' + expectedValue + '"');
+    });
+
+    it("should contain the value", function () {
+      var expectedValue = "jsoninactive";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.publicFieldsJson()).toContain('"value":"' + expectedValue + '"');
+    });
+
+    it("should print prettier JSON using the space parameter", function () {
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.publicFieldsJson(2)).toContain('  "value"');
+    });
   });
 
 });

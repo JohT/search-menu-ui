@@ -361,6 +361,7 @@ datarestructor.DescribedEntryCreator = (function () {
     this.resolveTemplate = function (template) {
       return replaceVariablesOfAll(replaceIndexVariables(template, indices, "index"), this, this._identifier);
     };
+    
     /**
      * Returns JSON containing all the public fields
      * @param space — Adds indentation, white space, and line break characters to the return-value JSON text to make it easier to read.
