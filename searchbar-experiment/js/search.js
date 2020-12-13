@@ -17,7 +17,6 @@ var searchbar = searchbar || {};
  * @property {string} listEntryElementIdPrefix - id prefix (followed by "-" and the index number) for every list entry
  * @property {string} [listEntryElementTag=li] - element tag for list entries. defaults to "li".
  * @property {string} [listEntryTextTemplate={{displayName}}: {{value}}] template for the text of each list entry
- * @property {string} [listEntryHiddenFieldsTemplate=JSON containing most important fields] template for the hidden text for each list entry
  */
 
 /**
@@ -33,15 +32,12 @@ searchbar.SearchViewDescriptionBuilder = (function () {
    * Constructor function and container for everything, that needs to exist per instance.
    */
   function SearchViewDescription() {
-    this.defaultListEntryHiddenFieldsTemplate =
-      '{"category": "{{category}}", "type": "{{type}}", "fieldName": "{{fieldName}}", "displayName": "{{displayName}}",  "value": "{{value}}" }';
     this.description = {
       viewElementId: "",
       listParentElementId: "",
       listEntryElementIdPrefix: "",
       listEntryElementTag: "li",
       listEntryTextTemplate: "{{displayName}}: {{value}}",
-      listEntryHiddenFieldsTemplate: this.defaultListEntryHiddenFieldsTemplate,
       isListEntrySelectable: true
     };
     this.viewElementId = function (value) {
@@ -62,10 +58,6 @@ searchbar.SearchViewDescriptionBuilder = (function () {
     };
     this.listEntryTextTemplate = function (value) {
       this.description.listEntryTextTemplate = withDefault(value, "{{displayName}}: {{value}");
-      return this;
-    };
-    this.listEntryHiddenFieldsTemplate = function (value) {
-      this.description.listEntryHiddenFieldsTemplate = withDefault(value, defaultListEntryHiddenFieldsTemplate);
       return this;
     };
     this.isListEntrySelectable = function (value) {
@@ -328,8 +320,6 @@ searchbar.SearchbarUI = (function () {
   }
 
   function addResult(entry, i, config) {
-    console.log(entry.publicFieldsJson(2)); //TODO delete this experimental line
-
     var matchList = document.getElementById(config.resultsView.listParentElementId);
     var listElementId = config.resultsView.listEntryElementIdPrefix + "-" + i;
     var resultElement = createListEntryElement(entry, config.resultsView, listElementId);
@@ -348,9 +338,10 @@ searchbar.SearchbarUI = (function () {
       );
       onArrowRightKey(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
     }
-    if (isFilterMenuEntry(entry)) {
-      addMenuEntrySelectionHandlers(resultElement, handleEventWithConfig(config, selectSearchResultAsFilter));
-    }
+    //TODO delete, if not used any more
+    // if (isFilterMenuEntry(entry)) {
+    //   addMenuEntrySelectionHandlers(resultElement, handleEventWithConfig(config, selectSearchResultAsFilter));
+    // }
     addMenuNavigationHandlers(resultElement, config);
   }
 
@@ -469,8 +460,9 @@ searchbar.SearchbarUI = (function () {
         return id + "-" + typeName + "-1";
       },
       mainMenuId: extractedMainMenuType + "-" + extractedMainMenuIndex,
+      hiddenFieldsId: id + "-fields",
       isFirstElement: extractedIndex <= 1,
-      isSubMenu: splittedId.length > 2
+      isSubMenu: splittedId.length > 3
     };
   }
 
@@ -521,7 +513,7 @@ searchbar.SearchbarUI = (function () {
   function focusPreviousSearchResult(event, config) {
     focusPreviousMenuEntry(event, function (menuEntryIdProperties) {
       var previous = null;
-      if (menuEntryIdProperties.type === config.filterOptionsView.listElementIdPrefix) {
+      if (menuEntryIdProperties.type === config.filterOptionsView.listEntryElementIdPrefix) {
         //select last result entry when arrow up is pressed on first filter entry
         //TODO Better way tp navigate from first options/filter entry to last search result?
         var resultElementsCount = getListElementCountOfType(config.resultsView.listEntryElementIdPrefix);
@@ -586,41 +578,37 @@ searchbar.SearchbarUI = (function () {
     }
   }
 
+  //TODO delete, if not needed any more
   //TODO use selectSearchResultAsFilter as base for filters selected from filter options.
-  function selectSearchResultAsFilter(event, config) {
-    var menuEntry = getEventTarget(event);
-    var filterElements = getListElementCountOfType(config.filtersView.listEntryElementIdPrefix);
-    var filterElement = createListElement(
-      menuEntry.innerText,
-      config.filtersView.listEntryElementIdPrefix + "-" + (filterElements + 1),
-      config.filtersView.listEntryElementIdPrefix,
-      config.filtersView.listEntryElementTag
-    );
-    addMenuNavigationHandlers(filterElement, config);
-    addMenuEntrySelectionHandlers(filterElement, toggleFilterEntry);
+  // function selectSearchResultAsFilter(event, config) {
+  //   var menuEntry = getEventTarget(event);
+  //   var filterElements = getListElementCountOfType(config.filtersView.listEntryElementIdPrefix);
+  //   var filterElement = createListElement(
+  //     menuEntry.innerText,
+  //     config.filtersView.listEntryElementIdPrefix + "-" + (filterElements + 1),
+  //     config.filtersView.listEntryElementIdPrefix,
+  //     config.filtersView.listEntryElementTag
+  //   );
+  //   addMenuNavigationHandlers(filterElement, config);
+  //   addMenuEntrySelectionHandlers(filterElement, toggleFilterEntry);
 
-    var searchFilters = document.getElementById(config.filtersView.listParentElementId);
-    searchFilters.appendChild(filterElement);
+  //   var searchFilters = document.getElementById(config.filtersView.listParentElementId);
+  //   searchFilters.appendChild(filterElement);
 
-    //hideSubMenus(config); //TODO previously opened sub menus like options or details need to be closed on blur
-    returnToMainMenu(event);
-  }
+  //   //hideSubMenus(config); //TODO previously opened sub menus like options or details need to be closed on blur
+  //   returnToMainMenu(event);
+  // }
 
   /**
-   * WIP/DRAFT
    * Gets called when a filter option is selected and copies it into the filter view, where all selected filters are collected.
    */
   function selectFilterOption(event, entries, config) {
     var selectedEntry = getEventTarget(event);
-    //var clonedEntry = node.cloneNode(true);
     var filterElements = getListElementCountOfType(config.filtersView.listEntryElementIdPrefix);
-    //TODO subMenuElement = createListEntryElement(filterOptionEntry, config.filtersView, config.filtersView.listEntryElementIdPrefix + "-" + (filterElements + 1));
-    var filterElement = createListElement(
-      selectedEntry.innerText, //TODO use own template + innerText does not contain field name (only value)
-      config.filtersView.listEntryElementIdPrefix + "-" + (filterElements + 1),
-      config.filtersView.listEntryElementIdPrefix,
-      config.filtersView.listEntryElementTag
-    );
+
+    //extract the currently selected entry out of the entries
+    var filterElementId = config.filtersView.listEntryElementIdPrefix + "-" + (filterElements + 1);
+    var filterElement = createListEntryElement(findSelectedEntry(selectedEntry.id, entries), config.filtersView, filterElementId);
     addMenuEntrySelectionHandlers(
       filterElement,
       handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions)
@@ -634,6 +622,23 @@ searchbar.SearchbarUI = (function () {
 
     //hideSubMenus(config); //TODO previously opened sub menus like options or details need to be closed on blur
     returnToMainMenu(event);
+  }
+
+  function findSelectedEntry(id, entries) {
+    var selectedEntryIdProperties = extractListElementIdProperties(id);
+    var selectedEntryHiddenFields = JSON.parse(document.getElementById(selectedEntryIdProperties.hiddenFieldsId).innerText);
+    var entryIndex;
+    var currentlySelected;
+    for (entryIndex = 0; entryIndex < entries.length; entryIndex += 1) {
+      currentlySelected = entries[entryIndex];
+      if (
+        currentlySelected.fieldName == selectedEntryHiddenFields.fieldName &&
+        currentlySelected.value == selectedEntryHiddenFields.value
+      ) {
+        return currentlySelected;
+      }
+    }
+    return null;
   }
 
   function selectSearchResultToDisplayDetails(event, entries, config) {
@@ -765,7 +770,7 @@ searchbar.SearchbarUI = (function () {
    */
   function createListEntryElement(entry, view, id) {
     var text = entry.resolveTemplate(view.listEntryTextTemplate);
-    text += '<p id="' + id + '-fields" style="display: none">' + entry.resolveTemplate(view.listEntryHiddenFieldsTemplate) + "</p>";
+    text += '<p id="' + id + '-fields" style="display: none">' + entry.publicFieldsJson() + "</p>";
     return createListElement(text, id, view.listEntryElementIdPrefix, view.listEntryElementTag);
   }
 
@@ -781,10 +786,9 @@ searchbar.SearchbarUI = (function () {
     var element = document.createElement(elementTag);
     element.setAttribute("id", id);
     element.setAttribute("tabindex", "0");
-    //TODO is it safer/faster to manually create child em tags instead of "innerHtml"?
+    //TODO is it safer/faster to manually create child em tag and hidden-p tag instead of "innerHtml"?
     //element.appendChild(document.createTextNode(text));
     element.innerHTML = text;
-    //TODO add hidden element containing entry info like fieldName, displayName, value, id, type, category?
     addClass(className, element);
     return element;
   }
