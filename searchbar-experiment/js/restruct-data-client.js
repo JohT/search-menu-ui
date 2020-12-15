@@ -23,6 +23,8 @@ restruct.Data = (function () {
     return restructured;
   }
 
+  //TODO new optional property containing a symbol 
+  //TODO new optional property containing a imageReference 
   function summariesDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")

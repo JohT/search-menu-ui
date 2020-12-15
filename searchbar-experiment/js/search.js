@@ -38,7 +38,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
       listEntryElementIdPrefix: "",
       listEntryElementTag: "li",
       listEntryTextTemplate: "{{displayName}}: {{value}}",
-      isListEntrySelectable: true
+      isSelectableFilterOption: false
     };
     this.viewElementId = function (value) {
       this.description.viewElementId = withDefault(value, "");
@@ -60,8 +60,8 @@ searchbar.SearchViewDescriptionBuilder = (function () {
       this.description.listEntryTextTemplate = withDefault(value, "{{displayName}}: {{value}");
       return this;
     };
-    this.isListEntrySelectable = function (value) {
-      this.description.isListEntrySelectable = value === true;
+    this.isSelectableFilterOption = function (value) {
+      this.description.isSelectableFilterOption = value === true;
       return this;
     };
     this.build = function () {
@@ -156,7 +156,6 @@ searchbar.SearchbarAPI = (function () {
         .listParentElementId("seachdetailentries")
         .listEntryElementIdPrefix("detail")
         .listEntryTextTemplate("{{displayName}}: {{value}}")
-        .isListEntrySelectable(false)
         .build();
     },
     defaultResultsView: function () {
@@ -173,6 +172,7 @@ searchbar.SearchbarAPI = (function () {
         .listParentElementId("seachfilteroptionentries")
         .listEntryElementIdPrefix("filter")
         .listEntryTextTemplate("{{value}}")
+        .isSelectableFilterOption(true)
         .build();
     },
     defaultFiltersView: function () {
@@ -180,6 +180,7 @@ searchbar.SearchbarAPI = (function () {
         .viewElementId("searchresults")
         .listParentElementId("searchfilters")
         .listEntryElementIdPrefix("filter")
+        .isSelectableFilterOption(true)
         .build();
     },
     waitBeforeClose: function (ms) {
@@ -337,7 +338,11 @@ searchbar.SearchbarUI = (function () {
         handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions)
       );
       onArrowRightKey(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
+      if (isMenuEntryWithDefault(entry)) {
+        createFilterOption(entry.default[0], entry.options, config);
+      }
     }
+    //TODO isMenuEntryWithDefault -> "auto select" filter option if no other value is already manually selected
     //TODO delete, if not used any more
     // if (isFilterMenuEntry(entry)) {
     //   addMenuEntrySelectionHandlers(resultElement, handleEventWithConfig(config, selectSearchResultAsFilter));
@@ -353,9 +358,14 @@ searchbar.SearchbarUI = (function () {
     return typeof entry.options !== "undefined";
   }
 
-  function isFilterMenuEntry(entry) {
-    return (typeof entry.options !== "undefined" || entry.type === "filter") && !isMenuEntryWithOptions(entry);
+  function isMenuEntryWithDefault(entry) {
+    return typeof entry.default !== "undefined";
   }
+
+  //TODO delete, if not used any more
+  // function isFilterMenuEntry(entry) {
+  //   return (typeof entry.options !== "undefined" || entry.type === "filter") && !isMenuEntryWithOptions(entry);
+  // }
 
   /**
    * @param {Element} element to add event handlers
@@ -604,11 +614,16 @@ searchbar.SearchbarUI = (function () {
    */
   function selectFilterOption(event, entries, config) {
     var selectedEntry = getEventTarget(event);
-    var filterElements = getListElementCountOfType(config.filtersView.listEntryElementIdPrefix);
+    var selectedDescribedEntry = findSelectedEntry(selectedEntry.id, entries);    
+    createFilterOption(selectedDescribedEntry, entries, config);
+    //hideSubMenus(config); //TODO previously opened sub menus like options or details need to be closed on blur
+    returnToMainMenu(event);
+  }
 
-    //extract the currently selected entry out of the entries
+  function createFilterOption(selectedDescribedEntry, entries, config) {
+    var filterElements = getListElementCountOfType(config.filtersView.listEntryElementIdPrefix);
     var filterElementId = config.filtersView.listEntryElementIdPrefix + "-" + (filterElements + 1);
-    var filterElement = createListEntryElement(findSelectedEntry(selectedEntry.id, entries), config.filtersView, filterElementId);
+    var filterElement = createListEntryElement(selectedDescribedEntry, config.filtersView, filterElementId);
     addMenuEntrySelectionHandlers(
       filterElement,
       handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions)
@@ -619,11 +634,14 @@ searchbar.SearchbarUI = (function () {
 
     var searchFilters = document.getElementById(config.filtersView.listParentElementId);
     searchFilters.appendChild(filterElement);
-
-    //hideSubMenus(config); //TODO previously opened sub menus like options or details need to be closed on blur
-    returnToMainMenu(event);
   }
 
+  /**
+   * Extracts the described entry that it referred by the element given by its ID out of the list of described entries.
+   * @param {string} element id
+   * @param {DescribedEntry[]} array of described entries
+   * @returns {DescribedEntry} described entry out of the given entries, that suits the element given by its id. 
+   */
   function findSelectedEntry(id, entries) {
     var selectedEntryIdProperties = extractListElementIdProperties(id);
     var selectedEntryHiddenFields = JSON.parse(document.getElementById(selectedEntryIdProperties.hiddenFieldsId).innerText);
@@ -665,7 +683,7 @@ searchbar.SearchbarUI = (function () {
       subMenuEntry = entries[subMenuIndex];
       subMenuEntryId = selectedElement.id + "-" + subMenuView.listEntryElementIdPrefix + "-" + (subMenuIndex + 1);
       subMenuElement = createListEntryElement(subMenuEntry, subMenuView, subMenuEntryId);
-      if (subMenuView.isListEntrySelectable) {
+      if (subMenuView.isSelectableFilterOption) {
         addSubMenuNavigationHandlers(subMenuElement);
         //TODO the only config dependency here
         //TODO should only apply to filter options
@@ -683,7 +701,7 @@ searchbar.SearchbarUI = (function () {
 
     showElement(subMenuViewElement);
 
-    if (subMenuView.isListEntrySelectable) {
+    if (subMenuView.isSelectableFilterOption) {
       selectedElement.blur();
       subMenuFirstEntry.focus();
     }
