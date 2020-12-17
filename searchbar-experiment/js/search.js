@@ -339,7 +339,7 @@ searchbar.SearchbarUI = (function () {
       );
       onArrowRightKey(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
       if (isMenuEntryWithDefault(entry)) {
-        createFilterOption(entry.default[0], entry.options, config);
+        createFilterOption(entry.default[0], entry.options, config.filtersView, config);
       }
     }
     //TODO isMenuEntryWithDefault -> "auto select" filter option if no other value is already manually selected
@@ -438,6 +438,8 @@ searchbar.SearchbarUI = (function () {
    * @property {string} lastId - ID of the last list element
    * @property {SubMenuId} subMenuId - Returns the ID of the first sub menu entry (with the given type name as parameter)
    * @property {string} mainMenuId - ID of the main menu entry e.g. to leave the sub menu. Equals to the id, if it already is a main menu entry
+   * @property {boolean} hiddenFieldsId - ID of the embedded hidden field, that contains all public information of the described entry as JSON.
+   * @property {boolean} hiddenFields - Parses the JSON inside the "hiddenFieldsId"-Element and returns the object with the described entry.
    * @property {boolean} isFirstElement - true, if it is the first element in the list
    * @property {boolean} isSubMenu - true, if it is the ID of an sub menu entry
    */
@@ -471,6 +473,9 @@ searchbar.SearchbarUI = (function () {
       },
       mainMenuId: extractedMainMenuType + "-" + extractedMainMenuIndex,
       hiddenFieldsId: id + "-fields",
+      hiddenFields: function() {
+        return JSON.parse(document.getElementById(id + "-fields").innerText);
+      },
       isFirstElement: extractedIndex <= 1,
       isSubMenu: splittedId.length > 3
     };
@@ -615,15 +620,21 @@ searchbar.SearchbarUI = (function () {
   function selectFilterOption(event, entries, config) {
     var selectedEntry = getEventTarget(event);
     var selectedDescribedEntry = findSelectedEntry(selectedEntry.id, entries);    
-    createFilterOption(selectedDescribedEntry, entries, config);
+    createFilterOption(selectedDescribedEntry, entries, config.filtersView, config);
     //hideSubMenus(config); //TODO previously opened sub menus like options or details need to be closed on blur
     returnToMainMenu(event);
   }
 
-  function createFilterOption(selectedDescribedEntry, entries, config) {
-    var filterElements = getListElementCountOfType(config.filtersView.listEntryElementIdPrefix);
-    var filterElementId = config.filtersView.listEntryElementIdPrefix + "-" + (filterElements + 1);
-    var filterElement = createListEntryElement(selectedDescribedEntry, config.filtersView, filterElementId);
+  function createFilterOption(selectedDescribedEntry, entries, view, config) {
+    // --------- start of experiement
+    var existingElement = getExistingFilterOption(selectedDescribedEntry.fieldName, view.listParentElementId);
+    if (existingElement) {
+      console.log("WIP/Draft: Filter Option Elements already exists: " + existingElement.id + "/" + existingElement.innerText);
+    }
+    // --------- end of experiement
+    var filterElements = getListElementCountOfType(view.listEntryElementIdPrefix);
+    var filterElementId = view.listEntryElementIdPrefix + "-" + (filterElements + 1);
+    var filterElement = createListEntryElement(selectedDescribedEntry, view, filterElementId);
     addMenuEntrySelectionHandlers(
       filterElement,
       handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions)
@@ -632,8 +643,23 @@ searchbar.SearchbarUI = (function () {
     addMenuNavigationHandlers(filterElement, config);
     onSpaceKey(filterElement, toggleFilterEntry);
 
-    var searchFilters = document.getElementById(config.filtersView.listParentElementId);
+    var searchFilters = document.getElementById(view.listParentElementId);
     searchFilters.appendChild(filterElement);
+  }
+
+  function getExistingFilterOption(fieldName, listParentElementId) {
+    var listParentElement = document.getElementById(listParentElementId);
+    var filterGroupIndex = 0;
+    var filterGroupElement, filterGroupElementIdProperties, filterGroupElementHiddenFields;
+    for (filterGroupIndex = 0; filterGroupIndex < listParentElement.childNodes.length; filterGroupIndex+=1) {
+      filterGroupElement = listParentElement.childNodes[filterGroupIndex];
+      filterGroupElementIdProperties = extractListElementIdProperties(filterGroupElement.id);
+      filterGroupElementHiddenFields = filterGroupElementIdProperties.hiddenFields();
+      if (filterGroupElementHiddenFields.fieldName === fieldName) {
+        return filterGroupElement;
+      }
+    }
+    return null;
   }
 
   /**
@@ -644,7 +670,7 @@ searchbar.SearchbarUI = (function () {
    */
   function findSelectedEntry(id, entries) {
     var selectedEntryIdProperties = extractListElementIdProperties(id);
-    var selectedEntryHiddenFields = JSON.parse(document.getElementById(selectedEntryIdProperties.hiddenFieldsId).innerText);
+    var selectedEntryHiddenFields = selectedEntryIdProperties.hiddenFields();
     var entryIndex;
     var currentlySelected;
     for (entryIndex = 0; entryIndex < entries.length; entryIndex += 1) {
@@ -656,6 +682,7 @@ searchbar.SearchbarUI = (function () {
         return currentlySelected;
       }
     }
+    console.log("error: no selected entry found for id " + id + " in " + entries);
     return null;
   }
 
