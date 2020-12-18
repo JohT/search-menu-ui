@@ -321,10 +321,8 @@ searchbar.SearchbarUI = (function () {
   }
 
   function addResult(entry, i, config) {
-    var matchList = document.getElementById(config.resultsView.listParentElementId);
     var listElementId = config.resultsView.listEntryElementIdPrefix + "-" + i;
     var resultElement = createListEntryElement(entry, config.resultsView, listElementId);
-    matchList.appendChild(resultElement);
 
     if (isMenuEntryWithFurtherDetails(entry)) {
       addMenuEntrySelectionHandlers(
@@ -473,7 +471,7 @@ searchbar.SearchbarUI = (function () {
       },
       mainMenuId: extractedMainMenuType + "-" + extractedMainMenuIndex,
       hiddenFieldsId: id + "-fields",
-      hiddenFields: function() {
+      hiddenFields: function () {
         return JSON.parse(document.getElementById(id + "-fields").innerText);
       },
       isFirstElement: extractedIndex <= 1,
@@ -619,7 +617,7 @@ searchbar.SearchbarUI = (function () {
    */
   function selectFilterOption(event, entries, config) {
     var selectedEntry = getEventTarget(event);
-    var selectedDescribedEntry = findSelectedEntry(selectedEntry.id, entries);    
+    var selectedDescribedEntry = findSelectedEntry(selectedEntry.id, entries);
     createFilterOption(selectedDescribedEntry, entries, config.filtersView, config);
     //hideSubMenus(config); //TODO previously opened sub menus like options or details need to be closed on blur
     returnToMainMenu(event);
@@ -627,14 +625,19 @@ searchbar.SearchbarUI = (function () {
 
   function createFilterOption(selectedDescribedEntry, entries, view, config) {
     // --------- start of experiement
-    var existingElement = getExistingFilterOption(selectedDescribedEntry.fieldName, view.listParentElementId);
+    var existingElement = getListEntryByFieldName(selectedDescribedEntry.fieldName, view.listParentElementId);
     if (existingElement) {
       console.log("WIP/Draft: Filter Option Elements already exists: " + existingElement.id + "/" + existingElement.innerText);
     }
-    // --------- end of experiement
+    // --------- end of experiment
     var filterElements = getListElementCountOfType(view.listEntryElementIdPrefix);
     var filterElementId = view.listEntryElementIdPrefix + "-" + (filterElements + 1);
-    var filterElement = createListEntryElement(selectedDescribedEntry, view, filterElementId);
+    var filterElement = getListEntryByFieldName(selectedDescribedEntry.fieldName, view.listParentElementId);
+    if (filterElement == null) {
+      filterElement = createListEntryElement(selectedDescribedEntry, view, filterElementId);
+    } else {
+      filterElement = updateListEntryElement(selectedDescribedEntry, view, filterElement);
+    }
     addMenuEntrySelectionHandlers(
       filterElement,
       handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions)
@@ -642,16 +645,13 @@ searchbar.SearchbarUI = (function () {
     onArrowRightKey(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
     addMenuNavigationHandlers(filterElement, config);
     onSpaceKey(filterElement, toggleFilterEntry);
-
-    var searchFilters = document.getElementById(view.listParentElementId);
-    searchFilters.appendChild(filterElement);
   }
 
-  function getExistingFilterOption(fieldName, listParentElementId) {
+  function getListEntryByFieldName(fieldName, listParentElementId) {
     var listParentElement = document.getElementById(listParentElementId);
     var filterGroupIndex = 0;
     var filterGroupElement, filterGroupElementIdProperties, filterGroupElementHiddenFields;
-    for (filterGroupIndex = 0; filterGroupIndex < listParentElement.childNodes.length; filterGroupIndex+=1) {
+    for (filterGroupIndex = 0; filterGroupIndex < listParentElement.childNodes.length; filterGroupIndex += 1) {
       filterGroupElement = listParentElement.childNodes[filterGroupIndex];
       filterGroupElementIdProperties = extractListElementIdProperties(filterGroupElement.id);
       filterGroupElementHiddenFields = filterGroupElementIdProperties.hiddenFields();
@@ -666,7 +666,7 @@ searchbar.SearchbarUI = (function () {
    * Extracts the described entry that it referred by the element given by its ID out of the list of described entries.
    * @param {string} element id
    * @param {DescribedEntry[]} array of described entries
-   * @returns {DescribedEntry} described entry out of the given entries, that suits the element given by its id. 
+   * @returns {DescribedEntry} described entry out of the given entries, that suits the element given by its id.
    */
   function findSelectedEntry(id, entries) {
     var selectedEntryIdProperties = extractListElementIdProperties(id);
@@ -698,7 +698,6 @@ searchbar.SearchbarUI = (function () {
 
   function selectSearchResultToDisplaySubMenu(event, entries, subMenuView, config) {
     clearAllEntriesOfElementWithId(subMenuView.listParentElementId);
-    var searchEntryDetails = document.getElementById(subMenuView.listParentElementId);
     var selectedElement = getEventTarget(event);
 
     var subMenuEntry = null;
@@ -719,7 +718,6 @@ searchbar.SearchbarUI = (function () {
       if (subMenuIndex === 0) {
         subMenuFirstEntry = subMenuElement;
       }
-      searchEntryDetails.appendChild(subMenuElement);
     }
 
     var subMenuViewElement = document.getElementById(subMenuView.viewElementId);
@@ -807,6 +805,19 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
+   * Updates an already existing list entry element to be used for search results, filter options, details and filters.
+   *
+   * @param {DescribedEntry} entry entry data
+   * @param {SearchViewDescription} view description
+   * @param {Node} already existing element
+   */
+  function updateListEntryElement(entry, view, existingElement) {
+    var text = createListEntryInnerHtmlText(entry, view, existingElement.id);
+    existingElement.innerHTML = text;
+    return existingElement;
+  }
+
+  /**
    * Creates a new list entry element to be used for search results, filter options, details and filters.
    *
    * @param {DescribedEntry} entry entry data
@@ -814,9 +825,25 @@ searchbar.SearchbarUI = (function () {
    * @param {number} id id of the list element
    */
   function createListEntryElement(entry, view, id) {
+    var text = createListEntryInnerHtmlText(entry, view, id);
+    var listElement = createListElement(text, id, view.listEntryElementIdPrefix, view.listEntryElementTag);
+    var parentElement = document.getElementById(view.listParentElementId);
+    parentElement.appendChild(listElement);
+    return listElement;
+  }
+
+  /**
+   * Creates the inner HTML Text for a list entry to be used for search results, filter options, details and filters.
+   *
+   * @param {DescribedEntry} entry entry data
+   * @param {SearchViewDescription} view description
+   * @param {number} id id of the list element
+   */
+  function createListEntryInnerHtmlText(entry, view, id) {
+    //TODO is it safer/faster to manually create child em tag and hidden-p tag instead of "innerHtml"?
     var text = entry.resolveTemplate(view.listEntryTextTemplate);
     text += '<p id="' + id + '-fields" style="display: none">' + entry.publicFieldsJson() + "</p>";
-    return createListElement(text, id, view.listEntryElementIdPrefix, view.listEntryElementTag);
+    return text;
   }
 
   /**
