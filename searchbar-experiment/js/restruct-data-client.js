@@ -16,8 +16,10 @@ restruct.Data = (function () {
     allDescriptions.push(filtersDescription());
 
     allDescriptions.push(sitesMainDescription());
+    allDescriptions.push(sitesOptionDefaultUrlPatternDescription());
     allDescriptions.push(sitesOptionsSummaryDescription());
     allDescriptions.push(sitesOptionDetailsDescription());
+    allDescriptions.push(sitesOptionUrlPatternDescription());
     var restructured = datarestructor.Restructor.processJsonUsingDescriptions(jsonData, allDescriptions, false);
     console.log(restructured);
     return restructured;
@@ -95,6 +97,21 @@ restruct.Data = (function () {
       .build();
   }
 
+  //TODO fieldname of last property element does not work any more?
+  //TODO add symbol as optional field that is only used to display results and is not needed for categorisation 
+  function sitesOptionDefaultUrlPatternDescription() {
+    return new datarestructor.PropertyStructureDescriptionBuilder()
+      .type("url")
+      .category("&#x261c;") //finger left navigation symbol
+      .indexStartsWith("2.")
+      .propertyPatternTemplateMode()
+      .propertyPattern("responses.hits.hits._source.urltemplate")
+      .groupName("urltemplate")
+      .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+      .groupDestinationPattern("{{category}}--main")
+      .build();
+  }
+
   function sitesOptionsSummaryDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
@@ -117,6 +134,19 @@ restruct.Data = (function () {
       .propertyPatternTemplateMode()
       .propertyPattern("responses.hits.hits._source.{{fieldName}}")
       .groupName("details")
+      .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+      .groupDestinationPattern("{{category}}--summary--{{index[0]}}--{{index[1]}}")
+      .build();
+  }
+
+  function sitesOptionUrlPatternDescription() {
+    return new datarestructor.PropertyStructureDescriptionBuilder()
+      .type("url")
+      .category("&#x261c;") //finger left navigation symbol
+      .indexStartsWith("3.")
+      .propertyPatternTemplateMode()
+      .propertyPattern("responses.hits.hits._source.urltemplate")
+      .groupName("urltemplate")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
       .groupDestinationPattern("{{category}}--summary--{{index[0]}}--{{index[1]}}")
       .build();

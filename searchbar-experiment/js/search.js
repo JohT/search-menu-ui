@@ -294,24 +294,24 @@ searchbar.SearchbarUI = (function () {
   }
 
   //TODO could be deleted when the demo/mock data of the states is not used any more or changed in structure
-  function mapStatesDemoStructure(entries) {
-    var index;
-    var element;
-    var mappedData = [];
-    for (index = 0; index < entries.length; index += 1) {
-      element = entries[index];
-      mappedData.push({ category: "State", type: "summary", displayName: element.name, fieldName: element.name, value: element.abbr });
-    }
-    return mappedData;
-  }
+  // function mapStatesDemoStructure(entries) {
+  //   var index;
+  //   var element;
+  //   var mappedData = [];
+  //   for (index = 0; index < entries.length; index += 1) {
+  //     element = entries[index];
+  //     mappedData.push({ category: "State", type: "summary", displayName: element.name, fieldName: element.name, value: element.abbr });
+  //   }
+  //   return mappedData;
+  // }
 
   //TODO to be deleted when backend filters. Beware: search text is unsafely used in this regex
-  function filterResults(jsonResults, searchText) {
-    var regex = new RegExp("^" + searchText, "gi");
-    return jsonResults.filter(function (entry) {
-      return entry.displayName.match(regex) || entry.value.match(regex);
-    });
-  }
+  // function filterResults(jsonResults, searchText) {
+  //   var regex = new RegExp("^" + searchText, "gi");
+  //   return jsonResults.filter(function (entry) {
+  //     return entry.displayName.match(regex) || entry.value.match(regex);
+  //   });
+  // }
 
   function displayResults(jsonResults, config) {
     var index = 0;
@@ -340,11 +340,6 @@ searchbar.SearchbarUI = (function () {
         createFilterOption(entry.default[0], entry.options, config.filtersView, config);
       }
     }
-    //TODO isMenuEntryWithDefault -> "auto select" filter option if no other value is already manually selected
-    //TODO delete, if not used any more
-    // if (isFilterMenuEntry(entry)) {
-    //   addMenuEntrySelectionHandlers(resultElement, handleEventWithConfig(config, selectSearchResultAsFilter));
-    // }
     addMenuNavigationHandlers(resultElement, config);
   }
 
@@ -359,11 +354,6 @@ searchbar.SearchbarUI = (function () {
   function isMenuEntryWithDefault(entry) {
     return typeof entry.default !== "undefined";
   }
-
-  //TODO delete, if not used any more
-  // function isFilterMenuEntry(entry) {
-  //   return (typeof entry.options !== "undefined" || entry.type === "filter") && !isMenuEntryWithOptions(entry);
-  // }
 
   /**
    * @param {Element} element to add event handlers
@@ -591,27 +581,6 @@ searchbar.SearchbarUI = (function () {
     }
   }
 
-  //TODO delete, if not needed any more
-  //TODO use selectSearchResultAsFilter as base for filters selected from filter options.
-  // function selectSearchResultAsFilter(event, config) {
-  //   var menuEntry = getEventTarget(event);
-  //   var filterElements = getListElementCountOfType(config.filtersView.listEntryElementIdPrefix);
-  //   var filterElement = createListElement(
-  //     menuEntry.innerText,
-  //     config.filtersView.listEntryElementIdPrefix + "-" + (filterElements + 1),
-  //     config.filtersView.listEntryElementIdPrefix,
-  //     config.filtersView.listEntryElementTag
-  //   );
-  //   addMenuNavigationHandlers(filterElement, config);
-  //   addMenuEntrySelectionHandlers(filterElement, toggleFilterEntry);
-
-  //   var searchFilters = document.getElementById(config.filtersView.listParentElementId);
-  //   searchFilters.appendChild(filterElement);
-
-  //   //hideSubMenus(config); //TODO previously opened sub menus like options or details need to be closed on blur
-  //   returnToMainMenu(event);
-  // }
-
   /**
    * Gets called when a filter option is selected and copies it into the filter view, where all selected filters are collected.
    */
@@ -624,15 +593,9 @@ searchbar.SearchbarUI = (function () {
   }
 
   function createFilterOption(selectedDescribedEntry, entries, view, config) {
-    // --------- start of experiement
-    var existingElement = getListEntryByFieldName(selectedDescribedEntry.fieldName, view.listParentElementId);
-    if (existingElement) {
-      console.log("WIP/Draft: Filter Option Elements already exists: " + existingElement.id + "/" + existingElement.innerText);
-    }
-    // --------- end of experiment
     var filterElements = getListElementCountOfType(view.listEntryElementIdPrefix);
     var filterElementId = view.listEntryElementIdPrefix + "-" + (filterElements + 1);
-    var filterElement = getListEntryByFieldName(selectedDescribedEntry.fieldName, view.listParentElementId);
+    var filterElement = getListEntryByFieldName(selectedDescribedEntry.category, selectedDescribedEntry.fieldName, view.listParentElementId);
     if (filterElement == null) {
       filterElement = createListEntryElement(selectedDescribedEntry, view, filterElementId);
     } else {
@@ -647,16 +610,53 @@ searchbar.SearchbarUI = (function () {
     onSpaceKey(filterElement, toggleFilterEntry);
   }
 
-  function getListEntryByFieldName(fieldName, listParentElementId) {
+  /**
+   * Searches all child elements of the given parent element 
+   * for an entry with the given fieldName contained in the hidden fields structure.
+   * 
+   * @param {String} category of the element to search for
+   * @param {String} fieldName of the element to search for
+   * @param {String} listParentElementId id of the parent element that child nodes will be searched
+   * @returns {HTMLElement} returns the element that matches the given fieldName or null, if it hadn't been found.
+   */
+  function getListEntryByFieldName(category, fieldName, listParentElementId) {
     var listParentElement = document.getElementById(listParentElementId);
-    var filterGroupIndex = 0;
-    var filterGroupElement, filterGroupElementIdProperties, filterGroupElementHiddenFields;
-    for (filterGroupIndex = 0; filterGroupIndex < listParentElement.childNodes.length; filterGroupIndex += 1) {
-      filterGroupElement = listParentElement.childNodes[filterGroupIndex];
-      filterGroupElementIdProperties = extractListElementIdProperties(filterGroupElement.id);
-      filterGroupElementHiddenFields = filterGroupElementIdProperties.hiddenFields();
-      if (filterGroupElementHiddenFields.fieldName === fieldName) {
-        return filterGroupElement;
+    var i, listElement, listElementIdProperties, listElementHiddenFields;
+    for (i = 0; i < listParentElement.childNodes.length; i += 1) {
+      listElement = listParentElement.childNodes[i];
+      listElementIdProperties = extractListElementIdProperties(listElement.id);
+      listElementHiddenFields = listElementIdProperties.hiddenFields();
+      //TODO does not work with escaped contents && (listElementHiddenFields.category == category))
+      if (listElementHiddenFields.fieldName === fieldName) {
+        return listElement;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Gets the currently selected url template for navigation.
+   * 
+   * @param {String} listParentElementId id of the parent element that child nodes will be searched
+   * @returns {String} returns the url template or null, if nothing could be found
+   */
+  //TODO should return a list of the selected, the default and a couple of other url templates in this particular order.
+  //TODO the detail fields of any search result entry are applicable to replace the url template placeholders.
+  //If there is any placeholder, that cannot be replaced, then the url template should be filtered out.
+  //This enables context sensitive navigation based one a couple of url templates that can be searched themselves.
+  function getSelectedUrlTemplate(listParentElementId) {
+    var listParentElement = document.getElementById(listParentElementId);
+    var i, listElement, listElementIdProperties, listElementHiddenFields;
+    for (i = 0; i < listParentElement.childNodes.length; i += 1) {
+      listElement = listParentElement.childNodes[i];
+      if (hasClass("inactive", listElement)) {
+        continue;
+      }
+      listElementIdProperties = extractListElementIdProperties(listElement.id);
+      listElementHiddenFields = listElementIdProperties.hiddenFields();
+      //TODO does not work with escaped contents && (listElementHiddenFields.category == category))
+      if (typeof listElementHiddenFields.urltemplate === "object") {
+        return listElementHiddenFields.urltemplate[0].value;
       }
     }
     return null;
@@ -689,6 +689,10 @@ searchbar.SearchbarUI = (function () {
   function selectSearchResultToDisplayDetails(event, entries, config) {
     hideSubMenus(config);
     selectSearchResultToDisplaySubMenu(event, entries, config.detailView, config);
+    //TODO remove experiment ---------
+    var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId);
+    console.log("selectedUrlTemplate=" + selectedUrlTemplate);
+    //------end of experiment
   }
 
   function selectSearchResultToDisplayFilterOptions(event, entries, config) {
