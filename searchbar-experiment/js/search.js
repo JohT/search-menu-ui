@@ -620,18 +620,13 @@ searchbar.SearchbarUI = (function () {
    * @returns {HTMLElement} returns the element that matches the given fieldName or null, if it hadn't been found.
    */
   function getListEntryByFieldName(category, fieldName, listParentElementId) {
-    var listParentElement = document.getElementById(listParentElementId);
-    var i, listElement, listElementIdProperties, listElementHiddenFields;
-    for (i = 0; i < listParentElement.childNodes.length; i += 1) {
-      listElement = listParentElement.childNodes[i];
-      listElementIdProperties = extractListElementIdProperties(listElement.id);
-      listElementHiddenFields = listElementIdProperties.hiddenFields();
+    return forEachListEntryElement(listParentElementId, function(element) {
+      var listElementHiddenFields = extractListElementIdProperties(element.id).hiddenFields();
       //TODO does not work with escaped contents && (listElementHiddenFields.category == category))
       if (listElementHiddenFields.fieldName === fieldName) {
-        return listElement;
+        return element;
       }
-    }
-    return null;
+    });
   }
 
   /**
@@ -645,18 +640,27 @@ searchbar.SearchbarUI = (function () {
   //If there is any placeholder, that cannot be replaced, then the url template should be filtered out.
   //This enables context sensitive navigation based one a couple of url templates that can be searched themselves.
   function getSelectedUrlTemplate(listParentElementId) {
+    return forEachListEntryElement(listParentElementId, function(element) {
+      var listElementHiddenFields = extractListElementIdProperties(element.id).hiddenFields();
+      if ((typeof listElementHiddenFields.urltemplate === "object") && !hasClass("inactive", element)) {
+        return listElementHiddenFields.urltemplate[0].value;
+      }
+    });
+  }
+
+  /**
+   * Iterates through all child nodes of the given parent and calls the given function.
+   * If the function returns a value, it will be returned directly.
+   * If the function returns nothing, the iteration continues.
+   */
+  function forEachListEntryElement(listParentElementId, listEntryElementFunction) {
     var listParentElement = document.getElementById(listParentElementId);
-    var i, listElement, listElementIdProperties, listElementHiddenFields;
+    var i, listElement, result;
     for (i = 0; i < listParentElement.childNodes.length; i += 1) {
       listElement = listParentElement.childNodes[i];
-      if (hasClass("inactive", listElement)) {
-        continue;
-      }
-      listElementIdProperties = extractListElementIdProperties(listElement.id);
-      listElementHiddenFields = listElementIdProperties.hiddenFields();
-      //TODO does not work with escaped contents && (listElementHiddenFields.category == category))
-      if (typeof listElementHiddenFields.urltemplate === "object") {
-        return listElementHiddenFields.urltemplate[0].value;
+      result = listEntryElementFunction(listElement);
+      if (result) {
+        return result;
       }
     }
     return null;
