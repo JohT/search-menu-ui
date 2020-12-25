@@ -163,7 +163,7 @@ searchbar.SearchbarAPI = (function () {
         .viewElementId("searchresults")
         .listParentElementId("searchmatches")
         .listEntryElementIdPrefix("result")
-        .listEntryTextTemplate("{{category}} {{displayName}} ({{value}})")
+        .listEntryTextTemplate("{{abbreviation}} {{displayName}} ({{value}})")
         .build();
     },
     defaultFilterOptionsView: function () {
@@ -622,8 +622,7 @@ searchbar.SearchbarUI = (function () {
   function getListEntryByFieldName(category, fieldName, listParentElementId) {
     return forEachListEntryElement(listParentElementId, function(element) {
       var listElementHiddenFields = extractListElementIdProperties(element.id).hiddenFields();
-      //TODO does not work with escaped contents && (listElementHiddenFields.category == category))
-      if (listElementHiddenFields.fieldName === fieldName) {
+      if ((listElementHiddenFields.fieldName === fieldName) && (listElementHiddenFields.category == category)) {
         return element;
       }
     });
