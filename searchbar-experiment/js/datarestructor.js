@@ -20,6 +20,8 @@ var datarestructor = datarestructor || {};
  * @typedef {Object} PropertyStructureDescription
  * @property {string} type - ""(default). Some examples: "summary" for e.g. a list overview. "detail" e.g. when a summary is selected. "filter" e.g. for field/value pair results that can be selected as search parameters.
  * @property {string} category - name of the category. Default = "". Could contain a symbol character or a short domain name. (e.g. "city")
+ * @property {string} [abbreviation=""] - one optional character, a symbol character or a short abbreviation of the category
+ * @property {string} [image=""] - one optional path to an image resource
  * @property {boolean} propertyPatternTemplateMode - "false"(default): property name needs to be equal to the pattern. "true" allows variables like "{{fieldName}}" inside the pattern.
  * @property {string} propertyPattern - property name pattern (without array indices) to match
  * @property {string} indexStartsWith - ""(default) matches all ids. String that needs to match the beginning of the id. E.g. "1." will match id="1.3.4" but not "0.1.2".
@@ -47,6 +49,8 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
     this.description = {
       type: "",
       category: "",
+      abbreviation: "",
+      image: "",
       propertyPatternTemplateMode: false,
       propertyPattern: "",
       indexStartsWith: "",
@@ -67,6 +71,14 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
       this.description.category = value;
       return this;
     };
+    this.abbreviation = function (value) {
+      this.description.abbreviation = withDefault(value, "");
+      return this;
+    };
+    this.image = function (value) {
+      this.description.image = withDefault(value, "");
+      return this;
+    };
     /**
      * "propertyPattern" need to match exactly if this mode is activated.
      *  It clears propertyPatternTemplateMode which means "equal" mode.
@@ -85,8 +97,14 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
       this.description.propertyPatternTemplateMode = true;
       return this;
     };
+    /**
+     * property name pattern (single property names with sub types separated by "." without array indices) to match.
+     * May contain variables in double curly brackets.
+     * Example: responses.hits.hits._source.{{fieldName}}
+     * @returns {PropertyStructureDescription}
+     */
     this.propertyPattern = function (value) {
-      this.description.propertyPattern = value;
+      this.description.propertyPattern = withDefault(value, "");
       return this;
     };
     /**
@@ -95,7 +113,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
      *  Default is "" which will match every id.
      */
     this.indexStartsWith = function (value) {
-      this.description.indexStartsWith = value;
+      this.description.indexStartsWith = withDefault(value, "");;
       return this;
     };
     this.displayPropertyName = function (value) {
@@ -116,7 +134,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
       return this;
     };
     this.groupName = function (value) {
-      this.description.groupName = value;
+      this.description.groupName = withDefault(value, "");;
       return this;
     };
     /**
@@ -124,7 +142,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
      * A pattern may contain variables in double curly brackets {{variable}}.
      */
     this.groupPattern = function (value) {
-      this.description.groupPattern = value;
+      this.description.groupPattern = withDefault(value, "");;
       return this;
     };
     /**
@@ -132,7 +150,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
      * A pattern may contain variables in double curly brackets {{variable}}.
      */
     this.groupDestinationPattern = function (value) {
-      this.description.groupDestinationPattern = value;
+      this.description.groupDestinationPattern = withDefault(value, "");;
       return this;
     };
     /**
@@ -140,7 +158,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
      * The default value is the groupName, which will be used when the value is not valid (null or empty)
      */
     this.groupDestinationName = function (value) {
-      this.description.groupDestinationName = isSpecifiedString(value) ? value : this.description.groupName;
+      this.description.groupDestinationName = withDefault(value, this.description.groupName);
       return this;
     };
     /**
@@ -148,7 +166,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
      * A pattern may contain variables in double curly brackets {{variable}}.
      */
     this.deduplicationPattern = function (value) {
-      this.description.deduplicationPattern = value;
+      this.description.deduplicationPattern = withDefault(value, "");;
       return this;
     };
     this.build = function () {
@@ -168,7 +186,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
 
   function createNameExtractFunction(value, description) {
     if (isSpecifiedString(value)) {
-      return function (propertyname) {
+      return function (propertyName) {
         return value;
       };
     }
@@ -196,13 +214,13 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
     };
   }
 
-  function rightMostPropertyNameElement(propertyname) {
+  function rightMostPropertyNameElement(propertyName) {
     var regularExpression = new RegExp("(\\w+)$", "gi");
-    var match = propertyname.match(regularExpression);
+    var match = propertyName.match(regularExpression);
     if (match != null) {
       return match[0];
     }
-    return propertyname;
+    return propertyName;
   }
 
   function upperCaseFirstLetter(value) {
@@ -213,33 +231,33 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
   }
 
   function upperCaseFirstLetterForFunction(nameExtractFunction) {
-    return function (propertyname) {
-      return upperCaseFirstLetter(nameExtractFunction(propertyname));
+    return function (propertyName) {
+      return upperCaseFirstLetter(nameExtractFunction(propertyName));
     };
   }
 
   function removeArrayValuePropertyPostfixFunction(nameExtractFunction) {
-    return function (propertyname) {
-      var name = nameExtractFunction(propertyname);
+    return function (propertyName) {
+      var name = nameExtractFunction(propertyName);
       name = name != null ? name : "";
       return name.replace("_comma_separated_values", "");
     };
   }
 
   function extractNameUsingTemplatePattern(propertyPattern) {
-    return function (propertyname) {
+    return function (propertyName) {
       var regex = templateModePatternRegexForPatternAndVariable(propertyPattern, "{{fieldName}}");
-      var match = regex.exec(propertyname);
+      var match = regex.exec(propertyName);
       if (match && match[1] != "") {
         return match[1];
       }
-      return value;
+      return rightMostPropertyNameElement(propertyName);
     };
   }
 
   function extractNameUsingRightMostPropertyNameElement() {
-    return function (propertyname) {
-      return rightMostPropertyNameElement(propertyname);
+    return function (propertyName) {
+      return rightMostPropertyNameElement(propertyName);
     };
   }
 
@@ -263,6 +281,10 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
     return characters.replace(nonWordCharactersRegEx, "\\$1");
   }
 
+  function withDefault(value, defaultValue) {
+    return isSpecifiedString(value) ? value : defaultValue;
+  }
+
   function isSpecifiedString(value) {
     return typeof value === "string" && value != null && value != "";
   }
@@ -278,6 +300,8 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
  * @typedef {Object} DescribedEntry
  * @property {string} category - category of the result from the PropertyStructureDescription using a short name or e.g. a symbol character
  * @property {string} type - type of the result from PropertyStructureDescription
+ * @property {string} [abbreviation=""] - one optional character, a symbol character or a short abbreviation of the category
+ * @property {string} [image=""] - one optional path to an image resource
  * @property {string} displayName - display name extracted from the point separated hierarchical property name, e.g. "Name"
  * @property {string} fieldName - field name extracted from the point separated hierarchical property name, e.g. "name"
  * @property {string} value - content of the field
@@ -319,6 +343,8 @@ datarestructor.DescribedEntryCreator = (function () {
 
     this.category = description.category;
     this.type = description.type;
+    this.abbreviation = description.abbreviation;
+    this.image = description.image;
     this.displayName = description.getDisplayNameForPropertyName(propertyNameWithoutArrayIndices);
     this.fieldName = description.getFieldNameForPropertyName(propertyNameWithoutArrayIndices);
     this.value = entry.value;
@@ -505,7 +531,7 @@ datarestructor.DescribedEntryCreator = (function () {
    * and creates new objects for grouped structures (only one recursion level) to get rid of the circular structure
    * that would lead to the error message "TypeError: Converting circular structure to JSON".
    *
-   * @param {string}  key name of the property to be converted to JSON or empty for the whole object.
+   * @param {string} key name of the property to be converted to JSON or empty for the whole object.
    * @param {string} value value of the property to be converted to JSON.
    * @param {string[]} propertyNames array of strings containing only the public fields that will be converted to JSON.
    */

@@ -53,7 +53,7 @@ describe("datarestructor.DescribedEntry", function () {
   describe("is created with the description and", function () {
     beforeEach(function () {
       rawEntry = { name: "responses[0].hits.hits[3]._source.tag[5]", value: "inactive" };
-      description = new datarestructor.PropertyStructureDescriptionBuilder().type("testtype").category("testcategory").build();
+      description = new datarestructor.PropertyStructureDescriptionBuilder().type("testtype").category("testcategory").abbreviation("T").image("i.png").build();
       describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
     });
 
@@ -62,11 +62,19 @@ describe("datarestructor.DescribedEntry", function () {
     });
 
     it("should contain the type of the description", function () {
-      expect(describedEntry.type).toEqual("testtype");
+      expect(describedEntry.type).toEqual(description.type);
     });
 
     it("should contain the category of the description", function () {
-      expect(describedEntry.category).toEqual("testcategory");
+      expect(describedEntry.category).toEqual(description.category);
+    });
+
+    it("should contain the abbreviation of the description", function () {
+      expect(describedEntry.abbreviation).toEqual(description.abbreviation);
+    });
+    
+    it("should contain the image of the description", function () {
+      expect(describedEntry.image).toEqual(description.image);
     });
 
     it("should have a matching id by default", function () {
@@ -144,6 +152,20 @@ describe("datarestructor.DescribedEntry", function () {
       expect(describedEntry.resolveTemplate("{{category}}")).toEqual(expectedValue);
     });
 
+    it("should resolve variable {{abbreviation}}", function () {
+      var expectedValue = "T";
+      description.abbreviation = expectedValue;
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.resolveTemplate("{{abbreviation}}")).toEqual(expectedValue);
+    });
+
+    it("should resolve variable {{image}}", function () {
+      var expectedValue = "image.png";
+      description.image = expectedValue;
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.resolveTemplate("{{image}}")).toEqual(expectedValue);
+    });
+
     it("should resolve variable {{index}}", function () {
       var expectedValue = "0.3.5";
       describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
@@ -180,7 +202,7 @@ describe("datarestructor.DescribedEntry", function () {
   describe("exports public fields as JSON and ", function () {
     beforeEach(function () {
       rawEntry = { name: "responses[0].hits.hits[3]._source.jsontag[5]", value: "jsoninactive" };
-      description = new datarestructor.PropertyStructureDescriptionBuilder().type("jsontesttype").category("jsontestcategory").build();
+      description = new datarestructor.PropertyStructureDescriptionBuilder().type("jsontesttype").category("jsontestcategory").abbreviation("J").image("j.img").build();
       describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
     });
 
@@ -194,6 +216,18 @@ describe("datarestructor.DescribedEntry", function () {
       var expectedValue = description.category;
       describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
       expect(describedEntry.publicFieldsJson()).toContain('"category":"' + expectedValue + '"');
+    });
+
+    it("should contain the abbreviation", function () {
+      var expectedValue = description.abbreviation;
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.publicFieldsJson()).toContain('"abbreviation":"' + expectedValue + '"');
+    });
+
+    it("should contain the image", function () {
+      var expectedValue = description.image;
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.publicFieldsJson()).toContain('"image":"' + expectedValue + '"');
     });
 
     it("should contain the fieldName", function () {

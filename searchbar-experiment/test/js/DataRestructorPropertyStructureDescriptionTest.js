@@ -20,6 +20,18 @@ describe("datarestructor.PropertyStructureDescription", function () {
       expect(result.category).toEqual(expectedValue);
     });
 
+    it("should contain the given abbreviation", function () {
+      var expectedValue = "A";
+      var result = description.abbreviation(expectedValue).build();
+      expect(result.abbreviation).toEqual(expectedValue);
+    });
+
+    it("should contain the given image", function () {
+      var expectedValue = "a.jpg";
+      var result = description.image(expectedValue).build();
+      expect(result.image).toEqual(expectedValue);
+    });
+
     it("should contain propertyPatternTemplateMode", function () {
       var result = description.propertyPatternTemplateMode().build();
       expect(result.propertyPatternTemplateMode).toBeTrue();
@@ -85,6 +97,14 @@ describe("datarestructor.PropertyStructureDescription", function () {
 
     it("should contain an empty category", function () {
       expect(defaultDescription.category).toEqual("");
+    });
+
+    it("should contain an empty abbreviation", function () {
+      expect(defaultDescription.abbreviation).toEqual("");
+    });
+
+    it("should contain an empty image", function () {
+      expect(defaultDescription.image).toEqual("");
     });
 
     it("should contain an empty propertyPattern", function () {
@@ -156,6 +176,12 @@ describe("datarestructor.PropertyStructureDescription", function () {
       expect(result.getDisplayNameForPropertyName("property.to.match.testname.postfix")).toEqual("Testname");
     });
 
+    it("should use the rightmost part of a point separated property name in 'template' mode if {{fieldName}} variable is missing", function () {
+      var pattern = "property.to.match.somethingElse.postfix";
+      var result = description.propertyPatternTemplateMode().propertyPattern(pattern).build();
+      expect(result.getDisplayNameForPropertyName("property.to.match.testname.postfix")).toEqual("Postfix");
+    });
+
     it("should remove '_comma_separated_values' postfix from an array property name", function () {
       var result = description.build();
       expect(result.getDisplayNameForPropertyName("test.property.tags_comma_separated_values")).toEqual("Tags");
@@ -200,6 +226,12 @@ describe("datarestructor.PropertyStructureDescription", function () {
       var pattern = "property.to.match.{{fieldName}}.postfix";
       var result = description.propertyPatternTemplateMode().propertyPattern(pattern).build();
       expect(result.getFieldNameForPropertyName("property.to.match.testname.postfix")).toEqual("testname");
+    });
+
+    it("should use the rightmost part of a point separated property name in 'template' mode if {{fieldName}} variable is missing", function () {
+      var pattern = "property.to.match.somethingElse.postfix";
+      var result = description.propertyPatternTemplateMode().propertyPattern(pattern).build();
+      expect(result.getFieldNameForPropertyName("property.to.match.testname.postfix")).toEqual("postfix");
     });
 
     it("should contain '_comma_separated_values' postfix from an array property name", function () {
