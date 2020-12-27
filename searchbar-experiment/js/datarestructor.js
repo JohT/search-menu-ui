@@ -113,7 +113,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
      *  Default is "" which will match every id.
      */
     this.indexStartsWith = function (value) {
-      this.description.indexStartsWith = withDefault(value, "");;
+      this.description.indexStartsWith = withDefault(value, "");
       return this;
     };
     this.displayPropertyName = function (value) {
@@ -302,6 +302,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
  * @property {string} type - type of the result from PropertyStructureDescription
  * @property {string} [abbreviation=""] - one optional character, a symbol character or a short abbreviation of the category
  * @property {string} [image=""] - one optional path to an image resource
+ * @property {string} index - array of numbers containing the split index. Example: "responses[2].hits.hits[4]._source.name" leads to an array with the two elements: [2,4]
  * @property {string} displayName - display name extracted from the point separated hierarchical property name, e.g. "Name"
  * @property {string} fieldName - field name extracted from the point separated hierarchical property name, e.g. "name"
  * @property {string} value - content of the field
@@ -345,6 +346,12 @@ datarestructor.DescribedEntryCreator = (function () {
     this.type = description.type;
     this.abbreviation = description.abbreviation;
     this.image = description.image;
+    /**
+     * Array of numbers containing the split index. 
+     * Example: "responses[2].hits.hits[4]._source.name" leads to an array with two elements: [2,4]
+     * This is the public version of the internal variable _identifier.index, which contains in contrast all index elements in one point separated string (e.g. "2.4").
+     */
+    this.index = indices.numberArray;
     this.displayName = description.getDisplayNameForPropertyName(propertyNameWithoutArrayIndices);
     this.fieldName = description.getFieldNameForPropertyName(propertyNameWithoutArrayIndices);
     this.value = entry.value;
@@ -359,35 +366,33 @@ datarestructor.DescribedEntryCreator = (function () {
       groupDestinationId: "",
       deduplicationId: ""
     };
-    this._identifier.groupId = replaceVariablesOfAll(
-      replaceIndexVariables(description.groupPattern, indices, "index"),
-      this,
-      this._description,
-      this._identifier
+    this._identifier.groupId = replaceResolvableFields(
+      description.groupPattern,
+      resolvableFieldsOfAll(this, this._description, this._identifier)
     );
-    this._identifier.groupDestinationId = replaceVariablesOfAll(
-      replaceIndexVariables(description.groupDestinationPattern, indices, "index"),
-      this,
-      this._description,
-      this._identifier
+    this._identifier.groupDestinationId = replaceResolvableFields(
+      description.groupDestinationPattern,
+      resolvableFieldsOfAll(this, this._description, this._identifier)
     );
-    this._identifier.deduplicationId = replaceVariablesOfAll(
-      replaceIndexVariables(description.deduplicationPattern, indices, "index"),
-      this,
-      this._description,
-      this._identifier
+    this._identifier.deduplicationId = replaceResolvableFields(
+      description.deduplicationPattern,
+      resolvableFieldsOfAll(this, this._description, this._identifier)
     );
     /**
      * Resolves the given template.
+     * 
      * The template may contain variables in double curly brackets.
      * Supported variables are all properties of this object, e.g. "{{fieldName}}", "{{displayName}}", "{{value}}".
-     * The index can also be inserted using "{{index}}", parts of the index using e.g. "{{index[1]}}".
+     * Since this object may also contains (described) groups of sub objects, they can also be used, e.g. "{{summaries[0].value}}" 
+     * Parts of the index can be inserted by using e.g. "{{index[1]}}".
+     * 
      * @param {string} template
+     * @returns {string} resolved template
      */
     this.resolveTemplate = function (template) {
-      return replaceVariablesOfAll(replaceIndexVariables(template, indices, "index"), this, this._identifier);
+      return replaceResolvableFields(template, resolvableFieldsOfAll(this));
     };
-    
+
     /**
      * Returns JSON containing all the public fields
      * @param space — Adds indentation, white space, and line break characters to the return-value JSON text to make it easier to read.
@@ -435,59 +440,47 @@ datarestructor.DescribedEntryCreator = (function () {
   }
 
   /**
-   * Replaces all indexed variables in double curly brackets, e.g. {{property[2]}},
-   * with the value of indices, e.g. value of index 2 of [1,12,123] is 123, and the given propertyname.
+   * Returns a map like object, that contains all resolvable fields and their values as properties.
+   * This function takes a variable count of input parameters, 
+   * each containing an object that contains resolvable fields to extract from.
+   * 
+   * The recursion depth is limited to 3, so that an object, 
+   * that contains an object can contain another object (but not further).
+   * 
+   * Properties beginning with an underscore in their name will be filtered out, since they are considered as internal fields.
+   * 
+   * @param {...object} varArgs variable count of parameters. Each parameter contains an object that fields should be resolvable for variables. 
+   * @returns {object} object with resolvable field names and their values.
    */
-  function replaceIndexVariables(stringContainingVariables, indices, propertyname) {
-    var replaced = stringContainingVariables;
-    var indexedVariableWithArrayIndex = new RegExp("\\{\\{" + propertyname + "\\[(\\d+)\\]\\}\\}", "gi");
-    var indexedVariables = indicesOfWithRegex(stringContainingVariables, indexedVariableWithArrayIndex);
-    var varPos = 0;
-    var idIndex = 0;
-    for (varPos = 0; varPos < indexedVariables.numberArray.length; varPos++) {
-      idIndex = indexedVariables.numberArray[varPos];
-      replaced = replaced.replace("{{" + propertyname + "[" + idIndex + "]}}", indices.numberArray[idIndex]);
+  function resolvableFieldsOfAll(varArgs) {
+    var map = {};
+    var ignoreInternalFields = function (properyName) {
+      return !properyName.startsWith("_") && (properyName.indexOf("._") < 0);
+    };
+    for (var index = 0; index < arguments.length; index+=1) {
+      addToFilteredMapObject(datarestructor.InternalTools.flattenToArray(arguments[index], 3), map, ignoreInternalFields);
     }
-    return replaced;
+    return map;
   }
 
   /**
    * Replaces all variables in double curly brackets, e.g. {{property}},
-   * with the value of that property from all (var args) source objects.
+   * with the value of that property from the resolvableProperties.
    *
    * Supported property types: string, number, boolean
-   * Sub-Objects will be ignored.
+   * @param {string} stringContainingVariables
+   * @param {object[]} resolvableFields (name=value)
    */
-  function replaceVariablesOfAll(stringContainingVariables, varArgs) {
+  function replaceResolvableFields(stringContainingVariables, resolvableFields) {
     var replaced = stringContainingVariables;
-    var index = 1;
-    var nextSource = "";
-    for (index = 1; index < arguments.length; index++) {
-      nextSource = arguments[index];
-      replaced = replaceVariables(replaced, nextSource);
-    }
-    return replaced;
-  }
-
-  /**
-   * Replaces all variables in double curly brackets, e.g. {{property}},
-   * with the value of that property from the source object.
-   *
-   * Supported property types: string, number, boolean
-   * Sub-Objects will be ignored.
-   */
-  function replaceVariables(stringContainingVariables, sourceDataObject) {
-    var replaced = stringContainingVariables;
-    var propertyNames = Object.keys(sourceDataObject);
+    var propertyNames = Object.keys(resolvableFields);
     var propertyIndex = 0;
     var propertyName = "";
     var propertyValue = "";
-    for (propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex++) {
+    for (propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex += 1) {
       propertyName = propertyNames[propertyIndex];
-      propertyValue = sourceDataObject[propertyName];
-      if (typeof propertyValue === "string" || typeof propertyValue === "number" || typeof propertyValue === "boolean") {
-        replaced = replaced.replace("{{" + propertyName + "}}", propertyValue);
-      }
+      propertyValue = resolvableFields[propertyName];
+      replaced = replaced.replace("{{" + propertyName + "}}", propertyValue);
     }
     return replaced;
   }
@@ -560,6 +553,25 @@ datarestructor.DescribedEntryCreator = (function () {
   }
 
   /**
+   * Collects all flattened name-value-pairs into one object using the property names as keys and their values as values (map-like).
+   * Example: `{name: "accountNumber", value: "12345"}` becomes `mapObject["accountNumber"]="12345"`.
+   * 
+   * @param {NameValuePair[]} elements flattened array of name-value-pairs
+   * @param {object} mapObject container to collect the results. Needs to be created before e.g. using `{}`. 
+   * @param {function} filterMatchesFunction takes the property name as string argument and returns true (include) or false (exclude).
+   */
+  function addToFilteredMapObject(elements, mapObject, filterMatchesFunction) {
+    var index, element;
+    for (index = 0; index < elements.length; index += 1) {
+      element = elements[index];
+      if (typeof filterMatchesFunction === "function" && filterMatchesFunction(element.name)) {
+        mapObject[element.name] = element.value;
+      }
+    }
+    return mapObject;
+  }
+
+  /**
    * Public interface
    * @scope datarestructor.DescribedEntryCreator
    */
@@ -578,7 +590,7 @@ datarestructor.Restructor = (function () {
    */
   function processJsonUsingDescriptions(jsonData, descriptions, debugMode) {
     // "Flatten" the hierarchical input json to an array of property names (point separated "folders") and values.
-    var processedData = flattenToArray(jsonData);
+    var processedData = datarestructor.InternalTools.flattenToArray(jsonData);
     // Fill in properties ending with the name "_comma_separated_values" for array values to make it easier to display them.
     processedData = fillInArrayValues(processedData);
 
@@ -862,34 +874,6 @@ datarestructor.Restructor = (function () {
     return result;
   }
 
-  //Modded version of:
-  //https://stackoverflow.com/questions/19098797/fastest-way-to-flatten-un-flatten-nested-json-objectss
-  function flattenToArray(data) {
-    var result = [];
-    function recurse(cur, prop) {
-      if (Object(cur) !== cur) {
-        result.push({ name: prop, value: cur });
-      } else if (Array.isArray(cur)) {
-        for (var i = 0, l = cur.length; i < l; i++) recurse(cur[i], prop + "[" + i + "]");
-        if (l == 0) {
-          result[prop] = [];
-          result.push({ name: prop, value: "" });
-        }
-      } else {
-        var isEmpty = true;
-        for (var p in cur) {
-          isEmpty = false;
-          recurse(cur[p], prop ? prop + "." + p : p);
-        }
-        if (isEmpty && prop) {
-          result.push({ name: prop, value: "" });
-        }
-      }
-    }
-    recurse(data, "");
-    return result;
-  }
-
   /**
    * Public interface
    * @scope datarestructor.Restructor
@@ -904,4 +888,63 @@ datarestructor.Restructor = (function () {
      */
     processJsonUsingDescriptions: processJsonUsingDescriptions
   };
+})();
+
+/**
+ * InternalTools. Not meant to be called outside of "datarestructor".
+ *
+ * @namespace
+ */
+datarestructor.InternalTools = (function () {
+  "use strict";
+  
+  /**
+   * @typedef {Object} NameValuePair
+   * @property {string} name - point separated names of the flattened main and sub properties, e.g. "responses[2].hits.hits[4]._source.name".
+   * @property {string} value - value of the property
+   */
+  /**
+   * @param {object} data hierarchical object that may consist fo fields, subfields and arrays.
+   * @param {number} maxRecursionDepth 
+   * @returns {NameValuePair[]} array of property name and value pairs
+   */
+  //Modded (compatibility, recursion depth) version of:
+  //https://stackoverflow.com/questions/19098797/fastest-way-to-flatten-un-flatten-nested-json-objectss
+  function flattenToArray(data, maxRecursionDepth) {
+    var result = [];
+    if (typeof maxRecursionDepth !== "number" || maxRecursionDepth < 1) {
+      maxRecursionDepth = 20;
+    }
+    function recurse(cur, prop, depth) {
+      if ((depth > maxRecursionDepth) || (typeof cur === "function")){
+        return;
+      }
+      if (Object(cur) !== cur) {
+        result.push({ name: prop, value: cur });
+      } else if (Array.isArray(cur)) {
+        for (var i = 0, l = cur.length; i < l; i++) recurse(cur[i], prop + "[" + i + "]", depth + 1);
+        if (l == 0) {
+          result[prop] = [];
+          result.push({ name: prop, value: "" });
+        }
+      } else {
+        var isEmpty = true;
+        for (var p in cur) {
+          isEmpty = false;
+          recurse(cur[p], prop ? prop + "." + p : p, depth + 1);
+        }
+        if (isEmpty && prop) {
+          result.push({ name: prop, value: "" });
+        }
+      }
+    }
+    recurse(data, "", 0);
+    return result;
+  }
+
+  /**
+   * Public interface
+   * @scope datarestructor.InternalTools
+   */
+  return { flattenToArray: flattenToArray };
 })();

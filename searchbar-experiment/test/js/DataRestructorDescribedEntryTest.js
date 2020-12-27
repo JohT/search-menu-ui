@@ -166,12 +166,6 @@ describe("datarestructor.DescribedEntry", function () {
       expect(describedEntry.resolveTemplate("{{image}}")).toEqual(expectedValue);
     });
 
-    it("should resolve variable {{index}}", function () {
-      var expectedValue = "0.3.5";
-      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
-      expect(describedEntry.resolveTemplate("{{index}}")).toEqual(expectedValue);
-    });
-
     it("should resolve variable {{index[1]}} with a part of the index", function () {
       var expectedValue = "3";
       var template = "{{index[1]}}";
@@ -197,6 +191,12 @@ describe("datarestructor.DescribedEntry", function () {
       expect(describedEntry.resolveTemplate("{{value}}")).toEqual(expectedValue);
     });
 
+    it("should resolve sub object variable {{testgroup.value}}", function () {
+      var expectedValue = "inactive";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      describedEntry.testgroup = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.resolveTemplate("{{testgroup.value}}")).toEqual(expectedValue);
+    });
   });
 
   describe("exports public fields as JSON and ", function () {

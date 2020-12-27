@@ -16,7 +16,9 @@ var searchbar = searchbar || {};
  * @property {string} listParentElementId - id of the element (e.g. "ul"), that contains all list entries and is located inside the view.
  * @property {string} listEntryElementIdPrefix - id prefix (followed by "-" and the index number) for every list entry
  * @property {string} [listEntryElementTag=li] - element tag for list entries. defaults to "li".
- * @property {string} [listEntryTextTemplate={{displayName}}: {{value}}] template for the text of each list entry
+ * @property {string} [listEntryTextTemplate={{displayName}}: {{value}}] - template for the text of each list entry
+ * @property {string} [listEntrySummaryTemplate={{displayName}}: {{value}}] - template for the text of each list entry, if the data group "summary" exists. 
+ * @property {boolean} [isSelectableFilterOption=false] - Specifies, if the list entry can be selected as filter option
  */
 
 /**
@@ -38,32 +40,78 @@ searchbar.SearchViewDescriptionBuilder = (function () {
       listEntryElementIdPrefix: "",
       listEntryElementTag: "li",
       listEntryTextTemplate: "{{displayName}}: {{value}}",
+      listEntrySummaryTemplate: "{{displayName}}: {{value}}",
       isSelectableFilterOption: false
     };
+    /**
+     * ID of the element (e.g. "div"), that contains the view with all list elements and their parent.
+     *
+     * @param {string} value - view element ID.
+     */
     this.viewElementId = function (value) {
       this.description.viewElementId = withDefault(value, "");
       return this;
     };
+    /**
+     * ID of the element (e.g. "ul"), that contains all list entries and is located inside the view.
+     * @param {string} value - parent element ID
+     */
     this.listParentElementId = function (value) {
       this.description.listParentElementId = withDefault(value, "");
       return this;
     };
+    /**
+     * ID prefix (followed by "-" and the index number) for every list entry.
+     * @param {string} value - ID prefix for every list entry element
+     */
     this.listEntryElementIdPrefix = function (value) {
       this.description.listEntryElementIdPrefix = withDefault(value, "");
       return this;
     };
+    /**
+     * Element tag for list entries. defaults to "li".
+     * Defaults to "li".
+     * @param {string} value - tag for every list entry element
+     */
     this.listEntryElementTag = function (value) {
       this.description.listEntryElementTag = withDefault(value, "li");
       return this;
     };
+    /**
+     * Template for the text of each list entry.
+     * Defaults to "{{displayName}}: {{value}}".
+     * May contain variables in double curly brackets.
+     *
+     * @param {string} value - list entry text template when there is no summary data group
+     */
     this.listEntryTextTemplate = function (value) {
-      this.description.listEntryTextTemplate = withDefault(value, "{{displayName}}: {{value}");
+      this.description.listEntryTextTemplate = withDefault(value, "{{displayName}}: {{value}}");
       return this;
     };
+    /**
+     * Template for the text of each list entry, if the data group "summary" exists.
+     * Defaults to "{{displayName}}: {{value}}".
+     * May contain variables in double curly brackets.
+     *
+     * @param {string} value - list entry text template when there is a summary data group
+     */
+    this.listEntrySummaryTemplate = function (value) {
+      this.description.listEntrySummaryTemplate = withDefault(value, "{{displayName}}: {{value}}");
+      return this;
+    };
+    /**
+     * Specifies, if the list entry can be selected as filter option.
+     * Defaults to "false".
+     * @param {boolean} value if a list entry is selectable as filter option
+     */
     this.isSelectableFilterOption = function (value) {
       this.description.isSelectableFilterOption = value === true;
       return this;
     };
+    /**
+     * Finishes the build of the description and returns its final (meant to be immutable) object.
+     * @returns {SearchViewDescription} 
+     */
     this.build = function () {
       return this.description;
     };
@@ -106,7 +154,7 @@ searchbar.SearchbarAPI = (function () {
   "use strict";
 
   var config = {
-    searchURI: "../data/state_capitals.json",
+    searchURI: "",
     searchAreaElementId: "searcharea",
     inputElementId: "searchbar",
     resultsView: null,
@@ -1091,4 +1139,4 @@ searchbar.SearchbarUI = (function () {
 })();
 
 // Configure and start the search bar functionality.
-searchbar.SearchbarAPI.start();
+searchbar.SearchbarAPI.searchURI("../data/state_capitals.json").start();
