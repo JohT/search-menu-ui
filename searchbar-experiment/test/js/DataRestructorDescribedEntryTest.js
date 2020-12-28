@@ -166,6 +166,11 @@ describe("datarestructor.DescribedEntry", function () {
       expect(describedEntry.resolveTemplate("{{image}}")).toEqual(expectedValue);
     });
 
+    it("should NOT resolve variable {{index}} anymore, since it is an internal field. {{index[0]}} can (still) be used instead.", function () {
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.resolveTemplate("{{index}}")).toEqual("{{index}}");
+    });
+
     it("should resolve variable {{index[1]}} with a part of the index", function () {
       var expectedValue = "3";
       var template = "{{index[1]}}";
@@ -191,11 +196,21 @@ describe("datarestructor.DescribedEntry", function () {
       expect(describedEntry.resolveTemplate("{{value}}")).toEqual(expectedValue);
     });
 
-    it("should resolve sub object variable {{testgroup.value}}", function () {
-      var expectedValue = "inactive";
+    it("should resolve sub object variable {{testsubobject.value}}", function () {
+      var expectedValue = "subobjectvalue";
       describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
-      describedEntry.testgroup = new datarestructor.DescribedEntryCreator(rawEntry, description);
-      expect(describedEntry.resolveTemplate("{{testgroup.value}}")).toEqual(expectedValue);
+      describedEntry.testsubobject = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      describedEntry.testsubobject.value = expectedValue;
+      expect(describedEntry.resolveTemplate("{{testsubobject.value}}")).toEqual(expectedValue);
+    });
+
+    it("should resolve sub object array {{testgroup.value}}", function () {
+      var expectedValue = "subarrayvalue";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      describedEntry.testgroup = [];
+      describedEntry.testgroup[0] = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      describedEntry.testgroup[0].value = expectedValue;
+      expect(describedEntry.resolveTemplate("{{testgroup[0].value}}")).toEqual(expectedValue);
     });
   });
 
