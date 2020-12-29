@@ -32,16 +32,20 @@ searchbar.SearchViewDescriptionBuilder = (function () {
 
   /**
    * Constructor function and container for everything, that needs to exist per instance.
+   * @param {SearchViewDescription} template optional parameter that contains a template to clone
    */
-  function SearchViewDescription() {
+  function SearchViewDescription(template) {
+    var defaultTemplate = "{{displayName}}: {{value}}";
+    var defaultSummaryTemplate = "{{summaries[0].displayName}}: {{summaries[0].value}}";
+    var defaultTag = "li";
     this.description = {
-      viewElementId: "",
-      listParentElementId: "",
-      listEntryElementIdPrefix: "",
-      listEntryElementTag: "li",
-      listEntryTextTemplate: "{{displayName}}: {{value}}",
-      listEntrySummaryTemplate: "{{displayName}}: {{value}}",
-      isSelectableFilterOption: false
+      viewElementId: template ? template.viewElementId : "",
+      listParentElementId: template ? template.listParentElementId : "",
+      listEntryElementIdPrefix: template ? template.listEntryElementIdPrefix : "",
+      listEntryElementTag: template ? template.listEntryElementTag : defaultTag,
+      listEntryTextTemplate: template ? template.listEntryTextTemplate : defaultTemplate,
+      listEntrySummaryTemplate: template ? template.listEntrySummaryTemplate : defaultSummaryTemplate,
+      isSelectableFilterOption: template ? template.isSelectableFilterOption : false
     };
     /**
      * ID of the element (e.g. "div"), that contains the view with all list elements and their parent.
@@ -74,7 +78,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * @param {string} value - tag for every list entry element
      */
     this.listEntryElementTag = function (value) {
-      this.description.listEntryElementTag = withDefault(value, "li");
+      this.description.listEntryElementTag = withDefault(value, defaultTag);
       return this;
     };
     /**
@@ -85,7 +89,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * @param {string} value - list entry text template when there is no summary data group
      */
     this.listEntryTextTemplate = function (value) {
-      this.description.listEntryTextTemplate = withDefault(value, "{{displayName}}: {{value}}");
+      this.description.listEntryTextTemplate = withDefault(value, defaultTemplate);
       return this;
     };
     /**
@@ -96,7 +100,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * @param {string} value - list entry text template when there is a summary data group
      */
     this.listEntrySummaryTemplate = function (value) {
-      this.description.listEntrySummaryTemplate = withDefault(value, "{{displayName}}: {{value}}");
+      this.description.listEntrySummaryTemplate = withDefault(value, defaultSummaryTemplate);
       return this;
     };
     /**
@@ -212,6 +216,7 @@ searchbar.SearchbarAPI = (function () {
         .listParentElementId("searchmatches")
         .listEntryElementIdPrefix("result")
         .listEntryTextTemplate("{{abbreviation}} {{displayName}} ({{value}})")
+        .listEntrySummaryTemplate("{{summaries[0].abbreviation}} {{summaries[0].displayName}} ({{summaries[0].value}})")
         .build();
     },
     defaultFilterOptionsView: function () {
@@ -897,6 +902,9 @@ searchbar.SearchbarUI = (function () {
   function createListEntryInnerHtmlText(entry, view, id) {
     //TODO is it safer/faster to manually create child em tag and hidden-p tag instead of "innerHtml"?
     var text = entry.resolveTemplate(view.listEntryTextTemplate);
+    if (typeof entry.summaries !== "undefined") {
+      text = entry.resolveTemplate(view.listEntrySummaryTemplate);
+    }
     text += '<p id="' + id + '-fields" style="display: none">' + entry.publicFieldsJson() + "</p>";
     return text;
   }
