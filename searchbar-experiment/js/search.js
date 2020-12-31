@@ -216,7 +216,7 @@ searchbar.SearchbarAPI = (function () {
         .listParentElementId("searchmatches")
         .listEntryElementIdPrefix("result")
         .listEntryTextTemplate("{{abbreviation}} {{displayName}} ({{value}})")
-        .listEntrySummaryTemplate("{{summaries[0].abbreviation}} {{summaries[0].displayName}} ({{summaries[0].value}})")
+        .listEntrySummaryTemplate("{{summaries[0].abbreviation}} {{summaries[1].value}}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{summaries[0].value}}")
         .build();
     },
     defaultFilterOptionsView: function () {

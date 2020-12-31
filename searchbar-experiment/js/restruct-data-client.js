@@ -10,8 +10,10 @@ restruct.Data = (function () {
 
   function restructJson(jsonData) {
     var allDescriptions = [];
-    allDescriptions.push(summariesDescription());
-    allDescriptions.push(highlightedDescription());
+    allDescriptions.push(summarizedAccountNumberDescription());
+    allDescriptions.push(highlightedAccountNumberDescription());
+    allDescriptions.push(summarizedAccountNameDescription());
+    allDescriptions.push(highlightedAccountNameDescription());
     allDescriptions.push(detailsDescription());
     allDescriptions.push(filtersDescription());
 
@@ -27,7 +29,7 @@ restruct.Data = (function () {
 
   //TODO new optional property containing a symbol 
   //TODO new optional property containing a imageReference 
-  function summariesDescription() {
+  function summarizedAccountNumberDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("account") 
@@ -41,7 +43,7 @@ restruct.Data = (function () {
       .build();
   }
 
-  function highlightedDescription() {
+  function highlightedAccountNumberDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("account")
@@ -51,6 +53,36 @@ restruct.Data = (function () {
       .propertyPattern("responses.hits.hits.highlight.kontonummer")
       .groupName("summaries")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+      .deduplicationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}--{{fieldName}}")
+      .build();
+  }
+
+  function summarizedAccountNameDescription() {
+    return new datarestructor.PropertyStructureDescriptionBuilder()
+      .type("summary")
+      .category("account") 
+      .abbreviation("&#128176;") //money bag symbol
+      .indexStartsWith("0.")
+      .propertyPatternEqualMode()
+      .propertyPattern("responses.hits.hits._source.verfuegungsberechtigt")
+      .groupName("summaries")
+      .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+      .groupDestinationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+      .deduplicationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}--{{fieldName}}")
+      .build();
+  }
+
+  function highlightedAccountNameDescription() {
+    return new datarestructor.PropertyStructureDescriptionBuilder()
+      .type("summary")
+      .category("account")
+      .abbreviation("&#128176;") //money bag symbol
+      .indexStartsWith("0.")
+      .propertyPatternEqualMode()
+      .propertyPattern("responses.hits.hits.highlight.verfuegungsberechtigt")
+      .groupName("summaries")
+      .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+      .groupDestinationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
       .deduplicationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}--{{fieldName}}")
       .build();
   }
@@ -65,7 +97,7 @@ restruct.Data = (function () {
       .propertyPattern("responses.hits.hits._source.{{fieldName}}")
       .groupName("details")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
-      .groupDestinationPattern("account--summary--{{index[0]}}--{{index[1]}}")
+      .groupDestinationPattern("{{category}}--summary--{{index[0]}}--{{index[1]}}")
       .build();
   }
 
