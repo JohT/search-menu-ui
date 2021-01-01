@@ -11,9 +11,11 @@ restruct.Data = (function () {
   function restructJson(jsonData) {
     var allDescriptions = [];
     allDescriptions.push(summarizedAccountNumberDescription());
-    allDescriptions.push(highlightedAccountNumberDescription());
+    // allDescriptions.push(highlightedAccountNumberDescription());
     allDescriptions.push(summarizedAccountNameDescription());
-    allDescriptions.push(highlightedAccountNameDescription());
+    // allDescriptions.push(highlightedAccountNameDescription());
+    allDescriptions.push(summarizedAccountTypeDescription());
+    
     allDescriptions.push(detailsDescription());
     allDescriptions.push(filtersDescription());
 
@@ -33,7 +35,8 @@ restruct.Data = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("account") 
-      .abbreviation("&#128176;") //money bag symbol
+      // .abbreviation("&#128176;") //money bag symbol
+      .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.kontonummer")
@@ -47,7 +50,8 @@ restruct.Data = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("account")
-      .abbreviation("&#128176;") //money bag symbol
+      // .abbreviation("&#128176;") //money bag symbol
+      .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits.highlight.kontonummer")
@@ -61,7 +65,8 @@ restruct.Data = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("account") 
-      .abbreviation("&#128176;") //money bag symbol
+      // .abbreviation("&#128176;") //money bag symbol
+      .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.verfuegungsberechtigt")
@@ -76,10 +81,27 @@ restruct.Data = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("account")
-      .abbreviation("&#128176;") //money bag symbol
+      // .abbreviation("&#128176;") //money bag symbol
+      .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits.highlight.verfuegungsberechtigt")
+      .groupName("summaries")
+      .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+      .groupDestinationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+      .deduplicationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}--{{fieldName}}")
+      .build();
+  }
+
+  function summarizedAccountTypeDescription() {
+    return new datarestructor.PropertyStructureDescriptionBuilder()
+      .type("summary")
+      .category("account") 
+      // .abbreviation("&#128176;") //money bag symbol
+      .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
+      .indexStartsWith("0.")
+      .propertyPatternEqualMode()
+      .propertyPattern("responses.hits.hits._source.geschaeftsart")
       .groupName("summaries")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
       .groupDestinationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
@@ -91,7 +113,8 @@ restruct.Data = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("detail")
       .category("account")
-      .abbreviation("&#128176;") //money bag symbol
+      // .abbreviation("&#128176;") //money bag symbol
+      .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
       .indexStartsWith("0.")
       .propertyPatternTemplateMode()
       .propertyPattern("responses.hits.hits._source.{{fieldName}}")
@@ -157,6 +180,7 @@ restruct.Data = (function () {
       .indexStartsWith("3.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.name")
+      // .displayPropertyName("Ziel") //TODO Bug: display field name rename does not work
       .groupName("summaries")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
       .groupDestinationPattern("{{category}}--main")

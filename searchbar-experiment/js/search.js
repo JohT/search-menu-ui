@@ -215,8 +215,8 @@ searchbar.SearchbarAPI = (function () {
         .viewElementId("searchresults")
         .listParentElementId("searchmatches")
         .listEntryElementIdPrefix("result")
-        .listEntryTextTemplate("{{abbreviation}} {{displayName}} ({{value}})")
-        .listEntrySummaryTemplate("{{summaries[0].abbreviation}} {{summaries[1].value}}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{summaries[0].value}}")
+        .listEntryTextTemplate("{{abbreviation}} {{displayName}}")
+        .listEntrySummaryTemplate("{{summaries[0].abbreviation}} <b>{{summaries[1].value}}</b><br>{{summaries[2].value}}: {{summaries[0].value}}")
         .build();
     },
     defaultFilterOptionsView: function () {
@@ -533,15 +533,6 @@ searchbar.SearchbarUI = (function () {
     return inputElement;
   }
 
-  /**
-   * Prevents the given event inside an event handler to get handled anywhere else.
-   * Pressing the arrow key up can lead to scrolling up the view. This is not useful,
-   * if the arrow key navigates the focus inside a sub menu, that is fully contained inside the current view.
-   */
-  function preventDefaultEventHandling(inputevent) {
-    inputevent.preventDefault ? inputevent.preventDefault() : (event.returnValue = false);
-  }
-
   function focusFirstResult(event, config) {
     var selectedElement = getEventTarget(event);
     var firstResult = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-1");
@@ -606,6 +597,7 @@ searchbar.SearchbarUI = (function () {
     if (next != null) {
       menuEntry.blur();
       next.focus();
+      scrollToFocus(next, false);
     }
   }
 
@@ -631,6 +623,7 @@ searchbar.SearchbarUI = (function () {
     if (previous != null) {
       menuEntry.blur();
       previous.focus();
+      scrollToFocus(previous, true);
     }
   }
 
@@ -640,8 +633,10 @@ searchbar.SearchbarUI = (function () {
   function selectFilterOption(event, entries, config) {
     var selectedEntry = getEventTarget(event);
     var selectedDescribedEntry = findSelectedEntry(selectedEntry.id, entries);
+    //TODO space key should only toggle, not open sub menu
     createFilterOption(selectedDescribedEntry, entries, config.filtersView, config);
     //hideSubMenus(config); //TODO previously opened sub menus like options or details need to be closed on blur
+    preventDefaultEventHandling(event);
     returnToMainMenu(event);
   }
 
@@ -745,6 +740,7 @@ searchbar.SearchbarUI = (function () {
   function selectSearchResultToDisplayDetails(event, entries, config) {
     hideSubMenus(config);
     selectSearchResultToDisplaySubMenu(event, entries, config.detailView, config);
+    preventDefaultEventHandling(event);
     //TODO remove experiment ---------
     var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId);
     console.log("selectedUrlTemplate=" + selectedUrlTemplate);
@@ -757,6 +753,7 @@ searchbar.SearchbarUI = (function () {
   }
 
   function selectSearchResultToDisplaySubMenu(event, entries, subMenuView, config) {
+    //TODO arrowKeyLeft to close sub menu
     clearAllEntriesOfElementWithId(subMenuView.listParentElementId);
     var selectedElement = getEventTarget(event);
 
@@ -794,6 +791,7 @@ searchbar.SearchbarUI = (function () {
 
   /**
    * Exit sub menu from event entry and return to main menu.
+   * @param {InputEvent}
    */
   function returnToMainMenu(event) {
     var subMenuEntryToExit = getEventTarget(event);
@@ -802,6 +800,29 @@ searchbar.SearchbarUI = (function () {
     subMenuEntryToExit.blur();
     mainMenuEntryToSelect.focus();
     hideViewOf(subMenuEntryToExit);
+  }
+
+  /**
+   * Prevents the given event inside an event handler to get handled anywhere else.
+   * Pressing the arrow key up can lead to scrolling up the view. This is not useful,
+   * if the arrow key navigates the focus inside a sub menu, that is fully contained inside the current view.
+   * @param {InputEvent}
+   */
+  function preventDefaultEventHandling(inputevent) {
+    inputevent.preventDefault ? inputevent.preventDefault() : (event.returnValue = false);
+  }
+
+  /**
+   * Scrolls to where the given element is visible.
+   * @param {HTMLElement} element
+   * @param {boolean} up true if the focus moved up, false otherwise
+   */
+  function scrollToFocus(element, up) {
+    if (up == true) {
+      element.scrollIntoView({block: "start"});
+    } else {
+      element.scrollIntoView({block: "end"});
+    }
   }
 
   /**
