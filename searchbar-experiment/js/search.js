@@ -378,22 +378,15 @@ searchbar.SearchbarUI = (function () {
     var resultElement = createListEntryElement(entry, config.resultsView, listElementId);
 
     if (isMenuEntryWithFurtherDetails(entry)) {
-      addMenuEntrySelectionHandlers(
-        resultElement,
-        handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails)
-      );
+      onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails));
     }
     if (isMenuEntryWithOptions(entry)) {
-      addMenuEntrySelectionHandlers(
-        resultElement,
-        handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions)
-      );
-      onArrowRightKey(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
+      onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
       if (isMenuEntryWithDefault(entry)) {
         createFilterOption(entry.default[0], entry.options, config.filtersView, config);
       }
     }
-    addMenuNavigationHandlers(resultElement, config);
+    addMainMenuNavigationHandlers(resultElement, config);
   }
 
   function isMenuEntryWithFurtherDetails(entry) {
@@ -409,16 +402,21 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
+   * Reacts to input events (keys, ...) to navigate through main menu entries.
+   * 
    * @param {Element} element to add event handlers
    * @param {SearchbarConfig} config search configuration
    */
-  function addMenuNavigationHandlers(element, config) {
+  function addMainMenuNavigationHandlers(element, config) {
     onArrowDownKey(element, handleEventWithConfig(config, focusNextSearchResult));
     onArrowUpKey(element, handleEventWithConfig(config, focusPreviousSearchResult));
     onEscapeKey(element, handleEventWithConfig(config, focusSearchInput));
+    onArrowLeftKey(element, handleEventWithConfig(config, closeAssociatedSubMenus));
   }
 
   /**
+   * Reacts to input events (keys, ...) to navigate through sub menu entries.
+   * 
    * @param {Element} element to add event handlers
    */
   function addSubMenuNavigationHandlers(element) {
@@ -428,10 +426,23 @@ searchbar.SearchbarUI = (function () {
     onEscapeKey(element, returnToMainMenu);
   }
 
-  function addMenuEntrySelectionHandlers(resultElement, handler) {
-    addEvent("mousedown", resultElement, handler);
-    onEnterKey(resultElement, handler);
-    onSpaceKey(resultElement, handler);
+  function onMenuEntrySelected(element, eventHandler) {
+    addEvent("mousedown", element, eventHandler);
+    onEnterKey(element, eventHandler);
+    onSpaceKey(element, eventHandler);
+    onArrowRightKey(element, eventHandler);
+  }
+
+  function onSubMenuEntrySelected(element, eventHandler) {
+    addEvent("mousedown", element, eventHandler);
+    onEnterKey(element, eventHandler);
+    onSpaceKey(element, eventHandler);
+  }
+
+  function onFilterMenuEntrySelected(element, eventHandler) {
+    addEvent("mousedown", element, eventHandler);
+    onEnterKey(element, eventHandler);
+    onArrowRightKey(element, eventHandler);
   }
 
   /**
@@ -643,19 +654,25 @@ searchbar.SearchbarUI = (function () {
   function createFilterOption(selectedDescribedEntry, entries, view, config) {
     var filterElements = getListElementCountOfType(view.listEntryElementIdPrefix);
     var filterElementId = view.listEntryElementIdPrefix + "-" + (filterElements + 1);
-    var filterElement = getListEntryByFieldName(selectedDescribedEntry.category, selectedDescribedEntry.fieldName, view.listParentElementId);
-    if (filterElement == null) {
-      filterElement = createListEntryElement(selectedDescribedEntry, view, filterElementId);
-    } else {
-      filterElement = updateListEntryElement(selectedDescribedEntry, view, filterElement);
-    }
-    addMenuEntrySelectionHandlers(
-      filterElement,
-      handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions)
+    var filterElement = getListEntryByFieldName(
+      selectedDescribedEntry.category,
+      selectedDescribedEntry.fieldName,
+      view.listParentElementId
     );
-    onArrowRightKey(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
-    addMenuNavigationHandlers(filterElement, config);
+    var isAlreadyExistingFilter = filterElement != null;
+    if (isAlreadyExistingFilter) {
+      filterElement = updateListEntryElement(selectedDescribedEntry, view, filterElement);
+      return;
+    }
+    filterElement = createListEntryElement(selectedDescribedEntry, view, filterElementId);
+    onFilterMenuEntrySelected(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
+    addMainMenuNavigationHandlers(filterElement, config);
+    //TODO it should not be possible to delete or inactivate "default" filters.
     onSpaceKey(filterElement, toggleFilterEntry);
+    //TODO removing a child shouldn't have any negative side effects (missing id 1)
+    //TODO removing a child should move the focus to the previous element 
+    onDeleteKey(filterElement, removeChildElement);
+    onBackspaceKey(filterElement, removeChildElement);
   }
 
   /**
@@ -770,7 +787,7 @@ searchbar.SearchbarUI = (function () {
         addSubMenuNavigationHandlers(subMenuElement);
         //TODO the only config dependency here
         //TODO should only apply to filter options
-        addMenuEntrySelectionHandlers(subMenuElement, handleEventWithEntriesAndConfig(entries, config, selectFilterOption));
+        onSubMenuEntrySelected(subMenuElement, handleEventWithEntriesAndConfig(entries, config, selectFilterOption));
       }
       if (subMenuIndex === 0) {
         subMenuFirstEntry = subMenuElement;
@@ -778,6 +795,7 @@ searchbar.SearchbarUI = (function () {
     }
 
     var subMenuViewElement = document.getElementById(subMenuView.viewElementId);
+    //TODO sub menu should not only be aligned vertically, but also horizontally
     var alignedSubMenuPosition = getYPositionOfElement(selectedElement) + getScrollY();
     subMenuViewElement.style.top = alignedSubMenuPosition + "px";
 
@@ -791,7 +809,7 @@ searchbar.SearchbarUI = (function () {
 
   /**
    * Exit sub menu from event entry and return to main menu.
-   * @param {InputEvent}
+   * @param {InputEvent} event
    */
   function returnToMainMenu(event) {
     var subMenuEntryToExit = getEventTarget(event);
@@ -800,6 +818,10 @@ searchbar.SearchbarUI = (function () {
     subMenuEntryToExit.blur();
     mainMenuEntryToSelect.focus();
     hideViewOf(subMenuEntryToExit);
+  }
+
+  function closeAssociatedSubMenus(event, config) {
+    hideSubMenus(config);
   }
 
   /**
@@ -868,10 +890,20 @@ searchbar.SearchbarUI = (function () {
 
   /**
    * Toggles a filter to inactive and vice versa.
+   * @param {InputEvent} event
    */
   function toggleFilterEntry(event) {
     var filterElement = getEventTarget(event);
     toggleClass("inactive", filterElement);
+  }
+ 
+  /**
+   * Removes the event target element from its parent.
+   * @param {InputEvent} event 
+   */
+  function removeChildElement(event) {
+    var filterElement = getEventTarget(event);
+    filterElement.parentElement.removeChild(filterElement);
   }
 
   /**
@@ -1030,10 +1062,6 @@ searchbar.SearchbarUI = (function () {
     return element.className.indexOf(classToLookFor) >= 0;
   }
 
-  function onFocus(element, eventHandler) {
-    addEvent("focus", element, eventHandler);
-  }
-
   function onEscapeKey(element, eventHandler) {
     addEvent("keydown", element, function (event) {
       if (event.key == "Escape" || event.key == "Esc" || keyCodeOf(event) == 27) {
@@ -1053,6 +1081,22 @@ searchbar.SearchbarUI = (function () {
   function onSpaceKey(element, eventHandler) {
     addEvent("keydown", element, function (event) {
       if (event.key == " " || event.key == "Spacebar" || keyCodeOf(event) == 32) {
+        eventHandler(event);
+      }
+    });
+  }
+
+  function onDeleteKey(element, eventHandler) {
+    addEvent("keydown", element, function (event) {
+      if (event.key == "Del" || event.key == "Delete" || keyCodeOf(event) == 46) {
+        eventHandler(event);
+      }
+    });
+  }
+
+  function onBackspaceKey(element, eventHandler) {
+    addEvent("keydown", element, function (event) {
+      if (event.key == "Backspace" || keyCodeOf(event) == 8) {
         eventHandler(event);
       }
     });
