@@ -795,9 +795,10 @@ searchbar.SearchbarUI = (function () {
     }
 
     var subMenuViewElement = document.getElementById(subMenuView.viewElementId);
-    //TODO sub menu should not only be aligned vertically, but also horizontally
-    var alignedSubMenuPosition = getYPositionOfElement(selectedElement) + getScrollY();
-    subMenuViewElement.style.top = alignedSubMenuPosition + "px";
+    var alignedSubMenuXPosition = (selectedElement.offsetWidth + 15);
+    var alignedSubMenuYPosition = getYPositionOfElement(selectedElement) + getScrollY();
+    subMenuViewElement.style.left = alignedSubMenuXPosition + "px";
+    subMenuViewElement.style.top = alignedSubMenuYPosition + "px";
 
     showElement(subMenuViewElement);
 
