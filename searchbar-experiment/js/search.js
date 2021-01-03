@@ -225,6 +225,7 @@ searchbar.SearchbarAPI = (function () {
         .listParentElementId("seachfilteroptionentries")
         .listEntryElementIdPrefix("filter")
         .listEntryTextTemplate("{{value}}")
+        .listEntrySummaryTemplate("{{summaries[0].value}}")
         .isSelectableFilterOption(true)
         .build();
     },
@@ -336,27 +337,11 @@ searchbar.SearchbarUI = (function () {
   }
 
   function getSearchResults(searchText, config) {
-    //TODO remove states example
-    // httpGetJson(config.searchURI, getHttpRequest(), function (jsonResult) {
-    //   displayResults(filterResults(mapStatesDemoStructure(jsonResult), searchText), config);
-    // });
     //TODO delete these 3 lines when experiment finished
     httpGetJson("../data/KontenMultiSearchTemplateResponse.json", getHttpRequest(), function (jsonResult) {
       displayResults(restruct.Data.restructJson(jsonResult), config);
     });
   }
-
-  //TODO could be deleted when the demo/mock data of the states is not used any more or changed in structure
-  // function mapStatesDemoStructure(entries) {
-  //   var index;
-  //   var element;
-  //   var mappedData = [];
-  //   for (index = 0; index < entries.length; index += 1) {
-  //     element = entries[index];
-  //     mappedData.push({ category: "State", type: "summary", displayName: element.name, fieldName: element.name, value: element.abbr });
-  //   }
-  //   return mappedData;
-  // }
 
   //TODO to be deleted when backend filters. Beware: search text is unsafely used in this regex
   // function filterResults(jsonResults, searchText) {
@@ -381,10 +366,12 @@ searchbar.SearchbarUI = (function () {
       onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails));
     }
     if (isMenuEntryWithOptions(entry)) {
-      onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
       if (isMenuEntryWithDefault(entry)) {
+        //TODO Only add the default value to the options, if its missing. (own function)
+        entry.options.push(entry.default[0]); //TODO Is it right to add the default value to the options?
         createFilterOption(entry.default[0], entry.options, config.filtersView, config);
       }
+      onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
     }
     addMainMenuNavigationHandlers(resultElement, config);
   }
@@ -443,6 +430,11 @@ searchbar.SearchbarUI = (function () {
     addEvent("mousedown", element, eventHandler);
     onEnterKey(element, eventHandler);
     onArrowRightKey(element, eventHandler);
+  }
+
+  function onFilterMenuEntryRemoved(element, eventHandler) {
+    onDeleteKey(element, eventHandler);
+    onBackspaceKey(element, eventHandler);
   }
 
   /**
@@ -644,7 +636,6 @@ searchbar.SearchbarUI = (function () {
   function selectFilterOption(event, entries, config) {
     var selectedEntry = getEventTarget(event);
     var selectedDescribedEntry = findSelectedEntry(selectedEntry.id, entries);
-    //TODO space key should only toggle, not open sub menu
     createFilterOption(selectedDescribedEntry, entries, config.filtersView, config);
     //hideSubMenus(config); //TODO previously opened sub menus like options or details need to be closed on blur
     preventDefaultEventHandling(event);
@@ -667,12 +658,15 @@ searchbar.SearchbarUI = (function () {
     filterElement = createListEntryElement(selectedDescribedEntry, view, filterElementId);
     onFilterMenuEntrySelected(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
     addMainMenuNavigationHandlers(filterElement, config);
-    //TODO it should not be possible to delete or inactivate "default" filters.
-    onSpaceKey(filterElement, toggleFilterEntry);
-    //TODO removing a child shouldn't have any negative side effects (missing id 1)
-    //TODO removing a child should move the focus to the previous element 
-    onDeleteKey(filterElement, removeChildElement);
-    onBackspaceKey(filterElement, removeChildElement);
+    var filterElementHiddenFields = extractListElementIdProperties(filterElement.id).hiddenFields();
+    var isFilterWithDefaultOption = typeof filterElementHiddenFields.default !== "undefined";
+    if (isFilterWithDefaultOption) {
+      //TODO elements with an default value should be reset to it instead of inactivated/deleted
+    } else {
+      onSpaceKey(filterElement, toggleFilterEntry);
+      //TODO removing a child shouldn't have any negative side effects (missing id 1)
+      onFilterMenuEntryRemoved(filterElement, handleEventWithConfig(config, removeFilterElement));
+    }
   }
 
   /**
@@ -898,6 +892,11 @@ searchbar.SearchbarUI = (function () {
     toggleClass("inactive", filterElement);
   }
  
+  function removeFilterElement(event, config) {
+    focusPreviousSearchResult(event, config);
+    removeChildElement(event);
+  }
+
   /**
    * Removes the event target element from its parent.
    * @param {InputEvent} event 

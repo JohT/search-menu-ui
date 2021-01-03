@@ -152,12 +152,12 @@ restruct.Data = (function () {
       .indexStartsWith("2.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.name")
+      .displayPropertyName("Ziel")
       .groupName("default")
       .groupPattern("{{category}}--{{type}}")
       .build();
   }
 
-  //TODO add symbol as optional field that is only used to display results and is not needed for categorisation 
   function sitesOptionDefaultUrlPatternDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("url")
@@ -180,7 +180,7 @@ restruct.Data = (function () {
       .indexStartsWith("3.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.name")
-      // .displayPropertyName("Ziel") //TODO Bug: display field name rename does not work
+      .displayPropertyName("Ziel")
       .groupName("summaries")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
       .groupDestinationPattern("{{category}}--main")
