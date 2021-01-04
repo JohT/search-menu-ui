@@ -366,14 +366,46 @@ searchbar.SearchbarUI = (function () {
       onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails));
     }
     if (isMenuEntryWithOptions(entry)) {
+      var options = entry.options;
       if (isMenuEntryWithDefault(entry)) {
-        //TODO Only add the default value to the options, if its missing. (own function)
-        entry.options.push(entry.default[0]); //TODO Is it right to add the default value to the options?
-        createFilterOption(entry.default[0], entry.options, config.filtersView, config);
+        //TODO Is it right to add the default value to the options?
+        options = insertAtBeginningIfMissing(entry.options, entry.default[0]);
+        createFilterOption(entry.default[0], options, config.filtersView, config);
       }
       onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
     }
     addMainMenuNavigationHandlers(resultElement, config);
+  }
+
+  /**
+   * Adds the given entry at be beginning of the given array of entries if it's missing. 
+   * If the entry to add is null, the entries are returned directly.
+   * 
+   * @param {DescribedEntry[]} entries 
+   * @param {DescribedEntry} entryToAdd 
+   * @returns {DescribedEntry[]}
+   */
+  function insertAtBeginningIfMissing(entries, entryToAdd) {
+    if (!entryToAdd) {
+      return entries;
+    }
+    var index;
+    var alreadyContainsEntryToAdd = false;
+    for (index = 0; index < entries.length; index+=1) {
+      if (entries[index].value == entryToAdd.value) {
+        alreadyContainsEntryToAdd = true;
+        break;
+      }
+    }
+    if (alreadyContainsEntryToAdd) {
+      return entries;
+    }
+    var result = [];
+    result.push(entryToAdd);
+    for (index = 0; index < entries.length; index+=1) {
+      result.push(entries[index]);
+    }
+    return result;
   }
 
   function isMenuEntryWithFurtherDetails(entry) {
@@ -658,10 +690,12 @@ searchbar.SearchbarUI = (function () {
     filterElement = createListEntryElement(selectedDescribedEntry, view, filterElementId);
     onFilterMenuEntrySelected(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
     addMainMenuNavigationHandlers(filterElement, config);
+    
     var filterElementHiddenFields = extractListElementIdProperties(filterElement.id).hiddenFields();
     var isFilterWithDefaultOption = typeof filterElementHiddenFields.default !== "undefined";
     if (isFilterWithDefaultOption) {
-      //TODO elements with an default value should be reset to it instead of inactivated/deleted
+      onSpaceKey(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
+      //TODO elements with an default value should be reset to it instead of deleted
     } else {
       onSpaceKey(filterElement, toggleFilterEntry);
       //TODO removing a child shouldn't have any negative side effects (missing id 1)
