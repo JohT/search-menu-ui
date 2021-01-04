@@ -368,7 +368,6 @@ searchbar.SearchbarUI = (function () {
     if (isMenuEntryWithOptions(entry)) {
       var options = entry.options;
       if (isMenuEntryWithDefault(entry)) {
-        //TODO Is it right to add the default value to the options?
         options = insertAtBeginningIfMissing(entry.options, entry.default[0]);
         createFilterOption(entry.default[0], options, config.filtersView, config);
       }
@@ -690,7 +689,7 @@ searchbar.SearchbarUI = (function () {
     filterElement = createListEntryElement(selectedDescribedEntry, view, filterElementId);
     onFilterMenuEntrySelected(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
     addMainMenuNavigationHandlers(filterElement, config);
-    
+
     var filterElementHiddenFields = extractListElementIdProperties(filterElement.id).hiddenFields();
     var isFilterWithDefaultOption = typeof filterElementHiddenFields.default !== "undefined";
     if (isFilterWithDefaultOption) {
@@ -727,6 +726,7 @@ searchbar.SearchbarUI = (function () {
    * @param {String} listParentElementId id of the parent element that child nodes will be searched
    * @returns {String} returns the url template or null, if nothing could be found
    */
+  //TODO should depend on category to provide url templates per category
   //TODO should return a list of the selected, the default and a couple of other url templates in this particular order.
   //TODO the detail fields of any search result entry are applicable to replace the url template placeholders.
   //If there is any placeholder, that cannot be replaced, then the url template should be filtered out.
@@ -786,7 +786,7 @@ searchbar.SearchbarUI = (function () {
     hideSubMenus(config);
     selectSearchResultToDisplaySubMenu(event, entries, config.detailView, config);
     preventDefaultEventHandling(event);
-    //TODO remove experiment ---------
+    //TODO remove experiment if navigation url template link is implemented ---------
     var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId);
     console.log("selectedUrlTemplate=" + selectedUrlTemplate);
     //------end of experiment
@@ -798,7 +798,6 @@ searchbar.SearchbarUI = (function () {
   }
 
   function selectSearchResultToDisplaySubMenu(event, entries, subMenuView, config) {
-    //TODO arrowKeyLeft to close sub menu
     clearAllEntriesOfElementWithId(subMenuView.listParentElementId);
     var selectedElement = getEventTarget(event);
 
@@ -814,7 +813,6 @@ searchbar.SearchbarUI = (function () {
       if (subMenuView.isSelectableFilterOption) {
         addSubMenuNavigationHandlers(subMenuElement);
         //TODO the only config dependency here
-        //TODO should only apply to filter options
         onSubMenuEntrySelected(subMenuElement, handleEventWithEntriesAndConfig(entries, config, selectFilterOption));
       }
       if (subMenuIndex === 0) {
