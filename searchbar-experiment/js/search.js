@@ -207,7 +207,7 @@ searchbar.SearchbarAPI = (function () {
         .viewElementId("seachdetails")
         .listParentElementId("seachdetailentries")
         .listEntryElementIdPrefix("detail")
-        .listEntryTextTemplate("{{displayName}}: {{value}}")
+        .listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}") //TODO display value smaller
         .build();
     },
     defaultResultsView: function () {
@@ -215,7 +215,7 @@ searchbar.SearchbarAPI = (function () {
         .viewElementId("searchresults")
         .listParentElementId("searchmatches")
         .listEntryElementIdPrefix("result")
-        .listEntryTextTemplate("{{abbreviation}} {{displayName}}")
+        .listEntryTextTemplate("{{abbreviation}} {{displayName}}") //TODO display second line smaller
         .listEntrySummaryTemplate("{{summaries[0].abbreviation}} <b>{{summaries[1].value}}</b><br>{{summaries[2].value}}: {{summaries[0].value}}")
         .build();
     },
@@ -364,6 +364,7 @@ searchbar.SearchbarUI = (function () {
 
     if (isMenuEntryWithFurtherDetails(entry)) {
       onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails));
+      onMouseOverDelayed(resultElement, handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails));
     }
     if (isMenuEntryWithOptions(entry)) {
       var options = entry.options;
@@ -373,6 +374,7 @@ searchbar.SearchbarUI = (function () {
       }
       onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
     }
+    //TODO onEnter -> isUrlTemplateResolvable -> "window.location.href = '...';""
     addMainMenuNavigationHandlers(resultElement, config);
   }
 
@@ -446,7 +448,7 @@ searchbar.SearchbarUI = (function () {
 
   function onMenuEntrySelected(element, eventHandler) {
     addEvent("mousedown", element, eventHandler);
-    onEnterKey(element, eventHandler);
+    onEnterKey(element, eventHandler); //TODO Resolve url template and navigate to it
     onSpaceKey(element, eventHandler);
     onArrowRightKey(element, eventHandler);
   }
@@ -819,9 +821,11 @@ searchbar.SearchbarUI = (function () {
         subMenuFirstEntry = subMenuElement;
       }
     }
-
+    var divParentOfSelectedElement = parentThatMatches(selectedElement, function (element) {
+      return element.tagName == "DIV";
+    });
     var subMenuViewElement = document.getElementById(subMenuView.viewElementId);
-    var alignedSubMenuXPosition = (selectedElement.offsetWidth + 15);
+    var alignedSubMenuXPosition = (divParentOfSelectedElement.offsetWidth + 15);
     var alignedSubMenuYPosition = getYPositionOfElement(selectedElement) + getScrollY();
     subMenuViewElement.style.left = alignedSubMenuXPosition + "px";
     subMenuViewElement.style.top = alignedSubMenuYPosition + "px";
@@ -844,6 +848,7 @@ searchbar.SearchbarUI = (function () {
     var mainMenuEntryToSelect = document.getElementById(subMenuEntryToExitProperties.mainMenuId);
     subMenuEntryToExit.blur();
     mainMenuEntryToSelect.focus();
+    //TODO hide all neighbor sub menus (elements containing class "show")
     hideViewOf(subMenuEntryToExit);
   }
 
@@ -1049,19 +1054,66 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
-   * Hides the view, that contains the given element.
+   * Hides the view (by removing the class "show"), that contains the given element.
    * The view is identified by the existing style-class "show".
+   * @param {Element} element
    */
   function hideViewOf(element) {
-    var parentElement = element;
-    while (parentElement != null) {
-      if (hasClass("show", parentElement)) {
-        hideElement(parentElement);
-        return;
-      }
-      parentElement = parentElement.parentNode;
+    var parentWithShowClass = parentThatMatches(element, function (parent) {
+      return hasClass("show", parent);
+    });
+    if (parentWithShowClass != null) {
+      hideElement(parentWithShowClass);
+      return;
     }
   }
+
+  /**
+   * @callback ElementPredicate
+   * @param {Element} element
+   * @returns {boolean} true, when the predicate matches the given element, false otherwise.
+   */
+
+  /**
+   * Returns the parent of the element (or the element itself), that matches the given predicate.
+   * Returns null, if no element had been found.
+   * 
+   * @param {Element} element 
+   * @param {ElementPredicate} predicate 
+   */
+  function parentThatMatches(element, predicate) {
+    var parentNode = element;
+    while (parentNode != null) {
+      if (predicate(parentNode)) {
+        return parentNode;
+      }
+      parentNode = parentNode.parentNode;
+    }
+    return null;
+  }
+
+  /**
+   * Returns the child of the element (or the element itself), that matches the given predicate.
+   * Returns null, if no element had been found.
+   * @param {Element} element 
+   * @param {ElementPredicate} predicate 
+   */
+  function childThatMatches(element, predicate) {
+    var node = element;
+    if (predicate(node)) {
+      return node;
+    }
+    var i, childElement, matchingChild;
+    for (i = 0; i < node.childNodes.length; i += 1) {
+      childElement = node.childNodes[i];
+      matchingChild = childThatMatches(childElement, predicate);
+      if (matchingChild != null) {
+        return matchingChild;
+      }
+    }
+    return null;
+  }
+
 
   /**
    * Hides the given element.
@@ -1091,7 +1143,25 @@ searchbar.SearchbarUI = (function () {
   }
 
   function hasClass(classToLookFor, element) {
-    return element.className.indexOf(classToLookFor) >= 0;
+    return element.className != null && element.className.indexOf(classToLookFor) >= 0;
+  }
+
+  function onMouseOverDelayed(element, eventHandler) {
+    addEvent("mouseover", element, function (event) {
+      this.delayedHandlerTimer = setTimeout(function () {
+        eventHandler(event);
+      }, 700); //TODO configurable wait time?
+      addEvent("mouseout", element, function () {
+        if (this.delayedHandlerTimer !== null) {
+          clearTimeout(this.delayedHandlerTimer);
+        }
+      });
+      addEvent("keydown", element, function () {
+        if (this.delayedHandlerTimer !== null) {
+          clearTimeout(this.delayedHandlerTimer);
+        }
+      });
+    });
   }
 
   function onEscapeKey(element, eventHandler) {
@@ -1179,9 +1249,9 @@ searchbar.SearchbarUI = (function () {
    * @returns {Element} target of the event
    */
   function getEventTarget(event) {
-    if (typeof event.currentTarget !== "undefined") {
+    if (typeof event.currentTarget !== "undefined" && event.currentTarget != null) {
       return event.currentTarget;
-    } else if (typeof event.srcElement !== "undefined") {
+    } else if (typeof event.srcElement !== "undefined" && event.srcElement != null) {
       return event.srcElement;
     } else {
       throw new Error("Event doesn't contain bounded element: " + event);
