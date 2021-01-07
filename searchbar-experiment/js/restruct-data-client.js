@@ -147,7 +147,7 @@ restruct.Data = (function () {
   function sitesMainDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("main")
-      .category("navigation") //finger left navigation symbol
+      .category("account") //finger left navigation symbol
       .abbreviation("&#x261c;") //finger left navigation symbol
       .indexStartsWith("2.")
       .propertyPatternEqualMode()
@@ -161,7 +161,7 @@ restruct.Data = (function () {
   function sitesOptionDefaultUrlPatternDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("url")
-      .category("navigation")
+      .category("account")
       .abbreviation("&#x261c;") //finger left navigation symbol
       .indexStartsWith("2.")
       .propertyPatternEqualMode()
@@ -175,7 +175,7 @@ restruct.Data = (function () {
   function sitesOptionsSummaryDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
-      .category("navigation")
+      .category("account")
       .abbreviation("&#x261c;") //finger left navigation symbol
       .indexStartsWith("3.")
       .propertyPatternEqualMode()
@@ -191,7 +191,7 @@ restruct.Data = (function () {
   function sitesOptionDetailsDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("details")
-      .category("navigation")
+      .category("account")
       .abbreviation("&#x261c;") //finger left navigation symbol
       .indexStartsWith("3.")
       .propertyPatternTemplateMode()
@@ -205,7 +205,7 @@ restruct.Data = (function () {
   function sitesOptionUrlPatternDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("url")
-      .category("navigation")
+      .category("account")
       .abbreviation("&#x261c;") //finger left navigation symbol
       .indexStartsWith("3.")
       .propertyPatternTemplateMode()

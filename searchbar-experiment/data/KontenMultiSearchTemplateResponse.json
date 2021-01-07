@@ -324,7 +324,7 @@
                                 "prod",
                                 "bez"
                             ],
-                            "urltemplate": "https://httpbin.org/get?type=overview?account={{kontonummer}}",
+                            "urltemplate": "http://127.0.0.1:5500/index.html#overview-{{summaries.kontonummer}}",
                             "defaultsite": true,
                             "neuanlagedatum": "2020-10-31",
                             "aktualisierungsdatum": "2020-10-31T08:53:30Z"
@@ -355,7 +355,7 @@
                                 "bon",
                                 "zan"
                             ],
-                            "urltemplate": "https://httpbin.org/get?type=creditinterest?account={{kontonummer}}",
+                            "urltemplate": "http://127.0.0.1:5500/index.html#creditinterest-{{summaries.kontonummer}}",
                             "neuanlagedatum": "2020-10-31",
                             "aktualisierungsdatum": "2020-10-31T09:06:30Z"
                         }
@@ -376,7 +376,7 @@
                                 "smg",
                                 "zan"
                             ],
-                            "urltemplate": "https://httpbin.org/get?type=debitinterest?account={{kontonummer}}",
+                            "urltemplate": "http://127.0.0.1:5500/index.html#debitinterest-{{summaries.kontonummer}}",
                             "neuanlagedatum": "2020-11-07",
                             "aktualisierungsdatum": "2020-11-07T09:06:30Z"
                         }

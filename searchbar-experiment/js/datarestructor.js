@@ -355,7 +355,7 @@ datarestructor.DescribedEntryCreator = (function () {
     this.displayName = description.getDisplayNameForPropertyName(propertyNameWithoutArrayIndices);
     this.fieldName = description.getFieldNameForPropertyName(propertyNameWithoutArrayIndices);
     this.value = entry.value;
-    this._isMatchingIndex = indices.pointDelimited.startsWith(description.indexStartsWith);
+    this._isMatchingIndex = indices.pointDelimited.indexOf(description.indexStartsWith) == 0;
     this._description = description;
 
     this._identifier = {
@@ -390,7 +390,7 @@ datarestructor.DescribedEntryCreator = (function () {
      * @returns {string} resolved template
      */
     this.resolveTemplate = function (template) {
-      return replaceResolvableFields(template, resolvableFieldsOfAll(this));
+      return replaceResolvableFields(template, addFieldsPerGroup(resolvableFieldsOfAll(this)));
     };
 
     /**
@@ -454,13 +454,45 @@ datarestructor.DescribedEntryCreator = (function () {
    */
   function resolvableFieldsOfAll(varArgs) {
     var map = {};
-    var ignoreInternalFields = function (properyName) {
-      return !properyName.startsWith("_") && (properyName.indexOf("._") < 0);
+    var ignoreInternalFields = function (propertyName) {
+      return (propertyName.indexOf("_") != 0) && (propertyName.indexOf("._") < 0);
     };
     for (var index = 0; index < arguments.length; index+=1) {
       addToFilteredMapObject(datarestructor.InternalTools.flattenToArray(arguments[index], 3), map, ignoreInternalFields);
     }
     return map;
+  }
+
+  /**
+   * Adds the value of the "fieldName" property (including its group prefix) and its associated "value" property content.
+   * For example: detail[2].fieldName="name", detail[2].value="Smith" lead to the additional property detail.name="Smith".
+   * @param {object} object with resolvable field names and their values.
+   * @returns {object} object with resolvable field names and their values.
+   */
+  function addFieldsPerGroup(map) {
+    var removeArrayBracketsRegEx = new RegExp("\\[\\d+\\]", "gi");
+    var propertyNames = Object.keys(map);
+    var i, propertyName, propertyValue, propertyGroupName, propertyGroupNameWithoutArrayIndices;
+    for (i = 0; i < propertyNames.length; i += 1) {
+      propertyName = propertyNames[i];
+      propertyValue = map[propertyName];
+      // Ignore custom fields that are named "fieldName", since this would lead to an unpredictable behavior.
+      if (isFieldNameProperty(propertyName) && (propertyValue != "fieldName")) {
+        propertyGroupName = propertyName.substr(0, propertyName.length - 10); //10 = length of ".fieldName"
+        propertyGroupNameWithoutArrayIndices = propertyGroupName.replace(removeArrayBracketsRegEx, "");
+        map[propertyGroupNameWithoutArrayIndices + "." + propertyValue] = map[propertyGroupName + ".value"];
+      }
+    }
+    return map;
+  }
+
+  /**
+   * Is true for full qualified (point separated) propertyNames that end with ".fieldName".
+   * @param {String} propertyName 
+   * @returns {boolean} true, if is a fieldName property name
+   */
+  function isFieldNameProperty(propertyName) {
+    return propertyName.length > 10 && propertyName.substr(propertyName.length - 10) == ".fieldName"; //10 = length of ".fieldName"
   }
 
   /**
@@ -532,7 +564,7 @@ datarestructor.DescribedEntryCreator = (function () {
     if (typeof value !== "object" && propertyNames.indexOf(key) < 0 && key != "") {
       return undefined; // Remove all properties that are not contained in the given list.
     }
-    if (key.startsWith("_")) {
+    if (key.indexOf("_") == 0) {
       return undefined; //Remove all properties with a name beginning with an underscore (internal fields).
     }
     if (Array.isArray(value)) {

@@ -365,6 +365,12 @@ searchbar.SearchbarUI = (function () {
     if (isMenuEntryWithFurtherDetails(entry)) {
       onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails));
       onMouseOverDelayed(resultElement, handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails));
+      onMenuEntryChosen(resultElement, function (event) {
+        var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId, entry.category);
+        if (selectedUrlTemplate) {
+          window.location.href = entry.resolveTemplate(selectedUrlTemplate);
+        }
+      });
     }
     if (isMenuEntryWithOptions(entry)) {
       var options = entry.options;
@@ -373,8 +379,8 @@ searchbar.SearchbarUI = (function () {
         createFilterOption(entry.default[0], options, config.filtersView, config);
       }
       onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
+      onMenuEntryChosen(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
     }
-    //TODO onEnter -> isUrlTemplateResolvable -> "window.location.href = '...';""
     addMainMenuNavigationHandlers(resultElement, config);
   }
 
@@ -447,10 +453,13 @@ searchbar.SearchbarUI = (function () {
   }
 
   function onMenuEntrySelected(element, eventHandler) {
-    addEvent("mousedown", element, eventHandler);
-    onEnterKey(element, eventHandler); //TODO Resolve url template and navigate to it
     onSpaceKey(element, eventHandler);
     onArrowRightKey(element, eventHandler);
+  }
+
+  function onMenuEntryChosen(element, eventHandler) {
+    addEvent("mousedown", element, eventHandler);
+    onEnterKey(element, eventHandler);
   }
 
   function onSubMenuEntrySelected(element, eventHandler) {
@@ -726,19 +735,25 @@ searchbar.SearchbarUI = (function () {
    * Gets the currently selected url template for navigation.
    * 
    * @param {String} listParentElementId id of the parent element that child nodes will be searched
+   * @param {String} category the url template needs to belong to the same category
    * @returns {String} returns the url template or null, if nothing could be found
    */
-  //TODO should depend on category to provide url templates per category
-  //TODO should return a list of the selected, the default and a couple of other url templates in this particular order.
   //TODO the detail fields of any search result entry are applicable to replace the url template placeholders.
   //If there is any placeholder, that cannot be replaced, then the url template should be filtered out.
   //This enables context sensitive navigation based one a couple of url templates that can be searched themselves.
-  function getSelectedUrlTemplate(listParentElementId) {
+  function getSelectedUrlTemplate(listParentElementId, category) {
     return forEachListEntryElement(listParentElementId, function(element) {
       var listElementHiddenFields = extractListElementIdProperties(element.id).hiddenFields();
-      if ((typeof listElementHiddenFields.urltemplate === "object") && !hasClass("inactive", element)) {
-        return listElementHiddenFields.urltemplate[0].value;
+      if (typeof listElementHiddenFields.urltemplate === "undefined") {
+        return null; // entry has no url template
       }
+      if (listElementHiddenFields.category != category) {
+        return null; // entry belongs to another category
+      }
+      if (hasClass("inactive", element)) {
+        return null; // entry is inactive
+      }
+      return listElementHiddenFields.urltemplate[0].value;
     });
   }
 
@@ -788,10 +803,6 @@ searchbar.SearchbarUI = (function () {
     hideSubMenus(config);
     selectSearchResultToDisplaySubMenu(event, entries, config.detailView, config);
     preventDefaultEventHandling(event);
-    //TODO remove experiment if navigation url template link is implemented ---------
-    var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId);
-    console.log("selectedUrlTemplate=" + selectedUrlTemplate);
-    //------end of experiment
   }
 
   function selectSearchResultToDisplayFilterOptions(event, entries, config) {
@@ -1152,6 +1163,11 @@ searchbar.SearchbarUI = (function () {
         eventHandler(event);
       }, 700); //TODO configurable wait time?
       addEvent("mouseout", element, function () {
+        if (this.delayedHandlerTimer !== null) {
+          clearTimeout(this.delayedHandlerTimer);
+        }
+      });
+      addEvent("mousedown", element, function () {
         if (this.delayedHandlerTimer !== null) {
           clearTimeout(this.delayedHandlerTimer);
         }
