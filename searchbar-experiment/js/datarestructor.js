@@ -470,29 +470,37 @@ datarestructor.DescribedEntryCreator = (function () {
    * @returns {object} object with resolvable field names and their values.
    */
   function addFieldsPerGroup(map) {
-    var removeArrayBracketsRegEx = new RegExp("\\[\\d+\\]", "gi");
     var propertyNames = Object.keys(map);
-    var i, propertyName, propertyValue, propertyGroupName, propertyGroupNameWithoutArrayIndices;
+    var i, fullPropertyName, propertyInfo, propertyValue;
     for (i = 0; i < propertyNames.length; i += 1) {
-      propertyName = propertyNames[i];
-      propertyValue = map[propertyName];
-      // Ignore custom fields that are named "fieldName", since this would lead to an unpredictable behavior.
-      if (isFieldNameProperty(propertyName) && (propertyValue != "fieldName")) {
-        propertyGroupName = propertyName.substr(0, propertyName.length - 10); //10 = length of ".fieldName"
-        propertyGroupNameWithoutArrayIndices = propertyGroupName.replace(removeArrayBracketsRegEx, "");
-        map[propertyGroupNameWithoutArrayIndices + "." + propertyValue] = map[propertyGroupName + ".value"];
+      fullPropertyName = propertyNames[i];
+      propertyValue = map[fullPropertyName];
+      propertyInfo = getPropertyNameInfos(fullPropertyName);
+      // Ignore custom fields that are named "fieldName"(propertyValue), since this would lead to an unpredictable behavior.
+      if (propertyInfo.name == "fieldName" && propertyValue != "fieldName") {
+        map[propertyInfo.groupWithoutArrayIndices + propertyValue] = map[propertyInfo.group + "value"];
       }
     }
     return map;
   }
 
   /**
-   * Is true for full qualified (point separated) propertyNames that end with ".fieldName".
-   * @param {String} propertyName 
-   * @returns {boolean} true, if is a fieldName property name
+   * Infos about the full property name including the name of the group (followed by the separator) and the name of the property itself. 
+   * @param {String} fullPropertyName 
+   * @returns {Object} Contains "group" (empty or group name including trailing separator "."), "groupWithoutArrayIndices" and "name" (property name).
    */
-  function isFieldNameProperty(propertyName) {
-    return propertyName.length > 10 && propertyName.substr(propertyName.length - 10) == ".fieldName"; //10 = length of ".fieldName"
+  function getPropertyNameInfos(fullPropertyName) {
+    var positionOfRightMostSeparator = fullPropertyName.lastIndexOf(".");
+    var propertyName = fullPropertyName;
+    if (positionOfRightMostSeparator > 0) {
+      propertyName = fullPropertyName.substr(positionOfRightMostSeparator + 1);
+    }
+    var propertyGroup = "";
+    if (positionOfRightMostSeparator > 0) {
+      propertyGroup = fullPropertyName.substr(0, positionOfRightMostSeparator + 1); //includes the trailing ".".
+    }
+    var propertyGroupWithoutArrayIndices = propertyGroup.replace(removeArrayBracketsRegEx, "");
+    return {group: propertyGroup, groupWithoutArrayIndices: propertyGroupWithoutArrayIndices, name: propertyName};
   }
 
   /**

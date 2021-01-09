@@ -196,6 +196,12 @@ describe("datarestructor.DescribedEntry", function () {
       expect(describedEntry.resolveTemplate("{{value}}")).toEqual(expectedValue);
     });
 
+    it("should resolve the described field directly with its fieldName {{tag}}", function () {
+      var expectedValue = "inactive";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      expect(describedEntry.resolveTemplate("{{tag}}")).toEqual(expectedValue);
+    });
+
     it("should resolve sub object variable {{testsubobject.value}}", function () {
       var expectedValue = "subobjectvalue";
       describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
@@ -212,6 +218,15 @@ describe("datarestructor.DescribedEntry", function () {
       describedEntry.testgroup[0].value = expectedValue;
       expect(describedEntry.resolveTemplate("{{testgroup[0].value}}")).toEqual(expectedValue);
     });
+
+    it("should resolve the described field in the sub object directly with its group and field name {{testsubobject.tag}}", function () {
+      var expectedValue = "subobjectvalue";
+      describedEntry = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      describedEntry.testsubobject = new datarestructor.DescribedEntryCreator(rawEntry, description);
+      describedEntry.testsubobject.value = expectedValue;
+      expect(describedEntry.resolveTemplate("{{testsubobject.tag}}")).toEqual(expectedValue);
+    });
+    
   });
 
   describe("exports public fields as JSON and ", function () {
