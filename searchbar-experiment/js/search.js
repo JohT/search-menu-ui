@@ -261,7 +261,7 @@ searchbar.SearchbarAPI = (function () {
       return new searchbar.SearchbarUI(config);
     }
   };
-})();
+}());
 
 /**
  * Searchbar UI.
@@ -326,8 +326,8 @@ searchbar.SearchbarUI = (function () {
   };
 
   function updateSearch(searchText, config) {
-    var matchlist = document.getElementById(config.resultsView.listParentElementId);
-    matchlist.innerHTML = "";
+    var matchList = document.getElementById(config.resultsView.listParentElementId);
+    matchList.innerHTML = "";
     if (searchText.length === 0) {
       hideMenu(config);
       return;
@@ -337,10 +337,17 @@ searchbar.SearchbarUI = (function () {
   }
 
   function getSearchResults(searchText, config) {
-    //TODO delete these 3 lines when experiment finished
-    httpGetJson("../data/KontenMultiSearchTemplateResponse.json", getHttpRequest(), function (jsonResult) {
+    //TODO put restSearchClient into config, remove uri from config
+    //TODO make restSearchClient exchangeable (clearly defined interface, design by contract)
+    //TODO make restruct.Data.restructJson exchangeable (clearly defined interface, design by contract)
+    var restSearchClient = searchService.RestSearchConfig.searchURI("../data/KontenMultiSearchTemplateResponse.json").start();
+    restSearchClient.search("TODO params", function (jsonResult) {
       displayResults(restruct.Data.restructJson(jsonResult), config);
     });
+    //TODO delete these 3 lines when experiment finished
+    // httpGetJson("../data/KontenMultiSearchTemplateResponse.json", getHttpRequest(), function (jsonResult) {
+    //   displayResults(restruct.Data.restructJson(jsonResult), config);
+    // });
   }
 
   //TODO to be deleted when backend filters. Beware: search text is unsafely used in this regex
@@ -1327,7 +1334,7 @@ searchbar.SearchbarUI = (function () {
 
   // Returns the instance
   return instance;
-})();
+}());
 
 // Configure and start the search bar functionality.
 searchbar.SearchbarAPI.searchURI("../data/state_capitals.json").start();

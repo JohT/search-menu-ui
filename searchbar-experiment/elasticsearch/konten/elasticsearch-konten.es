@@ -573,6 +573,21 @@ GET konten/_search/template?filter_path=hits.total.value,hits.hits._source,hits.
     }
 }
 
+//run stored search template script using post with given parameters and filtered response
+POST konten/_search/template?filter_path=hits.total.value,hits.hits._source,hits.hits.highlight
+{
+    "id": "konto_search_as_you_type_v1",
+    "params": {
+        "konto_prefix": "AT",
+        "mandantennummer": 999,
+        "betreuerkennung": "SARCON"
+        //,"waehrungskennung": "EUR" //optional, default= EUR
+        //,"produktkennung": "KOMMERZ" //Optional
+        //,"geschaeftsart": "Giro"
+        //,"kundennummer": "00001234570",
+    }
+}
+
 // delete search template script - konto_tags_v1
 DELETE _scripts/konto_tags_v1
 
