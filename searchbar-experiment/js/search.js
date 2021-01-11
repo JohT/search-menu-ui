@@ -137,14 +137,28 @@ searchbar.SearchViewDescriptionBuilder = (function () {
 })();
 
 /**
+ * This function will be called, when search results are available.
+ * @callback SearchServiceResultAvailable
+ * @param {Object} searchResultData already parsed data object containing the result of the search
+*/
+
+/**
+ * This function will be called to trigger search (calling the search backend).
+ * @callback SearchService
+ * @param {Object} searchParameters TODO to be defined
+ * @param {SearchServiceResultAvailable} onSearchResultsAvailable TODO to be documented in detail
+ */
+
+/**
  * @typedef {Object} SearchbarConfig
+ * @property {SearchService} searchService - function that will be called to trigger search (backend).
+ * @property {string} searchURI - uri of the search query TODO replace with searchService
  * @property {string} searchAreaElementId - id of the whole search area (default="searcharea")
  * @property {string} inputElementId - id of the search input field (default="searchbar")
  * @property {SearchViewDescription} resultsView - describes the main view containing the search results
  * @property {SearchViewDescription} detailView - describes the details view
  * @property {SearchViewDescription} filterOptionsView - describes the filter options view
  * @property {SearchViewDescription} filtersView - describes the filters view
- * @property {string} searchURI - uri of the search query
  * @property {string} waitBeforeClose - timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
  * @property {string} waitBeforeSearch - time in milliseconds to wait until typing is finished and search starts (default=500)
  */
@@ -158,7 +172,9 @@ searchbar.SearchbarAPI = (function () {
   "use strict";
 
   var config = {
-    searchURI: "",
+    triggerSearch: function (searchParameters, onSearchResultsAvailable) {
+      throw "search service needs to be defined.";
+    },
     searchAreaElementId: "searcharea",
     inputElementId: "searchbar",
     resultsView: null,
@@ -174,8 +190,12 @@ searchbar.SearchbarAPI = (function () {
    * @scope searchbar.SearchbarAPI
    */
   return {
-    searchURI: function (uri) {
-      config.searchURI = uri;
+    /**
+     * Defines the search service function, that will be called whenever search is triggered.
+     * @param {SearchService} service - function that will be called to trigger search (backend).
+     */
+    searchService: function (service) {
+      config.triggerSearch = service;
       return this;
     },
     searchAreaElementId: function (id) {
@@ -337,11 +357,8 @@ searchbar.SearchbarUI = (function () {
   }
 
   function getSearchResults(searchText, config) {
-    //TODO put restSearchClient into config, remove uri from config
-    //TODO make restSearchClient exchangeable (clearly defined interface, design by contract)
     //TODO make restruct.Data.restructJson exchangeable (clearly defined interface, design by contract)
-    var restSearchClient = searchService.RestSearchConfig.searchURI("../data/KontenMultiSearchTemplateResponse.json").start();
-    restSearchClient.search("TODO params", function (jsonResult) {
+    config.triggerSearch("TODO params", function (jsonResult) {
       displayResults(restruct.Data.restructJson(jsonResult), config);
     });
     //TODO delete these 3 lines when experiment finished
@@ -1336,5 +1353,10 @@ searchbar.SearchbarUI = (function () {
   return instance;
 }());
 
+
+
+// Configure the search service client.
+var restSearchClient = searchService.RestSearchConfig.searchURI("../data/KontenMultiSearchTemplateResponse.json").build();
+
 // Configure and start the search bar functionality.
-searchbar.SearchbarAPI.searchURI("../data/state_capitals.json").start();
+searchbar.SearchbarAPI.searchService(restSearchClient.search).start();

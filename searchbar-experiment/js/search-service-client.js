@@ -42,18 +42,17 @@ searchService.RestSearchConfig = (function () {
       config.searchBodyTemplate = value;
       return this;
     },
-    start: function () {
+    build: function () {
       return new searchService.RestSearchClient(config);
     }
   };
-})();
+}());
 
 /**
- * Searchbar UI.
+ * RestSearchClient.
  *
- * Contains the "behavior" of the search bar. It submits the search query,
- * parses the results, displays matches and filters and responds to
- * clicks and key presses.
+ * Contains the "backend-connection" of the search bar. It submits the search query,
+ * parses the results and informs the callback as soon as these results are available.
  *
  * @namespace
  */
