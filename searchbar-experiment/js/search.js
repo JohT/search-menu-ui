@@ -145,13 +145,21 @@ searchbar.SearchViewDescriptionBuilder = (function () {
 /**
  * This function will be called to trigger search (calling the search backend).
  * @callback SearchService
- * @param {Object} searchParameters TODO to be defined
- * @param {SearchServiceResultAvailable} onSearchResultsAvailable TODO to be documented in detail
+ * @param {Object} searchParameters TODO to be defined as type
+ * @param {SearchServiceResultAvailable} onSearchResultsAvailable will be called when search results are available
+ */
+
+/**
+ * This function converts the data from search backend to the structure needed by the search UI.
+ * @callback DataConverter
+ * @param {Object} searchData
+ * @returns {Object} converted and structured data for search UI //TODO to be defined as type
  */
 
 /**
  * @typedef {Object} SearchbarConfig
- * @property {SearchService} searchService - function that will be called to trigger search (backend).
+ * @property {SearchService} triggerSearch - triggers search (backend)
+ * @property {DataConverter} convertData - converts search result data to search ui data
  * @property {string} searchURI - uri of the search query TODO replace with searchService
  * @property {string} searchAreaElementId - id of the whole search area (default="searcharea")
  * @property {string} inputElementId - id of the search input field (default="searchbar")
@@ -175,6 +183,9 @@ searchbar.SearchbarAPI = (function () {
     triggerSearch: function (searchParameters, onSearchResultsAvailable) {
       throw "search service needs to be defined.";
     },
+    convertData: function(sourceData) {
+      throw "data converter needs to be defined.";
+    },
     searchAreaElementId: "searcharea",
     inputElementId: "searchbar",
     resultsView: null,
@@ -196,6 +207,14 @@ searchbar.SearchbarAPI = (function () {
      */
     searchService: function (service) {
       config.triggerSearch = service;
+      return this;
+    },
+    /**
+     * Defines the converter, that converts search result data to search ui data
+     * @param {DataConverter} converter - function that will be called to trigger search (backend).
+     */
+    dataConverter: function (converter) {
+      config.convertData = converter;
       return this;
     },
     searchAreaElementId: function (id) {
@@ -357,9 +376,8 @@ searchbar.SearchbarUI = (function () {
   }
 
   function getSearchResults(searchText, config) {
-    //TODO make restruct.Data.restructJson exchangeable (clearly defined interface, design by contract)
     config.triggerSearch("TODO params", function (jsonResult) {
-      displayResults(restruct.Data.restructJson(jsonResult), config);
+      displayResults(config.convertData(jsonResult), config);
     });
     //TODO delete these 3 lines when experiment finished
     // httpGetJson("../data/KontenMultiSearchTemplateResponse.json", getHttpRequest(), function (jsonResult) {
@@ -1359,4 +1377,4 @@ searchbar.SearchbarUI = (function () {
 var restSearchClient = searchService.RestSearchConfig.searchURI("../data/KontenMultiSearchTemplateResponse.json").build();
 
 // Configure and start the search bar functionality.
-searchbar.SearchbarAPI.searchService(restSearchClient.search).start();
+searchbar.SearchbarAPI.searchService(restSearchClient.search).dataConverter(restruct.Data.restructJson).start();
