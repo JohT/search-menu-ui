@@ -376,7 +376,10 @@ searchbar.SearchbarUI = (function () {
   }
 
   function getSearchResults(searchText, config) {
-    config.triggerSearch("TODO params", function (jsonResult) {
+    //TODO "retrigger" search when new filter options are selected (after each?)
+    var searchParameters = getSelectedOptions(config.filtersView.listParentElementId);
+    searchParameters['konto_prefix'] = searchText;
+    config.triggerSearch(searchParameters, function (jsonResult) {
       displayResults(config.convertData(jsonResult), config);
     });
     //TODO delete these 3 lines when experiment finished
@@ -780,9 +783,6 @@ searchbar.SearchbarUI = (function () {
    * @param {String} category the url template needs to belong to the same category
    * @returns {String} returns the url template or null, if nothing could be found
    */
-  //TODO the detail fields of any search result entry are applicable to replace the url template placeholders.
-  //If there is any placeholder, that cannot be replaced, then the url template should be filtered out.
-  //This enables context sensitive navigation based one a couple of url templates that can be searched themselves.
   function getSelectedUrlTemplate(listParentElementId, category) {
     return forEachListEntryElement(listParentElementId, function(element) {
       var listElementHiddenFields = extractListElementIdProperties(element.id).hiddenFields();
@@ -798,6 +798,22 @@ searchbar.SearchbarUI = (function () {
       return listElementHiddenFields.urltemplate[0].value;
     });
   }
+
+  function getSelectedOptions(listParentElementId) {
+    var result = {};
+    forEachListEntryElement(listParentElementId, function(element) {
+      var hiddenFields = extractListElementIdProperties(element.id).hiddenFields();
+      if ((typeof hiddenFields.fieldName === "undefined") ||  (typeof hiddenFields.value === "undefined")){
+        return null; 
+      }
+      if (hasClass("inactive", element)) {
+        return null; // entry is inactive
+      }
+      result[hiddenFields.fieldName] = hiddenFields.value;
+    });
+    return result;
+  }
+
 
   /**
    * Iterates through all child nodes of the given parent and calls the given function.

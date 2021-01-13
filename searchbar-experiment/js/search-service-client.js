@@ -70,6 +70,9 @@ searchService.RestSearchClient = (function () {
   var instance = function (config) {
     this.config = config;
     this.search = function (searchParameters, onJsonResultReceived) {
+      var jsonSearchParameters = JSON.stringify(searchParameters, null, 2);
+      console.log("jsonSearchParameters: " + jsonSearchParameters); //TODO remove
+      //TODO replace variable jsonSearchParameters
       httpGetJson(config.searchURI, getHttpRequest(), onJsonResultReceived);
     };
   };
