@@ -17,7 +17,7 @@ var searchbar = searchbar || {};
  * @property {string} listEntryElementIdPrefix - id prefix (followed by "-" and the index number) for every list entry
  * @property {string} [listEntryElementTag=li] - element tag for list entries. defaults to "li".
  * @property {string} [listEntryTextTemplate={{displayName}}: {{value}}] - template for the text of each list entry
- * @property {string} [listEntrySummaryTemplate={{displayName}}: {{value}}] - template for the text of each list entry, if the data group "summary" exists. 
+ * @property {string} [listEntrySummaryTemplate={{displayName}}: {{value}}] - template for the text of each list entry, if the data group "summary" exists.
  * @property {boolean} [isSelectableFilterOption=false] - Specifies, if the list entry can be selected as filter option
  */
 
@@ -114,7 +114,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
     };
     /**
      * Finishes the build of the description and returns its final (meant to be immutable) object.
-     * @returns {SearchViewDescription} 
+     * @returns {SearchViewDescription}
      */
     this.build = function () {
       return this.description;
@@ -140,7 +140,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  * This function will be called, when search results are available.
  * @callback SearchServiceResultAvailable
  * @param {Object} searchResultData already parsed data object containing the result of the search
-*/
+ */
 
 /**
  * This function will be called to trigger search (calling the search backend).
@@ -183,7 +183,7 @@ searchbar.SearchbarAPI = (function () {
     triggerSearch: function (searchParameters, onSearchResultsAvailable) {
       throw "search service needs to be defined.";
     },
-    convertData: function(sourceData) {
+    convertData: function (sourceData) {
       throw "data converter needs to be defined.";
     },
     searchAreaElementId: "searcharea",
@@ -255,7 +255,9 @@ searchbar.SearchbarAPI = (function () {
         .listParentElementId("searchmatches")
         .listEntryElementIdPrefix("result")
         .listEntryTextTemplate("{{abbreviation}} {{displayName}}") //TODO display second line smaller
-        .listEntrySummaryTemplate("{{summaries[0].abbreviation}} <b>{{summaries[1].value}}</b><br>{{summaries[2].value}}: {{summaries[0].value}}")
+        .listEntrySummaryTemplate(
+          "{{summaries[0].abbreviation}} <b>{{summaries[1].value}}</b><br>{{summaries[2].value}}: {{summaries[0].value}}"
+        )
         .build();
     },
     defaultFilterOptionsView: function () {
@@ -300,7 +302,7 @@ searchbar.SearchbarAPI = (function () {
       return new searchbar.SearchbarUI(config);
     }
   };
-}());
+})();
 
 /**
  * Searchbar UI.
@@ -378,7 +380,9 @@ searchbar.SearchbarUI = (function () {
   function getSearchResults(searchText, config) {
     //TODO "retrigger" search when new filter options are selected (after each?)
     var searchParameters = getSelectedOptions(config.filtersView.listParentElementId);
-    searchParameters['konto_prefix'] = searchText;
+    searchParameters["konto_prefix"] = searchText; //TODO make parameter name exchangeable
+    searchParameters["site_prefix"] = searchText; //TODO make multiple parameter names exchangeable?
+    searchParameters.mandantennummer = 999; //TODO constant parameters
     config.triggerSearch(searchParameters, function (jsonResult) {
       displayResults(config.convertData(jsonResult), config);
     });
@@ -430,11 +434,11 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
-   * Adds the given entry at be beginning of the given array of entries if it's missing. 
+   * Adds the given entry at be beginning of the given array of entries if it's missing.
    * If the entry to add is null, the entries are returned directly.
-   * 
-   * @param {DescribedEntry[]} entries 
-   * @param {DescribedEntry} entryToAdd 
+   *
+   * @param {DescribedEntry[]} entries
+   * @param {DescribedEntry} entryToAdd
    * @returns {DescribedEntry[]}
    */
   function insertAtBeginningIfMissing(entries, entryToAdd) {
@@ -443,7 +447,7 @@ searchbar.SearchbarUI = (function () {
     }
     var index;
     var alreadyContainsEntryToAdd = false;
-    for (index = 0; index < entries.length; index+=1) {
+    for (index = 0; index < entries.length; index += 1) {
       if (entries[index].value == entryToAdd.value) {
         alreadyContainsEntryToAdd = true;
         break;
@@ -454,7 +458,7 @@ searchbar.SearchbarUI = (function () {
     }
     var result = [];
     result.push(entryToAdd);
-    for (index = 0; index < entries.length; index+=1) {
+    for (index = 0; index < entries.length; index += 1) {
       result.push(entries[index]);
     }
     return result;
@@ -474,7 +478,7 @@ searchbar.SearchbarUI = (function () {
 
   /**
    * Reacts to input events (keys, ...) to navigate through main menu entries.
-   * 
+   *
    * @param {Element} element to add event handlers
    * @param {SearchbarConfig} config search configuration
    */
@@ -487,7 +491,7 @@ searchbar.SearchbarUI = (function () {
 
   /**
    * Reacts to input events (keys, ...) to navigate through sub menu entries.
-   * 
+   *
    * @param {Element} element to add event handlers
    */
   function addSubMenuNavigationHandlers(element) {
@@ -759,18 +763,18 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
-   * Searches all child elements of the given parent element 
+   * Searches all child elements of the given parent element
    * for an entry with the given fieldName contained in the hidden fields structure.
-   * 
+   *
    * @param {String} category of the element to search for
    * @param {String} fieldName of the element to search for
    * @param {String} listParentElementId id of the parent element that child nodes will be searched
    * @returns {HTMLElement} returns the element that matches the given fieldName or null, if it hadn't been found.
    */
   function getListEntryByFieldName(category, fieldName, listParentElementId) {
-    return forEachListEntryElement(listParentElementId, function(element) {
+    return forEachListEntryElement(listParentElementId, function (element) {
       var listElementHiddenFields = extractListElementIdProperties(element.id).hiddenFields();
-      if ((listElementHiddenFields.fieldName === fieldName) && (listElementHiddenFields.category == category)) {
+      if (listElementHiddenFields.fieldName === fieldName && listElementHiddenFields.category == category) {
         return element;
       }
     });
@@ -778,13 +782,13 @@ searchbar.SearchbarUI = (function () {
 
   /**
    * Gets the currently selected url template for navigation.
-   * 
+   *
    * @param {String} listParentElementId id of the parent element that child nodes will be searched
    * @param {String} category the url template needs to belong to the same category
    * @returns {String} returns the url template or null, if nothing could be found
    */
   function getSelectedUrlTemplate(listParentElementId, category) {
-    return forEachListEntryElement(listParentElementId, function(element) {
+    return forEachListEntryElement(listParentElementId, function (element) {
       var listElementHiddenFields = extractListElementIdProperties(element.id).hiddenFields();
       if (typeof listElementHiddenFields.urltemplate === "undefined") {
         return null; // entry has no url template
@@ -801,10 +805,10 @@ searchbar.SearchbarUI = (function () {
 
   function getSelectedOptions(listParentElementId) {
     var result = {};
-    forEachListEntryElement(listParentElementId, function(element) {
+    forEachListEntryElement(listParentElementId, function (element) {
       var hiddenFields = extractListElementIdProperties(element.id).hiddenFields();
-      if ((typeof hiddenFields.fieldName === "undefined") ||  (typeof hiddenFields.value === "undefined")){
-        return null; 
+      if (typeof hiddenFields.fieldName === "undefined" || typeof hiddenFields.value === "undefined") {
+        return null;
       }
       if (hasClass("inactive", element)) {
         return null; // entry is inactive
@@ -813,7 +817,6 @@ searchbar.SearchbarUI = (function () {
     });
     return result;
   }
-
 
   /**
    * Iterates through all child nodes of the given parent and calls the given function.
@@ -894,7 +897,7 @@ searchbar.SearchbarUI = (function () {
       return element.tagName == "DIV";
     });
     var subMenuViewElement = document.getElementById(subMenuView.viewElementId);
-    var alignedSubMenuXPosition = (divParentOfSelectedElement.offsetWidth + 15);
+    var alignedSubMenuXPosition = divParentOfSelectedElement.offsetWidth + 15;
     var alignedSubMenuYPosition = getYPositionOfElement(selectedElement) + getScrollY();
     subMenuViewElement.style.left = alignedSubMenuXPosition + "px";
     subMenuViewElement.style.top = alignedSubMenuYPosition + "px";
@@ -942,9 +945,9 @@ searchbar.SearchbarUI = (function () {
    */
   function scrollToFocus(element, up) {
     if (up == true) {
-      element.scrollIntoView({block: "start"});
+      element.scrollIntoView({ block: "start" });
     } else {
-      element.scrollIntoView({block: "end"});
+      element.scrollIntoView({ block: "end" });
     }
   }
 
@@ -997,7 +1000,7 @@ searchbar.SearchbarUI = (function () {
     var filterElement = getEventTarget(event);
     toggleClass("inactive", filterElement);
   }
- 
+
   function removeFilterElement(event, config) {
     focusPreviousSearchResult(event, config);
     removeChildElement(event);
@@ -1005,7 +1008,7 @@ searchbar.SearchbarUI = (function () {
 
   /**
    * Removes the event target element from its parent.
-   * @param {InputEvent} event 
+   * @param {InputEvent} event
    */
   function removeChildElement(event) {
     var filterElement = getEventTarget(event);
@@ -1146,9 +1149,9 @@ searchbar.SearchbarUI = (function () {
   /**
    * Returns the parent of the element (or the element itself), that matches the given predicate.
    * Returns null, if no element had been found.
-   * 
-   * @param {Element} element 
-   * @param {ElementPredicate} predicate 
+   *
+   * @param {Element} element
+   * @param {ElementPredicate} predicate
    */
   function parentThatMatches(element, predicate) {
     var parentNode = element;
@@ -1164,8 +1167,8 @@ searchbar.SearchbarUI = (function () {
   /**
    * Returns the child of the element (or the element itself), that matches the given predicate.
    * Returns null, if no element had been found.
-   * @param {Element} element 
-   * @param {ElementPredicate} predicate 
+   * @param {Element} element
+   * @param {ElementPredicate} predicate
    */
   function childThatMatches(element, predicate) {
     var node = element;
@@ -1182,7 +1185,6 @@ searchbar.SearchbarUI = (function () {
     }
     return null;
   }
-
 
   /**
    * Hides the given element.
@@ -1385,12 +1387,27 @@ searchbar.SearchbarUI = (function () {
 
   // Returns the instance
   return instance;
-}());
-
-
+})();
 
 // Configure the search service client.
-var restSearchClient = searchService.RestSearchConfig.searchURI("../data/KontenMultiSearchTemplateResponse.json").build();
+//var restSearchClient = searchService.RestSearchConfig.searchURI("../data/KontenMultiSearchTemplateResponse.json").searchMethod("GET").build();
+var restSearchClient = searchService.RestSearchConfig
+.searchMethod("POST")
+.searchContentType("application/x-ndjson")
+.searchURI(
+  "http://localhost:9200/_msearch/template?filter_path=responses.hits.total.value,responses.hits.hits._source,hits.responses.hits.highlight,responses.aggregations.*.buckets"
+)
+  .searchBodyTemplate(
+    '{"index": "konten"}\n' +
+      '{"id": "konto_search_as_you_type_v1", "params":{{searchParameters}}}\n' +
+      '{"index": "konten"}\n' +
+      '{"id": "konto_tags_v1", "params":{"konto_aggregations_prefix": "", "konto_aggregations_size": 10}}\n' +
+      '{"index": "sites"}\n' +
+      '{"id": "sites_default_v1", "params":{{searchParameters}}}\n' +
+      '{"index": "sites"}\n' +
+      '{"id": "sites_search_as_you_type_v1", "params":{{searchParameters}}}\n'
+  )
+  .build();
 
 // Configure and start the search bar functionality.
 searchbar.SearchbarAPI.searchService(restSearchClient.search).dataConverter(restruct.Data.restructJson).start();

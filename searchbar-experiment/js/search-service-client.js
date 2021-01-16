@@ -16,13 +16,19 @@ var searchService = searchService || {};
  *
  * @namespace
  */
+//TODO jsdoc config
 searchService.RestSearchConfig = (function () {
   "use strict";
 
   var config = {
     searchURI: "",
     searchMethod: "POST",
-    searchBodyTemplate: ""
+    searchContentType: "application/json",
+    searchBodyTemplate: null,
+    resolveSearchBody: function (searchParameters) {
+      var jsonSearchParameters = (typeof searchParameters === "string")? searchParameters : JSON.stringify(searchParameters);
+      return this.searchBodyTemplate.replace(new RegExp("\\{\\{searchParameters\\}\\}", "gm"), jsonSearchParameters);
+    }
   };
 
   /**
@@ -36,6 +42,10 @@ searchService.RestSearchConfig = (function () {
     },
     searchMethod: function (value) {
       config.searchMethod = value;
+      return this;
+    },
+    searchContentType: function (value) {
+      config.searchContentType = value;
       return this;
     },
     searchBodyTemplate: function (value) {
@@ -70,22 +80,53 @@ searchService.RestSearchClient = (function () {
   var instance = function (config) {
     this.config = config;
     this.search = function (searchParameters, onJsonResultReceived) {
-      var jsonSearchParameters = JSON.stringify(searchParameters, null, 2);
-      console.log("jsonSearchParameters: " + jsonSearchParameters); //TODO remove
-      //TODO replace variable jsonSearchParameters
-      httpGetJson(config.searchURI, getHttpRequest(), onJsonResultReceived);
+      var onFailure = function (resultText, httpStatus) {
+        console.error("search failed with status code " + httpStatus + ": " + resultText); //TODO debug mode
+      };
+      var searchBody = config.resolveSearchBody(searchParameters);
+      var request = { url: config.searchURI, method: config.searchMethod, contentType: config.searchContentType, body: searchBody };
+      httpRequestJson(request, getHttpRequest(), onJsonResultReceived, onFailure);
     };
   };
 
-  function httpGetJson(url, httpRequest, onJsonResultReceived) {
+  /**
+   * This function will be called when a already parsed response of the HTTP request is available.
+   * @callback ParsedHttpResponseAvailable
+   * @param {Object} resultData already parsed data object containing the results of the HTTP request
+   * @param {number} httpStatus HTTP response status
+   */
+  /**
+   * This function will be called when a response of the HTTP request is available as text.
+   * @callback TextHttpResponseAvailable
+   * @param {Object} resultText response body as text
+   * @param {number} httpStatus HTTP response status
+   */
+  /**
+   * Executes an HTTP "AJAX" request.
+   *
+   * @param {Object} request - flattened json from search query result
+   * @param {string} request.url - name of the property in hierarchical order separated by points
+   * @param {string} request.method - value of the property as string
+   * @param {string} request.contentType - value of the property as string
+   * @param {string} request.body - value of the property as string
+   * @param {Object} httpRequest - Browser provided object to use for the HTTP request.
+   * @param {ParsedHttpResponseAvailable} onSuccess - will be called when the request was successful.
+   * @param {TextHttpResponseAvailable} onFailure - will be called with the error message as text
+   */
+  function httpRequestJson(request, httpRequest, onSuccess, onFailure) {
     httpRequest.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-        var jsonResult = JSON.parse(this.responseText);
-        onJsonResultReceived(jsonResult);
+      if (this.readyState === 4) {
+        if (this.status >= 200 && this.status <= 299) {
+          var jsonResult = JSON.parse(this.responseText);
+          onSuccess(jsonResult, this.status);
+        } else {
+          onFailure(this.responseText, this.status);
+        }
       }
     };
-    httpRequest.open("GET", url, true);
-    httpRequest.send();
+    httpRequest.open(request.method, request.url, true);
+    httpRequest.setRequestHeader("Content-Type", request.contentType);
+    httpRequest.send(request.body);
   }
 
   function getHttpRequest() {
