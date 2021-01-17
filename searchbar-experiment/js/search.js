@@ -145,30 +145,43 @@ searchbar.SearchViewDescriptionBuilder = (function () {
 /**
  * This function will be called to trigger search (calling the search backend).
  * @callback SearchService
- * @param {Object} searchParameters TODO to be defined as type
- * @param {SearchServiceResultAvailable} onSearchResultsAvailable will be called when search results are available
+ * @param {Object} searchParameters object that contains all parameters as properties. It will be converted to JSON.
+ * @param {SearchServiceResultAvailable} onSearchResultsAvailable will be called when search results are available.
+ */
+
+//TODO finish data description
+/**
+ * @typedef {Object} SearchUiData 
+ * @property {function} resolveTemplate(template);
+ * @property {function} publicFieldsJson()
+ * @property {Object} details
+ * @property {Object} options
+ * @property {Object} default
+ * @property {Object} summaries
+ * @property {String} category
+ * @property {String} fieldName
  */
 
 /**
  * This function converts the data from search backend to the structure needed by the search UI.
  * @callback DataConverter
  * @param {Object} searchData
- * @returns {Object} converted and structured data for search UI //TODO to be defined as type
+ * @returns {SearchUiData} converted and structured data for search UI
  */
 
 /**
  * @typedef {Object} SearchbarConfig
  * @property {SearchService} triggerSearch - triggers search (backend)
  * @property {DataConverter} convertData - converts search result data to search ui data
- * @property {string} searchURI - uri of the search query TODO replace with searchService
  * @property {string} searchAreaElementId - id of the whole search area (default="searcharea")
  * @property {string} inputElementId - id of the search input field (default="searchbar")
  * @property {SearchViewDescription} resultsView - describes the main view containing the search results
  * @property {SearchViewDescription} detailView - describes the details view
  * @property {SearchViewDescription} filterOptionsView - describes the filter options view
  * @property {SearchViewDescription} filtersView - describes the filters view
- * @property {string} waitBeforeClose - timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
- * @property {string} waitBeforeSearch - time in milliseconds to wait until typing is finished and search starts (default=500)
+ * @property {string} [waitBeforeClose=700] - timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
+ * @property {string} [waitBeforeSearch=500] - time in milliseconds to wait until typing is finished and search starts (default=500)
+ * @property {string} [waitBeforeMouseOver=700] - time in milliseconds to wait until mouse over opens details (default=700)
  */
 
 /**
@@ -193,7 +206,8 @@ searchbar.SearchbarAPI = (function () {
     filterOptionsView: null,
     filtersView: null,
     waitBeforeClose: 700,
-    waitBeforeSearch: 500
+    waitBeforeSearch: 500,
+    waitBeforeMouseOver: 700
   };
 
   /**
@@ -284,6 +298,10 @@ searchbar.SearchbarAPI = (function () {
     },
     waitBeforeSearch: function (ms) {
       config.waitBeforeSearch = ms;
+      return this;
+    },
+    waitBeforeMouseOver: function (ms) {
+      config.waitBeforeMouseOver = ms;
       return this;
     },
     start: function () {
@@ -386,19 +404,7 @@ searchbar.SearchbarUI = (function () {
     config.triggerSearch(searchParameters, function (jsonResult) {
       displayResults(config.convertData(jsonResult), config);
     });
-    //TODO delete these 3 lines when experiment finished
-    // httpGetJson("../data/KontenMultiSearchTemplateResponse.json", getHttpRequest(), function (jsonResult) {
-    //   displayResults(restruct.Data.restructJson(jsonResult), config);
-    // });
   }
-
-  //TODO to be deleted when backend filters. Beware: search text is unsafely used in this regex
-  // function filterResults(jsonResults, searchText) {
-  //   var regex = new RegExp("^" + searchText, "gi");
-  //   return jsonResults.filter(function (entry) {
-  //     return entry.displayName.match(regex) || entry.value.match(regex);
-  //   });
-  // }
 
   function displayResults(jsonResults, config) {
     var index = 0;
@@ -413,7 +419,11 @@ searchbar.SearchbarUI = (function () {
 
     if (isMenuEntryWithFurtherDetails(entry)) {
       onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails));
-      onMouseOverDelayed(resultElement, handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails));
+      onMouseOverDelayed(
+        resultElement,
+        config.waitBeforeMouseOver,
+        handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails)
+      );
       onMenuEntryChosen(resultElement, function (event) {
         var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId, entry.category);
         if (selectedUrlTemplate) {
@@ -423,6 +433,8 @@ searchbar.SearchbarUI = (function () {
     }
     if (isMenuEntryWithOptions(entry)) {
       var options = entry.options;
+      //TODO if there is only one option (with/without being default), then skip the sub menu
+      //TODO apply it to constants (pre selected single filter options) like "tenant-number", "current-account"
       if (isMenuEntryWithDefault(entry)) {
         options = insertAtBeginningIfMissing(entry.options, entry.default[0]);
         createFilterOption(entry.default[0], options, config.filtersView, config);
@@ -639,7 +651,7 @@ searchbar.SearchbarUI = (function () {
       var next = null;
       if (menuEntryIdProperties.type === config.resultsView.listEntryElementIdPrefix) {
         //select first filter entry after last result/match entry
-        //TODO Better way tp navigate from last search result to first options/filter entry?
+        //TODO Better way (without config) to navigate from last search result to first options/filter entry?
         next = document.getElementById(config.filterOptionsView.listEntryElementIdPrefix + "-1");
       }
       if (next === null) {
@@ -656,7 +668,7 @@ searchbar.SearchbarUI = (function () {
       var previous = null;
       if (menuEntryIdProperties.type === config.filterOptionsView.listEntryElementIdPrefix) {
         //select last result entry when arrow up is pressed on first filter entry
-        //TODO Better way tp navigate from first options/filter entry to last search result?
+        //TODO Better way (without config) to navigate from first options/filter entry to last search result?
         var resultElementsCount = getListElementCountOfType(config.resultsView.listEntryElementIdPrefix);
         previous = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-" + resultElementsCount);
       }
@@ -728,7 +740,6 @@ searchbar.SearchbarUI = (function () {
     var selectedEntry = getEventTarget(event);
     var selectedDescribedEntry = findSelectedEntry(selectedEntry.id, entries);
     createFilterOption(selectedDescribedEntry, entries, config.filtersView, config);
-    //hideSubMenus(config); //TODO previously opened sub menus like options or details need to be closed on blur
     preventDefaultEventHandling(event);
     returnToMainMenu(event);
   }
@@ -754,10 +765,10 @@ searchbar.SearchbarUI = (function () {
     var isFilterWithDefaultOption = typeof filterElementHiddenFields.default !== "undefined";
     if (isFilterWithDefaultOption) {
       onSpaceKey(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
-      //TODO elements with an default value should be reset to it instead of deleted
+      //TODO elements with an default value could be reset upon deletion.
     } else {
       onSpaceKey(filterElement, toggleFilterEntry);
-      //TODO removing a child shouldn't have any negative side effects (missing id 1)
+      //TODO bug: removing a child shouldn't have any negative side effects (missing id 1)
       onFilterMenuEntryRemoved(filterElement, handleEventWithConfig(config, removeFilterElement));
     }
   }
@@ -1063,6 +1074,7 @@ searchbar.SearchbarUI = (function () {
    */
   function createListEntryInnerHtmlText(entry, view, id) {
     //TODO is it safer/faster to manually create child em tag and hidden-p tag instead of "innerHtml"?
+    //TODO move template completely into the html page referenced by id (with convention over code)
     var text = entry.resolveTemplate(view.listEntryTextTemplate);
     if (typeof entry.summaries !== "undefined") {
       text = entry.resolveTemplate(view.listEntrySummaryTemplate);
@@ -1217,11 +1229,11 @@ searchbar.SearchbarUI = (function () {
     return element.className != null && element.className.indexOf(classToLookFor) >= 0;
   }
 
-  function onMouseOverDelayed(element, eventHandler) {
+  function onMouseOverDelayed(element, delayTime, eventHandler) {
     addEvent("mouseover", element, function (event) {
       this.delayedHandlerTimer = setTimeout(function () {
         eventHandler(event);
-      }, 700); //TODO configurable wait time?
+      }, delayTime); 
       addEvent("mouseout", element, function () {
         if (this.delayedHandlerTimer !== null) {
           clearTimeout(this.delayedHandlerTimer);
