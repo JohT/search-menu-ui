@@ -1391,10 +1391,10 @@ searchbar.SearchbarUI = (function () {
 
 // Configure the search service client.
 //var restSearchClient = searchService.RestSearchConfig.searchURI("../data/KontenMultiSearchTemplateResponse.json").searchMethod("GET").build();
-var restSearchClient = searchService.RestSearchConfig
+var httpSearchClient = searchService.HttpSearchConfig
 .searchMethod("POST")
 .searchContentType("application/x-ndjson")
-.searchURI(
+.searchUrl(
   "http://localhost:9200/_msearch/template?filter_path=responses.hits.total.value,responses.hits.hits._source,hits.responses.hits.highlight,responses.aggregations.*.buckets"
 )
   .searchBodyTemplate(
@@ -1407,7 +1407,8 @@ var restSearchClient = searchService.RestSearchConfig
       '{"index": "sites"}\n' +
       '{"id": "sites_search_as_you_type_v1", "params":{{searchParameters}}}\n'
   )
+  .debugMode(true)
   .build();
 
 // Configure and start the search bar functionality.
-searchbar.SearchbarAPI.searchService(restSearchClient.search).dataConverter(restruct.Data.restructJson).start();
+searchbar.SearchbarAPI.searchService(httpSearchClient.search).dataConverter(restruct.Data.restructJson).start();
