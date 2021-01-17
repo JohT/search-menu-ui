@@ -63,7 +63,7 @@
 }
 
 .searchmatches.searchmatches {
-  height: 300px; 
+  max-height: 300px; 
   overflow: auto;
   border-bottom: 2px solid rgb(200, 200, 200);
 }
