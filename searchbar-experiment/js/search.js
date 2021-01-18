@@ -618,6 +618,9 @@ searchbar.SearchbarUI = (function () {
       subMenuId: function (typeName) {
         return id + "-" + typeName + "-1";
       },
+      reIndex: function (index) {
+        return idWithoutIndex + "-" + index;
+      },
       mainMenuId: extractedMainMenuType + "-" + extractedMainMenuIndex,
       hiddenFieldsId: id + "-fields",
       hiddenFields: function () {
@@ -768,7 +771,6 @@ searchbar.SearchbarUI = (function () {
       //TODO elements with an default value could be reset upon deletion.
     } else {
       onSpaceKey(filterElement, toggleFilterEntry);
-      //TODO bug: removing a child shouldn't have any negative side effects (missing id 1)
       onFilterMenuEntryRemoved(filterElement, handleEventWithConfig(config, removeFilterElement));
     }
   }
@@ -1022,8 +1024,19 @@ searchbar.SearchbarUI = (function () {
    * @param {InputEvent} event
    */
   function removeChildElement(event) {
-    var filterElement = getEventTarget(event);
-    filterElement.parentElement.removeChild(filterElement);
+    var element = getEventTarget(event);
+    var parentElement = element.parentElement;
+    parentElement.removeChild(element);
+    forEachEntryIn(parentElement.childNodes, function(entry, index) {
+      entry.id = extractListElementIdProperties(entry.id).reIndex(index + 1);
+    });
+  }
+
+  function forEachEntryIn(array, callback) {
+    var index = 0;
+    for (index = 0; index < array.length; index += 1) {
+      callback(array[index], index);
+    }
   }
 
   /**
