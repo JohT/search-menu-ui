@@ -149,17 +149,33 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  * @param {SearchServiceResultAvailable} onSearchResultsAvailable will be called when search results are available.
  */
 
-//TODO finish data description
+/**
+ * @callback ResolveTemplateFunction resolves variables in a string
+ * @param {String} template may contain variables in double curly brackets. T
+ * Typically supported variables would be: {{category}} {{fieldName}}, {{displayName}}, {{abbreviation}}, {{value}}
+ * @return {String} string with resolved/replaced variables
+ */
+
+/**
+ * @callback FieldsJson returns the fields as JSON
+ * @return {String} JSON of all contained fields
+ */
+
+ //TODO specify data structure clearer
+ //TODO could functions be moved out (for data-only structure)?
 /**
  * @typedef {Object} SearchUiData 
- * @property {function} resolveTemplate(template);
- * @property {function} publicFieldsJson()
- * @property {Object} details
- * @property {Object} options
- * @property {Object} default
- * @property {Object} summaries
+ * @property {ResolveTemplateFunction} resolveTemplate resolves the variables of the given string and returns the result.
+ * @property {FieldsJson} publicFieldsJson returns the fields including sub structures like "details" and their fields as JSON
  * @property {String} category
  * @property {String} fieldName
+ * @property {String} [displayName=""]
+ * @property {String} [abbreviation=""]
+ * @property {String} value
+ * @property {SearchUiData[]} details if there are further details that will be displayed e.g. on mouse over
+ * @property {SearchUiData[]} options contains filter options that can be selected as search parameters 
+ * @property {SearchUiData[]} default array with one element representing the default filter option (selected automatically)
+ * @property {SearchUiData[]} summaries fields that are used to display the main search entry/result
  */
 
 /**
@@ -374,6 +390,7 @@ searchbar.SearchbarUI = (function () {
         if (this.focusOutTimer != null) {
           clearTimeout(this.focusOutTimer);
         }
+        //TODO only show results if there are some
         show(config.resultsView.viewElementId);
       }
     });
@@ -1086,8 +1103,7 @@ searchbar.SearchbarUI = (function () {
    * @param {number} id id of the list element
    */
   function createListEntryInnerHtmlText(entry, view, id) {
-    //TODO is it safer/faster to manually create child em tag and hidden-p tag instead of "innerHtml"?
-    //TODO move template completely into the html page referenced by id (with convention over code)
+    //TODO support template inside html e.g. referenced by id (with convention over code)
     var text = entry.resolveTemplate(view.listEntryTextTemplate);
     if (typeof entry.summaries !== "undefined") {
       text = entry.resolveTemplate(view.listEntrySummaryTemplate);
@@ -1108,8 +1124,6 @@ searchbar.SearchbarUI = (function () {
     var element = document.createElement(elementTag);
     element.setAttribute("id", id);
     element.setAttribute("tabindex", "0");
-    //TODO is it safer/faster to manually create child em tag and hidden-p tag instead of "innerHtml"?
-    //element.appendChild(document.createTextNode(text));
     element.innerHTML = text;
     addClass(className, element);
     return element;
@@ -1428,7 +1442,7 @@ var httpSearchClient = searchService.HttpSearchConfig
       '{"index": "konten"}\n' +
       '{"id": "konto_tags_v1", "params":{"konto_aggregations_prefix": "", "konto_aggregations_size": 10}}\n' +
       '{"index": "sites"}\n' +
-      '{"id": "sites_default_v1", "params":{{searchParameters}}}\n' +
+      '{"id": "sites_default_v1", "params":{"mandantennummer":999}}\n' + //TODO single specified parameters
       '{"index": "sites"}\n' +
       '{"id": "sites_search_as_you_type_v1", "params":{{searchParameters}}}\n'
   )
