@@ -150,7 +150,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  */
 
 /**
- * @callback ResolveTemplateFunction resolves variables in a string
+ * @callback ResolveTemplateFunction replaces variables with object properties.
  * @param {String} template may contain variables in double curly brackets. T
  * Typically supported variables would be: {{category}} {{fieldName}}, {{displayName}}, {{abbreviation}}, {{value}}
  * @return {String} string with resolved/replaced variables
@@ -161,17 +161,17 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  * @return {String} JSON of all contained fields
  */
 
- //TODO specify data structure clearer
  //TODO could functions be moved out (for data-only structure)?
+ //TODO could a separate value object be defined and mapped to get some decoupling to data-reconstructor-js?
 /**
  * @typedef {Object} SearchUiData 
  * @property {ResolveTemplateFunction} resolveTemplate resolves the variables of the given string and returns the result.
  * @property {FieldsJson} publicFieldsJson returns the fields including sub structures like "details" and their fields as JSON
- * @property {String} category
- * @property {String} fieldName
- * @property {String} [displayName=""]
- * @property {String} [abbreviation=""]
- * @property {String} value
+ * @property {String} [category=""] name of the category. Default = "". Could contain a short domain name. (e.g. "city")
+ * @property {String} fieldName field name that will be used e.g. as a search parameter name for filter options.
+ * @property {String} [displayName=""] readable display name for e.g. the list of results.
+ * @property {String} [abbreviation=""] one optional character, a symbol character or a short abbreviation of the category
+ * @property {String} value value of the field
  * @property {SearchUiData[]} details if there are further details that will be displayed e.g. on mouse over
  * @property {SearchUiData[]} options contains filter options that can be selected as search parameters 
  * @property {SearchUiData[]} default array with one element representing the default filter option (selected automatically)
@@ -276,7 +276,7 @@ searchbar.SearchbarAPI = (function () {
         .viewElementId("seachdetails")
         .listParentElementId("seachdetailentries")
         .listEntryElementIdPrefix("detail")
-        .listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}") //TODO display value smaller
+        .listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}") //TODO could display value smaller
         .build();
     },
     defaultResultsView: function () {
@@ -284,7 +284,7 @@ searchbar.SearchbarAPI = (function () {
         .viewElementId("searchresults")
         .listParentElementId("searchmatches")
         .listEntryElementIdPrefix("result")
-        .listEntryTextTemplate("{{abbreviation}} {{displayName}}") //TODO display second line smaller
+        .listEntryTextTemplate("{{abbreviation}} {{displayName}}") //TODO could display second line smaller
         .listEntrySummaryTemplate(
           "{{summaries[0].abbreviation}} <b>{{summaries[1].value}}</b><br>{{summaries[2].value}}: {{summaries[0].value}}"
         )
@@ -413,11 +413,12 @@ searchbar.SearchbarUI = (function () {
   }
 
   function getSearchResults(searchText, config) {
-    //TODO "retrigger" search when new filter options are selected (after each?)
+    //TODO should "retrigger" search when new filter options are selected (after each?)
     var searchParameters = getSelectedOptions(config.filtersView.listParentElementId);
-    searchParameters["konto_prefix"] = searchText; //TODO make parameter name exchangeable
-    searchParameters["site_prefix"] = searchText; //TODO make multiple parameter names exchangeable?
-    searchParameters.mandantennummer = 999; //TODO constant parameters
+    searchParameters["konto_prefix"] = searchText; //TODO must make parameter name exchangeable
+    searchParameters["site_prefix"] = searchText; //TODO must make multiple parameter names exchangeable?
+    searchParameters.mandantennummer = 999; //TODO must support constant parameters
+    // TODO could provide optional build in search text highlighting
     config.triggerSearch(searchParameters, function (jsonResult) {
       displayResults(config.convertData(jsonResult), config);
     });
@@ -450,8 +451,8 @@ searchbar.SearchbarUI = (function () {
     }
     if (isMenuEntryWithOptions(entry)) {
       var options = entry.options;
-      //TODO if there is only one option (with/without being default), then skip the sub menu
-      //TODO apply it to constants (pre selected single filter options) like "tenant-number", "current-account"
+      //TODO should skip sub menu, if there is only one option (with/without being default).
+      //TODO could be used for constants (pre selected single filter options) like "tenant-number", "current-account"
       if (isMenuEntryWithDefault(entry)) {
         options = insertAtBeginningIfMissing(entry.options, entry.default[0]);
         createFilterOption(entry.default[0], options, config.filtersView, config);
@@ -671,7 +672,7 @@ searchbar.SearchbarUI = (function () {
       var next = null;
       if (menuEntryIdProperties.type === config.resultsView.listEntryElementIdPrefix) {
         //select first filter entry after last result/match entry
-        //TODO Better way (without config) to navigate from last search result to first options/filter entry?
+        //TODO analyze better way (without config) to navigate from last search result to first options/filter entry?
         next = document.getElementById(config.filterOptionsView.listEntryElementIdPrefix + "-1");
       }
       if (next === null) {
@@ -688,7 +689,7 @@ searchbar.SearchbarUI = (function () {
       var previous = null;
       if (menuEntryIdProperties.type === config.filterOptionsView.listEntryElementIdPrefix) {
         //select last result entry when arrow up is pressed on first filter entry
-        //TODO Better way (without config) to navigate from first options/filter entry to last search result?
+        //TODO analyze better way (without config) to navigate from first options/filter entry to last search result?
         var resultElementsCount = getListElementCountOfType(config.resultsView.listEntryElementIdPrefix);
         previous = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-" + resultElementsCount);
       }
@@ -785,7 +786,7 @@ searchbar.SearchbarUI = (function () {
     var isFilterWithDefaultOption = typeof filterElementHiddenFields.default !== "undefined";
     if (isFilterWithDefaultOption) {
       onSpaceKey(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
-      //TODO elements with an default value could be reset upon deletion.
+      //TODO could reset elements to their default value upon deletion.
     } else {
       onSpaceKey(filterElement, toggleFilterEntry);
       onFilterMenuEntryRemoved(filterElement, handleEventWithConfig(config, removeFilterElement));
@@ -916,7 +917,7 @@ searchbar.SearchbarUI = (function () {
       subMenuElement = createListEntryElement(subMenuEntry, subMenuView, subMenuEntryId);
       if (subMenuView.isSelectableFilterOption) {
         addSubMenuNavigationHandlers(subMenuElement);
-        //TODO the only config dependency here
+        //TODO analyze if the only config dependency here could be removed
         onSubMenuEntrySelected(subMenuElement, handleEventWithEntriesAndConfig(entries, config, selectFilterOption));
       }
       if (subMenuIndex === 0) {
@@ -950,7 +951,7 @@ searchbar.SearchbarUI = (function () {
     var mainMenuEntryToSelect = document.getElementById(subMenuEntryToExitProperties.mainMenuId);
     subMenuEntryToExit.blur();
     mainMenuEntryToSelect.focus();
-    //TODO hide all neighbor sub menus (elements containing class "show")
+    //TODO could hide all neighbor sub menus (elements containing class "show"), not only the current view
     hideViewOf(subMenuEntryToExit);
   }
 
@@ -1103,7 +1104,7 @@ searchbar.SearchbarUI = (function () {
    * @param {number} id id of the list element
    */
   function createListEntryInnerHtmlText(entry, view, id) {
-    //TODO support template inside html e.g. referenced by id (with convention over code)
+    //TODO should support template inside html e.g. referenced by id (with convention over code)
     var text = entry.resolveTemplate(view.listEntryTextTemplate);
     if (typeof entry.summaries !== "undefined") {
       text = entry.resolveTemplate(view.listEntrySummaryTemplate);
@@ -1442,7 +1443,7 @@ var httpSearchClient = searchService.HttpSearchConfig
       '{"index": "konten"}\n' +
       '{"id": "konto_tags_v1", "params":{"konto_aggregations_prefix": "", "konto_aggregations_size": 10}}\n' +
       '{"index": "sites"}\n' +
-      '{"id": "sites_default_v1", "params":{"mandantennummer":999}}\n' + //TODO single specified parameters
+      '{"id": "sites_default_v1", "params":{"mandantennummer":999}}\n' + //TODO must support single specified parameters
       '{"index": "sites"}\n' +
       '{"id": "sites_search_as_you_type_v1", "params":{{searchParameters}}}\n'
   )
