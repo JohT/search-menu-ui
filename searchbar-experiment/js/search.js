@@ -1398,34 +1398,6 @@ searchbar.SearchbarUI = (function () {
     }
   }
 
-  function httpGetJson(url, httpRequest, onJsonResultReceived) {
-    httpRequest.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-        var jsonResult = JSON.parse(this.responseText);
-        onJsonResultReceived(jsonResult);
-      }
-    };
-    httpRequest.open("GET", url, true);
-    httpRequest.send();
-  }
-
-  function getHttpRequest() {
-    if (typeof XMLHttpRequest !== "undefined") {
-      return new XMLHttpRequest();
-    }
-    try {
-      return new ActiveXObject("Msxml2.XMLHTTP.6.0");
-    } catch (e) {}
-    try {
-      return new ActiveXObject("Msxml2.XMLHTTP.3.0");
-    } catch (e) {}
-    try {
-      return new ActiveXObject("Microsoft.XMLHTTP");
-    } catch (e) {}
-    // Microsoft.XMLHTTP points to Msxml2.XMLHTTP and is redundant
-    throw new Error("This browser does not support XMLHttpRequest.");
-  }
-
   // Returns the instance
   return instance;
 })();
