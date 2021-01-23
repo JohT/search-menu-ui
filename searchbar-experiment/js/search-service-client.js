@@ -31,21 +31,57 @@ searchService.HttpSearchConfig = (function () {
     searchMethod: "POST",
     searchContentType: "application/json",
     searchBodyTemplate: null,
+    /**
+     * Resolves variables in the search body template based on the given search parameters object.
+     * The variable {{jsonSearchParameters}} will be replaces by the JSON of all search parameters. 
+     * @param {Object} searchParameters object properties will be used to replace the variables of the searchBodyTemplate
+     */
     resolveSearchBody: function (searchParameters) {
       if (!this.searchBodyTemplate) {
         return null;
       }
-      var jsonSearchParameters = typeof searchParameters === "string" ? searchParameters : JSON.stringify(searchParameters);
-      var result = this.searchBodyTemplate.replace(new RegExp("\\{\\{searchParameters\\}\\}", "gm"), jsonSearchParameters);
+      var jsonSearchParameters = JSON.stringify(searchParameters);
+      var resolvedBody = this.searchBodyTemplate;
+      resolvedBody = resolveVariableInTemplate(resolvedBody, "jsonSearchParameters", jsonSearchParameters);
+      resolvedBody = resolveVariablesInTemplate(resolvedBody, searchParameters);
       if (this.debugMode) {
         console.log("template search body=" + this.searchBodyTemplate);
-        console.log("{{searchParameters}}=" + jsonSearchParameters);
-        console.log("resolved search body=" + result);
+        console.log("{{jsonSearchParameters}}=" + jsonSearchParameters);
+        console.log("resolved search body=" + resolvedBody);
       }
-      return result;
+      return resolvedBody;
     },
     debugMode: false
   };
+
+  function resolveVariablesInTemplate(templateString, sourceDataObject) {
+    var resolvedString = templateString;
+    forEachFieldsIn(sourceDataObject, function (fieldName, fieldValue) {
+      resolvedString = resolveVariableInTemplate(resolvedString, fieldName, fieldValue);
+    });
+    return resolvedString;
+  }
+
+  function resolveVariableInTemplate(templateString, fieldName, fieldValue) {
+    //TODO could there be a better compatible solution to replace ALL occurrences instead of creating regular expressions?
+    var variableReplaceRegExp = new RegExp("\\{\\{" + escapeCharsForRegEx(fieldName) + "\\}\\}", "gm");
+    return templateString.replace(variableReplaceRegExp, fieldValue);
+  }
+
+  function escapeCharsForRegEx(characters) {
+    var nonWordCharactersRegEx = new RegExp("([^-\\w])", "gi");
+    return characters.replace(nonWordCharactersRegEx, "\\$1");
+  }
+
+  function forEachFieldsIn(object, fieldNameAndValueConsumer) {
+    var fieldNames = Object.keys(object);
+    var index, fieldName, fieldValue;
+    for (index = 0; index < fieldNames.length; index += 1) {
+      fieldName = fieldNames[index];
+      fieldValue = object[fieldName];
+      fieldNameAndValueConsumer(fieldName, fieldValue);
+    }
+  }
 
   /**
    * Public interface
@@ -117,7 +153,7 @@ searchService.HttpSearchConfig = (function () {
 
 /**
  * @typedef {Object} HttpSearchClient
- * @property {HttpSearchConfig} config 
+ * @property {HttpSearchConfig} config
  * @property {SearchService} search
  */
 
@@ -155,7 +191,7 @@ searchService.HttpClient = (function () {
       var searchBody = config.resolveSearchBody(searchParameters);
       var request = { url: config.searchUrl, method: config.searchMethod, contentType: config.searchContentType, body: searchBody };
       if (config.debugMode) {
-          onJsonResultReceived = loggedSuccess(onJsonResultReceived);
+        onJsonResultReceived = loggedSuccess(onJsonResultReceived);
       }
       httpRequestJson(request, getHttpRequest(), onJsonResultReceived, onFailure);
     };

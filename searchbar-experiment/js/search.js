@@ -415,6 +415,7 @@ searchbar.SearchbarUI = (function () {
   function getSearchResults(searchText, config) {
     //TODO should "retrigger" search when new filter options are selected (after each?)
     var searchParameters = getSelectedOptions(config.filtersView.listParentElementId);
+    searchParameters["searchtext"] = searchText; //TODO should make search text configurable
     searchParameters["konto_prefix"] = searchText; //TODO must make parameter name exchangeable
     searchParameters["site_prefix"] = searchText; //TODO must make multiple parameter names exchangeable?
     searchParameters.mandantennummer = 999; //TODO must support constant parameters
@@ -1439,13 +1440,13 @@ var httpSearchClient = searchService.HttpSearchConfig
 )
   .searchBodyTemplate(
     '{"index": "konten"}\n' +
-      '{"id": "konto_search_as_you_type_v1", "params":{{searchParameters}}}\n' +
+      '{"id": "konto_search_as_you_type_v1", "params":{{jsonSearchParameters}}}\n' +
       '{"index": "konten"}\n' +
       '{"id": "konto_tags_v1", "params":{"konto_aggregations_prefix": "", "konto_aggregations_size": 10}}\n' +
       '{"index": "sites"}\n' +
-      '{"id": "sites_default_v1", "params":{"mandantennummer":999}}\n' + //TODO must support single specified parameters
+      '{"id": "sites_default_v1", "params":{"mandantennummer":{{mandantennummer}}}}\n' +
       '{"index": "sites"}\n' +
-      '{"id": "sites_search_as_you_type_v1", "params":{{searchParameters}}}\n'
+      '{"id": "sites_search_as_you_type_v1", "params":{{jsonSearchParameters}}}\n'
   )
   .debugMode(true)
   .build();
