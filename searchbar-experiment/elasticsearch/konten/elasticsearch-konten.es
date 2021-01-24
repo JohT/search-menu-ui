@@ -391,7 +391,7 @@ GET konten/_search/template
                 "must": [
                     {
                         "multi_match": {
-                            "query": "{{konto_prefix}}",
+                            "query": "{{searchtext}}",
                             "type": "bool_prefix",
                             "fields": [
                                 "bezeichnung",
@@ -461,7 +461,7 @@ GET konten/_search/template
         }
     },
     "params": {
-        "konto_prefix": "AT",
+        "searchtext": "AT",
         "mandantennummer": 999,
         "betreuerkennung": "SARCON"
         //,"waehrungskennung": "EUR" //optional, default= EUR
@@ -486,7 +486,7 @@ POST _scripts/konto_search_as_you_type_v1
                     "must": [
                         {
                             "multi_match": {
-                                "query": "{{konto_prefix}}",
+                                "query": "{{searchtext}}",
                                 "type": "bool_prefix",
                                 "fields": [
                                     "bezeichnung",
@@ -563,7 +563,7 @@ GET konten/_search/template?filter_path=hits.total.value,hits.hits._source,hits.
 {
     "id": "konto_search_as_you_type_v1",
     "params": {
-        "konto_prefix": "AT",
+        "searchtext": "AT",
         "mandantennummer": 999,
         "betreuerkennung": "SARCON"
         //,"waehrungskennung": "EUR" //optional, default= EUR
@@ -578,7 +578,7 @@ POST konten/_search/template?filter_path=hits.total.value,hits.hits._source,hits
 {
     "id": "konto_search_as_you_type_v1",
     "params": {
-        "konto_prefix": "AT",
+        "searchtext": "AT",
         "mandantennummer": 999,
         "betreuerkennung": "SARCON"
         //,"waehrungskennung": "EUR" //optional, default= EUR
@@ -661,7 +661,7 @@ GET konten/_search/template//?filter_path=aggregations.*.buckets
 // Needs to be executed using postman until multi-line-json is supported here
 GET _msearch/template?filter_path=responses.hits.total.value,responses.hits.hits._source,responses.hits.hits.highlight,hits.responses.hits.highlight,responses.aggregations.*.buckets
 {"index": "konten"}
-{"id": "konto_search_as_you_type_v1", "params":{"konto_prefix":"at", "mandantennummer":999,"betreuerkennung":"SARCON"}}
+{"id": "konto_search_as_you_type_v1", "params":{"searchtext":"at", "mandantennummer":999,"betreuerkennung":"SARCON"}}
 {"index": "konten"}
 {"id": "konto_tags_v1", "params":{"konto_aggregations_prefix": "", "konto_aggregations_size": 10}}
 

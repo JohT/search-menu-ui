@@ -186,6 +186,12 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  */
 
 /**
+ * This function adds predefined search parameters before search is triggered, e.g. constants, environment parameters, ...
+ * @callback SearchParameterAdder
+ * @param {Object} searchParametersObject
+ */
+
+/**
  * @typedef {Object} SearchbarConfig
  * @property {SearchService} triggerSearch - triggers search (backend)
  * @property {DataConverter} convertData - converts search result data to search ui data
@@ -215,8 +221,12 @@ searchbar.SearchbarAPI = (function () {
     convertData: function (sourceData) {
       throw "data converter needs to be defined.";
     },
+    addPredefinedParametersTo: function(object) {
+      //does nothing if not specified otherwise  
+    },
     searchAreaElementId: "searcharea",
     inputElementId: "searchbar",
+    searchTextParameterName: "searchtext",
     resultsView: null,
     detailView: null,
     filterOptionsView: null,
@@ -247,12 +257,25 @@ searchbar.SearchbarAPI = (function () {
       config.convertData = converter;
       return this;
     },
+    /**
+     * Defines the function, that adds predefined (fixed, constant, environmental) search parameters
+     * to the first parameter object.
+     * @param {SearchParameterAdder} adder - function that will be called to before search is triggered.
+     */
+    addPredefinedParametersTo: function (adder) {
+      config.addPredefinedParametersTo = adder;
+      return this;
+    },
     searchAreaElementId: function (id) {
       config.searchAreaElementId = id;
       return this;
     },
     inputElementId: function (id) {
       config.inputElementId = id;
+      return this;
+    },
+    searchTextParameterName: function (value) {
+      config.searchTextParameterName = value;
       return this;
     },
     resultsView: function (view) {
@@ -415,10 +438,8 @@ searchbar.SearchbarUI = (function () {
   function getSearchResults(searchText, config) {
     //TODO should "retrigger" search when new filter options are selected (after each?)
     var searchParameters = getSelectedOptions(config.filtersView.listParentElementId);
-    searchParameters["searchtext"] = searchText; //TODO should make search text configurable
-    searchParameters["konto_prefix"] = searchText; //TODO must make parameter name exchangeable
-    searchParameters["site_prefix"] = searchText; //TODO must make multiple parameter names exchangeable?
-    searchParameters.mandantennummer = 999; //TODO must support constant parameters
+    searchParameters[config.searchTextParameterName] = searchText;
+    config.addPredefinedParametersTo(searchParameters);
     // TODO could provide optional build in search text highlighting
     config.triggerSearch(searchParameters, function (jsonResult) {
       displayResults(config.convertData(jsonResult), config);
@@ -455,7 +476,7 @@ searchbar.SearchbarUI = (function () {
       //TODO should skip sub menu, if there is only one option (with/without being default).
       //TODO could be used for constants (pre selected single filter options) like "tenant-number", "current-account"
       if (isMenuEntryWithDefault(entry)) {
-        options = insertAtBeginningIfMissing(entry.options, entry.default[0]);
+        options = insertAtBeginningIfMissing(entry.options, entry.default[0], equalProperties(["value"]));
         createFilterOption(entry.default[0], options, config.filtersView, config);
       }
       onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
@@ -464,22 +485,36 @@ searchbar.SearchbarUI = (function () {
     addMainMenuNavigationHandlers(resultElement, config);
   }
 
+  function equalProperties(propertyNames) {
+    return function (existingObject, newObject) {
+      var index;
+      for (index = 0; index < propertyNames.length; index += 1) {
+        if (existingObject[propertyNames[index]] != newObject[propertyNames[index]]) {
+          return false;
+        }
+      }
+      return true;
+    };
+  }
+
   /**
    * Adds the given entry at be beginning of the given array of entries if it's missing.
+   * The equalFunction determines, if the new value is missing (returns false) or not (returns true).
    * If the entry to add is null, the entries are returned directly.
    *
-   * @param {DescribedEntry[]} entries
-   * @param {DescribedEntry} entryToAdd
-   * @returns {DescribedEntry[]}
+   * @param {Object[]} entries
+   * @param {Object} entryToAdd
+   * @param {boolean} equalMatcher takes the existing and the new entry as parameters and returns true if they are considered "equal".
+   * @returns {Object[]}
    */
-  function insertAtBeginningIfMissing(entries, entryToAdd) {
+  function insertAtBeginningIfMissing(entries, entryToAdd, equalMatcher) {
     if (!entryToAdd) {
       return entries;
     }
     var index;
     var alreadyContainsEntryToAdd = false;
     for (index = 0; index < entries.length; index += 1) {
-      if (entries[index].value == entryToAdd.value) {
+      if (equalMatcher(entries[index], entryToAdd)) {
         alreadyContainsEntryToAdd = true;
         break;
       }
@@ -570,7 +605,7 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
-   * @param {DescribedEntry[]} entries - array of structured raw data of the entry
+   * @param {Object[]} entries - raw data of the entry
    * @param {SearchbarConfig} config - search configuration
    * @param {EventListener} eventHandler - event handler
    */
@@ -760,26 +795,26 @@ searchbar.SearchbarUI = (function () {
    */
   function selectFilterOption(event, entries, config) {
     var selectedEntry = getEventTarget(event);
-    var selectedDescribedEntry = findSelectedEntry(selectedEntry.id, entries);
-    createFilterOption(selectedDescribedEntry, entries, config.filtersView, config);
+    var selectedEntryData = findSelectedEntry(selectedEntry.id, entries, equalProperties(["fieldName", "value"]));
+    createFilterOption(selectedEntryData, entries, config.filtersView, config);
     preventDefaultEventHandling(event);
     returnToMainMenu(event);
   }
 
-  function createFilterOption(selectedDescribedEntry, entries, view, config) {
+  function createFilterOption(selectedEntryData, entries, view, config) {
     var filterElements = getListElementCountOfType(view.listEntryElementIdPrefix);
     var filterElementId = view.listEntryElementIdPrefix + "-" + (filterElements + 1);
     var filterElement = getListEntryByFieldName(
-      selectedDescribedEntry.category,
-      selectedDescribedEntry.fieldName,
+      selectedEntryData.category,
+      selectedEntryData.fieldName,
       view.listParentElementId
     );
     var isAlreadyExistingFilter = filterElement != null;
     if (isAlreadyExistingFilter) {
-      filterElement = updateListEntryElement(selectedDescribedEntry, view, filterElement);
+      filterElement = updateListEntryElement(selectedEntryData, view, filterElement);
       return;
     }
-    filterElement = createListEntryElement(selectedDescribedEntry, view, filterElementId);
+    filterElement = createListEntryElement(selectedEntryData, view, filterElementId);
     onFilterMenuEntrySelected(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
     addMainMenuNavigationHandlers(filterElement, config);
 
@@ -806,6 +841,8 @@ searchbar.SearchbarUI = (function () {
   function getListEntryByFieldName(category, fieldName, listParentElementId) {
     return forEachListEntryElement(listParentElementId, function (element) {
       var listElementHiddenFields = extractListElementIdProperties(element.id).hiddenFields();
+      //TODO should additionally match empty category?
+      //A global parameter should be found even from an foreign category and shouldn't be selected twice (per category).
       if (listElementHiddenFields.fieldName === fieldName && listElementHiddenFields.category == category) {
         return element;
       }
@@ -825,6 +862,7 @@ searchbar.SearchbarUI = (function () {
       if (typeof listElementHiddenFields.urltemplate === "undefined") {
         return null; // entry has no url template
       }
+      //TODO could always match empty category?
       if (listElementHiddenFields.category != category) {
         return null; // entry belongs to another category
       }
@@ -869,22 +907,20 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
-   * Extracts the described entry that it referred by the element given by its ID out of the list of described entries.
+   * Extracts the entry data that it referred by the element given by its ID out of the list of data entries.
    * @param {string} element id
    * @param {DescribedEntry[]} array of described entries
+   * @param {boolean} equalMatcher takes the existing and the new entry as parameters and returns true if they are considered "equal".
    * @returns {DescribedEntry} described entry out of the given entries, that suits the element given by its id.
    */
-  function findSelectedEntry(id, entries) {
+  function findSelectedEntry(id, entries, equalsMatcher) {
     var selectedEntryIdProperties = extractListElementIdProperties(id);
     var selectedEntryHiddenFields = selectedEntryIdProperties.hiddenFields();
     var entryIndex;
     var currentlySelected;
     for (entryIndex = 0; entryIndex < entries.length; entryIndex += 1) {
       currentlySelected = entries[entryIndex];
-      if (
-        currentlySelected.fieldName == selectedEntryHiddenFields.fieldName &&
-        currentlySelected.value == selectedEntryHiddenFields.value
-      ) {
+      if (equalsMatcher(currentlySelected, selectedEntryHiddenFields)) {
         return currentlySelected;
       }
     }
@@ -1106,6 +1142,7 @@ searchbar.SearchbarUI = (function () {
    */
   function createListEntryInnerHtmlText(entry, view, id) {
     //TODO should support template inside html e.g. referenced by id (with convention over code)
+    //TODO should limit length of resolved variables
     var text = entry.resolveTemplate(view.listEntryTextTemplate);
     if (typeof entry.summaries !== "undefined") {
       text = entry.resolveTemplate(view.listEntrySummaryTemplate);
@@ -1424,4 +1461,9 @@ var httpSearchClient = searchService.HttpSearchConfig
   .build();
 
 // Configure and start the search bar functionality.
-searchbar.SearchbarAPI.searchService(httpSearchClient.search).dataConverter(restruct.Data.restructJson).start();
+searchbar.SearchbarAPI.searchService(httpSearchClient.search)
+  .dataConverter(restruct.Data.restructJson)
+  .addPredefinedParametersTo(function (searchParameters) {
+    searchParameters.mandantennummer = 999;
+  })
+  .start();

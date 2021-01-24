@@ -322,7 +322,7 @@ GET sites/_search/template
                 "must": [
                     {
                         "multi_match": {
-                            "query": "{{site_prefix}}",
+                            "query": "{{searchtext}}",
                             "type": "bool_prefix",
                             "fields": [
                                 "name",
@@ -372,7 +372,7 @@ GET sites/_search/template
         }
     },
     "params": {
-        "site_prefix": "über",
+        "searchtext": "über",
         "mandantennummer": 999,
         "geschaeftsart": "Giro"
     }
@@ -439,7 +439,7 @@ POST _scripts/sites_search_as_you_type_v1
                     "must": [
                         {
                             "multi_match": {
-                                "query": "{{site_prefix}}",
+                                "query": "{{searchtext}}",
                                 "type": "bool_prefix",
                                 "fields": [
                                     "name",
@@ -505,7 +505,7 @@ GET sites/_search/template?filter_path=hits.total.value,hits.hits._source,hits.h
 {
     "id": "sites_search_as_you_type_v1",
     "params": {
-        "site_prefix": "über",
+        "searchtext": "über",
         "mandantennummer": 999,
         "geschaeftsart": "Giro"
     }
@@ -550,6 +550,6 @@ GET _msearch/template?filter_path=responses.hits.total.value,responses.hits.hits
 {"index": "sites"}
 {"id": "sites_default_v1", "params":{"mandantennummer":999}}
 {"index": "sites"}
-{"id": "sites_search_as_you_type_v1", "params":{"site_prefix":"hab", "mandantennummer":999,"geschaeftsart":"Giro"}}
+{"id": "sites_search_as_you_type_v1", "params":{"searchtext":"hab", "mandantennummer":999,"geschaeftsart":"Giro"}}
 //{"index": "sites"}
 //{"id": "sites_felder_v1", "params":{"felder_aggregations_prefix": "hab", "felder_aggregations_size": 10}}

@@ -1,13 +1,33 @@
 {
-    "error": {
-        "root_cause": [
+    "hits": {
+        "total": {
+            "value": 1
+        },
+        "hits": [
             {
-                "type": "illegal_argument_exception",
-                "reason": "The msearch request must be terminated by a newline [\n]"
+                "_source": {
+                    "mandantennummer": "999",
+                    "domain": "Kunde",
+                    "name": "Kundenübersicht",
+                    "feldnamen": [
+                        "kontonummer",
+                        "produkt",
+                        "name"
+                    ],
+                    "felder": [
+                        "kto",
+                        "prod",
+                        "nam"
+                    ],
+                    "urltemplate": "https://httpbin.org/get?type=interest?customer={{kundennummer}}",
+                    "neuanlagedatum": "2020-10-31"
+                },
+                "highlight": {
+                    "name": [
+                        "<em>Kundenübersicht</em>"
+                    ]
+                }
             }
-        ],
-        "type": "illegal_argument_exception",
-        "reason": "The msearch request must be terminated by a newline [\n]"
-    },
-    "status": 400
+        ]
+    }
 }
