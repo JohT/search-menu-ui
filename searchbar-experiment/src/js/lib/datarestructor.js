@@ -1,25 +1,48 @@
 /**
- * @fileOverview datarestructor for the web search client
- * @version ${project.version}
+ * @file datarestructor transforms parsed JSON objects into a uniform data structure
+ * @version {@link https://github.com/JohT/data-restructor-js/releases/latest latest version}
+ * @author JohT
  */
 
-/**
- * datarestructor namespace declaration.
- * It contains all functions to convert a JSON into enumerated list entries.
- * Workflow: JSON -> flatten -> mark and identify -> add array fields -> deduplicate -> group -> flatten again
- * @default {}
- */
-var datarestructor = datarestructor || {};
+ "use strict";
+var module = module || {}; // Fallback for vanilla js without modules
 
 /**
+ * datarestructor namespace and module declaration.
+ * It contains all functions to convert an object (e.g. parsed JSON) into uniform enumerated list of described field entries.
+ * 
+ * <b>Transformation steps:</b>
+ * - JSON
+ * - flatten
+ * - mark and identify
+ * - add array fields
+ * - deduplicate 
+ * - group
+ * - flatten again
+ * @module datarestructor
+ */
+var datarestructor = module.exports={}; // Export module for npm...
+
+var internal_object_tools = internal_object_tools || require("../../lib/js/flattenToArray"); // supports vanilla js & npm
+var template_resolver = template_resolver || require("../../src/js/templateResolver"); // supports vanilla js & npm
+
+/**
+ * Takes the full qualified original property name and extracts a simple name out of it.
+ * 
+ * @global
  * @callback propertyNameFunction
- *  @param {string} propertyname
+ * @param {string} propertyName full qualified, point separated property name 
+ * @return {String} extracted, simple name
  */
 
 /**
+ * Describes a selected part of the incoming data structure and defines, 
+ * how the data should be transformed.
+ * 
+ * @global
  * @typedef {Object} PropertyStructureDescription
  * @property {string} type - ""(default). Some examples: "summary" for e.g. a list overview. "detail" e.g. when a summary is selected. "filter" e.g. for field/value pair results that can be selected as search parameters.
- * @property {string} category - name of the category. Default = "". Could contain a symbol character or a short domain name. (e.g. "city")
+ * @property {string} category - name of the category. Default = "". Could contain a short domain name like "product" or "vendor".
  * @property {string} [abbreviation=""] - one optional character, a symbol character or a short abbreviation of the category
  * @property {string} [image=""] - one optional path to an image resource
  * @property {boolean} propertyPatternTemplateMode - "false"(default): property name needs to be equal to the pattern. "true" allows variables like "{{fieldName}}" inside the pattern.
@@ -35,17 +58,19 @@ var datarestructor = datarestructor || {};
  */
 
 /**
- * PropertyStructureDescriptionBuilder
- *
- * @namespace
+ * Builder for a {@link PropertyStructureDescription}.
  */
 datarestructor.PropertyStructureDescriptionBuilder = (function () {
   "use strict";
 
   /**
    * Constructor function and container for everything, that needs to exist per instance.
+   * @constructs PropertyStructureDescriptionBuilder
    */
   function PropertyStructureDescription() {
+    /**
+     * @type {PropertyStructureDescription}
+     */
     this.description = {
       type: "",
       category: "",
@@ -63,59 +88,139 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
       getFieldNameForPropertyName: null,
       matchesPropertyName: null
     };
+    /**
+     * Sets the type.
+     * 
+     * Contains the type of the entry, for example: 
+     * - "summary" for e.g. a list overview. 
+     * - "detail" e.g. when a summary is selected. 
+     * - "filter" e.g. for field/value pair results that can be selected as search parameters.
+     * 
+     * @function
+     * @param {String} [value=""]
+     * @returns {PropertyStructureDescriptionBuilder}
+     * @example type("summary")
+     */
     this.type = function (value) {
-      this.description.type = value;
+      this.description.type = withDefault(value, "");
       return this;
     };
+    /**
+     * Sets the category.
+     * 
+     * Contains a short domain nam, for example: 
+     * - "product" for products
+     * - "vendor" for vendors
+     * 
+     * @function
+     * @param {String} [value=""]
+     * @returns {PropertyStructureDescriptionBuilder}
+     * @example category("Product")
+     */
     this.category = function (value) {
-      this.description.category = value;
+      this.description.category = withDefault(value, "");
       return this;
     };
+    /**
+     * Sets the optional abbreviation.
+     * 
+     * Contains a symbol character or a very short abbreviation of the category.
+     * - "P" for products
+     * - "V" for vendors
+     * 
+     * @function
+     * @param {String} [value=""]
+     * @returns {PropertyStructureDescriptionBuilder}
+     * @example abbreviation("P")
+     */
     this.abbreviation = function (value) {
       this.description.abbreviation = withDefault(value, "");
       return this;
     };
+    /**
+     * Sets the optional path to an image resource.
+     * 
+     * @function
+     * @param {String} [value=""]
+     * @returns {PropertyStructureDescriptionBuilder}
+     * @example image("img/product.png")
+     */
     this.image = function (value) {
       this.description.image = withDefault(value, "");
       return this;
     };
     /**
+     * Sets "equal mode" for the property pattern.
+     * 
      * "propertyPattern" need to match exactly if this mode is activated.
      *  It clears propertyPatternTemplateMode which means "equal" mode.
+     * @function
+     * @returns {PropertyStructureDescriptionBuilder}
      */
     this.propertyPatternEqualMode = function () {
       this.description.propertyPatternTemplateMode = false;
       return this;
     };
     /**
+     * Sets "template mode" for the property pattern.
+     * 
      * "propertyPattern" can contain variables like {{fieldName}} and
      * doesn't need to match the property name exactly. If the "propertyPattern"
      * is shorter than the property name, it also matches when the property name
      * starts with the "propertyPattern".
+     * 
+     * @function
+     * @returns {PropertyStructureDescriptionBuilder}
      */
     this.propertyPatternTemplateMode = function () {
       this.description.propertyPatternTemplateMode = true;
       return this;
     };
     /**
-     * property name pattern (single property names with sub types separated by "." without array indices) to match.
+     * Sets the property name pattern. 
+     * 
+     * Contains single property names with sub types separated by "." without array indices.
      * May contain variables in double curly brackets.
-     * Example: responses.hits.hits._source.{{fieldName}}
-     * @returns {PropertyStructureDescription}
+     * 
+     * Example: 
+     * - responses.hits.hits._source.{{fieldName}}
+     * @function
+     * @param {String} [value=""]
+     * @returns {PropertyStructureDescriptionBuilder}
+     * @example propertyPattern("responses.hits.hits._source.{{fieldName}}")
      */
     this.propertyPattern = function (value) {
       this.description.propertyPattern = withDefault(value, "");
       return this;
     };
     /**
-     *  String that needs to match the beginning of the id.
-     *  E.g. "1." will match id="1.3.4" but not "0.1.2".
-     *  Default is "" which will match every id.
+     * Sets the optional beginning of the id that needs to match.
+     * Matches all indices if set to "" (or not called).
+     * 
+     * For example:
+     * - "1." will match id="1.3.4" but not "0.1.2".
+     * @function
+     * @param {String} [value=""]
+     * @returns {PropertyStructureDescriptionBuilder}
+     * @example indexStartsWith("1.")
      */
     this.indexStartsWith = function (value) {
       this.description.indexStartsWith = withDefault(value, "");
       return this;
     };
+    /**
+     * Overrides the display name of the property.
+     * 
+     * If it is not set or set to "" then it will be derived from the
+     * last part of original property name starting with an upper case character.
+     *  
+     * For example:
+     * - "Product"
+     * @function
+     * @param {String} [value=""]
+     * @returns {PropertyStructureDescriptionBuilder}
+     * @example displayPropertyName("Product")
+     */
     this.displayPropertyName = function (value) {
       this.description.getDisplayNameForPropertyName = createNameExtractFunction(value, this.description);
       if (isSpecifiedString(value)) {
@@ -129,46 +234,95 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
       );
       return this;
     };
+    /**
+     * Overrides the (technical) field name of the property.
+     * 
+     * If it is not set or set to "" then it will be derived from the
+     * last part of original property name.
+     *  
+     * For example:
+     * - "product"
+     * @function
+     * @param {String} [value=""]
+     * @returns {PropertyStructureDescriptionBuilder}
+     * @example fieldName("product")
+     */
     this.fieldName = function (value) {
       this.description.getFieldNameForPropertyName = createNameExtractFunction(value, this.description);
       return this;
     };
+    /**
+     * Sets the name of the property, that contains grouped entries. 
+     * 
+     * @function
+     * @param {String} [value=""]
+     * @returns {PropertyStructureDescriptionBuilder}
+     * @example groupName("details")
+     */
     this.groupName = function (value) {
-      this.description.groupName = withDefault(value, "");;
+      this.description.groupName = withDefault(value, "");
       return this;
     };
     /**
-     * Pattern that describes how to group entries. "groupName" defines the name of this group.
+     * Sets the pattern that describes how to group entries. 
+     * 
+     * "groupName" defines the name of this group.
      * A pattern may contain variables in double curly brackets {{variable}}.
+     * @function
+     * @param {String} [value=""]
+     * @returns {PropertyStructureDescriptionBuilder}
+     * @example groupPattern("{{type}}-{{category}}")
      */
     this.groupPattern = function (value) {
-      this.description.groupPattern = withDefault(value, "");;
+      this.description.groupPattern = withDefault(value, "");
       return this;
     };
     /**
-     * Pattern that describes where the group should be moved to. Default=""=Group will not be moved.
+     * Sets the pattern that describes where the group should be moved to. 
+     * 
+     * Default=""=Group will not be moved.
      * A pattern may contain variables in double curly brackets {{variable}}.
+     * @function
+     * @param {String} [value=""]
+     * @returns {PropertyStructureDescriptionBuilder}
+     * @example groupDestinationPattern("main-{{category}}")
      */
     this.groupDestinationPattern = function (value) {
-      this.description.groupDestinationPattern = withDefault(value, "");;
+      this.description.groupDestinationPattern = withDefault(value, "");
       return this;
     };
     /**
-     * Name of the group when it had been moved to the destination.
+     * Sets the name of the group when it had been moved to the destination.
+     * 
      * The default value is the groupName, which will be used when the value is not valid (null or empty)
+     * @function
+     * @param {String} [value=""]
+     * @returns {PropertyStructureDescriptionBuilder}
+     * @example groupDestinationPattern("options")
      */
     this.groupDestinationName = function (value) {
       this.description.groupDestinationName = withDefault(value, this.description.groupName);
       return this;
     };
     /**
-     * Pattern to use to remove duplicate entries. A pattern may contain variables in double curly brackets {{variable}}.
+     * Sets the pattern to be used to remove duplicate entries. 
+     * 
      * A pattern may contain variables in double curly brackets {{variable}}.
+     * A pattern may contain variables in double curly brackets {{variable}}.
+     * @function
+     * @param {String} [value=""]
+     * @returns {PropertyStructureDescriptionBuilder}
+     * @example deduplicationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}--{{fieldName}}")
      */
     this.deduplicationPattern = function (value) {
-      this.description.deduplicationPattern = withDefault(value, "");;
+      this.description.deduplicationPattern = withDefault(value, "");
       return this;
     };
+    /**
+     * Finalizes the settings and builds the  PropertyStructureDescription.
+     * @function
+     * @returns {PropertyStructureDescription}
+     */
     this.build = function () {
       this.description.matchesPropertyName = createFunctionMatchesPropertyName(this.description);
       if (this.description.getDisplayNameForPropertyName == null) {
@@ -186,7 +340,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
 
   function createNameExtractFunction(value, description) {
     if (isSpecifiedString(value)) {
-      return function (propertyName) {
+      return function () {
         return value;
       };
     }
@@ -200,7 +354,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
   function createFunctionMatchesPropertyName(description) {
     var propertyPatternToMatch = description.propertyPattern; // closure (closed over) parameter
     if (!isSpecifiedString(propertyPatternToMatch)) {
-      return function (propertyNameWithoutArrayIndices) {
+      return function () {
         return false; // Without a propertyPattern, no property will match (deactivated mark/identify).
       };
     }
@@ -289,14 +443,11 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
     return typeof value === "string" && value != null && value != "";
   }
 
-  /**
-   * Public interface
-   * @scope datarestructor.PropertyStructureDescriptionBuilder
-   */
   return PropertyStructureDescription;
 })();
 
 /**
+ * @global
  * @typedef {Object} DescribedEntry
  * @property {string} category - category of the result from the PropertyStructureDescription using a short name or e.g. a symbol character
  * @property {string} type - type of the result from PropertyStructureDescription
@@ -321,14 +472,16 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
  */
 
 /**
+ * Returns a field value of the given {@link DescribedEntry}.
+ * 
+ * @global
  * @callback stringFieldOfDescribedEntryFunction
- *  @param {DescribedEntry} entry
+ * @param {DescribedEntry} entry described entry that contains the field that should be returned
+ * @returns {String} field value 
  */
 
 /**
- * DescribedEntryCreator
- *
- * @namespace
+ * Creates a {@link DescribedEntry}.
  */
 datarestructor.DescribedEntryCreator = (function () {
   "use strict";
@@ -337,10 +490,13 @@ datarestructor.DescribedEntryCreator = (function () {
 
   /**
    * Constructor function and container for everything, that needs to exist per instance.
+   * @constructs DescribedEntry
+   * @type {DescribedEntry}
    */
   function DescribedEntry(entry, description) {
     var indices = indicesOf(entry.name);
     var propertyNameWithoutArrayIndices = entry.name.replace(removeArrayBracketsRegEx, "");
+    var templateResolver = new template_resolver.Resolver(this);
 
     this.category = description.category;
     this.type = description.type;
@@ -366,17 +522,17 @@ datarestructor.DescribedEntryCreator = (function () {
       groupDestinationId: "",
       deduplicationId: ""
     };
-    this._identifier.groupId = replaceResolvableFields(
+    this._identifier.groupId = templateResolver.replaceResolvableFields(
       description.groupPattern,
-      resolvableFieldsOfAll(this, this._description, this._identifier)
+      templateResolver.resolvableFieldsOfAll(this, this._description, this._identifier)
     );
-    this._identifier.groupDestinationId = replaceResolvableFields(
+    this._identifier.groupDestinationId = templateResolver.replaceResolvableFields(
       description.groupDestinationPattern,
-      resolvableFieldsOfAll(this, this._description, this._identifier)
+      templateResolver.resolvableFieldsOfAll(this, this._description, this._identifier)
     );
-    this._identifier.deduplicationId = replaceResolvableFields(
+    this._identifier.deduplicationId = templateResolver.replaceResolvableFields(
       description.deduplicationPattern,
-      resolvableFieldsOfAll(this, this._description, this._identifier)
+      templateResolver.resolvableFieldsOfAll(this, this._description, this._identifier)
     );
     /**
      * Resolves the given template.
@@ -390,7 +546,7 @@ datarestructor.DescribedEntryCreator = (function () {
      * @returns {string} resolved template
      */
     this.resolveTemplate = function (template) {
-      return replaceResolvableFields(template, addFieldsPerGroup(resolvableFieldsOfAll(this)));
+      return new template_resolver.Resolver(this).resolveTemplate(template);
     };
 
     /**
@@ -403,6 +559,12 @@ datarestructor.DescribedEntryCreator = (function () {
       return JSON.stringify(this, replacerRetainsOnlyDefinedPublicFields(propertyNames), prettyPrintJsonSpace);
     };
   }
+
+  /**
+   * @typedef {Object} ExtractedIndices
+   * @property {string} pointDelimited - bracket indices separated by points
+   * @property {number[]} numberArray as array of numbers
+   */
 
   /**
    * Returns "1.12.123" and [1,12,123] for "results[1].hits.hits[12].aggregates[123]".
@@ -437,92 +599,6 @@ datarestructor.DescribedEntryCreator = (function () {
       }
     } while (match);
     return { pointDelimited: pointDelimited, numberArray: numberArray };
-  }
-
-  /**
-   * Returns a map like object, that contains all resolvable fields and their values as properties.
-   * This function takes a variable count of input parameters, 
-   * each containing an object that contains resolvable fields to extract from.
-   * 
-   * The recursion depth is limited to 3, so that an object, 
-   * that contains an object can contain another object (but not further).
-   * 
-   * Properties beginning with an underscore in their name will be filtered out, since they are considered as internal fields.
-   * 
-   * @param {...object} varArgs variable count of parameters. Each parameter contains an object that fields should be resolvable for variables. 
-   * @returns {object} object with resolvable field names and their values.
-   */
-  function resolvableFieldsOfAll(varArgs) {
-    var map = {};
-    var ignoreInternalFields = function (propertyName) {
-      return (propertyName.indexOf("_") != 0) && (propertyName.indexOf("._") < 0);
-    };
-    for (var index = 0; index < arguments.length; index+=1) {
-      addToFilteredMapObject(datarestructor.InternalTools.flattenToArray(arguments[index], 3), map, ignoreInternalFields);
-    }
-    return map;
-  }
-
-  /**
-   * Adds the value of the "fieldName" property (including its group prefix) and its associated "value" property content.
-   * For example: detail[2].fieldName="name", detail[2].value="Smith" lead to the additional property detail.name="Smith".
-   * @param {object} object with resolvable field names and their values.
-   * @returns {object} object with resolvable field names and their values.
-   */
-  function addFieldsPerGroup(map) {
-    var propertyNames = Object.keys(map);
-    var i, fullPropertyName, propertyInfo, propertyValue;
-    for (i = 0; i < propertyNames.length; i += 1) {
-      fullPropertyName = propertyNames[i];
-      propertyValue = map[fullPropertyName];
-      propertyInfo = getPropertyNameInfos(fullPropertyName);
-      // Ignore custom fields that are named "fieldName"(propertyValue), since this would lead to an unpredictable behavior.
-      if (propertyInfo.name == "fieldName" && propertyValue != "fieldName") {
-        map[propertyInfo.groupWithoutArrayIndices + propertyValue] = map[propertyInfo.group + "value"];
-      }
-    }
-    return map;
-  }
-
-  /**
-   * Infos about the full property name including the name of the group (followed by the separator) and the name of the property itself. 
-   * @param {String} fullPropertyName 
-   * @returns {Object} Contains "group" (empty or group name including trailing separator "."), "groupWithoutArrayIndices" and "name" (property name).
-   */
-  function getPropertyNameInfos(fullPropertyName) {
-    var positionOfRightMostSeparator = fullPropertyName.lastIndexOf(".");
-    var propertyName = fullPropertyName;
-    if (positionOfRightMostSeparator > 0) {
-      propertyName = fullPropertyName.substr(positionOfRightMostSeparator + 1);
-    }
-    var propertyGroup = "";
-    if (positionOfRightMostSeparator > 0) {
-      propertyGroup = fullPropertyName.substr(0, positionOfRightMostSeparator + 1); //includes the trailing ".".
-    }
-    var propertyGroupWithoutArrayIndices = propertyGroup.replace(removeArrayBracketsRegEx, "");
-    return {group: propertyGroup, groupWithoutArrayIndices: propertyGroupWithoutArrayIndices, name: propertyName};
-  }
-
-  /**
-   * Replaces all variables in double curly brackets, e.g. {{property}},
-   * with the value of that property from the resolvableProperties.
-   *
-   * Supported property types: string, number, boolean
-   * @param {string} stringContainingVariables
-   * @param {object[]} resolvableFields (name=value)
-   */
-  function replaceResolvableFields(stringContainingVariables, resolvableFields) {
-    var replaced = stringContainingVariables;
-    var propertyNames = Object.keys(resolvableFields);
-    var propertyIndex = 0;
-    var propertyName = "";
-    var propertyValue = "";
-    for (propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex += 1) {
-      propertyName = propertyNames[propertyIndex];
-      propertyValue = resolvableFields[propertyName];
-      replaced = replaced.replace("{{" + propertyName + "}}", propertyValue);
-    }
-    return replaced;
   }
 
   /**
@@ -592,45 +668,64 @@ datarestructor.DescribedEntryCreator = (function () {
     return value;
   }
 
-  /**
-   * Collects all flattened name-value-pairs into one object using the property names as keys and their values as values (map-like).
-   * Example: `{name: "accountNumber", value: "12345"}` becomes `mapObject["accountNumber"]="12345"`.
-   * 
-   * @param {NameValuePair[]} elements flattened array of name-value-pairs
-   * @param {object} mapObject container to collect the results. Needs to be created before e.g. using `{}`. 
-   * @param {function} filterMatchesFunction takes the property name as string argument and returns true (include) or false (exclude).
-   */
-  function addToFilteredMapObject(elements, mapObject, filterMatchesFunction) {
-    var index, element;
-    for (index = 0; index < elements.length; index += 1) {
-      element = elements[index];
-      if (typeof filterMatchesFunction === "function" && filterMatchesFunction(element.name)) {
-        mapObject[element.name] = element.value;
-      }
-    }
-    return mapObject;
-  }
-
-  /**
-   * Public interface
-   * @scope datarestructor.DescribedEntryCreator
-   */
   return DescribedEntry;
 })();
 
-datarestructor.Restructor = (function () {
+/**
+ * Main class for the data transformation.
+ */
+datarestructor.Transform = (function () {
   "use strict";
 
   /**
+   * Constructor function and container for anything, that needs to exist per instance.
+   * @param {PropertyStructureDescription[]} descriptions
+   * @constructs Transform
+   */
+  function Transform(descriptions) {
+    /**
+     * Descriptions of the input data that define the behaviour of the transformation.
+     * @type {DescribedEntry[]}
+     */
+    this.descriptions = descriptions;
+    /**
+     * DebugMode enables detailed logging for troubleshooting.
+     * @type {boolean}
+     */
+    this.debugMode = false;
+    /**
+     * Enables debug mode. Logs additional informations.
+     * @returns Transform
+     */
+    this.enableDebugMode = function () {
+      this.debugMode = true;
+      return this;
+    };
+    /**
+     * "Assembly line", that takes the (pared JSON) data and processes it using all given descriptions in their given order.
+     * @param {object} data - parsed JSON data or any other data object
+     * @returns {DescribedEntry[]}
+     * @example 
+     * var allDescriptions = [];
+     * allDescriptions.push(summariesDescription());
+     * allDescriptions.push(detailsDescription());
+     * var result = new datarestructor.Transform(allDescriptions).processJson(jsonData);
+     */
+    this.processJson = function (data) {
+      return processJsonUsingDescriptions(data, this.descriptions, this.debugMode);
+    };
+  }
+
+  /**
    * "Assembly line", that takes the jsonData and processes it using all given descriptions in their given order.
-   * Workflow: JSON -> flatten -> mark and identify -> add array fields -> deduplicate -> group -> flatten again
    * @param {object} jsonData - parsed JSON data or any other data object
    * @param {PropertyStructureDescription[]} descriptions - already grouped entries
    * @param {boolean} debugMode - false=default=off, true=write additional logs for detailed debugging
+   * @returns {DescribedEntry[]}
    */
   function processJsonUsingDescriptions(jsonData, descriptions, debugMode) {
     // "Flatten" the hierarchical input json to an array of property names (point separated "folders") and values.
-    var processedData = datarestructor.InternalTools.flattenToArray(jsonData);
+    var processedData = internal_object_tools.flattenToArray(jsonData);
     // Fill in properties ending with the name "_comma_separated_values" for array values to make it easier to display them.
     processedData = fillInArrayValues(processedData);
 
@@ -641,10 +736,11 @@ datarestructor.Restructor = (function () {
 
     // Mark, identify and harmonize the flattened data by applying one description after another in their given order.
     var describedData = [];
-    for (var descriptionIndex = 0; descriptionIndex < descriptions.length; descriptionIndex++) {
-      var description = descriptions[descriptionIndex];
+    var descriptionIndex, description, dataWithDescription;
+    for (descriptionIndex = 0; descriptionIndex < descriptions.length; descriptionIndex+=1) {
+      description = descriptions[descriptionIndex];
       // Filter all entries that match the current description and enrich them with it
-      var dataWithDescription = extractEntriesByDescription(processedData, description);
+      dataWithDescription = extractEntriesByDescription(processedData, description);
       // Remove duplicate entries where a deduplicationPattern is described
       describedData = deduplicateFlattenedData(describedData, dataWithDescription);
     }
@@ -682,15 +778,16 @@ datarestructor.Restructor = (function () {
   function mergeFlattenedData(entries, entriesToMerge, idOfElementFunction) {
     var entriesToMergeById = asIdBasedObject(entriesToMerge, idOfElementFunction);
     var merged = [];
-    for (var index = 0; index < entries.length; index++) {
-      var entry = entries[index];
-      var id = idOfElementFunction(entry);
+    var index, entry, id;
+    for (index = 0; index < entries.length; index+=1) {
+      entry = entries[index];
+      id = idOfElementFunction(entry);
       if (id == null || id === "" || entriesToMergeById[id] == null) {
         merged.push(entry);
       }
     }
-    for (var index = 0; index < entriesToMerge.length; index++) {
-      var entry = entriesToMerge[index];
+    for (index = 0; index < entriesToMerge.length; index+=1) {
+      entry = entriesToMerge[index];
       merged.push(entry);
     }
     return merged;
@@ -853,7 +950,7 @@ datarestructor.Restructor = (function () {
       }
     }
     // delete all moved entries that had been collected by their key
-    for (var index = 0; index < keysToDelete.length; index++) {
+    for (index = 0; index < keysToDelete.length; index+=1) {
       var keyToDelete = keysToDelete[index];
       delete groupedObject[keyToDelete];
     }
@@ -898,11 +995,6 @@ datarestructor.Restructor = (function () {
     return result;
   }
 
-  /**
-   * @typedef {Object} ExtractedIndices
-   * @property {string} pointDelimited - bracket indices separated by points
-   * @property {number[]} numberArray as array of numbers
-   */
   function propertiesAsArray(groupedData) {
     var result = [];
     var propertyNames = Object.keys(groupedData);
@@ -914,77 +1006,31 @@ datarestructor.Restructor = (function () {
     return result;
   }
 
-  /**
-   * Public interface
-   * @scope datarestructor.Restructor
-   */
-  return {
-    /**
-     * "Assembly line", that takes the jsonData and processes it using all given descriptions in their given order.
-     * Workflow: JSON -> flatten -> mark and identify -> add array fields -> deduplicate -> group -> flatten again
-     * @param {object} jsonData - parsed JSON data or any other data object
-     * @param {PropertyStructureDescription[]} descriptions - already grouped entries
-     * @param {boolean} debugMode - false=default=off, true=write additional logs for detailed debugging
-     */
-    processJsonUsingDescriptions: processJsonUsingDescriptions
-  };
+  return Transform;
 })();
 
 /**
- * InternalTools. Not meant to be called outside of "datarestructor".
- *
+ * Main fassade for the data restructor as static function(s).
+ * 
+ * @example 
+ * var allDescriptions = [];
+ * allDescriptions.push(summariesDescription());
+ * allDescriptions.push(detailsDescription());
+ * var result = datarestructor.Restructor.processJsonUsingDescriptions(jsonData, allDescriptions);
  * @namespace
  */
-datarestructor.InternalTools = (function () {
-  "use strict";
-  
-  /**
-   * @typedef {Object} NameValuePair
-   * @property {string} name - point separated names of the flattened main and sub properties, e.g. "responses[2].hits.hits[4]._source.name".
-   * @property {string} value - value of the property
-   */
-  /**
-   * @param {object} data hierarchical object that may consist fo fields, subfields and arrays.
-   * @param {number} maxRecursionDepth 
-   * @returns {NameValuePair[]} array of property name and value pairs
-   */
-  //Modded (compatibility, recursion depth) version of:
-  //https://stackoverflow.com/questions/19098797/fastest-way-to-flatten-un-flatten-nested-json-objectss
-  function flattenToArray(data, maxRecursionDepth) {
-    var result = [];
-    if (typeof maxRecursionDepth !== "number" || maxRecursionDepth < 1) {
-      maxRecursionDepth = 20;
-    }
-    function recurse(cur, prop, depth) {
-      if ((depth > maxRecursionDepth) || (typeof cur === "function")){
-        return;
-      }
-      if (Object(cur) !== cur) {
-        result.push({ name: prop, value: cur });
-      } else if (Array.isArray(cur)) {
-        for (var i = 0, l = cur.length; i < l; i++) recurse(cur[i], prop + "[" + i + "]", depth + 1);
-        if (l == 0) {
-          result[prop] = [];
-          result.push({ name: prop, value: "" });
-        }
-      } else {
-        var isEmpty = true;
-        for (var p in cur) {
-          isEmpty = false;
-          recurse(cur[p], prop ? prop + "." + p : p, depth + 1);
-        }
-        if (isEmpty && prop) {
-          result.push({ name: prop, value: "" });
-        }
-      }
-    }
-    recurse(data, "", 0);
-    return result;
+datarestructor.Restructor = {};
+/**
+ * Static fassade function for the "Assembly line", that takes the jsonData and processes it using all given descriptions in their given order.
+ * @param {object} jsonData - parsed JSON data or any other data object
+ * @param {PropertyStructureDescription[]} descriptions - already grouped entries
+ * @param {boolean} debugMode - false=default=off, true=write additional logs for detailed debugging
+ * @returns {DescribedEntry[]}
+ */
+datarestructor.Restructor.processJsonUsingDescriptions = function(jsonData, descriptions, debugMode) {
+  var restructor = new datarestructor.Transform(descriptions);
+  if (debugMode) {
+    restructor.enableDebugMode();
   }
-
-  /**
-   * Public interface
-   * @scope datarestructor.InternalTools
-   */
-  return { flattenToArray: flattenToArray };
-})();
+  return restructor.processJson(jsonData);
+};
