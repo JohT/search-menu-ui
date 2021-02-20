@@ -9,24 +9,28 @@ restruct.Data = (function () {
   "use strict";
 
   function restructJson(jsonData) {
-    var allDescriptions = [];
-    allDescriptions.push(summarizedAccountNumberDescription());
-    // allDescriptions.push(highlightedAccountNumberDescription());
-    allDescriptions.push(summarizedAccountNameDescription());
-    // allDescriptions.push(highlightedAccountNameDescription());
-    allDescriptions.push(summarizedAccountTypeDescription());
-    
-    allDescriptions.push(detailsDescription());
-    allDescriptions.push(filtersDescription());
-
-    allDescriptions.push(sitesMainDescription());
-    allDescriptions.push(sitesOptionDefaultUrlPatternDescription());
-    allDescriptions.push(sitesOptionsSummaryDescription());
-    allDescriptions.push(sitesOptionDetailsDescription());
-    allDescriptions.push(sitesOptionUrlPatternDescription());
-    var restructured = datarestructor.Restructor.processJsonUsingDescriptions(jsonData, allDescriptions, false);
+    var restructured = datarestructor.Restructor.processJsonUsingDescriptions(jsonData, getDescriptions(), false);
     console.log(restructured);
     return restructured;
+  }
+
+  function getDescriptions() {
+    var descriptions = [];
+    descriptions.push(summarizedAccountNumberDescription());
+    // allDescriptions.push(highlightedAccountNumberDescription());
+    descriptions.push(summarizedAccountNameDescription());
+    // allDescriptions.push(highlightedAccountNameDescription());
+    descriptions.push(summarizedAccountTypeDescription());
+    
+    descriptions.push(detailsDescription());
+    descriptions.push(filtersDescription());
+
+    descriptions.push(sitesMainDescription());
+    descriptions.push(sitesOptionDefaultUrlPatternDescription());
+    descriptions.push(sitesOptionsSummaryDescription());
+    descriptions.push(sitesOptionDetailsDescription());
+    descriptions.push(sitesOptionUrlPatternDescription());
+    return descriptions;
   }
 
   //TODO new optional property containing a symbol 
@@ -221,6 +225,7 @@ restruct.Data = (function () {
    * @scope restruct.Data
    */
   return {
-    restructJson: restructJson
+    restructJson: restructJson,
+    getDescriptions: getDescriptions,
   };
 })();
