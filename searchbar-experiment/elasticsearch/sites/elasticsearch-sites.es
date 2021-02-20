@@ -166,13 +166,13 @@ PUT sites/_doc/default
         "prod",
         "bez"
     ],
-    "urltemplate": "https://httpbin.org/get?type=overview?account={{kontonummer}}",
+    "urltemplate": "http://127.0.0.1:5500/index.html#overview-{{summaries.kontonummer}}",
     "defaultsite": true,
-    "neuanlagedatum": "2020-10-31",
-    "aktualisierungsdatum": "2020-10-31T08:53:30Z"
+    "neuanlagedatum": "2020-10-29",
+    "aktualisierungsdatum": "2020-10-29T08:53:30Z"
 }
 
-POST sites/_doc
+POST sites/_doc/1
 {
     "mandantennummer": "999",
     "domain": "Konto",
@@ -188,12 +188,33 @@ POST sites/_doc
         "bon",
         "zan"
     ],
-    "urltemplate": "https://httpbin.org/get?type=interest?account={{kontonummer}}",
-    "neuanlagedatum": "2020-10-31",
-    "aktualisierungsdatum": "2020-10-31T09:06:30Z"
+    "urltemplate": "http://127.0.0.1:5500/index.html#creditinterest-{{summaries.kontonummer}}",
+    "neuanlagedatum": "2020-10-30",
+    "aktualisierungsdatum": "2020-10-30T09:06:30Z"
 }
 
-POST sites/_doc
+POST sites/_doc/2
+{
+    "mandantennummer": "999",
+    "domain": "Konto",
+    "geschaeftsart": "Giro",
+    "name": "Sollzinsen",
+    "feldnamen": [
+        "sollzinssatz",
+        "sollzinsmarge",
+        "zinsanpassung"
+    ],
+    "felder": [
+        "soz",
+        "smg",
+        "zan"
+    ],
+    "urltemplate": "http://127.0.0.1:5500/index.html#debitinterest-{{summaries.kontonummer}}",
+    "neuanlagedatum": "2020-11-07",
+    "aktualisierungsdatum": "2020-11-07T09:06:30Z"
+}
+
+POST sites/_doc/3
 {
     "mandantennummer": "999",
     "domain": "Kunde",
@@ -208,7 +229,7 @@ POST sites/_doc
         "prod",
         "nam"
     ],
-    "urltemplate": "https://httpbin.org/get?type=interest?customer={{kundennummer}}",
+    "urltemplate": "http://127.0.0.1:5500/index.html#overview-customer-{{details.kundennummer}}",
     "neuanlagedatum": "2020-10-31"
 }
 
@@ -438,6 +459,24 @@ POST _scripts/sites_search_as_you_type_v1
                 "bool": {
                     "must": [
                         {
+                            "match": {
+                                "mandantennummer": {
+                                    "query": "{{mandantennummer}}"
+                                }
+                            }
+                        }
+                    ],
+                    "must_not": [
+                        {
+                            "match": {
+                                "defaultsite": {
+                                    "query": true
+                                }
+                            }
+                        }
+                    ],
+                    "should": [
+                        {
                             "multi_match": {
                                 "query": "{{searchtext}}",
                                 "type": "bool_prefix",
@@ -456,24 +495,6 @@ POST _scripts/sites_search_as_you_type_v1
                                 ]
                             }
                         },
-                        {
-                            "match": {
-                                "mandantennummer": {
-                                    "query": "{{mandantennummer}}"
-                                }
-                            }
-                        }
-                    ],
-                    "must_not": [
-                        {
-                            "match": {
-                                "defaultsite": {
-                                    "query": true
-                                }
-                            }
-                        }
-                    ],
-                    "should": [
                         {
                             "match": {
                                 "geschaeftsart": "{{geschaeftsart}}{{^geschaeftsart}}giro{{/geschaeftsart}}"
@@ -505,7 +526,7 @@ GET sites/_search/template?filter_path=hits.total.value,hits.hits._source,hits.h
 {
     "id": "sites_search_as_you_type_v1",
     "params": {
-        "searchtext": "über",
+        "searchtext": "Über",
         "mandantennummer": 999,
         "geschaeftsart": "Giro"
     }
