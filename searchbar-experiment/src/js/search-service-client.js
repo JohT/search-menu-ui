@@ -33,7 +33,7 @@ searchService.HttpSearchConfig = (function () {
     searchBodyTemplate: null,
     /**
      * Resolves variables in the search body template based on the given search parameters object.
-     * The variable {{jsonSearchParameters}} will be replaces by the JSON of all search parameters. 
+     * The variable {{jsonSearchParameters}} will be replaces by the JSON of all search parameters.
      * @param {Object} searchParameters object properties will be used to replace the variables of the searchBodyTemplate
      */
     resolveSearchBody: function (searchParameters) {
@@ -178,13 +178,36 @@ searchService.HttpClient = (function () {
    * @param {HttpSearchConfig} config
    */
   var instance = function (config) {
+    /**
+     * Configuration for the search HTTP requests.
+     * @type {HttpSearchConfig}
+     */
     this.config = config;
+    /**
+     * Contains the XMLHttpRequest that is used to handle HTTP requests and responses.
+     * @type {XMLHttpRequest}
+     */
+    this.httpRequest = getHttpRequest();
     /**
      * This function will be called to trigger search (calling the search backend).
      * @param {Object} searchParameters object that contains all parameters as properties. It will be converted to JSON.
      * @param {SearchServiceResultAvailable} onJsonResultReceived will be called when search results are available.
      */
-    this.search = function (searchParameters, onJsonResultReceived) {
+    this.search = createSearchFunction(this.config, this.httpRequest);
+
+    /**
+     * Overrides the XMLHttpRequest that is used to handle HTTP requests and responses.
+     * This function is primary meant to be used for testing purposes to mock XMLHttpRequest.
+     * @param {XMLHttpRequest} httpRequest 
+     */
+    this.setHttpRequest = function(httpRequest) {
+      this.httpRequest = httpRequest;
+      this.search = createSearchFunction(this.config, this.httpRequest);
+    }
+  };
+
+  function createSearchFunction(config, httpRequest) {
+    return function (searchParameters, onJsonResultReceived) {
       var onFailure = function (resultText, httpStatus) {
         console.error("search failed with status code " + httpStatus + ": " + resultText);
       };
@@ -193,14 +216,14 @@ searchService.HttpClient = (function () {
       if (config.debugMode) {
         onJsonResultReceived = loggedSuccess(onJsonResultReceived);
       }
-      httpRequestJson(request, getHttpRequest(), onJsonResultReceived, onFailure);
+      httpRequestJson(request, httpRequest, onJsonResultReceived, onFailure);
     };
-  };
+  }
 
   function loggedSuccess(onSuccess) {
     return function (jsonResult, status) {
       console.log("successful search response with code " + status + ": " + JSON.stringify(jsonResult, null, 2));
-      onSuccess(jsonResult);
+      onSuccess(jsonResult, status);
     };
   }
 
@@ -262,4 +285,4 @@ searchService.HttpClient = (function () {
   }
 
   return instance;
-}());
+})();
