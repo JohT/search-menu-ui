@@ -213,153 +213,158 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  */
 searchbar.SearchbarAPI = (function () {
   "use strict";
-
-  var config = {
-    triggerSearch: function (searchParameters, onSearchResultsAvailable) {
-      throw "search service needs to be defined.";
-    },
-    convertData: function (sourceData) {
-      throw "data converter needs to be defined.";
-    },
-    addPredefinedParametersTo: function(object) {
-      //does nothing if not specified otherwise  
-    },
-    searchAreaElementId: "searcharea",
-    inputElementId: "searchbar",
-    searchTextParameterName: "searchtext",
-    resultsView: null,
-    detailView: null,
-    filterOptionsView: null,
-    filtersView: null,
-    waitBeforeClose: 700,
-    waitBeforeSearch: 500,
-    waitBeforeMouseOver: 700
-  };
-
   /**
-   * Public interface
-   * @scope searchbar.SearchbarAPI
+   * Constructor function and container for everything, that needs to exist per instance.
+   * @param {SearchbarConfig} optional parameter that contains a template to clone
    */
-  return {
+  function SearchbarApiBuilder() {
+    this.config = {
+      triggerSearch: function (searchParameters, onSearchResultsAvailable) {
+        throw new Error("search service needs to be defined.");
+      },
+      convertData: function (sourceData) {
+        throw new Error("data converter needs to be defined.");
+      },
+      addPredefinedParametersTo: function (object) {
+        //does nothing if not specified otherwise
+      },
+      searchAreaElementId: "searcharea",
+      inputElementId: "searchbar",
+      searchTextParameterName: "searchtext",
+      resultsView: null,
+      detailView: null,
+      filterOptionsView: null,
+      filtersView: null,
+      waitBeforeClose: 700,
+      waitBeforeSearch: 500,
+      waitBeforeMouseOver: 700
+    };
     /**
      * Defines the search service function, that will be called whenever search is triggered.
      * @param {SearchService} service - function that will be called to trigger search (backend).
      */
-    searchService: function (service) {
-      config.triggerSearch = service;
+    this.searchService = function (service) {
+      this.config.triggerSearch = service;
       return this;
-    },
+    };
     /**
      * Defines the converter, that converts search result data to search ui data
      * @param {DataConverter} converter - function that will be called to trigger search (backend).
      */
-    dataConverter: function (converter) {
-      config.convertData = converter;
+    this.dataConverter = function (converter) {
+      this.config.convertData = converter;
       return this;
-    },
+    };
     /**
      * Defines the function, that adds predefined (fixed, constant, environmental) search parameters
      * to the first parameter object.
      * @param {SearchParameterAdder} adder - function that will be called to before search is triggered.
      */
-    addPredefinedParametersTo: function (adder) {
-      config.addPredefinedParametersTo = adder;
+    this.addPredefinedParametersTo = function (adder) {
+      this.config.addPredefinedParametersTo = adder;
       return this;
-    },
-    searchAreaElementId: function (id) {
-      config.searchAreaElementId = id;
+    };
+    this.searchAreaElementId = function (id) {
+      this.config.searchAreaElementId = id;
       return this;
-    },
-    inputElementId: function (id) {
-      config.inputElementId = id;
+    };
+    this.inputElementId = function (id) {
+      this.config.inputElementId = id;
       return this;
-    },
-    searchTextParameterName: function (value) {
-      config.searchTextParameterName = value;
+    };
+    this.searchTextParameterName = function (value) {
+      this.config.searchTextParameterName = value;
       return this;
-    },
-    resultsView: function (view) {
-      config.resultsView = view;
+    };
+    this.resultsView = function (view) {
+      this.config.resultsView = view;
       return this;
-    },
-    detailView: function (view) {
-      config.detailView = view;
+    };
+    this.detailView = function (view) {
+      this.config.detailView = view;
       return this;
-    },
-    filterOptionsView: function (view) {
-      config.filterOptionsView = view;
+    };
+    this.filterOptionsView = function (view) {
+      this.config.filterOptionsView = view;
       return this;
-    },
-    filtersView: function (view) {
-      config.filtersView = view;
+    };
+    this.filtersView = function (view) {
+      this.config.filtersView = view;
       return this;
-    },
-    defaultDetailView: function () {
-      return new searchbar.SearchViewDescriptionBuilder()
-        .viewElementId("seachdetails")
-        .listParentElementId("seachdetailentries")
-        .listEntryElementIdPrefix("detail")
-        .listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}") //TODO could display value smaller
-        .build();
-    },
-    defaultResultsView: function () {
-      return new searchbar.SearchViewDescriptionBuilder()
-        .viewElementId("searchresults")
-        .listParentElementId("searchmatches")
-        .listEntryElementIdPrefix("result")
-        .listEntryTextTemplate("{{abbreviation}} {{displayName}}") //TODO could display second line smaller
-        .listEntrySummaryTemplate(
-          "{{summaries[0].abbreviation}} <b>{{summaries[1].value}}</b><br>{{summaries[2].value}}: {{summaries[0].value}}"
-        )
-        .build();
-    },
-    defaultFilterOptionsView: function () {
-      return new searchbar.SearchViewDescriptionBuilder()
-        .viewElementId("seachfilteroptions")
-        .listParentElementId("seachfilteroptionentries")
-        .listEntryElementIdPrefix("filter")
-        .listEntryTextTemplate("{{value}}")
-        .listEntrySummaryTemplate("{{summaries[0].value}}")
-        .isSelectableFilterOption(true)
-        .build();
-    },
-    defaultFiltersView: function () {
-      return new searchbar.SearchViewDescriptionBuilder()
-        .viewElementId("searchresults")
-        .listParentElementId("searchfilters")
-        .listEntryElementIdPrefix("filter")
-        .isSelectableFilterOption(true)
-        .build();
-    },
-    waitBeforeClose: function (ms) {
-      config.waitBeforeClose = ms;
+    };
+    this.waitBeforeClose = function (ms) {
+      this.config.waitBeforeClose = ms;
       return this;
-    },
-    waitBeforeSearch: function (ms) {
-      config.waitBeforeSearch = ms;
+    };
+    this.waitBeforeSearch = function (ms) {
+      this.config.waitBeforeSearch = ms;
       return this;
-    },
-    waitBeforeMouseOver: function (ms) {
-      config.waitBeforeMouseOver = ms;
+    };
+    this.waitBeforeMouseOver = function (ms) {
+      this.config.waitBeforeMouseOver = ms;
       return this;
-    },
-    start: function () {
-      if (config.resultsView == null) {
-        this.resultsView(this.defaultResultsView());
+    };
+    this.start = function () {
+      if (this.config.resultsView == null) {
+        this.resultsView(defaultResultsView());
       }
-      if (config.defaultDetailView == null) {
-        this.detailView(this.defaultDetailView());
+      if (this.config.defaultDetailView == null) {
+        this.detailView(defaultDetailView());
       }
-      if (config.filterOptionsView == null) {
-        this.filterOptionsView(this.defaultFilterOptionsView());
+      if (this.config.filterOptionsView == null) {
+        this.filterOptionsView(defaultFilterOptionsView());
       }
-      if (config.filtersView == null) {
-        this.filtersView(this.defaultFiltersView());
+      if (this.config.filtersView == null) {
+        this.filtersView(defaultFiltersView());
       }
-      return new searchbar.SearchbarUI(config);
-    }
-  };
-})();
+      return new searchbar.SearchbarUI(this.config);
+    };
+  }
+
+  function defaultDetailView() {
+    return new searchbar.SearchViewDescriptionBuilder()
+      .viewElementId("seachdetails")
+      .listParentElementId("seachdetailentries")
+      .listEntryElementIdPrefix("detail")
+      .listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}") //TODO could display value smaller
+      .build();
+  }
+  function defaultResultsView() {
+    return new searchbar.SearchViewDescriptionBuilder()
+      .viewElementId("searchresults")
+      .listParentElementId("searchmatches")
+      .listEntryElementIdPrefix("result")
+      .listEntryTextTemplate("{{abbreviation}} {{displayName}}") //TODO could display second line smaller
+      .listEntrySummaryTemplate(
+        "{{summaries[0].abbreviation}} <b>{{summaries[1].value}}</b><br>{{summaries[2].value}}: {{summaries[0].value}}"
+      )
+      .build();
+  }
+  function defaultFilterOptionsView() {
+    return new searchbar.SearchViewDescriptionBuilder()
+      .viewElementId("seachfilteroptions")
+      .listParentElementId("seachfilteroptionentries")
+      .listEntryElementIdPrefix("filter")
+      .listEntryTextTemplate("{{value}}")
+      .listEntrySummaryTemplate("{{summaries[0].value}}")
+      .isSelectableFilterOption(true)
+      .build();
+  }
+  function defaultFiltersView() {
+    return new searchbar.SearchViewDescriptionBuilder()
+      .viewElementId("searchresults")
+      .listParentElementId("searchfilters")
+      .listEntryElementIdPrefix("filter")
+      .isSelectableFilterOption(true)
+      .build();
+  }
+
+  /**
+   * Public interface
+   * @scope searchbar.SearchbarAPI
+   */
+  return SearchbarApiBuilder;
+}());
 
 /**
  * Searchbar UI.

@@ -20,7 +20,7 @@ var httpSearchClient = searchService.HttpSearchConfig
   .build();
 
 // Configure and start the search bar functionality.
-searchbar.SearchbarAPI.searchService(httpSearchClient.search)
+new searchbar.SearchbarAPI().searchService(httpSearchClient.search)
   .dataConverter(restruct.Data.restructJson)
   .addPredefinedParametersTo(function (searchParameters) {
     searchParameters.mandantennummer = 999;
