@@ -231,10 +231,10 @@ searchbar.SearchbarAPI = (function () {
       searchAreaElementId: "searcharea",
       inputElementId: "searchbar",
       searchTextParameterName: "searchtext",
-      resultsView: null,
-      detailView: null,
-      filterOptionsView: null,
-      filtersView: null,
+      resultsView: defaultResultsView(),
+      detailView: defaultDetailView(),
+      filterOptionsView: defaultFilterOptionsView(),
+      filtersView: defaultFiltersView(),
       waitBeforeClose: 700,
       waitBeforeSearch: 500,
       waitBeforeMouseOver: 700
@@ -305,30 +305,10 @@ searchbar.SearchbarAPI = (function () {
       return this;
     };
     this.start = function () {
-      if (this.config.resultsView == null) {
-        this.resultsView(defaultResultsView());
-      }
-      if (this.config.defaultDetailView == null) {
-        this.detailView(defaultDetailView());
-      }
-      if (this.config.filterOptionsView == null) {
-        this.filterOptionsView(defaultFilterOptionsView());
-      }
-      if (this.config.filtersView == null) {
-        this.filtersView(defaultFiltersView());
-      }
       return new searchbar.SearchbarUI(this.config);
     };
   }
 
-  function defaultDetailView() {
-    return new searchbar.SearchViewDescriptionBuilder()
-      .viewElementId("seachdetails")
-      .listParentElementId("seachdetailentries")
-      .listEntryElementIdPrefix("detail")
-      .listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}") //TODO could display value smaller
-      .build();
-  }
   function defaultResultsView() {
     return new searchbar.SearchViewDescriptionBuilder()
       .viewElementId("searchresults")
@@ -340,6 +320,16 @@ searchbar.SearchbarAPI = (function () {
       )
       .build();
   }
+
+  function defaultDetailView() {
+    return new searchbar.SearchViewDescriptionBuilder()
+      .viewElementId("seachdetails")
+      .listParentElementId("seachdetailentries")
+      .listEntryElementIdPrefix("detail")
+      .listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}") //TODO could display value smaller
+      .build();
+  }
+
   function defaultFilterOptionsView() {
     return new searchbar.SearchViewDescriptionBuilder()
       .viewElementId("seachfilteroptions")
@@ -350,6 +340,7 @@ searchbar.SearchbarAPI = (function () {
       .isSelectableFilterOption(true)
       .build();
   }
+
   function defaultFiltersView() {
     return new searchbar.SearchViewDescriptionBuilder()
       .viewElementId("searchresults")

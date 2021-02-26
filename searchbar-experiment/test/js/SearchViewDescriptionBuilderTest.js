@@ -1,6 +1,6 @@
 "use strict";
 
-describe("search.js ", function () {
+describe("search.js SearchViewDescription", function () {
   var searchUnderTest;
 
   beforeEach(function () {
