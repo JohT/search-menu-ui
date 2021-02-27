@@ -226,6 +226,6 @@ restruct.Data = (function () {
    */
   return {
     restructJson: restructJson,
-    getDescriptions: getDescriptions,
+    getDescriptions: getDescriptions
   };
 })();

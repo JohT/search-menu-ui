@@ -648,7 +648,7 @@ datarestructor.DescribedEntryCreator = (function () {
     if (typeof value !== "object" && propertyNames.indexOf(key) < 0 && key != "") {
       return undefined; // Remove all properties that are not contained in the given list.
     }
-    if (key.indexOf("_") == 0) {
+    if ((typeof value === "string") && (key.indexOf("_") == 0)) { //TODO Wehn could "key" be a number?
       return undefined; //Remove all properties with a name beginning with an underscore (internal fields).
     }
     if (Array.isArray(value)) {

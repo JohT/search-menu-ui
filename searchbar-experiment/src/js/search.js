@@ -472,8 +472,8 @@ searchbar.SearchbarUI = (function () {
       //TODO should skip sub menu, if there is only one option (with/without being default).
       //TODO could be used for constants (pre selected single filter options) like "tenant-number", "current-account"
       if (isMenuEntryWithDefault(entry)) {
-        options = insertAtBeginningIfMissing(entry.options, entry.default[0], equalProperties(["value"]));
-        createFilterOption(entry.default[0], options, config.filtersView, config);
+        options = insertAtBeginningIfMissing(entry.options, entry["default"][0], equalProperties(["value"]));
+        createFilterOption(entry["default"][0], options, config.filtersView, config);
       }
       onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
       onMenuEntryChosen(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
@@ -535,7 +535,7 @@ searchbar.SearchbarUI = (function () {
   }
 
   function isMenuEntryWithDefault(entry) {
-    return typeof entry.default !== "undefined";
+    return typeof entry["default"] !== "undefined";
   }
 
   /**
@@ -815,7 +815,7 @@ searchbar.SearchbarUI = (function () {
     addMainMenuNavigationHandlers(filterElement, config);
 
     var filterElementHiddenFields = extractListElementIdProperties(filterElement.id).hiddenFields();
-    var isFilterWithDefaultOption = typeof filterElementHiddenFields.default !== "undefined";
+    var isFilterWithDefaultOption = typeof filterElementHiddenFields["default"] !== "undefined";
     if (isFilterWithDefaultOption) {
       onSpaceKey(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
       //TODO could reset elements to their default value upon deletion.
@@ -999,7 +999,11 @@ searchbar.SearchbarUI = (function () {
    * @param {InputEvent}
    */
   function preventDefaultEventHandling(inputevent) {
-    inputevent.preventDefault ? inputevent.preventDefault() : (event.returnValue = false);
+    if (typeof inputevent.preventDefault !== "undefined") {
+      inputevent.preventDefault();
+    } else {
+      inputevent.returnValue = false;
+    }
   }
 
   /**
@@ -1293,8 +1297,9 @@ searchbar.SearchbarUI = (function () {
 
   function onMouseOverDelayed(element, delayTime, eventHandler) {
     addEvent("mouseover", element, function (event) {
+      this.originalEvent = cloneObject(event);
       this.delayedHandlerTimer = setTimeout(function () {
-        eventHandler(event);
+        eventHandler(this.originalEvent);
       }, delayTime); 
       addEvent("mouseout", element, function () {
         if (this.delayedHandlerTimer !== null) {
@@ -1314,6 +1319,16 @@ searchbar.SearchbarUI = (function () {
     });
   }
 
+  function cloneObject(source) {
+    var result = {};
+    var propertyNames = Object.keys(source);
+    for (var propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex++) {
+      var propertyName = propertyNames[propertyIndex];
+      var propertyValue = source[propertyName];
+      result[propertyName] = propertyValue;
+    }
+    return result;
+  }
   function onEscapeKey(element, eventHandler) {
     addEvent("keydown", element, function (event) {
       if (event.key == "Escape" || event.key == "Esc" || keyCodeOf(event) == 27) {
@@ -1402,7 +1417,7 @@ searchbar.SearchbarUI = (function () {
   function getEventTarget(event) {
     if (typeof event.currentTarget !== "undefined" && event.currentTarget != null) {
       return event.currentTarget;
-    } else if (typeof event.srcElement !== "undefined" && event.srcElement != null) {
+    } if (typeof event.srcElement !== "undefined" && event.srcElement != null) {
       return event.srcElement;
     } else {
       throw new Error("Event doesn't contain bounded element: " + event);
