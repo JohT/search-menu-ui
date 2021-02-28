@@ -1,3 +1,4 @@
+//https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf#polyfill
 if (!Array.prototype.indexOf)  Array.prototype.indexOf = (function(Object, max, min){
     "use strict";
     return function indexOf(member, fromIndex) {
