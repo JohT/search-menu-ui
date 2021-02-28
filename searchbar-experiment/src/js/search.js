@@ -695,8 +695,10 @@ searchbar.SearchbarUI = (function () {
   function focusFirstResult(event, config) {
     var selectedElement = getEventTarget(event);
     var firstResult = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-1");
-    selectedElement.blur();
-    firstResult.focus();
+    if (firstResult) {
+      selectedElement.blur();
+      firstResult.focus();
+    }
   }
 
   function focusNextSearchResult(event, config) {
@@ -1161,8 +1163,8 @@ searchbar.SearchbarUI = (function () {
    */
   function createListElement(text, id, className, elementTag) {
     var element = document.createElement(elementTag);
-    element.setAttribute("id", id);
-    element.setAttribute("tabindex", "0");
+    element.id = id;
+    element.tabIndex = "0";
     element.innerHTML = text;
     addClass(className, element);
     return element;
