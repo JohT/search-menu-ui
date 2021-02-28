@@ -444,7 +444,7 @@ searchbar.SearchbarUI = (function () {
 
   function displayResults(jsonResults, config) {
     var index = 0;
-    for (index = 0; index < jsonResults.length; index++) {
+    for (index = 0; index < jsonResults.length; index+=1) {
       addResult(jsonResults[index], index + 1, config);
     }
   }

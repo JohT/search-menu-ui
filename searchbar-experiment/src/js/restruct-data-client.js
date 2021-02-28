@@ -10,7 +10,12 @@ restruct.Data = (function () {
 
   function restructJson(jsonData) {
     var restructured = datarestructor.Restructor.processJsonUsingDescriptions(jsonData, getDescriptions(), false);
+    //TODO should only log in debugMode
     console.log(restructured);
+    var index = 0;
+    for (index = 0; index < restructured.length; index += 1) {
+      console.log(restructured[index].publicFieldsJson(2));
+    }
     return restructured;
   }
 
