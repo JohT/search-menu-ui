@@ -459,6 +459,7 @@ datarestructor.PropertyStructureDescriptionBuilder = (function () {
  * @property {string} value - content of the field
  * @property {string} resolveTemplate - function, that replaces propertyNames in double curly brackets with the values in this object.
  * @property {string} publicFieldsJson - function, that converts the public fields including grouped sub structures to JSON.
+ * @property {string} publicFields - function, that returns an object similar to this but without internal fields that can easily be converted to JSON.
  * @property {boolean} _isMatchingIndex - true, when _identifier.index matches the described "indexStartsWith"
  * @property {Object} _identifier - internal structure for identifier. Avoid using it outside since it may change.
  * @property {string} _identifier.index - array indices in hierarchical order separated by points, e.g. "0.0"
@@ -557,6 +558,14 @@ datarestructor.DescribedEntryCreator = (function () {
       var propertyNames = propertyNamesWithoutObjectsAndFunctions(this);
       var prettyPrintJsonSpace = typeof space === "number" ? space : 0;
       return JSON.stringify(this, replacerRetainsOnlyDefinedPublicFields(propertyNames), prettyPrintJsonSpace);
+    };
+    /**
+     * Returns an object similar to DescribedEntry but without internal fields and without circle references,
+     * so it can easily be converted to JSON.
+     * @returns {object} like DescribedEntry.
+     */
+    this.publicFields = function () {
+      return JSON.parse(this.publicFieldsJson());
     };
   }
 

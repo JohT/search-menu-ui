@@ -2,6 +2,7 @@
 
 describe("search.js SearchBarUI", function () {
   var searchUnderTest;
+  var searchTestData;
 
   beforeEach(function () {
     var require =
@@ -10,6 +11,7 @@ describe("search.js SearchBarUI", function () {
         console.warn("no module system found to load " + nameOfModule);
       };
     searchUnderTest = searchbar || require("../../src/js/search.js");
+    searchTestData = searchresulttestdata || require("../../test/js/SearchBarUiTestJsonData.js");
   });
 
   /**
@@ -88,7 +90,7 @@ describe("search.js SearchBarUI", function () {
   describe("SearchBarUI", function () {
     var searchBarUiUnderTest;
     var config;
-    var searchResultData = []; // Array containing the search results.
+    var searchResultData;
     var searchService = jasmine.createSpy("searchServiceSpy").and.callFake(function (searchParameters, callback) {
       callback(searchResultData);
     });
@@ -110,6 +112,7 @@ describe("search.js SearchBarUI", function () {
         .addPredefinedParametersTo(predefinedParametersCallback)
         .start();
       config = searchBarUiUnderTest.config;
+      searchResultData = searchTestData.SearchResult.getJson();
       replaceTimeoutWithin(searchBarUiUnderTest);
     });
 
@@ -147,10 +150,6 @@ describe("search.js SearchBarUI", function () {
       return documentElements[config.resultsView.listEntryElementIdPrefix + "-1"];
     }
 
-    function getSearchAreaElement() {
-      return documentElements[config.searchAreaElementId];
-    }
-
     it("should add key down event listeners to the input element", function () {
       expect(document.getElementById).toHaveBeenCalledWith("searchbar");
       expect(getSearchInputTextElement().addEventListener).toHaveBeenCalledWith("keydown", jasmine.any(Function), false);
@@ -180,6 +179,7 @@ describe("search.js SearchBarUI", function () {
     });
 
     it("should update search when input text character is entered", function () {
+      searchResultData = [];
       var searchInputTextElement = getSearchInputTextElement();
       searchInputTextElement.value = "X";
 
@@ -190,6 +190,7 @@ describe("search.js SearchBarUI", function () {
     });
 
     it("shouldn't update search when input text is cleared", function () {
+      searchResultData = [];
       var searchInputTextElement = getSearchInputTextElement();
       searchInputTextElement.value = "X";
 
@@ -202,6 +203,7 @@ describe("search.js SearchBarUI", function () {
     });
 
     it("should add search text as search parameters", function () {
+      searchResultData = [];
       var searchInputTextElement = getSearchInputTextElement();
       searchInputTextElement.value = "X";
 
@@ -211,6 +213,7 @@ describe("search.js SearchBarUI", function () {
     });
 
     it("should add predefined parameters of callback as search parameters", function () {
+      searchResultData = [];
       var searchInputTextElement = getSearchInputTextElement();
       searchInputTextElement.value = "X";
       predefinedParametersCallback.and.callFake(function (parameters) {
@@ -223,6 +226,7 @@ describe("search.js SearchBarUI", function () {
     });
 
     it("should use filter view elements as search parameters", function () {
+      searchResultData = [];
       var expectedParameter = {fieldName: "testFilterParameter", value: "testFilterValue"};
       var child = document.getElementById(config.filtersView.listParentElementId + "-testchild");
       var childFields = document.getElementById(child.id + "-fields");
@@ -239,6 +243,7 @@ describe("search.js SearchBarUI", function () {
     });
 
     it("should wait the configured amount of time (waitBeforeSearch) before search is updated", function () {
+      searchResultData = [];
       var searchInputTextElement = getSearchInputTextElement();
       searchInputTextElement.value = "X";
 

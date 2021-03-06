@@ -10,6 +10,8 @@
  */
 var searchbar = searchbar || {};
 
+var template_resolver = template_resolver || require("../../src/js/lib/templateResolver"); // supports vanilla js & npm
+
 /**
  * @typedef {Object} SearchViewDescription Describes a part of the search view (e.g. search result details).
  * @property {string} viewElementId - id of the element (e.g. "div"), that contains the view with all list elements and their parent.
@@ -165,8 +167,6 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  //TODO could a separate value object be defined and mapped to get some decoupling to data-reconstructor-js?
 /**
  * @typedef {Object} SearchUiData 
- * @property {ResolveTemplateFunction} resolveTemplate resolves the variables of the given string and returns the result.
- * @property {FieldsJson} publicFieldsJson returns the fields including sub structures like "details" and their fields as JSON
  * @property {String} [category=""] name of the category. Default = "". Could contain a short domain name. (e.g. "city")
  * @property {String} fieldName field name that will be used e.g. as a search parameter name for filter options.
  * @property {String} [displayName=""] readable display name for e.g. the list of results.
@@ -463,7 +463,7 @@ searchbar.SearchbarUI = (function () {
       onMenuEntryChosen(resultElement, function (event) {
         var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId, entry.category);
         if (selectedUrlTemplate) {
-          window.location.href = entry.resolveTemplate(selectedUrlTemplate);
+          window.location.href = new template_resolver.Resolver(entry).resolveTemplate(selectedUrlTemplate);
         }
       });
     }
@@ -1150,11 +1150,13 @@ searchbar.SearchbarUI = (function () {
   function createListEntryInnerHtmlText(entry, view, id) {
     //TODO should support template inside html e.g. referenced by id (with convention over code)
     //TODO should limit length of resolved variables
-    var text = entry.resolveTemplate(view.listEntryTextTemplate);
+    var resolver = new template_resolver.Resolver(entry);
+    var text = resolver.resolveTemplate(view.listEntryTextTemplate);
     if (typeof entry.summaries !== "undefined") {
-      text = entry.resolveTemplate(view.listEntrySummaryTemplate);
+      text = resolver.resolveTemplate(view.listEntrySummaryTemplate);
     }
-    text += '<p id="' + id + '-fields" style="display: none">' + entry.publicFieldsJson() + "</p>";
+    var json = JSON.stringify(entry);
+    text += '<p id="' + id + '-fields" style="display: none">' + json + "</p>";
     return text;
   }
 
@@ -1306,7 +1308,7 @@ searchbar.SearchbarUI = (function () {
     addEvent("mouseover", element, function (event) {
       this.originalEvent = cloneObject(event);
       this.delayedHandlerTimer = setTimeout(function () {
-        eventHandler(this.originalEvent);
+        eventHandler(typeof this.originalEvent !== "undefined"? this.originalEvent : event);
       }, delayTime); 
       addEvent("mouseout", element, function () {
         if (this.delayedHandlerTimer !== null) {

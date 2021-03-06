@@ -14,7 +14,9 @@ restruct.Data = (function () {
     console.log(restructured);
     var index = 0;
     for (index = 0; index < restructured.length; index += 1) {
-      console.log(restructured[index].publicFieldsJson(2));
+      restructured[index] = restructured[index].publicFields(); //TODO should be a separate type that is returned directly
+      //TODO should only log in debugMode
+      console.log(JSON.stringify(restructured[index], null, 2));
     }
     return restructured;
   }
