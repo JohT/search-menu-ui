@@ -4,11 +4,6 @@ describe("search.js SearchBarApi", function () {
   var searchUnderTest;
 
   beforeEach(function () {
-    var require =
-      require ||
-      function (nameOfModule) {
-        console.warn("no module system found to load " + nameOfModule);
-      };
     searchUnderTest = searchbar || require("../../src/js/search.js");
   });
 

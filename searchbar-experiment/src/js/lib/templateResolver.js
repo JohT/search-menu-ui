@@ -5,13 +5,18 @@
  * @version ${project.version}
  */
 "use strict";
-var module = module || {}; // Fallback for vanilla js without modules
+var module = templateResolverInternalCreateIfNotExists(module); // Fallback for vanilla js without modules
+
+function templateResolverInternalCreateIfNotExists(objectToCheck) {
+  return objectToCheck || {};
+}
 
 /**
  * Provides a simple template resolver, that replaces variables in double curly brackets with the values of a given object.
  * @module template_resolver
  */
 var template_resolver = (module.exports = {}); // Export module for npm...
+template_resolver.internalCreateIfNotExists = templateResolverInternalCreateIfNotExists;
 
 var internal_object_tools = internal_object_tools || require("../../lib/js/flattenToArray"); // supports vanilla js & npm
 

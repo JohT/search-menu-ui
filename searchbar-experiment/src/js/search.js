@@ -11,6 +11,7 @@
 var searchbar = searchbar || {};
 
 var template_resolver = template_resolver || require("../../src/js/lib/templateResolver"); // supports vanilla js & npm
+var described_field = described_field || require("../../src/js/lib/describedfield"); // supports vanilla js & npm
 
 /**
  * @typedef {Object} SearchViewDescription Describes a part of the search view (e.g. search result details).

@@ -1,20 +1,19 @@
 "use strict";
 
-var require = require || function () {};
 var restruct = restruct || require("../../src/js/restruct-data-client"); // supports vanilla js & npm
 
 describe("restruct-data-client.Data", function () {
-  var data;
+  var dataConverter;
 
   beforeEach(function () {
-    data = restruct.Data;
+    dataConverter = new restruct.DataConverter();
   });
 
   describe("descriptions ", function () {
     var descriptions;
 
     beforeEach(function () {
-      descriptions = data.getDescriptions();
+      descriptions = dataConverter.getDescriptions();
     });
 
     function forEachDescription(callback) {
@@ -24,14 +23,6 @@ describe("restruct-data-client.Data", function () {
       for (index = 0; index < descriptions.length; index += 1) {
         callback(descriptions[index]);
       }
-    }
-
-    function forEachDescriptionMatching(matcher, callback) {
-      return forEachDescription(function (entry) {
-        if (matcher(entry)) {
-          callback(entry);
-        }
-      });
     }
 
     function forEachDescriptionCount(matcher) {

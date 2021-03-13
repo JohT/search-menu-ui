@@ -5,18 +5,48 @@
  */
 var restruct = restruct || {};
 
-restruct.Data = (function () {
+restruct.DataConverter = (function () {
   "use strict";
 
-  function restructJson(jsonData) {
+  /**
+   * Provides the data converter for the search. 
+   * It uses "datarestructor" and acts as a delegating client in between.
+   * @constructs DataConverter
+   */
+  function DataConverter() {
+
+    /**
+     * Creates the data converter function with or without debugMode.
+     * @function
+     * @param {boolean} debugMode 
+     * @returns data converter function
+     * @memberof DataConverter#
+     */
+    this.createDataConverter = function(debugMode) {
+      return function(jsonData) {
+        return restructJson(jsonData, debugMode);
+      };
+    };
+
+    /**
+     * @function
+     * @returns {PropertyStructureDescription}
+     * @memberof DataConverter#
+     */
+    this.getDescriptions = function() {
+      return getDescriptions();
+    };
+  }
+
+  function restructJson(jsonData, debugMode) {
+    if (debugMode) {
+      console.log("data before it gets restructured:");
+      console.log(jsonData);
+    }
     var restructured = datarestructor.Restructor.processJsonUsingDescriptions(jsonData, getDescriptions(), false);
-    //TODO should only log in debugMode
-    console.log(restructured);
-    var index = 0;
-    for (index = 0; index < restructured.length; index += 1) {
-      restructured[index] = restructured[index].publicFields(); //TODO should be a separate type that is returned directly
-      //TODO should only log in debugMode
-      console.log(JSON.stringify(restructured[index], null, 2));
+    if (debugMode) {
+      console.log("restructured data:");
+      console.log(JSON.stringify(restructured));
     }
     return restructured;
   }
@@ -40,8 +70,6 @@ restruct.Data = (function () {
     return descriptions;
   }
 
-  //TODO new optional property containing a symbol 
-  //TODO new optional property containing a imageReference 
   function summarizedAccountNumberDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
@@ -227,12 +255,5 @@ restruct.Data = (function () {
       .build();
   }
 
-  /**
-   * Public interface
-   * @scope restruct.Data
-   */
-  return {
-    restructJson: restructJson,
-    getDescriptions: getDescriptions
-  };
-})();
+  return DataConverter;
+}());

@@ -5,11 +5,6 @@ describe("search.js SearchBarUI", function () {
   var searchTestData;
 
   beforeEach(function () {
-    var require =
-      require ||
-      function (nameOfModule) {
-        console.warn("no module system found to load " + nameOfModule);
-      };
     searchUnderTest = searchbar || require("../../src/js/search.js");
     searchTestData = searchresulttestdata || require("../../test/js/SearchBarUiTestJsonData.js");
   });

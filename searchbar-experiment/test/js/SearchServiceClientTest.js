@@ -4,11 +4,6 @@ describe("search-service-client HttpSearchConfig", function () {
   var searchServiceUnderTest;
 
   beforeEach(function () {
-    var require =
-      require ||
-      function (nameOfModule) {
-        console.warn("no module system found to load " + nameOfModule);
-      };
     searchServiceUnderTest = searchService || require("../../src/js/search-service-client");
   });
 
