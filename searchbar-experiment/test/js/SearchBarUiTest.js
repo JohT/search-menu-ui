@@ -22,7 +22,7 @@ describe("search.js SearchBarUI", function () {
    * @param {NewlyDiscoveredElement} onNewlyDiscoveredElement
    */
   function collectElementsById(documentElements, onNewlyDiscoveredElement) {
-    document.getElementById = jasmine.createSpy("HTML Element").and.callFake(function (id) {
+    var functionFake = function (id) {
       if (!documentElements[id]) {
         var newElement = document.createElement("div");
         newElement.id = id;
@@ -32,7 +32,8 @@ describe("search.js SearchBarUI", function () {
         }
       }
       return documentElements[id];
-    });
+    };
+    document.getElementById = jasmine.createSpy("getElementById-Spy").and.callFake(functionFake);
   }
 
   /**
@@ -62,7 +63,7 @@ describe("search.js SearchBarUI", function () {
   /**
    * Replaces "setTimeout" with a spy that calls the otherwise delayed function immediately.
    * The spy can then also be used to assert the wait time that was set.
-   * @param {Object} callOriginObject Object to use when the callback refers to "this". 
+   * @param {Object} callOriginObject Object to use when the callback refers to "this".
    */
   function replaceTimeoutWithin(callOriginObject) {
     spyOn(window, "setTimeout").and.callFake(function (timedFunction, timer) {
@@ -94,20 +95,27 @@ describe("search.js SearchBarUI", function () {
     });
     var predefinedParametersCallback;
 
-    var documentElements;
-    var eventListeners;
+    var documentElements; // Contains all document elements that are set up, created or read during the test
+    var eventListeners; // Contains all event listeners that are involved.
     var nonExistingElements; // Array of element id Strings that should return "null" on getElementById. e.g. ["searchbar"]
-    var childNodeElements; // Array of element id Strings that should return an element when "childNodes" is called.
+    var globalParentElement; // Every test element will be created as child of this parent element if present.
 
     beforeEach(function () {
       initializeDocumentElements();
-      searchBarUiUnderTest = new searchUnderTest.SearchbarAPI()
+      var searchBarApiConfig = new searchUnderTest.SearchbarAPI()
         .searchService(searchService)
         .dataConverter(dataConverter)
         .addPredefinedParametersTo(predefinedParametersCallback)
-        .start();
-      config = searchBarUiUnderTest.config;
+        .addElementCreatedHandler(function (newElement) {
+          spyOnElement(newElement);
+          collectEventListeners(eventListeners, newElement);
+          documentElements[newElement.id] = newElement;
+        });
+      config = searchBarApiConfig.config;
+      setUpFixture(config);
+      searchBarUiUnderTest = searchBarApiConfig.start();
       searchResultData = searchTestData.SearchResult.getJson();
+      globalParentElement = document.getElementById(config.searchAreaElementId);
       replaceTimeoutWithin(searchBarUiUnderTest);
     });
 
@@ -115,22 +123,56 @@ describe("search.js SearchBarUI", function () {
       documentElements = {};
       eventListeners = {};
       nonExistingElements = [];
-      childNodeElements = {};
+      globalParentElement = null;
       predefinedParametersCallback = jasmine.createSpy("predefinedParametersCallbackSpy");
 
       collectElementsById(documentElements, function (newElement) {
+        // This function is called whenever a new test element is created when "document.getElementById" is called.
         if (nonExistingElements.includes(newElement.id)) {
-          return null;
+          return null; // "document.getElementById" will return "null".
         }
-        spyOn(newElement, "blur");
-        spyOn(newElement, "focus");
-        if (typeof childNodeElements[newElement.id] === "object") {
-          newElement.appendChild(childNodeElements[newElement.id]);
+        if (globalParentElement && !newElement.parentElement) {
+          globalParentElement.appendChild(newElement);
         }
-        spyOn(newElement, "childNodes").and.callThrough();
+        spyOnElement(newElement);
         collectEventListeners(eventListeners, newElement);
         return newElement;
       });
+    }
+
+    function spyOnElement(newElement) {
+      if (newElement.blur) {
+        spyOn(newElement, "blur");
+      }
+      if (newElement.focus) {
+        spyOn(newElement, "focus");
+      }
+      spyOn(newElement, "appendChild").and.callThrough();
+      spyOn(newElement, "parentElement").and.callThrough();
+      spyOn(newElement, "childNodes").and.callThrough();
+    }
+
+    function setUpFixture(config) {
+      var searchAreaElement = document.getElementById(config.searchAreaElementId);
+      var searchInputElement = document.getElementById(config.inputElementId);
+      searchAreaElement.appendChild(searchInputElement);
+
+      var searchResultsElement = document.getElementById(config.resultsView.viewElementId);
+      searchAreaElement.appendChild(searchResultsElement);
+      var searchMatchesElement = document.getElementById(config.resultsView.listParentElementId);
+      searchMatchesElement.appendChild(searchResultsElement);
+      var searchFiltersElement = document.getElementById(config.filtersView.listParentElementId);
+      searchFiltersElement.appendChild(searchResultsElement);
+
+      var searchDetailsElement = document.getElementById(config.detailView.viewElementId);
+      searchAreaElement.appendChild(searchDetailsElement);
+      var searchDetailEntriesElement = document.getElementById(config.detailView.listParentElementId);
+      searchDetailEntriesElement.appendChild(searchResultsElement);
+
+      var searchFilterOptionsElement = document.getElementById(config.filterOptionsView.viewElementId);
+      searchAreaElement.appendChild(searchFilterOptionsElement);
+      var searchFilterOptionsEntriesElement = document.getElementById(config.filterOptionsView.listParentElementId);
+      searchFilterOptionsEntriesElement.appendChild(searchResultsElement);
     }
 
     function getSearchInputTextElement() {
@@ -143,6 +185,10 @@ describe("search.js SearchBarUI", function () {
 
     function getFirstResultListElement() {
       return documentElements[config.resultsView.listEntryElementIdPrefix + "-1"];
+    }
+
+    function getResultViewParentElement() {
+      return documentElements[config.resultsView.listParentElementId];
     }
 
     it("should add key down event listeners to the input element", function () {
@@ -222,11 +268,12 @@ describe("search.js SearchBarUI", function () {
 
     it("should use filter view elements as search parameters", function () {
       searchResultData = [];
-      var expectedParameter = {fieldName: "testFilterParameter", value: "testFilterValue"};
+      var expectedParameter = { fieldName: "testFilterParameter", value: "testFilterValue" };
       var child = document.getElementById(config.filtersView.listParentElementId + "-testchild");
       var childFields = document.getElementById(child.id + "-fields");
       childFields.innerText = JSON.stringify(expectedParameter);
-      childNodeElements[config.filtersView.listParentElementId] = child;
+      
+      documentElements[config.filtersView.listParentElementId].appendChild(child);
 
       var searchInputTextElement = getSearchInputTextElement();
       searchInputTextElement.value = "X";
@@ -234,7 +281,7 @@ describe("search.js SearchBarUI", function () {
       eventListeners.searchbar.keyup(createKeyEvent("X", getSearchInputTextElement()));
 
       expect(document.getElementById).toHaveBeenCalledWith(config.filtersView.listParentElementId);
-      expect(searchService).toHaveBeenCalledWith({ searchtext: "X", testFilterParameter: "testFilterValue"}, jasmine.any(Function));
+      expect(searchService).toHaveBeenCalledWith({ searchtext: "X", testFilterParameter: "testFilterValue" }, jasmine.any(Function));
     });
 
     it("should wait the configured amount of time (waitBeforeSearch) before search is updated", function () {
@@ -258,6 +305,17 @@ describe("search.js SearchBarUI", function () {
 
       expect(getResultViewElement().className).toContain("show");
     });
-  });
 
+    it("should add elements for each search result", function () {
+      //nonExistingElements.push(config.filtersView.listEntryElementIdPrefix + "-1");
+
+      var searchInputTextElement = getSearchInputTextElement();
+      searchInputTextElement.value = "X";
+      eventListeners.searchbar.keyup(createKeyEvent("X", getSearchInputTextElement()));
+
+      expect(getResultViewParentElement().appendChild).toHaveBeenCalled();
+      //   var parentElement = document.getElementById(view.listParentElementId);
+      // parentElement.appendChild(listElement);
+    });
+  });
 });

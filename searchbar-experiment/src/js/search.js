@@ -193,9 +193,17 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  */
 
 /**
+ * This function will be called when a new HTML is created.
+ * @callback ElementCreatedListener
+ * @param {Element} newlyCreatedElement
+ */
+
+/**
  * @typedef {Object} SearchbarConfig
  * @property {SearchService} triggerSearch - triggers search (backend)
  * @property {DataConverter} convertData - converts search result data to search ui data
+ * @property {SearchParameterAdder} addPredefinedParametersTo - adds custom search parameters 
+ * @property {ElementCreatedListener} onCreatedElement - this function will be called when a new HTML is created.
  * @property {string} searchAreaElementId - id of the whole search area (default="searcharea")
  * @property {string} inputElementId - id of the search input field (default="searchbar")
  * @property {SearchViewDescription} resultsView - describes the main view containing the search results
@@ -227,6 +235,9 @@ searchbar.SearchbarAPI = (function () {
         throw new Error("data converter needs to be defined.");
       },
       addPredefinedParametersTo: function (object) {
+        //does nothing if not specified otherwise
+      },
+      onCreatedElement: function (element) {
         //does nothing if not specified otherwise
       },
       searchAreaElementId: "searcharea",
@@ -263,6 +274,14 @@ searchbar.SearchbarAPI = (function () {
      */
     this.addPredefinedParametersTo = function (adder) {
       this.config.addPredefinedParametersTo = adder;
+      return this;
+    };
+    /**
+     * Sets the listener, that will be called, when a new HTML element was created.
+     * @param {ElementCreatedListener} listener 
+     */
+    this.addElementCreatedHandler = function (listener) {
+      this.config.onCreatedElement = listener;
       return this;
     };
     this.searchAreaElementId = function (id) {
@@ -453,6 +472,7 @@ searchbar.SearchbarUI = (function () {
   function addResult(entry, i, config) {
     var listElementId = config.resultsView.listEntryElementIdPrefix + "-" + i;
     var resultElement = createListEntryElement(entry, config.resultsView, listElementId);
+    forEachIdElementIncludingChildren(resultElement, config.onCreatedElement);
 
     if (isMenuEntryWithFurtherDetails(entry)) {
       onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails));
@@ -814,6 +834,8 @@ searchbar.SearchbarUI = (function () {
       return;
     }
     filterElement = createListEntryElement(selectedEntryData, view, filterElementId);
+    forEachIdElementIncludingChildren(filterElement, config.onCreatedElement);
+
     onFilterMenuEntrySelected(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
     addMainMenuNavigationHandlers(filterElement, config);
 
@@ -951,9 +973,10 @@ searchbar.SearchbarUI = (function () {
       subMenuEntry = entries[subMenuIndex];
       subMenuEntryId = selectedElement.id + "-" + subMenuView.listEntryElementIdPrefix + "-" + (subMenuIndex + 1);
       subMenuElement = createListEntryElement(subMenuEntry, subMenuView, subMenuEntryId);
+      forEachIdElementIncludingChildren(subMenuElement, config.onCreatedElement);
+
       if (subMenuView.isSelectableFilterOption) {
         addSubMenuNavigationHandlers(subMenuElement);
-        //TODO analyze if the only config dependency here could be removed
         onSubMenuEntrySelected(subMenuElement, handleEventWithEntriesAndConfig(entries, config, selectFilterOption));
       }
       if (subMenuIndex === 0) {
@@ -1092,6 +1115,17 @@ searchbar.SearchbarUI = (function () {
     parentElement.removeChild(element);
     forEachEntryIn(parentElement.childNodes, function(entry, index) {
       entry.id = extractListElementIdProperties(entry.id).reIndex(index + 1);
+    });
+  }
+
+  function forEachIdElementIncludingChildren(element, callback) {
+    if (element.id) {
+      callback(element);
+    }
+    forEachEntryIn(element.childNodes, function(element) {
+      if (element.id) {
+        callback(element);
+      }
     });
   }
 
