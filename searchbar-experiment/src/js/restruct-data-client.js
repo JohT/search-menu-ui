@@ -43,10 +43,10 @@ restruct.DataConverter = (function () {
       console.log("data before it gets restructured:");
       console.log(jsonData);
     }
-    var restructured = datarestructor.Restructor.processJsonUsingDescriptions(jsonData, getDescriptions(), false);
+    var restructured = datarestructor.Restructor.processJsonUsingDescriptions(jsonData, getDescriptions(), debugMode);
     if (debugMode) {
       console.log("restructured data:");
-      console.log(JSON.stringify(restructured));
+      console.log(JSON.stringify(restructured, null, 2));
     }
     return restructured;
   }

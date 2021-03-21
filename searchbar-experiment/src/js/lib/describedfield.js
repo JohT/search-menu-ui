@@ -38,7 +38,7 @@ described_field.internalCreateIfNotExists = describedFieldInternalCreateIfNotExi
 
 described_field.DescribedDataFieldBuilder = (function () {
   /**
-   * Builds a DescribedDataField.  
+   * Builds a DescribedDataField.
    * DescribedDataField is the main element of the restructured data and therefore considered "public".
    * @constructs DescribedDataFieldBuilder
    */
@@ -227,19 +227,19 @@ described_field.DescribedDataFieldBuilder = (function () {
 
 /**
  * Creates a new described data field with all properties of the original one except for dynamically added groups.
- * @param {DescribedDataField} describedDataField 
- * @returns {DescribedDataField} 
+ * @param {DescribedDataField} describedDataField
+ * @returns {DescribedDataField}
  * @memberof described_field
  */
-described_field.copyWithoutGroups = function(describedDataField) {
-  return new described_field.DescribedDataFieldBuilder().fromDescribedDataField(describedDataField).build();
+described_field.copyWithoutGroups = function (describedDataField) {
+  return new described_field.DescribedDataFieldBuilder().fromDescribedDataField(describedDataField).groupNames([]).build();
 };
 
 described_field.DescribedDataFieldGroup = (function () {
   /**
    * Adds groups to DescribedDataFields. These groups are dynamically added properties
    * that contain an array of sub fields of the same type DescribedDataFields.
-   * 
+   *
    * @param {DescribedDataField} dataField
    * @constructs DescribedDataFieldGroup
    * @example new described_field.DescribedDataFieldGroup(field).addGroupEntry("details", detailField);
@@ -269,7 +269,13 @@ described_field.DescribedDataFieldGroup = (function () {
      * @memberOf DescribedDataFieldGroup
      */
     this.addGroupEntries = function (groupName, describedFields) {
-      if (!this.dataField[groupName]) {
+      if (!groupName || groupName.length === 0) {
+        return this;
+      }
+      if (!describedFields || describedFields.length === 0) {
+        return this;
+      }
+      if (this.dataField[groupName] === undefined) {
         this.dataField.groupNames.push(groupName);
         this.dataField[groupName] = [];
       }
@@ -277,12 +283,32 @@ described_field.DescribedDataFieldGroup = (function () {
       var describedField;
       for (index = 0; index < describedFields.length; index += 1) {
         describedField = describedFields[index];
-        describedField = described_field.copyWithoutGroups(describedField);
         this.dataField[groupName].push(describedField);
+      }
+      return this;
+    };
+
+    /**
+     * Adds all groups of the given source field. 
+     * Doesn't add the groups of the sub-group field and therefore limits the hierarchy to 2.
+     * @function
+     * @param {DescribedDataField} sourceField source field that contains the groups to add
+     * @param {number} [subGroupLevel=0] hierarchical/recursive sub group level
+     * @returns {DescribedDataFieldGroup}
+     * @memberOf DescribedDataFieldGroup
+     */
+    this.addGroupsOfField = function (sourceField, subGroupLevel) {
+      var index;
+      var groupEntries, groupName;
+
+      for (index = 0; index < sourceField.groupNames.length; index += 1) {
+        groupName = sourceField.groupNames[index];
+        groupEntries = sourceField[groupName];
+        this.addGroupEntries(groupName, groupEntries, subGroupLevel);
       }
       return this;
     };
   }
 
   return DescribedDataFieldGroup;
-})();
+}());

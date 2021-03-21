@@ -504,31 +504,22 @@ datarestructor.DescribedEntryCreator = (function () {
     var indices = indicesOf(entry.name);
     var propertyNameWithoutArrayIndices = entry.name.replace(removeArrayBracketsRegEx, "");
     var templateResolver = new template_resolver.Resolver(this);
-
-    this.describedField = new described_field.DescribedDataFieldBuilder()
-      .category(description.category)
-      .type(description.type)
-      .abbreviation(description.abbreviation)
-      .image(description.image)
-      .index(indices.numberArray)
-      .displayName(description.getDisplayNameForPropertyName(propertyNameWithoutArrayIndices))
-      .fieldName(description.getFieldNameForPropertyName(propertyNameWithoutArrayIndices))
-      .value(entry.value)
-      .build();
     this.category = description.category;
     this.type = description.type;
     this.abbreviation = description.abbreviation;
     this.image = description.image;
     /**
-     * Array of numbers containing the split index. 
+     * Array of numbers containing the split index.
      * Example: "responses[2].hits.hits[4]._source.name" leads to an array with two elements: [2,4]
      * This is the public version of the internal variable _identifier.index, which contains in contrast all index elements in one point separated string (e.g. "2.4").
      * @type {number[]}
+     * @memberof DescribedEntry#
      */
     this.index = indices.numberArray;
     this.displayName = description.getDisplayNameForPropertyName(propertyNameWithoutArrayIndices);
     this.fieldName = description.getFieldNameForPropertyName(propertyNameWithoutArrayIndices);
     this.value = entry.value;
+    this.groupNames = [];
     this._isMatchingIndex = indices.pointDelimited.indexOf(description.indexStartsWith) == 0;
     this._description = description;
 
@@ -542,21 +533,22 @@ datarestructor.DescribedEntryCreator = (function () {
     };
     this._identifier.groupId = templateResolver.replaceResolvableFields(
       description.groupPattern,
-      templateResolver.resolvableFieldsOfAll(this.describedField, this._description, this._identifier)
+      templateResolver.resolvableFieldsOfAll(this, this._description, this._identifier)
     );
     this._identifier.groupDestinationId = templateResolver.replaceResolvableFields(
       description.groupDestinationPattern,
-      templateResolver.resolvableFieldsOfAll(this.describedField, this._description, this._identifier)
+      templateResolver.resolvableFieldsOfAll(this, this._description, this._identifier)
     );
     this._identifier.deduplicationId = templateResolver.replaceResolvableFields(
       description.deduplicationPattern,
-      templateResolver.resolvableFieldsOfAll(this.describedField, this._description, this._identifier)
+      templateResolver.resolvableFieldsOfAll(this, this._description, this._identifier)
     );
 
     /**
      * Adds an entry to the given group. If the group does not exist, it will be created.
-     * @param {String} groupName 
-     * @param {DescribedEntry} describedEntry 
+     * @param {String} groupName
+     * @param {DescribedEntry} describedEntry
+     * @memberof DescribedEntry.prototype
      */
     this.addGroupEntry = function(groupName, describedEntry) {
       this.addGroupEntries(groupName, [describedEntry]);
@@ -564,12 +556,13 @@ datarestructor.DescribedEntryCreator = (function () {
 
     /**
      * Adds entries to the given group. If the group does not exist, it will be created.
-     * @param {String} groupName 
+     * @param {String} groupName
      * @param {DescribedEntry[]} describedEntries
+     * @memberof DescribedEntry.prototype
      */
     this.addGroupEntries = function(groupName, describedEntries) {
-      var describedFieldDataGroup =  new described_field.DescribedDataFieldGroup(this.describedField);
       if (!this[groupName]) {
+        this.groupNames.push(groupName);
         this[groupName] = [];
       }
       var index;
@@ -577,7 +570,6 @@ datarestructor.DescribedEntryCreator = (function () {
       for (index = 0; index < describedEntries.length; index += 1) {
         describedEntry = describedEntries[index];
         this[groupName].push(describedEntry);
-        describedFieldDataGroup.addGroupEntry(groupName, describedEntry.describedField);
       }
     };
   }
@@ -648,7 +640,7 @@ datarestructor.Transform = (function () {
      */
     this.debugMode = false;
     /**
-     * Enables debug mode. Logs additional informations.
+     * Enables debug mode. Logs additional information.
      * @returns Transform
      */
     this.enableDebugMode = function () {
@@ -678,12 +670,15 @@ datarestructor.Transform = (function () {
    * @returns {DescribedEntry[]}
    */
   function processJsonUsingDescriptions(jsonData, descriptions, debugMode) {
+    if (typeof debugMode !== "boolean") {
+      debugMode = false;
+    }
     // "Flatten" the hierarchical input json to an array of property names (point separated "folders") and values.
     var processedData = internal_object_tools.flattenToArray(jsonData);
     // Fill in properties ending with the name "_comma_separated_values" for array values to make it easier to display them.
     processedData = fillInArrayValues(processedData);
 
-    if ((typeof debugMode === "boolean") && debugMode) {
+    if (debugMode) {
       console.log("flattened data with array values:");
       console.log(processedData);
     }
@@ -700,14 +695,40 @@ datarestructor.Transform = (function () {
     }
     processedData = describedData;
 
+    if (debugMode) {
+      console.log("describedData data:");
+      console.log(processedData);
+    }
+
     // Group entries where a groupPattern is described
     processedData = groupFlattenedData(processedData);
+
+    if (debugMode) {
+      console.log("grouped describedData data:");
+      console.log(processedData);
+    }
 
     // Move group entries where a groupDestinationPattern is described
     processedData = applyGroupDestinationPattern(processedData);
 
+    if (debugMode) {
+      console.log("moved grouped describedData data:");
+      console.log(processedData);
+    }
+
     // Turns the grouped object back into an array of DescribedEntry-Objects
-    return propertiesAsArray(processedData);
+    processedData = propertiesAsArray(processedData);
+    
+    // Converts the internal described entries  into described fields
+    var maxRecursionDepth = 8;
+    processedData = toDescribedFields(processedData, maxRecursionDepth);
+
+    if (debugMode) {
+      console.log("transformed result:");
+      console.log(processedData);
+    }
+
+    return processedData;
   }
 
   /**
@@ -952,9 +973,53 @@ datarestructor.Transform = (function () {
     for (var propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex++) {
       var propertyName = propertyNames[propertyIndex];
       var propertyValue = groupedData[propertyName];
-      result.push(propertyValue.describedField);
+      result.push(propertyValue);
     }
     return result;
+  }
+
+  function toDescribedFields(describedEntities, maxRecursionDepth) {
+    var result = [];
+    var index;
+    var describedEntity;
+    for (index = 0; index < describedEntities.length; index+=1) {
+      describedEntity = describedEntities[index];
+      result.push(toDescribedField(describedEntity, 0, maxRecursionDepth));
+    }
+    return result;
+  }
+
+  function toDescribedField(entry, recursionDepth, maxRecursionDepth) {
+    var field = new described_field.DescribedDataFieldBuilder()
+      .category(entry.category)
+      .type(entry.type)
+      .abbreviation(entry.abbreviation)
+      .image(entry.image)
+      .index(entry.index)
+      .displayName(entry.displayName)
+      .fieldName(entry.fieldName)
+      .value(entry.value)
+      .build();
+    if (recursionDepth > maxRecursionDepth) {
+      return field;
+    }
+    var fieldGroups = new described_field.DescribedDataFieldGroup(field);
+    forEachGroupEntry(entry, function (groupName, groupEntry) {
+      fieldGroups.addGroupEntry(groupName, toDescribedField(groupEntry, recursionDepth + 1, maxRecursionDepth));
+    });
+    return field;
+  }
+
+  function forEachGroupEntry(rootEntry, onFoundEntry) {
+    var groupIndex, entryIndex;
+    var groupName, entry;
+    for (groupIndex = 0; groupIndex < rootEntry.groupNames.length; groupIndex += 1) {
+      groupName = rootEntry.groupNames[groupIndex];
+      for (entryIndex = 0; entryIndex < rootEntry[groupName].length; entryIndex += 1) {
+        entry = rootEntry[groupName][entryIndex];
+        onFoundEntry(groupName, entry);
+      }
+    }
   }
 
   return Transform;

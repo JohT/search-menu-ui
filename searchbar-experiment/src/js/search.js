@@ -1110,6 +1110,7 @@ searchbar.SearchbarUI = (function () {
    * @param {InputEvent} event
    */
   function removeChildElement(event) {
+    //TODO must also reindex sub menus. a changed selection inside the filters should not lead to an error.
     var element = getEventTarget(event);
     var parentElement = element.parentElement;
     parentElement.removeChild(element);
@@ -1190,7 +1191,7 @@ searchbar.SearchbarUI = (function () {
     if (typeof entry.summaries !== "undefined") {
       text = resolver.resolveTemplate(view.listEntrySummaryTemplate);
     }
-    var json = JSON.stringify(entry);
+    var json = JSON.stringify(entry); //TODO must be without spaces
     text += '<p id="' + id + '-fields" style="display: none">' + json + "</p>";
     return text;
   }
