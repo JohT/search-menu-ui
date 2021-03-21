@@ -20,17 +20,19 @@ template_resolver.internalCreateIfNotExists = templateResolverInternalCreateIfNo
 
 var internal_object_tools = internal_object_tools || require("../../lib/js/flattenToArray"); // supports vanilla js & npm
 
-/**
- * Resolver. Is used inside this repository. It could also be used outside.
- */
 template_resolver.Resolver = (function () {
   var removeArrayBracketsRegEx = new RegExp("\\[\\d+\\]", "gi");
 
   /**
-   * Constructor function and container for everything, that needs to exist per instance.
+   * Resolver. Is used inside this repository. It could also be used outside.
+   * @param {*} sourceDataObject The properties of this object will be used to replace the placeholders in the template.
    * @constructs Resolver
+   * @alias module:template_resolver.Resolver
    */
   function Resolver(sourceDataObject) {
+    /**
+     * The properties of this source data object will be used to replace the placeholders in the template.
+     */
     this.sourceDataObject = sourceDataObject;
     /**
      * Resolves the given template.
@@ -58,6 +60,7 @@ template_resolver.Resolver = (function () {
      *
      * @param {...object} varArgs variable count of parameters. Each parameter contains an object that fields should be resolvable for variables.
      * @returns {object} object with resolvable field names and their values.
+     * @public
      */
     this.resolvableFieldsOfAll = function () {
       var map = {};
@@ -98,6 +101,8 @@ template_resolver.Resolver = (function () {
    * For example: detail[2].fieldName="name", detail[2].value="Smith" lead to the additional property detail.name="Smith".
    * @param {object} object with resolvable field names and their values.
    * @returns {object} object with resolvable field names and their values.
+   * @protected
+   * @memberof module:template_resolver.Resolver
    */
   function addFieldsPerGroup(map) {
     var propertyNames = Object.keys(map);
@@ -121,6 +126,8 @@ template_resolver.Resolver = (function () {
    * Infos about the full property name including the name of the group (followed by the separator) and the name of the property itself.
    * @param {String} fullPropertyName
    * @returns {Object} Contains "group" (empty or group name including trailing separator "."), "groupWithoutArrayIndices" and "name" (property name).
+   * @protected
+   * @memberof module:template_resolver.Resolver
    */
   function getPropertyNameInfos(fullPropertyName) {
     var positionOfRightMostSeparator = fullPropertyName.lastIndexOf(".");
@@ -143,6 +150,8 @@ template_resolver.Resolver = (function () {
    * @param {NameValuePair[]} elements flattened array of name-value-pairs
    * @param {object} mapObject container to collect the results. Needs to be created before e.g. using `{}`.
    * @param {function} filterMatchesFunction takes the property name as string argument and returns true (include) or false (exclude).
+   * @protected
+   * @memberof module:template_resolver.Resolver
    */
   function addToFilteredMapObject(elements, mapObject, filterMatchesFunction) {
     var index, element;
@@ -155,9 +164,5 @@ template_resolver.Resolver = (function () {
     return mapObject;
   }
 
-  /**
-   * Public interface
-   * @scope template_resolver.Resolver
-   */
   return Resolver;
-})();
+}());
