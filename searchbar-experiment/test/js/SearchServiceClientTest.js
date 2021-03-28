@@ -85,6 +85,7 @@ describe("search-service-client HttpSearchConfig", function () {
     var httpSearchConfig;
     var searchParameters = { parameter1: "A", parameter2: "B" };
     var httpRequest;
+    var httpSearchConfigBuilder;
     var httpClientUnderTest;
 
     beforeEach(function () {
@@ -96,11 +97,13 @@ describe("search-service-client HttpSearchConfig", function () {
       httpRequest.status = 200;
       httpRequest.responseText = "{}";
 
-      httpClientUnderTest = new searchServiceUnderTest.HttpSearchConfig().debugMode(false)
-        .searchMethod("POST")
-        .searchUrl("http://localhost:9200/_msearch/template")
-        .httpRequest(httpRequest)
-        .build();
+      httpSearchConfigBuilder = new searchServiceUnderTest.HttpSearchConfig()
+      .debugMode(false)
+      .searchMethod("POST")
+      .searchUrl("http://localhost:9200/_msearch/template")
+      .httpRequest(httpRequest);
+
+      httpClientUnderTest = httpSearchConfigBuilder.build();
       httpSearchConfig = httpClientUnderTest.config;
     });
 
@@ -149,5 +152,16 @@ describe("search-service-client HttpSearchConfig", function () {
       httpRequest.onreadystatechange();
       expect(successful).toBeFalsy();
     });
+
+    it("should write additional information into the log in debug mode", function () {
+      var logSpy = spyOn(console, "log");
+      httpClientUnderTest = httpSearchConfigBuilder.debugMode(true).build();
+      httpSearchConfig = httpClientUnderTest.config;
+      var onJsonResultReceived = function () {};
+      httpClientUnderTest.search(searchParameters, onJsonResultReceived);
+      httpRequest.onreadystatechange();
+      expect(logSpy).toHaveBeenCalled();
+    });
+
   });
 });
