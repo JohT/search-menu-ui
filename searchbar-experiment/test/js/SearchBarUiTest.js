@@ -1,12 +1,15 @@
 "use strict";
 
-describe("search.js SearchBarUI", function () {
+var searchbar = searchbar || require("../../src/js/search"); // supports vanilla js & npm
+var searchresulttestdata = searchresulttestdata || require("../../test/js/SearchBarUiTestJsonData");
+
+describe("search.js", function () {
   var searchUnderTest;
   var searchTestData;
 
   beforeEach(function () {
-    searchUnderTest = searchbar || require("../../src/js/search.js");
-    searchTestData = searchresulttestdata || require("../../test/js/SearchBarUiTestJsonData.js");
+    searchUnderTest = searchbar;
+    searchTestData = searchresulttestdata;
   });
 
   /**
@@ -191,107 +194,117 @@ describe("search.js SearchBarUI", function () {
       return documentElements[config.resultsView.listParentElementId];
     }
 
-    it("should add key down event listeners to the input element", function () {
-      expect(document.getElementById).toHaveBeenCalledWith("searchbar");
-      expect(getSearchInputTextElement().addEventListener).toHaveBeenCalledWith("keydown", jasmine.any(Function), false);
-      expect(eventListeners.searchbar.keydown).toBeDefined();
-    });
-
-    it("should reset search input text when escape key is pressed there", function () {
-      eventListeners.searchbar.keydown(createKeyEvent("Escape", getSearchInputTextElement()));
-      expect(documentElements.searchbar.value).toEqual("");
-    });
-
-    it("should hide search area when escape key is pressed on input text", function () {
-      eventListeners.searchbar.keydown(createKeyEvent("Escape", getSearchInputTextElement()));
-      expect(getResultViewElement().className).not.toContain("show");
-    });
-
-    it("should focus the first result when arrow key down is pressed on the input text", function () {
-      eventListeners.searchbar.keydown(createKeyEvent("ArrowDown", getSearchInputTextElement()));
-      expect(getSearchInputTextElement().blur).toHaveBeenCalled();
-      expect(getFirstResultListElement().focus).toHaveBeenCalled();
-    });
-
-    it("should focus the first result when arrow key down is pressed on the input text", function () {
-      nonExistingElements.push(config.resultsView.listEntryElementIdPrefix + "-1");
-      eventListeners.searchbar.keydown(createKeyEvent("ArrowDown", getSearchInputTextElement()));
-      expect(getSearchInputTextElement().blur).not.toHaveBeenCalled();
-    });
-
-    it("should update search when input text character is entered", function () {
-      searchResultData = [];
-      var searchInputTextElement = getSearchInputTextElement();
-      searchInputTextElement.value = "X";
-
-      eventListeners.searchbar.keyup(createKeyEvent("X", getSearchInputTextElement()));
-
-      expect(document.getElementById).toHaveBeenCalledWith(config.resultsView.listParentElementId);
-      expect(getResultViewElement().className).toContain("show");
-    });
-
-    it("shouldn't update search when input text is cleared", function () {
-      searchResultData = [];
-      var searchInputTextElement = getSearchInputTextElement();
-      searchInputTextElement.value = "X";
-
-      eventListeners.searchbar.keyup(createKeyEvent("X", getSearchInputTextElement()));
-
-      searchInputTextElement.value = "";
-      eventListeners.searchbar.keyup(createKeyEvent("Backspace", getSearchInputTextElement()));
-
-      expect(getResultViewElement().className).not.toContain("show");
-    });
-
-    it("should add search text as search parameters", function () {
-      searchResultData = [];
-      var searchInputTextElement = getSearchInputTextElement();
-      searchInputTextElement.value = "X";
-
-      eventListeners.searchbar.keyup(createKeyEvent("X", getSearchInputTextElement()));
-
-      expect(searchService).toHaveBeenCalledWith({ searchtext: "X" }, jasmine.any(Function));
-    });
-
-    it("should add predefined parameters of callback as search parameters", function () {
-      searchResultData = [];
-      var searchInputTextElement = getSearchInputTextElement();
-      searchInputTextElement.value = "X";
-      predefinedParametersCallback.and.callFake(function (parameters) {
-        parameters.constantNumber = 123;
+    describe("should recognize key events", function () {
+      it("should add key down event listeners to the input element", function () {
+        expect(document.getElementById).toHaveBeenCalledWith("searchbar");
+        expect(getSearchInputTextElement().addEventListener).toHaveBeenCalledWith("keydown", jasmine.any(Function), false);
+        expect(eventListeners.searchbar.keydown).toBeDefined();
       });
 
-      eventListeners.searchbar.keyup(createKeyEvent("X", getSearchInputTextElement()));
+      it("should reset search input text when escape key is pressed there", function () {
+        eventListeners.searchbar.keydown(createKeyEvent("Escape", getSearchInputTextElement()));
+        expect(documentElements.searchbar.value).toEqual("");
+      });
 
-      expect(searchService).toHaveBeenCalledWith({ searchtext: "X", constantNumber: 123 }, jasmine.any(Function));
+      it("should hide search area when escape key is pressed on input text", function () {
+        eventListeners.searchbar.keydown(createKeyEvent("Escape", getSearchInputTextElement()));
+        expect(getResultViewElement().className).not.toContain("show");
+      });
+
+      it("should focus the first result when arrow key down is pressed on the input text", function () {
+        eventListeners.searchbar.keydown(createKeyEvent("ArrowDown", getSearchInputTextElement()));
+        expect(getSearchInputTextElement().blur).toHaveBeenCalled();
+        expect(getFirstResultListElement().focus).toHaveBeenCalled();
+      });
+
+      it("should focus the first result when arrow key down is pressed on the input text", function () {
+        nonExistingElements.push(config.resultsView.listEntryElementIdPrefix + "-1");
+        eventListeners.searchbar.keydown(createKeyEvent("ArrowDown", getSearchInputTextElement()));
+        expect(getSearchInputTextElement().blur).not.toHaveBeenCalled();
+      });
     });
 
-    it("should use filter view elements as search parameters", function () {
-      searchResultData = [];
-      var expectedParameter = { fieldName: "testFilterParameter", value: "testFilterValue" };
-      var child = document.getElementById(config.filtersView.listParentElementId + "-testchild");
-      var childFields = document.getElementById(child.id + "-fields");
-      childFields.innerText = JSON.stringify(expectedParameter);
-      
-      documentElements[config.filtersView.listParentElementId].appendChild(child);
+    describe("should trigger search and", function () {
+      it("should update search when input text character is entered", function () {
+        searchResultData = [];
+        var searchInputTextElement = getSearchInputTextElement();
+        searchInputTextElement.value = "X";
 
-      var searchInputTextElement = getSearchInputTextElement();
-      searchInputTextElement.value = "X";
+        var keyEvent = createKeyEvent("X", getSearchInputTextElement());
+        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
 
-      eventListeners.searchbar.keyup(createKeyEvent("X", getSearchInputTextElement()));
+        expect(document.getElementById).toHaveBeenCalledWith(config.resultsView.listParentElementId);
+        expect(getResultViewElement().className).toContain("show");
+      });
 
-      expect(document.getElementById).toHaveBeenCalledWith(config.filtersView.listParentElementId);
-      expect(searchService).toHaveBeenCalledWith({ searchtext: "X", testFilterParameter: "testFilterValue" }, jasmine.any(Function));
-    });
+      it("shouldn't update search when input text is cleared", function () {
+        searchResultData = [];
+        var searchInputTextElement = getSearchInputTextElement();
+        searchInputTextElement.value = "X";
 
-    it("should wait the configured amount of time (waitBeforeSearch) before search is updated", function () {
-      searchResultData = [];
-      var searchInputTextElement = getSearchInputTextElement();
-      searchInputTextElement.value = "X";
+        var keyEvent = createKeyEvent("X", getSearchInputTextElement());
+        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
 
-      eventListeners.searchbar.keyup(createKeyEvent("X", getSearchInputTextElement()));
+        searchInputTextElement.value = "";
+        eventListeners.searchbar.keyup(createKeyEvent("Backspace", getSearchInputTextElement()));
 
-      expect(window.setTimeout).toHaveBeenCalledWith(jasmine.any(Function), config.waitBeforeSearch);
+        expect(getResultViewElement().className).not.toContain("show");
+      });
+
+      it("should add search text as search parameters", function () {
+        searchResultData = [];
+        var searchInputTextElement = getSearchInputTextElement();
+        searchInputTextElement.value = "X";
+
+        var keyEvent = createKeyEvent("X", getSearchInputTextElement());
+        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
+
+        expect(searchService).toHaveBeenCalledWith({ searchtext: "X" }, jasmine.any(Function));
+      });
+
+      it("should add predefined parameters of callback as search parameters", function () {
+        searchResultData = [];
+        var searchInputTextElement = getSearchInputTextElement();
+        searchInputTextElement.value = "X";
+        predefinedParametersCallback.and.callFake(function (parameters) {
+          parameters.constantNumber = 123;
+        });
+
+        var keyEvent = createKeyEvent("X", getSearchInputTextElement());
+        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
+
+        expect(searchService).toHaveBeenCalledWith({ searchtext: "X", constantNumber: 123 }, jasmine.any(Function));
+      });
+
+      it("should use filter view elements as search parameters", function () {
+        searchResultData = [];
+        var expectedParameter = { fieldName: "testFilterParameter", value: "testFilterValue" };
+        var child = document.getElementById(config.filtersView.listParentElementId + "-testchild");
+        var childFields = document.getElementById(child.id + "-fields");
+        childFields.textContent = JSON.stringify(expectedParameter);
+
+        documentElements[config.filtersView.listParentElementId].appendChild(child);
+
+        var searchInputTextElement = getSearchInputTextElement();
+        searchInputTextElement.value = "X";
+
+        var keyEvent = createKeyEvent("X", getSearchInputTextElement());
+        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
+
+        expect(document.getElementById).toHaveBeenCalledWith(config.filtersView.listParentElementId);
+        expect(searchService).toHaveBeenCalledWith({ searchtext: "X", testFilterParameter: "testFilterValue" }, jasmine.any(Function));
+      });
+
+      it("should wait the configured amount of time (waitBeforeSearch) before search is updated", function () {
+        searchResultData = [];
+        var searchInputTextElement = getSearchInputTextElement();
+        searchInputTextElement.value = "X";
+
+        var keyEvent = createKeyEvent("X", getSearchInputTextElement());
+        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
+
+        expect(window.setTimeout).toHaveBeenCalledWith(jasmine.any(Function), config.waitBeforeSearch);
+      });
     });
 
     it("should show the results when search area is in focus", function () {
@@ -307,15 +320,13 @@ describe("search.js SearchBarUI", function () {
     });
 
     it("should add elements for each search result", function () {
-      //nonExistingElements.push(config.filtersView.listEntryElementIdPrefix + "-1");
-
       var searchInputTextElement = getSearchInputTextElement();
       searchInputTextElement.value = "X";
-      eventListeners.searchbar.keyup(createKeyEvent("X", getSearchInputTextElement()));
+
+      var keyEvent = createKeyEvent("X", getSearchInputTextElement());
+      eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
 
       expect(getResultViewParentElement().appendChild).toHaveBeenCalled();
-      //   var parentElement = document.getElementById(view.listParentElementId);
-      // parentElement.appendChild(listElement);
     });
   });
 });

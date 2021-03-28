@@ -1,6 +1,6 @@
 // Configure the search service client.
 //var restSearchClient = searchService.RestSearchConfig.searchURI("../data/KontenMultiSearchTemplateResponse.json").searchMethod("GET").build();
-var httpSearchClient = searchService.HttpSearchConfig
+var httpSearchClient = new searchService.HttpSearchConfig()
 .searchMethod("POST")
 .searchContentType("application/x-ndjson")
 .searchUrl(

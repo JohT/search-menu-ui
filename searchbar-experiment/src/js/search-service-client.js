@@ -1,14 +1,25 @@
 /**
- * @fileOverview Provides the (http) client/connection to the search backend service.
+ * @file Provides the (http) client/connection to the search backend service.
  * @version ${project.version}
+ * @author JohT
  */
+//TODO JSDoc
+
+"use strict";
+
+var module = datarestructorInternalCreateIfNotExists(module); // Fallback for vanilla js without modules
+
+function datarestructorInternalCreateIfNotExists(objectToCheck) {
+  return objectToCheck || {};
+}
 
 /**
- * SearchServiceClient namespace declaration.
+ * SearchServiceClient.
  * It provides the (http) client/connection to the search backend service.
- * @default {}
+ * @module searchService
  */
-var searchService = searchService || {};
+var searchService = (module.exports = {}); // Export module for npm...
+searchService.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
 
 /**
  * @typedef {Object} HttpSearchConfig Configures the HTTP request for the search.
@@ -19,40 +30,129 @@ var searchService = searchService || {};
  * @property {boolean} [debugMode=false] debug mode prints some more info to the console.
  */
 
-/**
- * Configures the HTTP search service.
- * @namespace
- */
 searchService.HttpSearchConfig = (function () {
-  "use strict";
-
-  var config = {
-    searchUrl: "",
-    searchMethod: "POST",
-    searchContentType: "application/json",
-    searchBodyTemplate: null,
+  /**
+   * Configures and builds the {@link module:searchService.HttpClient}.
+   * DescribedDataField is the main element of the restructured data and therefore considered "public".
+   * @constructs HttpSearchConfig
+   * @alias module:searchService.HttpSearchConfig
+   */
+  function HttpSearchConfig() {
+    this.config = {
+      /**
+       * URL, that is called for every search request.
+       * @type {String}
+       */
+      searchUrl: "",
+      /**
+       * HTTP Method, that is used for every search request
+       * @type {String}
+       */
+      searchMethod: "POST",
+      /**
+       * HTTP MIME-Type of the body, that is used for every search request
+       * @type {String}
+       */
+      searchContentType: "application/json",
+      /**
+       * HTTP body template, that is used for every search request. 
+       * It may include variables in double curly brackets like {{jsonSearchParameters}}.
+       * @type {String}
+       */
+       searchBodyTemplate: null,
+      /**
+       * Resolves variables in the search body template based on the given search parameters object.
+       * The variable {{jsonSearchParameters}} will be replaces by the JSON of all search parameters.
+       * @param {Object} searchParameters object properties will be used to replace the variables of the searchBodyTemplate
+       */
+      resolveSearchBody: function (searchParameters) {
+        if (!this.searchBodyTemplate) {
+          return null;
+        }
+        var jsonSearchParameters = JSON.stringify(searchParameters);
+        var resolvedBody = this.searchBodyTemplate;
+        resolvedBody = resolveVariableInTemplate(resolvedBody, "jsonSearchParameters", jsonSearchParameters);
+        resolvedBody = resolveVariablesInTemplate(resolvedBody, searchParameters);
+        if (this.debugMode) {
+          console.log("template search body=" + this.searchBodyTemplate);
+          console.log("{{jsonSearchParameters}}=" + jsonSearchParameters);
+          console.log("resolved search body=" + resolvedBody);
+        }
+        return resolvedBody;
+      },
+      /**
+       * Contains the XMLHttpRequest that is used to handle HTTP requests and responses.
+       * Defaults to XMLHttpRequest.
+       * @type {XMLHttpRequest}
+       */
+      httpRequest: null,
+      debugMode: false
+    };
     /**
-     * Resolves variables in the search body template based on the given search parameters object.
-     * The variable {{jsonSearchParameters}} will be replaces by the JSON of all search parameters.
-     * @param {Object} searchParameters object properties will be used to replace the variables of the searchBodyTemplate
+     * Sets the url for the HTTP request for the search.
+     * @param {String} value
+     * @return {module:searchService.HttpSearchConfig}
      */
-    resolveSearchBody: function (searchParameters) {
-      if (!this.searchBodyTemplate) {
-        return null;
+    this.searchUrl = function (value) {
+      this.config.searchUrl = value;
+      return this;
+    };
+    /**
+     * Sets the HTTP method for the search. Defaults to "POST".
+     * @param {String} value
+     * @return {module:searchService.HttpSearchConfig}
+     */
+    this.searchMethod = function (value) {
+      this.config.searchMethod = value;
+      return this;
+    };
+    /**
+     * Sets the HTTP content type of the request body. Defaults to "application/json".
+     * @param {String} value
+     * @return {module:searchService.HttpSearchConfig}
+     */
+    this.searchContentType = function (value) {
+      this.config.searchContentType = value;
+      return this;
+    };
+    /**
+     * Sets the HTTP request body template that may contain variables (e.g. {{searchParameters}}) in double curly brackets, or null if there is none.
+     * @param {String} value
+     * @return {module:searchService.HttpSearchConfig}
+     */
+    this.searchBodyTemplate = function (value) {
+      this.config.searchBodyTemplate = value;
+      return this;
+    };
+    /**
+     * Sets the HTTP-Request-Object. Defaults to XMLHttpRequest if not set.
+     * @param {String} value
+     * @return {module:searchService.HttpSearchConfig}
+     */
+    this.httpRequest = function (value) {
+      this.config.httpRequest = value;
+      return this;
+    };
+    /**
+     * Sets the debug mode, that prints some more info to the console.
+     * @param {boolean} value
+     * @return {module:searchService.HttpSearchConfig}
+     */
+     this.debugMode = function (value) {
+      this.config.debugMode = value === true;
+      return this;
+    };
+    /**
+     * Uses the configuration to build the http client that provides the function "search" (parameters: searchParameters, onSuccess callback).
+     * @returns {HttpSearchClient}
+     */
+    this.build = function () {
+      if (!this.httpRequest) {
+        this.httpRequest = getStandardHttpRequest();
       }
-      var jsonSearchParameters = JSON.stringify(searchParameters);
-      var resolvedBody = this.searchBodyTemplate;
-      resolvedBody = resolveVariableInTemplate(resolvedBody, "jsonSearchParameters", jsonSearchParameters);
-      resolvedBody = resolveVariablesInTemplate(resolvedBody, searchParameters);
-      if (this.debugMode) {
-        console.log("template search body=" + this.searchBodyTemplate);
-        console.log("{{jsonSearchParameters}}=" + jsonSearchParameters);
-        console.log("resolved search body=" + resolvedBody);
-      }
-      return resolvedBody;
-    },
-    debugMode: false
-  };
+      return new searchService.HttpClient(this.config);
+    };
+  }
 
   function resolveVariablesInTemplate(templateString, sourceDataObject) {
     var resolvedString = templateString;
@@ -84,58 +184,38 @@ searchService.HttpSearchConfig = (function () {
   }
 
   /**
-   * Public interface
-   * @scope searchService.HttpSearchConfig
+   * Provide the XMLHttpRequest constructor for Internet Explorer 5.x-6.x:
+   * Other browsers (including Internet Explorer 7.x-9.x) do not redefine
+   * XMLHttpRequest if it already exists.
+   *
+   * This example is based on findings at:
+   * http://blogs.msdn.com/xmlteam/archive/2006/10/23/using-the-right-version-of-msxml-in-internet-explorer.aspx
+   * @returns {XMLHttpRequest}
    */
-  return {
-    /**
-     * Sets the url for the HTTP request for the search.
-     * @param {String} value
-     */
-    searchUrl: function (value) {
-      config.searchUrl = value;
-      return this;
-    },
-    /**
-     * Sets the HTTP method for the search. Defaults to "POST".
-     * @param {String} value
-     */
-    searchMethod: function (value) {
-      config.searchMethod = value;
-      return this;
-    },
-    /**
-     * Sets the HTTP content type of the request body. Defaults to "application/json".
-     * @param {String} value
-     */
-    searchContentType: function (value) {
-      config.searchContentType = value;
-      return this;
-    },
-    /**
-     * Sets the HTTP request body template that may contain variables (e.g. {{searchParameters}}) in double curly brackets, or null if there is none.
-     * @param {String} value
-     */
-    searchBodyTemplate: function (value) {
-      config.searchBodyTemplate = value;
-      return this;
-    },
-    /**
-     * Sets the debug mode, that prints some more info to the console.
-     * @param {boolean} value
-     */
-    debugMode: function (value) {
-      config.debugMode = value === true;
-      return this;
-    },
-    /**
-     * Uses the configuration to build the http client that provides the function "search" (parameters: searchParameters, onSuccess callback).
-     * @returns {HttpSearchClient}
-     */
-    build: function () {
-      return new searchService.HttpClient(config);
+  function getStandardHttpRequest() {
+    if (typeof XMLHttpRequest !== "undefined") {
+      return new XMLHttpRequest();
     }
-  };
+    try {
+      return new ActiveXObject("Msxml2.XMLHTTP.6.0");
+    } catch (e) {
+      console.log("XMLHttpRequest Msxml2.XMLHTTP.6.0 not available: " + e);
+    }
+    try {
+      return new ActiveXObject("Msxml2.XMLHTTP.3.0");
+    } catch (e) {
+      console.log("XMLHttpRequest Msxml2.XMLHTTP.3.0 not available: " + e);
+    }
+    try {
+      return new ActiveXObject("Microsoft.XMLHTTP");
+    } catch (e) {
+      console.log("XMLHttpRequest Microsoft.XMLHTTP not available: " + e);
+    }
+    // Microsoft.XMLHTTP points to Msxml2.XMLHTTP and is redundant
+    throw new Error("This browser does not support XMLHttpRequest.");
+  }
+
+  return HttpSearchConfig;
 }());
 
 /**
@@ -157,25 +237,15 @@ searchService.HttpSearchConfig = (function () {
  * @property {SearchService} search
  */
 
-/**
- * HttpClient.
- *
- * Contains the "backend-connection" of the search bar. It submits the search query,
- * parses the results and informs the callback as soon as these results are available.
- *
- * @namespace
- */
 searchService.HttpClient = (function () {
-  "use strict";
-
   /**
-   * This (constructor) function is called on "new searchService.HttpSearchConfig(config)"
-   * with the search client configuration as parameter. It contains everything that needs
-   * to be initialized and constructed for this specific http service instance.
+   * HttpClient.
    *
-   * Functions outside of this object can be considered as static (for every instance).
-   * They can also be considered to be "private", since they can not be accessed from outside.
+   * Contains the "backend-connection" of the search bar. It submits the search query,
+   * parses the results and informs the callback as soon as these results are available.
    * @param {HttpSearchConfig} config
+   * @constructs HttpClient
+   * @alias module:searchService.HttpClient
    */
   var instance = function (config) {
     /**
@@ -184,26 +254,11 @@ searchService.HttpClient = (function () {
      */
     this.config = config;
     /**
-     * Contains the XMLHttpRequest that is used to handle HTTP requests and responses.
-     * @type {XMLHttpRequest}
-     */
-    this.httpRequest = getHttpRequest();
-    /**
      * This function will be called to trigger search (calling the search backend).
      * @param {Object} searchParameters object that contains all parameters as properties. It will be converted to JSON.
      * @param {SearchServiceResultAvailable} onJsonResultReceived will be called when search results are available.
      */
-    this.search = createSearchFunction(this.config, this.httpRequest);
-
-    /**
-     * Overrides the XMLHttpRequest that is used to handle HTTP requests and responses.
-     * This function is primary meant to be used for testing purposes to mock XMLHttpRequest.
-     * @param {XMLHttpRequest} httpRequest 
-     */
-    this.setHttpRequest = function(httpRequest) {
-      this.httpRequest = httpRequest;
-      this.search = createSearchFunction(this.config, this.httpRequest);
-    }
+    this.search = createSearchFunction(this.config, this.config.httpRequest);
   };
 
   function createSearchFunction(config, httpRequest) {
@@ -265,23 +320,6 @@ searchService.HttpClient = (function () {
     httpRequest.open(request.method, request.url, true);
     httpRequest.setRequestHeader("Content-Type", request.contentType);
     httpRequest.send(request.body);
-  }
-
-  function getHttpRequest() {
-    if (typeof XMLHttpRequest !== "undefined") {
-      return new XMLHttpRequest();
-    }
-    try {
-      return new ActiveXObject("Msxml2.XMLHTTP.6.0");
-    } catch (e) {}
-    try {
-      return new ActiveXObject("Msxml2.XMLHTTP.3.0");
-    } catch (e) {}
-    try {
-      return new ActiveXObject("Microsoft.XMLHTTP");
-    } catch (e) {}
-    // Microsoft.XMLHTTP points to Msxml2.XMLHTTP and is redundant
-    throw new Error("This browser does not support XMLHttpRequest.");
   }
 
   return instance;

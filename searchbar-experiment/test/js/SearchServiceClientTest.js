@@ -1,68 +1,83 @@
 "use strict";
 
+var searchService = searchService || require("../../src/js/search-service-client"); // supports vanilla js & npm
+
 describe("search-service-client HttpSearchConfig", function () {
   var searchServiceUnderTest;
 
   beforeEach(function () {
-    searchServiceUnderTest = searchService || require("../../src/js/search-service-client");
+    searchServiceUnderTest = searchService;
+  });
+
+  describe("detect empty objects and", function () {
+    it("should create a new object if the given one doesn't exist", function () {
+      var result = searchService.internalCreateIfNotExists(null);
+      expect(result).toEqual({});
+    });
+  
+    it("should use the given object if it exists", function () {
+      var expectedExistingObject = {anytestproperty: 3};
+      var result = searchService.internalCreateIfNotExists(expectedExistingObject);
+      expect(result).toEqual(expectedExistingObject);
+    });
   });
 
   describe("HttpSearchConfig", function () {
     var httpSearchConfig;
 
     beforeEach(function () {
-      httpSearchConfig = searchServiceUnderTest.HttpSearchConfig;
+      httpSearchConfig = new searchServiceUnderTest.HttpSearchConfig();
     });
 
     it("should contain configured debug mode", function () {
       var expectedValue = true;
-      var httpClient = httpSearchConfig.debugMode(expectedValue).build();
-      expect(httpClient.config.debugMode).toEqual(expectedValue);
+      httpSearchConfig = httpSearchConfig.debugMode(expectedValue);
+      expect(httpSearchConfig.config.debugMode).toEqual(expectedValue);
     });
 
     it("should contain configured search method", function () {
       var expectedValue = "POST";
-      var httpClient = httpSearchConfig.searchMethod(expectedValue).build();
-      expect(httpClient.config.searchMethod).toEqual(expectedValue);
+      httpSearchConfig = httpSearchConfig.searchMethod(expectedValue);
+      expect(httpSearchConfig.config.searchMethod).toEqual(expectedValue);
     });
 
     it("should contain configured search url", function () {
       var expectedValue = "http://localhost:9200/_msearch/template";
-      var httpClient = httpSearchConfig.searchUrl(expectedValue).build();
-      expect(httpClient.config.searchUrl).toEqual(expectedValue);
+      httpSearchConfig = httpSearchConfig.searchUrl(expectedValue);
+      expect(httpSearchConfig.config.searchUrl).toEqual(expectedValue);
     });
 
     it("should contain configured search content type", function () {
       var expectedValue = "application/json";
-      var httpClient = httpSearchConfig.searchContentType(expectedValue).build();
-      expect(httpClient.config.searchContentType).toEqual(expectedValue);
+      httpSearchConfig = httpSearchConfig.searchContentType(expectedValue);
+      expect(httpSearchConfig.config.searchContentType).toEqual(expectedValue);
     });
 
     it("should contain configured search request body template", function () {
       var expectedValue = '{"index": "customers"}';
-      var httpClient = httpSearchConfig.searchBodyTemplate(expectedValue).build();
-      expect(httpClient.config.searchBodyTemplate).toEqual(expectedValue);
+      httpSearchConfig = httpSearchConfig.searchBodyTemplate(expectedValue);
+      expect(httpSearchConfig.config.searchBodyTemplate).toEqual(expectedValue);
     });
 
     it("should resolve variables in the search request body template", function () {
       var template = "{{variable1}}-{{variable2}}";
       var variables = { variable1: "AB", variable2: "CD" };
-      var httpClient = httpSearchConfig.searchBodyTemplate(template).build();
-      expect(httpClient.config.resolveSearchBody(variables)).toEqual("AB-CD");
+      httpSearchConfig = httpSearchConfig.searchBodyTemplate(template);
+      expect(httpSearchConfig.config.resolveSearchBody(variables)).toEqual("AB-CD");
     });
 
     it("should resolve variables in the search request body template with additional logs in debug mode", function () {
       var template = "{{variable1}}-{{variable2}}";
       var variables = { variable1: "AB", variable2: "CD" };
-      var httpClient = httpSearchConfig.searchBodyTemplate(template).debugMode(true).build();
-      expect(httpClient.config.resolveSearchBody(variables)).toEqual("AB-CD");
+      httpSearchConfig = httpSearchConfig.searchBodyTemplate(template).debugMode(true);
+      expect(httpSearchConfig.config.resolveSearchBody(variables)).toEqual("AB-CD");
     });
 
     it("should resolve {{jsonSearchParameters}} in the search request body template with all variables as json", function () {
       var template = "{{jsonSearchParameters}}";
       var variables = { variable1: "AB", variable2: "CD" };
-      var httpClient = httpSearchConfig.searchBodyTemplate(template).build();
-      expect(httpClient.config.resolveSearchBody(variables)).toEqual('{"variable1":"AB","variable2":"CD"}');
+      httpSearchConfig = httpSearchConfig.searchBodyTemplate(template);
+      expect(httpSearchConfig.config.resolveSearchBody(variables)).toEqual('{"variable1":"AB","variable2":"CD"}');
     });
   });
 
@@ -73,12 +88,6 @@ describe("search-service-client HttpSearchConfig", function () {
     var httpClientUnderTest;
 
     beforeEach(function () {
-      httpClientUnderTest = searchServiceUnderTest.HttpSearchConfig.debugMode(false)
-        .searchMethod("POST")
-        .searchUrl("http://localhost:9200/_msearch/template")
-        .build();
-      httpSearchConfig = httpClientUnderTest.config;
-
       httpRequest = {};
       httpRequest.open = function () {};
       httpRequest.setRequestHeader = function () {};
@@ -87,7 +96,12 @@ describe("search-service-client HttpSearchConfig", function () {
       httpRequest.status = 200;
       httpRequest.responseText = "{}";
 
-      httpClientUnderTest.setHttpRequest(httpRequest);
+      httpClientUnderTest = new searchServiceUnderTest.HttpSearchConfig().debugMode(false)
+        .searchMethod("POST")
+        .searchUrl("http://localhost:9200/_msearch/template")
+        .httpRequest(httpRequest)
+        .build();
+      httpSearchConfig = httpClientUnderTest.config;
     });
 
     it("should take successfully received data", function () {

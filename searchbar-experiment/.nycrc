@@ -1,0 +1,21 @@
+{
+    "all": true,
+    "include": [
+        "src/**/*.js"
+    ],
+    "exclude": [
+        "**/lib/**/*.js",
+        "**/polyfills/**/*.js",
+        "**/search-binding.js"
+    ],
+    "reporter": [
+        "html",
+        "text",
+        "json-summary"
+    ],
+    "check-coverage": true,
+    "branches": 35,
+    "lines": 0,
+    "functions": 0,
+    "statements": 0
+}

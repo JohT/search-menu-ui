@@ -1,0 +1,14 @@
+{
+  "spec_dir": "test/js",
+  "spec_files": [
+    "**/*Test.js"
+  ],
+  "helpers": [
+    "polyfills/**/*.js",
+    "**/*Data.js",
+    "**/*Fixture.js",
+    "helpers/**/*.js"
+  ],
+  "stopSpecOnExpectationFailure": false,
+  "random": true
+}

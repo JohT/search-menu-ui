@@ -1,6 +1,6 @@
 "use strict";
 
-var searchresulttestdata = {};
+var searchresulttestdata = module.exports={} || {};
 
 searchresulttestdata.SearchResult = (function () {
   //TODO convert and fill in test data from comments below

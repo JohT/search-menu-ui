@@ -3,17 +3,30 @@
 var restruct = restruct || require("../../src/js/restruct-data-client"); // supports vanilla js & npm
 
 describe("restruct-data-client.Data", function () {
-  var dataConverter;
+  var dataConverterClient;
 
   beforeEach(function () {
-    dataConverter = new restruct.DataConverter();
+    dataConverterClient = new restruct.DataConverter();
   });
 
-  describe("descriptions ", function () {
+  describe("detect empty objects and", function () {
+    it("should create a new object if the given one doesn't exist", function () {
+      var result = restruct.internalCreateIfNotExists(null);
+      expect(result).toEqual({});
+    });
+  
+    it("should use the given object if it exists", function () {
+      var expectedExistingObject = {anytestproperty: 3};
+      var result = restruct.internalCreateIfNotExists(expectedExistingObject);
+      expect(result).toEqual(expectedExistingObject);
+    });
+  });
+
+  describe("should provide descriptions of the data structure and", function () {
     var descriptions;
 
     beforeEach(function () {
-      descriptions = dataConverter.getDescriptions();
+      descriptions = dataConverterClient.getDescriptions();
     });
 
     function forEachDescription(callback) {
@@ -85,5 +98,29 @@ describe("restruct-data-client.Data", function () {
       });
     });
 
+  });
+  describe("should delegate data conversion and ", function () {
+    var debugModeEnabled = true;
+    var debugModeDisabled = false;
+    var dataConverter;
+
+    beforeEach(function () {
+      dataConverter = dataConverterClient.createDataConverter(debugModeDisabled);
+    });
+
+    it("should be able to convert an empty array object", function () {
+      var json = JSON.stringify([]);
+      var result = dataConverter(json);
+      expect(result).toEqual([]);
+    });
+
+    it("should be able to convert an empty array object in debugMode", function () {
+      var logSpy = spyOn(console, "log");
+      dataConverter = dataConverterClient.createDataConverter(debugModeEnabled);
+      var json = JSON.stringify([]);
+      var result = dataConverter(json);
+      expect(result).toEqual([]);
+      expect(logSpy).toHaveBeenCalled();
+    });
   });
 });

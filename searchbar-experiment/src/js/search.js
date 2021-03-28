@@ -1,17 +1,27 @@
 /**
- * @fileOverview "Searchbar" for the web client
+ * @file "Searchbar" for the web client
  * @version ${project.version}
+ * @author JohT
  */
+//TODO JSDoc
+
+var module = datarestructorInternalCreateIfNotExists(module); // Fallback for vanilla js without modules
+
+function datarestructorInternalCreateIfNotExists(objectToCheck) {
+  return objectToCheck || {};
+}
 
 /**
- * searchbar namespace declaration.
- * It contains all functions for the "search as you type" feature.
- * @default {}
+ * Contains all functions for the "search as you type" feature.
+ * @module searchbar
  */
-var searchbar = searchbar || {};
+ var searchbar = module.exports={}; // Export module for npm...
+ searchbar.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
 
-var template_resolver = template_resolver || require("../../src/js/lib/templateResolver"); // supports vanilla js & npm
-var described_field = described_field || require("../../src/js/lib/describedfield"); // supports vanilla js & npm
+//TODO must find a way to use the "dist" module
+//TODO must find a way to use ie compatible module
+var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
+var described_field = described_field || require("data-restructor/devdist/describedfield"); // supports vanilla js & npm
 
 /**
  * @typedef {Object} SearchViewDescription Describes a part of the search view (e.g. search result details).
@@ -414,7 +424,7 @@ searchbar.SearchbarUI = (function () {
         clearTimeout(this.waitBeforeSearchTimer);
       }
       var newSearchText = getEventTarget(event).value;
-      this.waitBeforeSearchTimer = setTimeout(function () {
+      this.waitBeforeSearchTimer = window.setTimeout(function () {
         if (newSearchText !== this.currentSearchText || this.currentSearchText === "") {
           updateSearch(newSearchText, config);
           this.currentSearchText = newSearchText;
@@ -434,7 +444,7 @@ searchbar.SearchbarUI = (function () {
       }
     });
     addEvent("focusout", searchareaElement, function (event) {
-      this.focusOutTimer = setTimeout(function () {
+      this.focusOutTimer = window.setTimeout(function () {
         hideMenu(config);
       }, config.waitBeforeClose);
     });
@@ -695,7 +705,9 @@ searchbar.SearchbarUI = (function () {
       mainMenuId: extractedMainMenuType + "-" + extractedMainMenuIndex,
       hiddenFieldsId: id + "-fields",
       hiddenFields: function () {
-        return JSON.parse(document.getElementById(id + "-fields").innerText);
+        var hiddenFieldsElement = document.getElementById(id + "-fields");
+        var hiddenFieldsJson = (typeof hiddenFieldsElement.textContent !== "undefined")? hiddenFieldsElement.textContent : hiddenFieldsElement.innerText;
+        return JSON.parse(hiddenFieldsJson);
       },
       isFirstElement: extractedIndex <= 1,
       isSubMenu: splittedId.length > 3
@@ -1343,7 +1355,7 @@ searchbar.SearchbarUI = (function () {
   function onMouseOverDelayed(element, delayTime, eventHandler) {
     addEvent("mouseover", element, function (event) {
       this.originalEvent = cloneObject(event);
-      this.delayedHandlerTimer = setTimeout(function () {
+      this.delayedHandlerTimer = window.setTimeout(function () {
         eventHandler(typeof this.originalEvent !== "undefined"? this.originalEvent : event);
       }, delayTime); 
       addEvent("mouseout", element, function () {

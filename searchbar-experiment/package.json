@@ -1,0 +1,31 @@
+{
+  "name": "searchbar-experiment",
+  "version": "1.0.0",
+  "description": "An experiment with a generic search menu",
+  "main": "index.html",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jasmine --config=./test/js/jasmine.json",
+    "coverage": "nyc npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JohT/private-snippets.git"
+  },
+  "keywords": [
+    "search",
+    "experiement"
+  ],
+  "author": "JohT",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "data-restructor": "^3.1.0"
+  },
+  "devDependencies": {
+    "jasmine": "^3.7.0",
+    "jsdom": "^16.5.1",
+    "nyc": "^15.1.0"
+  }
+}

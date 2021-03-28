@@ -1,13 +1,30 @@
 /**
- * restruct namespace declaration.
- * Adapts the search result JSON from the server to the data structure needed by the search UI.
- * @default {}
+ * @file restruct-data-client adapts the search result JSON from the server to the data structure needed by the search UI.
+ * @version
+ * @author JohT
  */
-var restruct = restruct || {};
+//TODO JSDoc
+
+ "use strict";
+
+var module = datarestructorInternalCreateIfNotExists(module); // Fallback for vanilla js without modules
+
+function datarestructorInternalCreateIfNotExists(objectToCheck) {
+  return objectToCheck || {};
+}
+
+/**
+ * Adapts the search result JSON from the server to the data structure needed by the search UI.
+ * @module restruct
+ */
+ var restruct = module.exports={}; // Export module for npm...
+ restruct.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
+ 
+//TODO must find a way to use the "dist" module
+//TODO must find a way to use ie compatible module
+var datarestructor = datarestructor || require("data-restructor/devdist/datarestructor"); // supports vanilla js & npm
 
 restruct.DataConverter = (function () {
-  "use strict";
-
   /**
    * Provides the data converter for the search. 
    * It uses "datarestructor" and acts as a delegating client in between.
@@ -43,7 +60,11 @@ restruct.DataConverter = (function () {
       console.log("data before it gets restructured:");
       console.log(jsonData);
     }
-    var restructured = datarestructor.Restructor.processJsonUsingDescriptions(jsonData, getDescriptions(), debugMode);
+    var transform = new datarestructor.Transform(getDescriptions());
+    if (debugMode) {
+      transform.enableDebugMode();
+    }
+    var restructured = transform.processJson(jsonData);
     if (debugMode) {
       console.log("restructured data:");
       console.log(JSON.stringify(restructured, null, 2));

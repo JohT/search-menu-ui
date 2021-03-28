@@ -1,10 +1,12 @@
 "use strict";
 
+var searchbar = searchbar || require("../../src/js/search"); // supports vanilla js & npm
+
 describe("search.js SearchBarApi", function () {
   var searchUnderTest;
 
   beforeEach(function () {
-    searchUnderTest = searchbar || require("../../src/js/search.js");
+    searchUnderTest = searchbar;
   });
 
   describe("SearchBarApi is predefined and", function () {
