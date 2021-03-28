@@ -86,6 +86,19 @@ describe("search.js", function () {
     };
   }
 
+  describe("detect empty objects and", function () {
+    it("should create a new object if the given one doesn't exist", function () {
+      var result = searchUnderTest.internalCreateIfNotExists(null);
+      expect(result).toEqual({});
+    });
+
+    it("should use the given object if it exists", function () {
+      var expectedExistingObject = { anytestproperty: 3 };
+      var result = searchUnderTest.internalCreateIfNotExists(expectedExistingObject);
+      expect(result).toEqual(expectedExistingObject);
+    });
+  });
+
   describe("SearchBarUI", function () {
     var searchBarUiUnderTest;
     var config;
@@ -194,7 +207,7 @@ describe("search.js", function () {
       return documentElements[config.resultsView.listParentElementId];
     }
 
-    describe("should recognize key events", function () {
+    describe("should recognize key events and", function () {
       it("should add key down event listeners to the input element", function () {
         expect(document.getElementById).toHaveBeenCalledWith("searchbar");
         expect(getSearchInputTextElement().addEventListener).toHaveBeenCalledWith("keydown", jasmine.any(Function), false);
@@ -224,6 +237,32 @@ describe("search.js", function () {
       });
     });
 
+    describe("should recognize focus changes and", function () {
+      it("should show the results when search area is in focus", function () {
+        var searchInputTextElement = getSearchInputTextElement();
+        searchInputTextElement.value = "X";
+
+        var searchAreaElementId = config.searchAreaElementId;
+        var searchAreaElement = documentElements[searchAreaElementId];
+
+        eventListeners[searchAreaElementId].focusin({ currentTarget: searchAreaElement });
+
+        expect(getResultViewElement().className).toContain("show");
+      });
+
+      it("should hide the results when search looses focus", function () {
+        var searchInputTextElement = getSearchInputTextElement();
+        searchInputTextElement.value = "X";
+
+        var searchAreaElementId = config.searchAreaElementId;
+        var searchAreaElement = documentElements[searchAreaElementId];
+
+        eventListeners[searchAreaElementId].focusout({ currentTarget: searchAreaElement });
+
+        expect(getResultViewElement().className).not.toContain("show");
+      });
+    });
+
     describe("should trigger search and", function () {
       it("should update search when input text character is entered", function () {
         searchResultData = [];
@@ -240,13 +279,14 @@ describe("search.js", function () {
       it("shouldn't update search when input text is cleared", function () {
         searchResultData = [];
         var searchInputTextElement = getSearchInputTextElement();
-        searchInputTextElement.value = "X";
 
+        searchInputTextElement.value = "X";
         var keyEvent = createKeyEvent("X", getSearchInputTextElement());
         eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
 
         searchInputTextElement.value = "";
-        eventListeners.searchbar.keyup(createKeyEvent("Backspace", getSearchInputTextElement()));
+        keyEvent = createKeyEvent("Backspace", getSearchInputTextElement());
+        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
 
         expect(getResultViewElement().className).not.toContain("show");
       });
@@ -305,18 +345,6 @@ describe("search.js", function () {
 
         expect(window.setTimeout).toHaveBeenCalledWith(jasmine.any(Function), config.waitBeforeSearch);
       });
-    });
-
-    it("should show the results when search area is in focus", function () {
-      var searchInputTextElement = getSearchInputTextElement();
-      searchInputTextElement.value = "X";
-
-      var searchAreaElementId = config.searchAreaElementId;
-      var searchAreaElement = documentElements[searchAreaElementId];
-
-      eventListeners[searchAreaElementId].focusin({ currentTarget: searchAreaElement });
-
-      expect(getResultViewElement().className).toContain("show");
     });
 
     it("should add elements for each search result", function () {

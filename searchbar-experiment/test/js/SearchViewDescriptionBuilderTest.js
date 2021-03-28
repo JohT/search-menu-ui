@@ -16,6 +16,18 @@ describe("search.js SearchViewDescription", function () {
       searchViewDescriptionBuilderUnderTest = new searchUnderTest.SearchViewDescriptionBuilder();
     });
 
+    describe("should contain default values and", function () {
+      it("should contain listEntryTextTemplate", function () {
+        var expectedValue = "{{displayName}}: {{value}}";
+        expect(searchViewDescriptionBuilderUnderTest.description.listEntryTextTemplate).toEqual(expectedValue);
+      });
+
+      it("should contain li as default list entry element tag", function () {
+        var expectedValue = "li";
+        expect(searchViewDescriptionBuilderUnderTest.description.listEntryElementTag).toEqual(expectedValue);
+      });
+    });
+
     it("should contain an empty string for viewElementId if set to null", function () {
       searchViewDescriptionBuilderUnderTest.viewElementId(null);
       expect(searchViewDescriptionBuilderUnderTest.description.viewElementId).toEqual("");
@@ -44,6 +56,12 @@ describe("search.js SearchViewDescription", function () {
       expect(searchViewDescriptionBuilderUnderTest.description.listEntryElementIdPrefix).toEqual(expectedValue);
     });
 
+    it("should contain listEntryElementTag", function () {
+      var expectedValue = "a";
+      searchViewDescriptionBuilderUnderTest.listEntryElementTag(expectedValue);
+      expect(searchViewDescriptionBuilderUnderTest.description.listEntryElementTag).toEqual(expectedValue);
+    });
+
     it("should contain listEntryTextTemplate", function () {
       var expectedValue = "{{abbreviation}} {{displayName}}";
       searchViewDescriptionBuilderUnderTest.listEntryTextTemplate(expectedValue);
@@ -61,9 +79,8 @@ describe("search.js SearchViewDescription", function () {
       searchViewDescriptionBuilderUnderTest.isSelectableFilterOption(expectedValue);
       expect(searchViewDescriptionBuilderUnderTest.description.isSelectableFilterOption).toEqual(expectedValue);
     });
-
   });
-  
+
   describe("SearchViewDescriptionBuilder from template", function () {
     var searchViewDescriptionBuilderUnderTest;
 
@@ -99,6 +116,13 @@ describe("search.js SearchViewDescription", function () {
       expect(searchViewDescriptionBuilderUnderTest.description.listEntryElementIdPrefix).toEqual(expectedValue);
     });
 
+    it("should contain listEntryElementTag", function () {
+      var expectedValue = "a";
+      var template = searchViewDescriptionBuilderUnderTest.listEntryElementTag(expectedValue).build();
+      searchViewDescriptionBuilderUnderTest = new searchUnderTest.SearchViewDescriptionBuilder(template);
+      expect(searchViewDescriptionBuilderUnderTest.description.listEntryElementTag).toEqual(expectedValue);
+    });
+
     it("should contain listEntryTextTemplate", function () {
       var expectedValue = "{{abbreviation}} {{displayName}}";
       var template = searchViewDescriptionBuilderUnderTest.listEntryTextTemplate(expectedValue).build();
@@ -115,11 +139,9 @@ describe("search.js SearchViewDescription", function () {
 
     it("should contain isSelectableFilterOption", function () {
       var expectedValue = true;
-      var template =  searchViewDescriptionBuilderUnderTest.isSelectableFilterOption(expectedValue).build();
+      var template = searchViewDescriptionBuilderUnderTest.isSelectableFilterOption(expectedValue).build();
       searchViewDescriptionBuilderUnderTest = new searchUnderTest.SearchViewDescriptionBuilder(template);
       expect(searchViewDescriptionBuilderUnderTest.description.isSelectableFilterOption).toEqual(expectedValue);
     });
-
   });
-
 });
