@@ -75,13 +75,25 @@ describe("search.js", function () {
   }
 
   /**
-   * Creates a dummy key event for event handler tests.
+   * Creates a key event for event handler tests.
    * @param {String} keyName
    * @param {Element} targetElement
    */
   function createKeyEvent(keyName, targetElement) {
     return {
       key: keyName,
+      currentTarget: targetElement
+    };
+  }
+
+  /**
+   * Creates a key code event for event handler tests.
+   * @param {number} keyCode
+   * @param {Element} targetElement
+   */
+  function createKeyCodeEvent(keyCode, targetElement) {
+    return {
+      keyCode: keyCode,
       currentTarget: targetElement
     };
   }
@@ -119,14 +131,14 @@ describe("search.js", function () {
     beforeEach(function () {
       initializeDocumentElements();
       var searchBarApiConfig = new searchUnderTest.SearchbarAPI()
-        .searchService(searchService)
-        .dataConverter(dataConverter)
-        .addPredefinedParametersTo(predefinedParametersCallback)
-        .addElementCreatedHandler(function (newElement) {
-          spyOnElement(newElement);
-          collectEventListeners(eventListeners, newElement);
-          documentElements[newElement.id] = newElement;
-        });
+      .searchService(searchService)
+      .dataConverter(dataConverter)
+      .addPredefinedParametersTo(predefinedParametersCallback)
+      .addElementCreatedHandler(function (newElement) {
+        spyOnElement(newElement);
+        collectEventListeners(eventListeners, newElement);
+        documentElements[newElement.id] = newElement;
+      });
       config = searchBarApiConfig.config;
       setUpFixture(config);
       searchBarUiUnderTest = searchBarApiConfig.start();
@@ -176,19 +188,19 @@ describe("search.js", function () {
       var searchResultsElement = document.getElementById(config.resultsView.viewElementId);
       searchAreaElement.appendChild(searchResultsElement);
       var searchMatchesElement = document.getElementById(config.resultsView.listParentElementId);
-      searchMatchesElement.appendChild(searchResultsElement);
+      searchResultsElement.appendChild(searchMatchesElement);
       var searchFiltersElement = document.getElementById(config.filtersView.listParentElementId);
-      searchFiltersElement.appendChild(searchResultsElement);
+      searchResultsElement.appendChild(searchFiltersElement);
 
       var searchDetailsElement = document.getElementById(config.detailView.viewElementId);
       searchAreaElement.appendChild(searchDetailsElement);
       var searchDetailEntriesElement = document.getElementById(config.detailView.listParentElementId);
-      searchDetailEntriesElement.appendChild(searchResultsElement);
+      searchDetailsElement.appendChild(searchDetailEntriesElement);
 
       var searchFilterOptionsElement = document.getElementById(config.filterOptionsView.viewElementId);
       searchAreaElement.appendChild(searchFilterOptionsElement);
       var searchFilterOptionsEntriesElement = document.getElementById(config.filterOptionsView.listParentElementId);
-      searchFilterOptionsEntriesElement.appendChild(searchResultsElement);
+      searchFilterOptionsElement.appendChild(searchFilterOptionsEntriesElement);
     }
 
     function getSearchInputTextElement() {
@@ -203,19 +215,57 @@ describe("search.js", function () {
       return documentElements[config.resultsView.listEntryElementIdPrefix + "-1"];
     }
 
+    function getSecondResultListElement() {
+      return documentElements[config.resultsView.listEntryElementIdPrefix + "-2"];
+    }
+
     function getResultViewParentElement() {
       return documentElements[config.resultsView.listParentElementId];
     }
 
-    describe("should recognize key events and", function () {
-      it("should add key down event listeners to the input element", function () {
-        expect(document.getElementById).toHaveBeenCalledWith("searchbar");
-        expect(getSearchInputTextElement().addEventListener).toHaveBeenCalledWith("keydown", jasmine.any(Function), false);
-        expect(eventListeners.searchbar.keydown).toBeDefined();
-      });
+    function inputSearchCharacter(searchCharacter) {
+      var searchInputTextElement = getSearchInputTextElement();
+      searchInputTextElement.value = searchCharacter;
+      var keyEvent = createKeyEvent(searchCharacter, searchInputTextElement);
+      eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
+    }
 
+    function eraseInputSearchText() {
+      var searchInputTextElement = getSearchInputTextElement();
+      searchInputTextElement.value = "";
+      var keyEvent = createKeyEvent("Backspace", searchInputTextElement);
+      eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
+    }
+
+    function arrowKeyDownOnElementId(elementId) {
+      var keyEvent = createKeyEvent("ArrowDown", documentElements[elementId]);
+      expect(eventListeners.searchbar.keydown).toBeDefined();
+      eventListeners[elementId].keydown.call(searchBarUiUnderTest, keyEvent);
+    }
+
+    function arrowKeyUpOnElementId(elementId) {
+      var keyEvent = createKeyEvent("ArrowUp", documentElements[elementId]);
+      eventListeners[elementId].keydown.call(searchBarUiUnderTest, keyEvent);
+    }
+
+    function arrowKeyRightOnElementId(elementId) {
+      var keyEvent = createKeyEvent("ArrowRight", documentElements[elementId]);
+      eventListeners[elementId].keydown.call(searchBarUiUnderTest, keyEvent);
+    }
+
+    describe("should recognize key events on input text element and", function () {
       it("should reset search input text when escape key is pressed there", function () {
         eventListeners.searchbar.keydown(createKeyEvent("Escape", getSearchInputTextElement()));
+        expect(documentElements.searchbar.value).toEqual("");
+      });
+
+      it("should reset search input text when escape key event is signaled as 'Esc'", function () {
+        eventListeners.searchbar.keydown(createKeyEvent("Esc", getSearchInputTextElement()));
+        expect(documentElements.searchbar.value).toEqual("");
+      });
+
+      it("should reset search input text when escape key event is signaled as keyCode 27", function () {
+        eventListeners.searchbar.keydown(createKeyCodeEvent(27, getSearchInputTextElement()));
         expect(documentElements.searchbar.value).toEqual("");
       });
 
@@ -230,10 +280,86 @@ describe("search.js", function () {
         expect(getFirstResultListElement().focus).toHaveBeenCalled();
       });
 
-      it("should focus the first result when arrow key down is pressed on the input text", function () {
+      it("shouldn't change focus when arrow key down is pressed without results", function () {
         nonExistingElements.push(config.resultsView.listEntryElementIdPrefix + "-1");
         eventListeners.searchbar.keydown(createKeyEvent("ArrowDown", getSearchInputTextElement()));
         expect(getSearchInputTextElement().blur).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("should recognize key events on search results main menu elements and", function () {
+      it("should focus first search result when arrow key down is pressed after search", function () {
+        inputSearchCharacter("X");
+        arrowKeyDownOnElementId(config.inputElementId);
+        expect(getSearchInputTextElement().blur).toHaveBeenCalled();
+        expect(getFirstResultListElement().focus).toHaveBeenCalled();
+      });
+
+      it("should focus first search result also when arrow key down event is signaled as 'Down'", function () {
+        inputSearchCharacter("X");
+        var keyEvent = createKeyEvent("Down", getSearchInputTextElement());
+        eventListeners.searchbar.keydown.call(searchBarUiUnderTest, keyEvent);
+        expect(getFirstResultListElement().focus).toHaveBeenCalled();
+      });
+
+      it("should focus first search result also when arrow key down event is signaled as keyCode 40 ", function () {
+        inputSearchCharacter("X");
+        var keyEvent = createKeyCodeEvent(40, getSearchInputTextElement());
+        eventListeners.searchbar.keydown.call(searchBarUiUnderTest, keyEvent);
+        expect(getFirstResultListElement().focus).toHaveBeenCalled();
+      });
+
+      it("should focus next search result when arrow key down is pressed on first result", function () {
+        inputSearchCharacter("X");
+        arrowKeyDownOnElementId(config.inputElementId);
+
+        var firstResultElement = getFirstResultListElement();
+        arrowKeyDownOnElementId(firstResultElement.id);
+
+        expect(firstResultElement.blur).toHaveBeenCalled();
+        expect(getSecondResultListElement().focus).toHaveBeenCalled();
+      });
+
+      it("should focus previous search result when arrow key up is pressed on second result", function () {
+        inputSearchCharacter("X");
+        arrowKeyDownOnElementId(config.inputElementId);
+
+        var firstResultElement = getFirstResultListElement();
+        arrowKeyDownOnElementId(firstResultElement.id);
+
+        var secondResultElement = getSecondResultListElement();
+        arrowKeyUpOnElementId(secondResultElement.id);
+
+        expect(secondResultElement.blur).toHaveBeenCalled();
+        expect(firstResultElement.focus).toHaveBeenCalled();
+      });
+
+      it("should focus previous search result when arrow key up event is signaled as 'Up'", function () {
+        inputSearchCharacter("X");
+        arrowKeyDownOnElementId(config.inputElementId);
+
+        var firstResultElement = getFirstResultListElement();
+        arrowKeyDownOnElementId(firstResultElement.id);
+
+        var secondResultElement = getSecondResultListElement();
+        var keyEvent = createKeyEvent("Up", secondResultElement);
+        eventListeners[secondResultElement.id].keydown.call(searchBarUiUnderTest, keyEvent);
+
+        expect(firstResultElement.focus).toHaveBeenCalled();
+      });
+
+      it("should focus previous search result when arrow key up event is signaled as keyCode 38", function () {
+        inputSearchCharacter("X");
+        arrowKeyDownOnElementId(config.inputElementId);
+
+        var firstResultElement = getFirstResultListElement();
+        arrowKeyDownOnElementId(firstResultElement.id);
+
+        var secondResultElement = getSecondResultListElement();
+        var keyEvent = createKeyCodeEvent(38, secondResultElement);
+        eventListeners[secondResultElement.id].keydown.call(searchBarUiUnderTest, keyEvent);
+
+        expect(firstResultElement.focus).toHaveBeenCalled();
       });
     });
 
@@ -261,58 +387,48 @@ describe("search.js", function () {
 
         expect(getResultViewElement().className).not.toContain("show");
       });
+
+      it("should open details sub menu when right arrow key is pressed on a result", function () {
+        inputSearchCharacter("X");
+        arrowKeyDownOnElementId(config.inputElementId);
+        
+        var firstResultElement = getFirstResultListElement();
+        arrowKeyRightOnElementId(firstResultElement.id);
+
+        expect(firstResultElement.focus).toHaveBeenCalled();
+        //TODO assert blur and focus of details menu
+      });
+
+
     });
 
     describe("should trigger search and", function () {
       it("should update search when input text character is entered", function () {
         searchResultData = [];
-        var searchInputTextElement = getSearchInputTextElement();
-        searchInputTextElement.value = "X";
-
-        var keyEvent = createKeyEvent("X", getSearchInputTextElement());
-        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
-
+        inputSearchCharacter("X");
         expect(document.getElementById).toHaveBeenCalledWith(config.resultsView.listParentElementId);
         expect(getResultViewElement().className).toContain("show");
       });
 
       it("shouldn't update search when input text is cleared", function () {
         searchResultData = [];
-        var searchInputTextElement = getSearchInputTextElement();
-
-        searchInputTextElement.value = "X";
-        var keyEvent = createKeyEvent("X", getSearchInputTextElement());
-        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
-
-        searchInputTextElement.value = "";
-        keyEvent = createKeyEvent("Backspace", getSearchInputTextElement());
-        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
-
+        inputSearchCharacter("X");
+        eraseInputSearchText();
         expect(getResultViewElement().className).not.toContain("show");
       });
 
       it("should add search text as search parameters", function () {
         searchResultData = [];
-        var searchInputTextElement = getSearchInputTextElement();
-        searchInputTextElement.value = "X";
-
-        var keyEvent = createKeyEvent("X", getSearchInputTextElement());
-        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
-
+        inputSearchCharacter("X");
         expect(searchService).toHaveBeenCalledWith({ searchtext: "X" }, jasmine.any(Function));
       });
 
       it("should add predefined parameters of callback as search parameters", function () {
         searchResultData = [];
-        var searchInputTextElement = getSearchInputTextElement();
-        searchInputTextElement.value = "X";
         predefinedParametersCallback.and.callFake(function (parameters) {
           parameters.constantNumber = 123;
         });
-
-        var keyEvent = createKeyEvent("X", getSearchInputTextElement());
-        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
-
+        inputSearchCharacter("X");
         expect(searchService).toHaveBeenCalledWith({ searchtext: "X", constantNumber: 123 }, jasmine.any(Function));
       });
 
@@ -325,11 +441,7 @@ describe("search.js", function () {
 
         documentElements[config.filtersView.listParentElementId].appendChild(child);
 
-        var searchInputTextElement = getSearchInputTextElement();
-        searchInputTextElement.value = "X";
-
-        var keyEvent = createKeyEvent("X", getSearchInputTextElement());
-        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
+        inputSearchCharacter("X");
 
         expect(document.getElementById).toHaveBeenCalledWith(config.filtersView.listParentElementId);
         expect(searchService).toHaveBeenCalledWith({ searchtext: "X", testFilterParameter: "testFilterValue" }, jasmine.any(Function));
@@ -337,23 +449,14 @@ describe("search.js", function () {
 
       it("should wait the configured amount of time (waitBeforeSearch) before search is updated", function () {
         searchResultData = [];
-        var searchInputTextElement = getSearchInputTextElement();
-        searchInputTextElement.value = "X";
-
-        var keyEvent = createKeyEvent("X", getSearchInputTextElement());
-        eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
+        inputSearchCharacter("X");
 
         expect(window.setTimeout).toHaveBeenCalledWith(jasmine.any(Function), config.waitBeforeSearch);
       });
     });
 
     it("should add elements for each search result", function () {
-      var searchInputTextElement = getSearchInputTextElement();
-      searchInputTextElement.value = "X";
-
-      var keyEvent = createKeyEvent("X", getSearchInputTextElement());
-      eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
-
+      inputSearchCharacter("X");
       expect(getResultViewParentElement().appendChild).toHaveBeenCalled();
     });
   });
