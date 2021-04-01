@@ -14,8 +14,8 @@
         "json-summary"
     ],
     "check-coverage": true,
-    "branches": 40,
-    "lines": 0,
-    "functions": 0,
-    "statements": 0
+    "branches": 65,
+    "lines": 70,
+    "functions": 70,
+    "statements": 70
 }
