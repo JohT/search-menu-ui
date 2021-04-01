@@ -96,14 +96,14 @@ describe("search.js SearchBarApi", function () {
     });
 
     describe("has default values for the detailView and", function () {
-      it("should use `seachdetails` as default viewElementId", function () {
+      it("should use `searchdetails` as default viewElementId", function () {
         var resultingSearchUi = searchBarApiUnderTest.start();
-        expect(resultingSearchUi.config.detailView.viewElementId).toEqual("seachdetails");
+        expect(resultingSearchUi.config.detailView.viewElementId).toEqual("searchdetails");
       });
 
-      it("should use `seachdetailentries` as default listParentElementId", function () {
+      it("should use `searchdetailentries` as default listParentElementId", function () {
         var resultingSearchUi = searchBarApiUnderTest.start();
-        expect(resultingSearchUi.config.detailView.listParentElementId).toEqual("seachdetailentries");
+        expect(resultingSearchUi.config.detailView.listParentElementId).toEqual("searchdetailentries");
       });
 
       it("should use `detail` as default listEntryElementIdPrefix", function () {
@@ -118,14 +118,14 @@ describe("search.js SearchBarApi", function () {
     });
 
     describe("has default values for the filterOptionsView and", function () {
-      it("should use `seachfilteroptions` as default viewElementId", function () {
+      it("should use `searchfilteroptions` as default viewElementId", function () {
         var resultingSearchUi = searchBarApiUnderTest.start();
-        expect(resultingSearchUi.config.filterOptionsView.viewElementId).toEqual("seachfilteroptions");
+        expect(resultingSearchUi.config.filterOptionsView.viewElementId).toEqual("searchfilteroptions");
       });
 
-      it("should use `seachfilteroptionentries` as default listParentElementId", function () {
+      it("should use `searchfilteroptionentries` as default listParentElementId", function () {
         var resultingSearchUi = searchBarApiUnderTest.start();
-        expect(resultingSearchUi.config.filterOptionsView.listParentElementId).toEqual("seachfilteroptionentries");
+        expect(resultingSearchUi.config.filterOptionsView.listParentElementId).toEqual("searchfilteroptionentries");
       });
 
       it("should use `filter` as default listEntryElementIdPrefix", function () {

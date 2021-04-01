@@ -149,8 +149,8 @@ searchService.HttpSearchConfig = (function () {
      * @returns {HttpSearchClient}
      */
     this.build = function () {
-      if (!this.httpRequest) {
-        this.httpRequest = xmlHttpRequestCreator.createXMLHttpRequest();
+      if (!this.config.httpRequest) {
+        this.config.httpRequest = xmlHttpRequestCreator.createXMLHttpRequest();
       }
       return new searchService.HttpClient(this.config);
     };

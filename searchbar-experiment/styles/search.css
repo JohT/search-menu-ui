@@ -41,11 +41,11 @@
   z-index: 1;
 }
 
-.seachdetails {
+.searchdetails {
   left: 250px; 
 }
 
-.seachfilteroptions {
+.searchfilteroptions {
   left: 250px; 
 }
 
@@ -80,11 +80,11 @@
   border: 1px solid rgb(233, 233, 233);
 }
 
-.seachdetailentries li {
+.searchdetailentries li {
   padding: 0.1em;
 }
 
-.seachfilteroptionentries li {
+.searchfilteroptionentries li {
   /* padding: 1em; */
 }
 

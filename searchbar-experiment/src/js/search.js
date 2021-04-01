@@ -353,8 +353,8 @@ searchbar.SearchbarAPI = (function () {
 
   function defaultDetailView() {
     return new searchbar.SearchViewDescriptionBuilder()
-      .viewElementId("seachdetails")
-      .listParentElementId("seachdetailentries")
+      .viewElementId("searchdetails")
+      .listParentElementId("searchdetailentries")
       .listEntryElementIdPrefix("detail")
       .listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}") //TODO could display value smaller
       .build();
@@ -362,8 +362,8 @@ searchbar.SearchbarAPI = (function () {
 
   function defaultFilterOptionsView() {
     return new searchbar.SearchViewDescriptionBuilder()
-      .viewElementId("seachfilteroptions")
-      .listParentElementId("seachfilteroptionentries")
+      .viewElementId("searchfilteroptions")
+      .listParentElementId("searchfilteroptionentries")
       .listEntryElementIdPrefix("filter")
       .listEntryTextTemplate("{{value}}")
       .listEntrySummaryTemplate("{{summaries[0].value}}")
