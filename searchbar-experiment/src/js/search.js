@@ -1089,14 +1089,12 @@ searchbar.SearchbarUI = (function () {
   function clearAllEntriesOfElementWithId(elementId) {
     var node = document.getElementById(elementId);
 
+    // Fastest way to delete child nodes in Chrome and FireFox according to
+    // https://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
     if (typeof node.cloneNode === "function" && typeof node.replaceChild === "function") {
-      // Fastest way to delete child nodes in Chrome and FireFox according to
-      // https://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
       var cNode = node.cloneNode(false);
       node.parentNode.replaceChild(cNode, node);
     } else {
-      // Fastest way in IE and most browser compatible solution according to
-      // https://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
       node.innerHTML = "";
     }
   }
