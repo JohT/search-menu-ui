@@ -22,6 +22,8 @@ function datarestructorInternalCreateIfNotExists(objectToCheck) {
 //TODO must find a way to use ie compatible module
 var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
 var described_field = described_field || require("data-restructor/devdist/describedfield"); // supports vanilla js & npm
+var eventtarget = eventtarget || require("./ponyfills//eventCurrentTargetPonyfill"); // supports vanilla js & npm
+var selectionrange = selectionrange || require("./ponyfills/selectionRangePonyfill"); // supports vanilla js & npm
 
 /**
  * @typedef {Object} SearchViewDescription Describes a part of the search view (e.g. search result details).
@@ -719,8 +721,8 @@ searchbar.SearchbarUI = (function () {
     var inputElement = document.getElementById(config.inputElementId);
     resultEntry.blur();
     inputElement.focus();
-    moveCursorToEndOf(inputElement);
-    preventDefaultEventHandling(inputElement); //skips cursor position change on key up once
+    selectionrange.moveCursorToEndOf(inputElement);
+    preventDefaultEventHandling(event); //skips cursor position change on key up once
     hideSubMenus(config);
     return inputElement;
   }
@@ -1384,6 +1386,7 @@ searchbar.SearchbarUI = (function () {
     }
     return result;
   }
+  
   function onEscapeKey(element, eventHandler) {
     addEvent("keydown", element, function (event) {
       if (event.key == "Escape" || event.key == "Esc" || keyCodeOf(event) == 27) {
@@ -1470,13 +1473,7 @@ searchbar.SearchbarUI = (function () {
    * @returns {Element} target of the event
    */
   function getEventTarget(event) {
-    if (typeof event.currentTarget !== "undefined" && event.currentTarget != null) {
-      return event.currentTarget;
-    } if (typeof event.srcElement !== "undefined" && event.srcElement != null) {
-      return event.srcElement;
-    } else {
-      throw new Error("Event doesn't contain bounded element: " + event);
-    }
+    return eventtarget.getEventTarget(event);
   }
 
   /**
@@ -1486,20 +1483,6 @@ searchbar.SearchbarUI = (function () {
    */
   function keyCodeOf(event) {
     return typeof event.keyCode === "undefined" ? -1 : event.keyCode;
-  }
-
-  function moveCursorToEndOf(element) {
-    if (typeof element.setSelectionRange === "function") {
-      element.setSelectionRange(element.value.length, element.value.length);
-    } else if (typeof element.selectionStart === "number" && typeof element.selectionEnd === "number") {
-      element.selectionStart = element.selectionEnd = element.value.length;
-    } else if (typeof element.createTextRange === "function") {
-      var range = element.createTextRange();
-      range.collapse(true);
-      range.moveEnd("character", element.value.length);
-      range.moveStart("character", element.value.length);
-      range.select();
-    }
   }
 
   // Returns the instance

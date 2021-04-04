@@ -1,7 +1,10 @@
 "use strict";
 
 var module = module || {}; // Fallback for vanilla js without modules
-var xmlHttpRequestCreator = module.exports={}; // Fallback for vanilla js without modules
+/**
+ * @namespace xmlHttpRequest
+ */
+var xmlHttpRequest = module.exports={}; // Fallback for vanilla js without modules
 
 /**
  * Provide the XMLHttpRequest constructor for Internet Explorer 5.x-6.x:
@@ -11,8 +14,9 @@ var xmlHttpRequestCreator = module.exports={}; // Fallback for vanilla js withou
  * This example is based on findings at:
  * http://blogs.msdn.com/xmlteam/archive/2006/10/23/using-the-right-version-of-msxml-in-internet-explorer.aspx
  * @returns {XMLHttpRequest}
+ * @memberof xmlHttpRequest
  */
- xmlHttpRequestCreator.createXMLHttpRequest = function () {
+ xmlHttpRequest.getXMLHttpRequest = function () {
   if (typeof XMLHttpRequest !== "undefined") {
     return new XMLHttpRequest();
   }

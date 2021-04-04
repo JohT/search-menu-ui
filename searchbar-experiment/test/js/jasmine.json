@@ -5,6 +5,7 @@
   ],
   "helpers": [
     "polyfills/**/*.js",
+    "ponyfills/**/*.js",
     "**/*Data.js",
     "**/*Fixture.js",
     "helpers/**/*.js"

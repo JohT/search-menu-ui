@@ -144,6 +144,8 @@ describe("search.js", function () {
 
       nonExistingElements.push(config.resultsView.listEntryElementIdPrefix + "-0");
       nonExistingElements.push(config.resultsView.listEntryElementIdPrefix + "-1");
+      nonExistingElements.push(config.filtersView.listEntryElementIdPrefix + "-0");
+      nonExistingElements.push(config.filtersView.listEntryElementIdPrefix + "-1");
       nonExistingElements.push(config.filterOptionsView.listEntryElementIdPrefix + "-0");
       nonExistingElements.push(config.filterOptionsView.listEntryElementIdPrefix + "-1");
 
@@ -338,6 +340,17 @@ describe("search.js", function () {
       });
     });
 
+    describe("should recognize mouse events on search results main menu elements and", function () {
+      it("should open details when mouse over a result", function () {
+        inputSearchCharacter("X");
+        arrowKeyDownOnElementId(config.inputElementId);
+        var firstResultListElement = getFirstResultListElement();
+        var mouseEvent = { currentTarget: firstResultListElement };
+        eventListeners[firstResultListElement.id].mouseover.call(searchBarUiUnderTest, mouseEvent);
+        expect(getDetailsViewElement().className).toContain("show");
+      });
+    });
+
     describe("should recognize key events on search results main menu elements and", function () {
       it("should focus first search result when arrow key down is pressed after search", function () {
         inputSearchCharacter("X");
@@ -421,7 +434,6 @@ describe("search.js", function () {
         var lastResultElement = getLastResultListElement();
         arrowKeyDownOnElementId(lastResultElement.id);
 
-        //TODO first filter option doesn't seem to exist
         var firstFilterElement = getFirstFilterElement();
         arrowKeyUpOnElementId(firstFilterElement.id);
 
@@ -470,7 +482,7 @@ describe("search.js", function () {
         // Enter result that contains a filter options sub menu
         var filterElementResultElement = getFilterResultListElement();
         arrowKeyRightOnElementId(filterElementResultElement.id);
-        
+
         var firstFilterOptionsSubMenuElement = getFirstFilterOptionElementOfResultId(filterElementResultElement.id);
         expect(getFilterOptionsViewElement().className).toContain("show");
         expect(filterElementResultElement.blur).toHaveBeenCalled();
@@ -541,32 +553,54 @@ describe("search.js", function () {
         // Enter result that contains a filter options sub menu
         var filterElementResultElement = getFilterResultListElement();
         arrowKeyRightOnElementId(filterElementResultElement.id);
-        
+
         var firstFilterOptionsSubMenuElement = getFirstFilterOptionElementOfResultId(filterElementResultElement.id);
         arrowKeyLeftOnElementId(firstFilterOptionsSubMenuElement.id);
-        
-        //TODO should hide filter options by removing "show", work but doesn't work here
+
+        //TODO should hide filter options by removing "show", but doesn't seem to work here
+        //"searchfilteroptionentries" doesn't contain a parent, even if it is clearly specified in the fixture
         //expect(getFilterOptionsViewElement().className).not.toContain("show");
         expect(filterElementResultElement.focus).toHaveBeenCalled();
         expect(firstFilterOptionsSubMenuElement.blur).toHaveBeenCalled();
       });
 
-      it("should close filter options sub menu and return to main menu when escape arrow key is pressed inside the sub menu", function () {
+      it("should close filter options sub menu and return to main menu when escape key is pressed inside the sub menu", function () {
         inputSearchCharacter("X");
         arrowKeyDownOnElementId(config.inputElementId);
 
         // Enter result that contains a filter options sub menu
         var filterElementResultElement = getFilterResultListElement();
         arrowKeyRightOnElementId(filterElementResultElement.id);
-        
+
         var firstFilterOptionsSubMenuElement = getFirstFilterOptionElementOfResultId(filterElementResultElement.id);
         keyDownOnElementId(firstFilterOptionsSubMenuElement.id, "Escape");
-        
+
         //TODO should hide filter options by removing "show", work but doesn't work here
         //expect(getFilterOptionsViewElement().className).not.toContain("show");
         expect(filterElementResultElement.focus).toHaveBeenCalled();
         expect(firstFilterOptionsSubMenuElement.blur).toHaveBeenCalled();
       });
+
+      it("should select filter option in sub menu when enter key is pressed inside the sub menu", function () {
+        inputSearchCharacter("X");
+        arrowKeyDownOnElementId(config.inputElementId);
+
+        // Enter result that contains a filter options sub menu
+        var filterElementResultElement = getFilterResultListElement();
+        arrowKeyRightOnElementId(filterElementResultElement.id);
+        expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(1);
+
+        var firstFilterOptionsSubMenuElement = getFirstFilterOptionElementOfResultId(filterElementResultElement.id);
+        keyDownOnElementId(firstFilterOptionsSubMenuElement.id, "Enter");
+
+        expect(filterElementResultElement.focus).toHaveBeenCalled();
+        expect(firstFilterOptionsSubMenuElement.blur).toHaveBeenCalled();
+        
+        //Selected filter appears as new element inside the filters view:
+        expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(2);
+      });
+
+
     });
 
     describe("should recognize focus changes and", function () {
@@ -652,6 +686,5 @@ describe("search.js", function () {
       inputSearchCharacter("X");
       expect(getResultViewParentElement().appendChild).toHaveBeenCalled();
     });
-    
   });
 });

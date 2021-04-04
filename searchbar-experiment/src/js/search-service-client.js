@@ -21,7 +21,7 @@ function datarestructorInternalCreateIfNotExists(objectToCheck) {
 var searchService = (module.exports = {}); // Export module for npm...
 searchService.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
 
-var xmlHttpRequestCreator = xmlHttpRequestCreator || require("../../src/js/lib/xmlHttpRequestCreator"); // supports vanilla js & npm
+var xmlHttpRequest = xmlHttpRequest || require("../../src/js/ponyfills/xmlHttpRequestPonyfill"); // supports vanilla js & npm
 
 /**
  * @typedef {Object} HttpSearchConfig Configures the HTTP request for the search.
@@ -150,7 +150,7 @@ searchService.HttpSearchConfig = (function () {
      */
     this.build = function () {
       if (!this.config.httpRequest) {
-        this.config.httpRequest = xmlHttpRequestCreator.createXMLHttpRequest();
+        this.config.httpRequest = xmlHttpRequest.getXMLHttpRequest();
       }
       return new searchService.HttpClient(this.config);
     };

@@ -6,6 +6,7 @@
     "exclude": [
         "**/lib/**/*.js",
         "**/polyfills/**/*.js",
+        "**/ponyfills/**/*.js",
         "**/search-binding.js"
     ],
     "reporter": [
@@ -14,7 +15,7 @@
         "json-summary"
     ],
     "check-coverage": true,
-    "branches": 65,
+    "branches": 70,
     "lines": 70,
     "functions": 70,
     "statements": 70
