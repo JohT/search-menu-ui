@@ -24,6 +24,7 @@ var template_resolver = template_resolver || require("data-restructor/devdist/te
 var described_field = described_field || require("data-restructor/devdist/describedfield"); // supports vanilla js & npm
 var eventtarget = eventtarget || require("./ponyfills//eventCurrentTargetPonyfill"); // supports vanilla js & npm
 var selectionrange = selectionrange || require("./ponyfills/selectionRangePonyfill"); // supports vanilla js & npm
+var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfill"); // supports vanilla js & npm
 
 /**
  * @typedef {Object} SearchViewDescription Describes a part of the search view (e.g. search result details).
@@ -1358,21 +1359,14 @@ searchbar.SearchbarUI = (function () {
       this.delayedHandlerTimer = window.setTimeout(function () {
         eventHandler(typeof this.originalEvent !== "undefined"? this.originalEvent : event);
       }, delayTime); 
-      addEvent("mouseout", element, function () {
+      this.preventEventHandling = function() {
         if (this.delayedHandlerTimer !== null) {
           clearTimeout(this.delayedHandlerTimer);
         }
-      });
-      addEvent("mousedown", element, function () {
-        if (this.delayedHandlerTimer !== null) {
-          clearTimeout(this.delayedHandlerTimer);
-        }
-      });
-      addEvent("keydown", element, function () {
-        if (this.delayedHandlerTimer !== null) {
-          clearTimeout(this.delayedHandlerTimer);
-        }
-      });
+      };
+      addEvent("mouseout", element, this.preventEventHandling);
+      addEvent("mousedown", element, this.preventEventHandling);
+      addEvent("keydown", element, this.preventEventHandling);
     });
   }
 
@@ -1460,13 +1454,7 @@ searchbar.SearchbarUI = (function () {
   }
 
   function addEvent(eventName, element, eventHandler) {
-    if (element.addEventListener) { 
-      element.addEventListener(eventName, eventHandler, false);
-    } else if (element.attachEvent) {
-      element.attachEvent("on" + eventName, eventHandler);
-    } else {
-      element["on" + eventName] = eventHandler;
-    }
+    eventlistener.addEventListener(eventName, element, eventHandler);
   }
 
   /**
