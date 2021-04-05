@@ -257,8 +257,8 @@ describe("search.js", function () {
       return getLastElementOfIdPrefix(config.resultsView.listEntryElementIdPrefix);
     }
 
-    function getLastFilterOptionsElement() {
-      return getLastElementOfIdPrefix(config.filterOptionsView.listEntryElementIdPrefix);
+    function getLastFilterElement() {
+      return getLastElementOfIdPrefix(config.filtersView.listEntryElementIdPrefix);
     }
 
     function getFirstFilterOptionElementOfResultId(resultId) {
@@ -311,6 +311,16 @@ describe("search.js", function () {
 
     function arrowKeyLeftOnElementId(elementId) {
       keyDownOnElementId(elementId, "ArrowLeft");
+    }
+
+    function selectFilterOption() {
+      inputSearchCharacter("X");
+      arrowKeyDownOnElementId(config.inputElementId); //open results main menu
+      var filterElementResultElement = getFilterResultListElement();
+      arrowKeyRightOnElementId(filterElementResultElement.id); // enter result 2 that contains a filter options sub menu
+
+      var firstFilterOptionsSubMenuElement = getFirstFilterOptionElementOfResultId(filterElementResultElement.id);
+      keyDownOnElementId(firstFilterOptionsSubMenuElement.id, "Enter"); //filter added
     }
 
     describe("should recognize key events on input text element and", function () {
@@ -398,7 +408,7 @@ describe("search.js", function () {
         inputSearchCharacter("X");
         arrowKeyDownOnElementId(config.inputElementId);
 
-        var lastFilterElement = getLastFilterOptionsElement();
+        var lastFilterElement = getLastFilterElement();
 
         arrowKeyDownOnElementId(lastFilterElement.id);
 
@@ -533,6 +543,14 @@ describe("search.js", function () {
         expect(detailsViewElement.className).not.toContain("show");
       });
 
+      it("should select search result and navigate to its url if enter key is pressed ", function () {
+        inputSearchCharacter("X");
+        arrowKeyDownOnElementId(config.inputElementId);
+        keyDownOnElementId(getFirstResultListElement().id, "Enter");
+
+        //TODO expect url to change 
+      });
+
       it("should focus previous search result when arrow key up event is signaled as keyCode 38", function () {
         inputSearchCharacter("X");
         arrowKeyDownOnElementId(config.inputElementId);
@@ -595,11 +613,68 @@ describe("search.js", function () {
 
         expect(filterElementResultElement.focus).toHaveBeenCalled();
         expect(firstFilterOptionsSubMenuElement.blur).toHaveBeenCalled();
-        
+
         //Selected filter appears as new element inside the filters view:
         expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(2);
       });
 
+      it("should select filter option in sub menu when enter key is signaled as keyCode 13", function () {
+        inputSearchCharacter("X");
+        arrowKeyDownOnElementId(config.inputElementId); //open results main menu
+        var filterElementResultElement = getFilterResultListElement();
+        arrowKeyRightOnElementId(filterElementResultElement.id); // enter result 2 that contains a filter options sub menu
+
+        var firstFilterOptionsSubMenuElement = getFirstFilterOptionElementOfResultId(filterElementResultElement.id);
+        keyCodeDownOnElementId(firstFilterOptionsSubMenuElement.id, "13");
+
+        //Selected filter appears as new element inside the filters view:
+        expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(2);
+      });
+    });
+
+    describe("should recognize key events on search filter elements and", function () {
+      it("should delete selected filter option when backspace key is pressed", function () {
+        selectFilterOption();
+        var selectedFilterOptionsCount = documentElements[config.filtersView.listParentElementId].childNodes.length;
+        keyDownOnElementId(getLastFilterElement().id, "Backspace");
+        expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(selectedFilterOptionsCount - 1);
+      });
+
+      it("should delete selected filter option when backspace key is signaled with keyCode 8", function () {
+        selectFilterOption();
+        var selectedFilterOptionsCount = documentElements[config.filtersView.listParentElementId].childNodes.length;
+        keyCodeDownOnElementId(getLastFilterElement().id, 8);
+        expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(selectedFilterOptionsCount - 1);
+      });
+
+      it("should delete selected filter option when delete key is pressed", function () {
+        selectFilterOption();
+        var selectedFilterOptionsCount = documentElements[config.filtersView.listParentElementId].childNodes.length;
+        keyDownOnElementId(getLastFilterElement().id, "Delete");
+        expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(selectedFilterOptionsCount - 1);
+      });
+
+      it("should delete selected filter option when delete key is signaled as 'Del'", function () {
+        selectFilterOption();
+        var selectedFilterOptionsCount = documentElements[config.filtersView.listParentElementId].childNodes.length;
+        keyDownOnElementId(getLastFilterElement().id, "Del");
+        expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(selectedFilterOptionsCount - 1);
+      });
+
+      it("should delete selected filter option when delete key is signaled with keyCode 46", function () {
+        selectFilterOption();
+        var selectedFilterOptionsCount = documentElements[config.filtersView.listParentElementId].childNodes.length;
+        keyCodeDownOnElementId(getLastFilterElement().id, 46);
+        expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(selectedFilterOptionsCount - 1);
+      });
+
+      it("should deactivate selected filter option when space bar is pressed", function () {
+        selectFilterOption();
+        var selectedFilterElement = getLastFilterElement();
+        expect(selectedFilterElement.className).not.toContain("inactive");
+        keyDownOnElementId(selectedFilterElement.id, "Spacebar");
+        expect(selectedFilterElement.className).toContain("inactive");
+      });
 
     });
 
