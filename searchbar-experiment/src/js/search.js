@@ -212,11 +212,18 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  */
 
 /**
+ * This function will be called to navigate to a selected search result url.
+ * @callback NavigateToFunction
+ * @param {String} destinationUrl
+ */
+
+/**
  * @typedef {Object} SearchbarConfig
  * @property {SearchService} triggerSearch - triggers search (backend)
  * @property {DataConverter} convertData - converts search result data to search ui data
  * @property {SearchParameterAdder} addPredefinedParametersTo - adds custom search parameters 
  * @property {ElementCreatedListener} onCreatedElement - this function will be called when a new HTML is created.
+ * @property {NavigateToFunction} navigateTo - this function will be called to navigate to a selected search result url.
  * @property {string} searchAreaElementId - id of the whole search area (default="searcharea")
  * @property {string} inputElementId - id of the search input field (default="searchbar")
  * @property {SearchViewDescription} resultsView - describes the main view containing the search results
@@ -252,6 +259,9 @@ searchbar.SearchbarAPI = (function () {
       },
       onCreatedElement: function (element) {
         //does nothing if not specified otherwise
+      },
+      navigateTo(destinationUrl) {
+        window.location.href = destinationUrl;
       },
       searchAreaElementId: "searcharea",
       inputElementId: "searchbar",
@@ -497,7 +507,7 @@ searchbar.SearchbarUI = (function () {
       onMenuEntryChosen(resultElement, function (event) {
         var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId, entry.category);
         if (selectedUrlTemplate) {
-          window.location.href = new template_resolver.Resolver(entry).resolveTemplate(selectedUrlTemplate);
+          config.navigateTo(new template_resolver.Resolver(entry).resolveTemplate(selectedUrlTemplate));
         }
       });
     }
