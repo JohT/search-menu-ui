@@ -25,10 +25,13 @@ describe("search.js", function () {
    * @param {NewlyDiscoveredElement} onNewlyDiscoveredElement
    */
   function collectElementsById(documentElements, onNewlyDiscoveredElement) {
-    var functionFake = function (id) {
+    var functionFake = function (originalGetElementById, id) {
       if (!documentElements[id]) {
+        //var newElement = originalGetElementById.call(document, id);
+        //if (!newElement) {
         var newElement = document.createElement("div");
         newElement.id = id;
+        //}
         documentElements[id] = newElement;
         if (typeof onNewlyDiscoveredElement === "function") {
           return onNewlyDiscoveredElement(newElement);
@@ -36,6 +39,7 @@ describe("search.js", function () {
       }
       return documentElements[id];
     };
+    functionFake = functionFake.bind(document, document.getElementById);
     document.getElementById = jasmine.createSpy("getElementById-Spy").and.callFake(functionFake);
   }
 
@@ -142,6 +146,7 @@ describe("search.js", function () {
       config = searchBarApiConfig.config;
       setUpFixture(config);
 
+      nonExistingElements = [];
       nonExistingElements.push(config.resultsView.listEntryElementIdPrefix + "-0");
       nonExistingElements.push(config.resultsView.listEntryElementIdPrefix + "-1");
       nonExistingElements.push(config.filtersView.listEntryElementIdPrefix + "-0");
@@ -546,9 +551,9 @@ describe("search.js", function () {
       it("should select search result and navigate to its url if enter key is pressed ", function () {
         inputSearchCharacter("X");
         arrowKeyDownOnElementId(config.inputElementId);
+        spyOn(config, "navigateTo");
         keyDownOnElementId(getFirstResultListElement().id, "Enter");
-
-        //TODO expect url to change 
+        expect(config.navigateTo).toHaveBeenCalledWith("http://127.0.0.1:5500/index.html#overview-12345678901");
       });
 
       it("should focus previous search result when arrow key up event is signaled as keyCode 38", function () {

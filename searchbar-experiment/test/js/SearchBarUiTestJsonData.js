@@ -154,7 +154,17 @@ searchresulttestdata.SearchResult = (function () {
           abbreviation: "&#x261c;",
           displayName: "Ziel",
           fieldName: "name",
-          value: "account overview"
+          value: "account overview",
+          urltemplate: [
+            {
+              category: "account",
+              type: "url",
+              abbreviation: "&#x261c;",
+              displayName: "Urltemplate",
+              fieldName: "urltemplate",
+              value: "http://127.0.0.1:5500/index.html#overview-{{summaries.accountnumber}}"
+            }
+          ]
         }
       ],
       urltemplate: [
@@ -174,7 +184,17 @@ searchresulttestdata.SearchResult = (function () {
           abbreviation: "&#x261c;",
           displayName: "Ziel",
           fieldName: "name",
-          value: "debit interest"
+          value: "debit interest",
+          urltemplate: [
+            {
+              category: "account",
+              type: "url",
+              abbreviation: "&#x261c;",
+              displayName: "Urltemplate",
+              fieldName: "urltemplate",
+              value: "http://127.0.0.1:5500/index.html#debit-interest-{{summaries.accountnumber}}"
+            }
+          ]
         },
         {
           category: "account",
@@ -182,7 +202,17 @@ searchresulttestdata.SearchResult = (function () {
           abbreviation: "&#x261c;",
           displayName: "Ziel",
           fieldName: "name",
-          value: "credit interest"
+          value: "credit interest",
+          urltemplate: [
+            {
+              category: "account",
+              type: "url",
+              abbreviation: "&#x261c;",
+              displayName: "Urltemplate",
+              fieldName: "urltemplate",
+              value: "http://127.0.0.1:5500/index.html#credit-interest-{{summaries.accountnumber}}"
+            }
+          ]
         }
       ]
     };
