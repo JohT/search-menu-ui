@@ -147,12 +147,12 @@ describe("search.js", function () {
       setUpFixture(config);
 
       nonExistingElements = [];
-      nonExistingElements.push(config.resultsView.listEntryElementIdPrefix + "-0");
-      nonExistingElements.push(config.resultsView.listEntryElementIdPrefix + "-1");
-      nonExistingElements.push(config.filtersView.listEntryElementIdPrefix + "-0");
-      nonExistingElements.push(config.filtersView.listEntryElementIdPrefix + "-1");
-      nonExistingElements.push(config.filterOptionsView.listEntryElementIdPrefix + "-0");
-      nonExistingElements.push(config.filterOptionsView.listEntryElementIdPrefix + "-1");
+      nonExistingElements.push(config.resultsView.listEntryElementIdPrefix + "--0");
+      nonExistingElements.push(config.resultsView.listEntryElementIdPrefix + "--1");
+      nonExistingElements.push(config.filtersView.listEntryElementIdPrefix + "--0");
+      nonExistingElements.push(config.filtersView.listEntryElementIdPrefix + "--1");
+      nonExistingElements.push(config.filterOptionsView.listEntryElementIdPrefix + "--0");
+      nonExistingElements.push(config.filterOptionsView.listEntryElementIdPrefix + "--1");
 
       searchBarUiUnderTest = searchBarApiConfig.start();
       searchResultData = searchTestData.SearchResult.getJson();
@@ -233,11 +233,11 @@ describe("search.js", function () {
     }
 
     function getFirstResultListElement() {
-      return documentElements[config.resultsView.listEntryElementIdPrefix + "-1"];
+      return documentElements[config.resultsView.listEntryElementIdPrefix + "--1"];
     }
 
     function getSecondResultListElement() {
-      return documentElements[config.resultsView.listEntryElementIdPrefix + "-2"];
+      return documentElements[config.resultsView.listEntryElementIdPrefix + "--2"];
     }
 
     function getFilterResultListElement() {
@@ -249,13 +249,13 @@ describe("search.js", function () {
       var resultElement = null;
       do {
         index = index + 1;
-        resultElement = documentElements[idPrefix + "-" + index];
+        resultElement = documentElements[idPrefix + "--" + index];
       } while (typeof resultElement === "object");
 
       // Register non existing result so it won't be created on "document.getElementById".
-      nonExistingElements.push(idPrefix + "-" + index);
+      nonExistingElements.push(idPrefix + "--" + index);
 
-      return documentElements[idPrefix + "-" + (index - 1)];
+      return documentElements[idPrefix + "--" + (index - 1)];
     }
 
     function getLastResultListElement() {
@@ -267,11 +267,11 @@ describe("search.js", function () {
     }
 
     function getFirstFilterOptionElementOfResultId(resultId) {
-      return documentElements[resultId + "-" + config.filterOptionsView.listEntryElementIdPrefix + "-1"];
+      return documentElements[resultId + "--" + config.filterOptionsView.listEntryElementIdPrefix + "--1"];
     }
 
     function getFirstFilterElement() {
-      return documentElements[config.filtersView.listEntryElementIdPrefix + "-1"];
+      return documentElements[config.filtersView.listEntryElementIdPrefix + "--1"];
     }
 
     function getResultViewParentElement() {
@@ -442,7 +442,7 @@ describe("search.js", function () {
       });
 
       it("should focus last search result when arrow key up is pressed on first filter option", function () {
-        nonExistingElements.push(config.filterOptionsView.listEntryElementIdPrefix + "-1");
+        nonExistingElements.push(config.filterOptionsView.listEntryElementIdPrefix + "--1");
         inputSearchCharacter("X");
         arrowKeyDownOnElementId(config.inputElementId);
 
@@ -742,8 +742,8 @@ describe("search.js", function () {
       it("should use filter view elements as search parameters", function () {
         searchResultData = [];
         var expectedParameter = { fieldName: "testFilterParameter", value: "testFilterValue" };
-        var child = document.getElementById(config.filtersView.listParentElementId + "-testchild");
-        var childFields = document.getElementById(child.id + "-fields");
+        var child = document.getElementById(config.filtersView.listParentElementId + "--testchild");
+        var childFields = document.getElementById(child.id + "--fields");
         childFields.textContent = JSON.stringify(expectedParameter);
 
         documentElements[config.filtersView.listParentElementId].appendChild(child);

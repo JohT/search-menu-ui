@@ -28,13 +28,13 @@ var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfi
 
 /**
  * @typedef {Object} SearchViewDescription Describes a part of the search view (e.g. search result details).
- * @property {string} viewElementId - id of the element (e.g. "div"), that contains the view with all list elements and their parent.
- * @property {string} listParentElementId - id of the element (e.g. "ul"), that contains all list entries and is located inside the view.
- * @property {string} listEntryElementIdPrefix - id prefix (followed by "-" and the index number) for every list entry
- * @property {string} [listEntryElementTag=li] - element tag for list entries. defaults to "li".
- * @property {string} [listEntryTextTemplate={{displayName}}: {{value}}] - template for the text of each list entry
- * @property {string} [listEntrySummaryTemplate={{displayName}}: {{value}}] - template for the text of each list entry, if the data group "summary" exists.
- * @property {boolean} [isSelectableFilterOption=false] - Specifies, if the list entry can be selected as filter option
+ * @property {string} viewElementId id of the element (e.g. "div"), that contains the view with all list elements and their parent.
+ * @property {string} listParentElementId id of the element (e.g. "ul"), that contains all list entries and is located inside the view.
+ * @property {string} listEntryElementIdPrefix id prefix (followed by "--" and the index number) for every list entry
+ * @property {string} [listEntryElementTag=li] element tag for list entries. defaults to "li".
+ * @property {string} [listEntryTextTemplate={{displayName}}: {{value}}] template for the text of each list entry
+ * @property {string} [listEntrySummaryTemplate={{displayName}}: {{value}}] template for the text of each list entry, if the data group "summary" exists.
+ * @property {boolean} [isSelectableFilterOption=false] Specifies, if the list entry can be selected as filter option
  */
 
 /**
@@ -66,7 +66,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
     /**
      * ID of the element (e.g. "div"), that contains the view with all list elements and their parent.
      *
-     * @param {string} value - view element ID.
+     * @param {string} value view element ID.
      */
     this.viewElementId = function (value) {
       this.description.viewElementId = withDefault(value, "");
@@ -74,24 +74,25 @@ searchbar.SearchViewDescriptionBuilder = (function () {
     };
     /**
      * ID of the element (e.g. "ul"), that contains all list entries and is located inside the view.
-     * @param {string} value - parent element ID
+     * @param {string} value parent element ID
      */
     this.listParentElementId = function (value) {
       this.description.listParentElementId = withDefault(value, "");
       return this;
     };
     /**
-     * ID prefix (followed by "-" and the index number) for every list entry.
-     * @param {string} value - ID prefix for every list entry element
+     * ID prefix (followed by "--" and the index number) for every list entry.
+     * @param {string} value ID prefix for every list entry element
      */
     this.listEntryElementIdPrefix = function (value) {
+      //TODO Should be checked to not contain the index separation chars "--"
       this.description.listEntryElementIdPrefix = withDefault(value, "");
       return this;
     };
     /**
      * Element tag for list entries. defaults to "li".
      * Defaults to "li".
-     * @param {string} value - tag for every list entry element
+     * @param {string} value tag for every list entry element
      */
     this.listEntryElementTag = function (value) {
       this.description.listEntryElementTag = withDefault(value, defaultTag);
@@ -102,7 +103,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * Defaults to "{{displayName}}: {{value}}".
      * May contain variables in double curly brackets.
      *
-     * @param {string} value - list entry text template when there is no summary data group
+     * @param {string} value list entry text template when there is no summary data group
      */
     this.listEntryTextTemplate = function (value) {
       this.description.listEntryTextTemplate = withDefault(value, defaultTemplate);
@@ -113,7 +114,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * Defaults to "{{displayName}}: {{value}}".
      * May contain variables in double curly brackets.
      *
-     * @param {string} value - list entry text template when there is a summary data group
+     * @param {string} value list entry text template when there is a summary data group
      */
     this.listEntrySummaryTemplate = function (value) {
       this.description.listEntrySummaryTemplate = withDefault(value, defaultSummaryTemplate);
@@ -177,8 +178,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  * @return {String} JSON of all contained fields
  */
 
- //TODO could functions be moved out (for data-only structure)?
- //TODO could a separate value object be defined and mapped to get some decoupling to data-reconstructor-js?
+//TODO could a separate value object be defined and mapped to get some decoupling to data-reconstructor-js?
 /**
  * @typedef {Object} SearchUiData 
  * @property {String} [category=""] name of the category. Default = "". Could contain a short domain name. (e.g. "city")
@@ -219,20 +219,20 @@ searchbar.SearchViewDescriptionBuilder = (function () {
 
 /**
  * @typedef {Object} SearchbarConfig
- * @property {SearchService} triggerSearch - triggers search (backend)
- * @property {DataConverter} convertData - converts search result data to search ui data
- * @property {SearchParameterAdder} addPredefinedParametersTo - adds custom search parameters 
- * @property {ElementCreatedListener} onCreatedElement - this function will be called when a new HTML is created.
- * @property {NavigateToFunction} navigateTo - this function will be called to navigate to a selected search result url.
- * @property {string} searchAreaElementId - id of the whole search area (default="searcharea")
- * @property {string} inputElementId - id of the search input field (default="searchbar")
- * @property {SearchViewDescription} resultsView - describes the main view containing the search results
- * @property {SearchViewDescription} detailView - describes the details view
- * @property {SearchViewDescription} filterOptionsView - describes the filter options view
- * @property {SearchViewDescription} filtersView - describes the filters view
- * @property {string} [waitBeforeClose=700] - timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
- * @property {string} [waitBeforeSearch=500] - time in milliseconds to wait until typing is finished and search starts (default=500)
- * @property {string} [waitBeforeMouseOver=700] - time in milliseconds to wait until mouse over opens details (default=700)
+ * @property {SearchService} triggerSearch triggers search (backend)
+ * @property {DataConverter} convertData converts search result data to search ui data
+ * @property {SearchParameterAdder} addPredefinedParametersTo adds custom search parameters 
+ * @property {ElementCreatedListener} onCreatedElement this function will be called when a new HTML is created.
+ * @property {NavigateToFunction} navigateTo this function will be called to navigate to a selected search result url.
+ * @property {string} searchAreaElementId id of the whole search area (default="searcharea")
+ * @property {string} inputElementId id of the search input field (default="searchbar")
+ * @property {SearchViewDescription} resultsView describes the main view containing the search results
+ * @property {SearchViewDescription} detailView describes the details view
+ * @property {SearchViewDescription} filterOptionsView describes the filter options view
+ * @property {SearchViewDescription} filtersView describes the filters view
+ * @property {string} [waitBeforeClose=700] timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
+ * @property {string} [waitBeforeSearch=500] time in milliseconds to wait until typing is finished and search starts (default=500)
+ * @property {string} [waitBeforeMouseOver=700] time in milliseconds to wait until mouse over opens details (default=700)
  */
 
 /**
@@ -276,7 +276,7 @@ searchbar.SearchbarAPI = (function () {
     };
     /**
      * Defines the search service function, that will be called whenever search is triggered.
-     * @param {SearchService} service - function that will be called to trigger search (backend).
+     * @param {SearchService} service function that will be called to trigger search (backend).
      */
     this.searchService = function (service) {
       this.config.triggerSearch = service;
@@ -284,7 +284,7 @@ searchbar.SearchbarAPI = (function () {
     };
     /**
      * Defines the converter, that converts search result data to search ui data
-     * @param {DataConverter} converter - function that will be called to trigger search (backend).
+     * @param {DataConverter} converter function that will be called to trigger search (backend).
      */
     this.dataConverter = function (converter) {
       this.config.convertData = converter;
@@ -293,7 +293,7 @@ searchbar.SearchbarAPI = (function () {
     /**
      * Defines the function, that adds predefined (fixed, constant, environmental) search parameters
      * to the first parameter object.
-     * @param {SearchParameterAdder} adder - function that will be called to before search is triggered.
+     * @param {SearchParameterAdder} adder function that will be called to before search is triggered.
      */
     this.addPredefinedParametersTo = function (adder) {
       this.config.addPredefinedParametersTo = adder;
@@ -493,7 +493,7 @@ searchbar.SearchbarUI = (function () {
   }
 
   function addResult(entry, i, config) {
-    var listElementId = config.resultsView.listEntryElementIdPrefix + "-" + i;
+    var listElementId = config.resultsView.listEntryElementIdPrefix + "--" + i;
     var resultElement = createListEntryElement(entry, config.resultsView, listElementId);
     forEachIdElementIncludingChildren(resultElement, config.onCreatedElement);
 
@@ -513,7 +513,7 @@ searchbar.SearchbarUI = (function () {
     }
     if (isMenuEntryWithOptions(entry)) {
       var options = entry.options;
-      //TODO should skip sub menu, if there is only one option (with/without being default).
+      //TODO could skip sub menu, if there is only one option (with/without being default).
       //TODO could be used for constants (pre selected single filter options) like "tenant-number", "current-account"
       if (isMenuEntryWithDefault(entry)) {
         options = insertAtBeginningIfMissing(entry.options, entry["default"][0], equalProperties(["value"]));
@@ -635,8 +635,8 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
-   * @param {SearchbarConfig} config - search configuration
-   * @param {EventListener} eventHandler - event handler
+   * @param {SearchbarConfig} config search configuration
+   * @param {EventListener} eventHandler event handler
    */
   function handleEventWithConfig(config, eventHandler) {
     return function (event) {
@@ -645,9 +645,9 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
-   * @param {Object[]} entries - raw data of the entry
-   * @param {SearchbarConfig} config - search configuration
-   * @param {EventListener} eventHandler - event handler
+   * @param {Object[]} entries raw data of the entry
+   * @param {SearchbarConfig} config search configuration
+   * @param {EventListener} eventHandler event handler
    */
   function handleEventWithEntriesAndConfig(entries, config, eventHandler) {
     return function (event) {
@@ -670,19 +670,19 @@ searchbar.SearchbarUI = (function () {
    */
   /**
    * @typedef {Object} ListElementIdProperties
-   * @property {id} id - Original ID
-   * @property {string} type - Type of the list element
-   * @property {number} index - Index of the list element
-   * @property {string} previousId - ID of the previous list element
-   * @property {string} nextId - ID of the next list element
-   * @property {string} firstId - ID of the first list element
-   * @property {string} lastId - ID of the last list element
-   * @property {SubMenuId} subMenuId - Returns the ID of the first sub menu entry (with the given type name as parameter)
-   * @property {string} mainMenuId - ID of the main menu entry e.g. to leave the sub menu. Equals to the id, if it already is a main menu entry
-   * @property {boolean} hiddenFieldsId - ID of the embedded hidden field, that contains all public information of the described entry as JSON.
-   * @property {boolean} hiddenFields - Parses the JSON inside the "hiddenFieldsId"-Element and returns the object with the described entry.
-   * @property {boolean} isFirstElement - true, if it is the first element in the list
-   * @property {boolean} isSubMenu - true, if it is the ID of an sub menu entry
+   * @property {id} id Original ID
+   * @property {string} type Type of the list element
+   * @property {number} index Index of the list element
+   * @property {string} previousId ID of the previous list element
+   * @property {string} nextId ID of the next list element
+   * @property {string} firstId ID of the first list element
+   * @property {string} lastId ID of the last list element
+   * @property {SubMenuId} subMenuId  Returns the ID of the first sub menu entry (with the given type name as parameter)
+   * @property {string} mainMenuId ID of the main menu entry e.g. to leave the sub menu. Equals to the id, if it already is a main menu entry
+   * @property {boolean} hiddenFieldsId ID of the embedded hidden field, that contains all public information of the described entry as JSON.
+   * @property {boolean} hiddenFields Parses the JSON inside the "hiddenFieldsId"-Element and returns the object with the described entry.
+   * @property {boolean} isFirstElement true, if it is the first element in the list
+   * @property {boolean} isSubMenu true, if it is the ID of an sub menu entry
    */
   /**
    * Extracts properties like type and index
@@ -692,33 +692,33 @@ searchbar.SearchbarUI = (function () {
    * @return {ListElementIdProperties} list element id properties
    */
   function extractListElementIdProperties(id) {
-    var splittedId = id.split("-");
+    var splittedId = id.split("--");
     if (splittedId.length < 2) {
-      console.log("expected at least one '-' separator inside the id " + id);
+      console.log("expected at least one '--' separator inside the id " + id);
     }
     var extractedMainMenuType = splittedId[0];
     var extractedMainMenuIndex = parseInt(splittedId[1]);
     var extractedType = splittedId[splittedId.length - 2];
     var extractedIndex = parseInt(splittedId[splittedId.length - 1]);
-    var idWithoutIndex = id.substring(0, id.lastIndexOf(extractedIndex) - 1);
+    var idWithoutIndex = id.substring(0, id.lastIndexOf(extractedIndex) - 2);
     return {
       id: id,
       type: extractedType,
       index: extractedIndex,
-      previousId: idWithoutIndex + "-" + (extractedIndex - 1),
-      nextId: idWithoutIndex + "-" + (extractedIndex + 1),
-      firstId: idWithoutIndex + "-1",
-      lastId: idWithoutIndex + "-" + document.getElementById(id).parentElement.childNodes.length,
+      previousId: idWithoutIndex + "--" + (extractedIndex - 1),
+      nextId: idWithoutIndex + "--" + (extractedIndex + 1),
+      firstId: idWithoutIndex + "--1",
+      lastId: idWithoutIndex + "--" + document.getElementById(id).parentElement.childNodes.length,
       subMenuId: function (typeName) {
-        return id + "-" + typeName + "-1";
+        return id + "--" + typeName + "--1";
       },
       reIndex: function (index) {
-        return idWithoutIndex + "-" + index;
+        return idWithoutIndex + "--" + index;
       },
-      mainMenuId: extractedMainMenuType + "-" + extractedMainMenuIndex,
-      hiddenFieldsId: id + "-fields",
+      mainMenuId: extractedMainMenuType + "--" + extractedMainMenuIndex,
+      hiddenFieldsId: id + "--fields",
       hiddenFields: function () {
-        var hiddenFieldsElement = document.getElementById(id + "-fields");
+        var hiddenFieldsElement = document.getElementById(id + "--fields");
         var hiddenFieldsJson = (typeof hiddenFieldsElement.textContent !== "undefined")? hiddenFieldsElement.textContent : hiddenFieldsElement.innerText;
         return JSON.parse(hiddenFieldsJson);
       },
@@ -740,7 +740,7 @@ searchbar.SearchbarUI = (function () {
 
   function focusFirstResult(event, config) {
     var selectedElement = getEventTarget(event);
-    var firstResult = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-1");
+    var firstResult = document.getElementById(config.resultsView.listEntryElementIdPrefix + "--1");
     if (firstResult) {
       selectedElement.blur();
       firstResult.focus();
@@ -752,12 +752,12 @@ searchbar.SearchbarUI = (function () {
       var next = null;
       if (menuEntryIdProperties.type === config.resultsView.listEntryElementIdPrefix) {
         //select first filter entry after last result/match entry
-        //TODO analyze better way (without config) to navigate from last search result to first options/filter entry?
-        next = document.getElementById(config.filterOptionsView.listEntryElementIdPrefix + "-1");
+        //TODO could analyze better way (without config) to navigate from last search result to first options/filter entry
+        next = document.getElementById(config.filterOptionsView.listEntryElementIdPrefix + "--1");
       }
       if (next === null) {
         //select first result/match entry after last filter entry (or whenever nothing is found)
-        next = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-1");
+        next = document.getElementById(config.resultsView.listEntryElementIdPrefix + "--1");
       }
       return next;
     });
@@ -769,9 +769,9 @@ searchbar.SearchbarUI = (function () {
       var previous = null;
       if (menuEntryIdProperties.type === config.filterOptionsView.listEntryElementIdPrefix) {
         //select last result entry when arrow up is pressed on first filter entry
-        //TODO analyze better way (without config) to navigate from first options/filter entry to last search result?
+        //TODO could analyze better way (without config) to navigate from first options/filter entry to last search result?
         var resultElementsCount = getListElementCountOfType(config.resultsView.listEntryElementIdPrefix);
-        previous = document.getElementById(config.resultsView.listEntryElementIdPrefix + "-" + resultElementsCount);
+        previous = document.getElementById(config.resultsView.listEntryElementIdPrefix + "--" + resultElementsCount);
       }
       if (previous === null) {
         //select input, if there is no previous entry.
@@ -847,7 +847,7 @@ searchbar.SearchbarUI = (function () {
 
   function createFilterOption(selectedEntryData, entries, view, config) {
     var filterElements = getListElementCountOfType(view.listEntryElementIdPrefix);
-    var filterElementId = view.listEntryElementIdPrefix + "-" + (filterElements + 1);
+    var filterElementId = view.listEntryElementIdPrefix + "--" + (filterElements + 1);
     var filterElement = getListEntryByFieldName(
       selectedEntryData.category,
       selectedEntryData.fieldName,
@@ -887,7 +887,7 @@ searchbar.SearchbarUI = (function () {
   function getListEntryByFieldName(category, fieldName, listParentElementId) {
     return forEachListEntryElement(listParentElementId, function (element) {
       var listElementHiddenFields = extractListElementIdProperties(element.id).hiddenFields();
-      //TODO should additionally match empty category?
+      //TODO could additionally match empty ("global") category
       //A global parameter should be found even from an foreign category and shouldn't be selected twice (per category).
       if (listElementHiddenFields.fieldName === fieldName && listElementHiddenFields.category == category) {
         return element;
@@ -908,7 +908,7 @@ searchbar.SearchbarUI = (function () {
       if (typeof listElementHiddenFields.urltemplate === "undefined") {
         return null; // entry has no url template
       }
-      //TODO could always match empty category?
+      //TODO could also match empty ("global") category.
       if (listElementHiddenFields.category != category) {
         return null; // entry belongs to another category
       }
@@ -992,11 +992,11 @@ searchbar.SearchbarUI = (function () {
     var subMenuEntry = null;
     var subMenuElement = null;
     var subMenuIndex = 0;
-    var subMenuEntryId = selectedElement.id + "-" + subMenuView.listEntryElementIdPrefix;
+    var subMenuEntryId = selectedElement.id + "--" + subMenuView.listEntryElementIdPrefix;
     var subMenuFirstEntry = null;
     for (subMenuIndex = 0; subMenuIndex < entries.length; subMenuIndex += 1) {
       subMenuEntry = entries[subMenuIndex];
-      subMenuEntryId = selectedElement.id + "-" + subMenuView.listEntryElementIdPrefix + "-" + (subMenuIndex + 1);
+      subMenuEntryId = selectedElement.id + "--" + subMenuView.listEntryElementIdPrefix + "--" + (subMenuIndex + 1);
       subMenuElement = createListEntryElement(subMenuEntry, subMenuView, subMenuEntryId);
       forEachIdElementIncludingChildren(subMenuElement, config.onCreatedElement);
 
@@ -1062,7 +1062,7 @@ searchbar.SearchbarUI = (function () {
    * @param {HTMLElement} element
    * @param {boolean} up true if the focus moved up, false otherwise
    */
-  //TODO must: does not work as expected an leads to errors in IE
+  //TODO should be fixed to work as expected even in IE
   function scrollToFocus(element, up) {
     /*
     if (up == true) {
@@ -1138,7 +1138,7 @@ searchbar.SearchbarUI = (function () {
     var parentElement = element.parentElement;
     parentElement.removeChild(element);
     forEachEntryIn(parentElement.childNodes, function(entry, index) {
-      entry.id = extractListElementIdProperties(entry.id).reIndex(index + 1);
+      entry.id = extractListElementIdProperties(entry.id).reIndex(index);
     });
   }
 
@@ -1156,7 +1156,7 @@ searchbar.SearchbarUI = (function () {
   function forEachEntryIn(array, callback) {
     var index = 0;
     for (index = 0; index < array.length; index += 1) {
-      callback(array[index], index);
+      callback(array[index], index + 1); //index parameter starts with 1 (1 instead of 0 based)
     }
   }
 
@@ -1164,7 +1164,7 @@ searchbar.SearchbarUI = (function () {
    * @return {number} list element count of the given type
    */
   function getListElementCountOfType(listelementtype) {
-    var firstListEntry = document.getElementById(listelementtype + "-1");
+    var firstListEntry = document.getElementById(listelementtype + "--1");
     if (firstListEntry === null) {
       return 0;
     }
@@ -1215,7 +1215,7 @@ searchbar.SearchbarUI = (function () {
       text = resolver.resolveTemplate(view.listEntrySummaryTemplate);
     }
     var json = JSON.stringify(entry); //TODO must be without spaces
-    text += '<p id="' + id + '-fields" style="display: none">' + json + "</p>";
+    text += '<p id="' + id + '--fields" style="display: none">' + json + "</p>";
     return text;
   }
 
@@ -1249,7 +1249,7 @@ searchbar.SearchbarUI = (function () {
 
   /**
    * Shows the element given by its id.
-   * @param elementId - ID of the element that should be shown
+   * @param elementId ID of the element that should be shown
    */
   function show(elementId) {
     showElement(document.getElementById(elementId));
@@ -1257,7 +1257,7 @@ searchbar.SearchbarUI = (function () {
 
   /**
    * Shows the given element.
-   * @param element - element that should be shown
+   * @param element element that should be shown
    */
   function showElement(element) {
     addClass("show", element);
@@ -1265,7 +1265,7 @@ searchbar.SearchbarUI = (function () {
 
   /**
    * Hides the element given by its id.
-   * @param elementId - ID of the element that should be hidden
+   * @param elementId ID of the element that should be hidden
    */
   function hide(elementId) {
     hideElement(document.getElementById(elementId));
@@ -1273,7 +1273,7 @@ searchbar.SearchbarUI = (function () {
 
   /**
    * Hides the view (by removing the class "show"), that contains the given element.
-   * The view is identified by the existing style-class "show".
+   * The view is identified by the existing style class "show".
    * @param {Element} element
    */
   function hideViewOf(element) {
@@ -1334,7 +1334,7 @@ searchbar.SearchbarUI = (function () {
 
   /**
    * Hides the given element.
-   * @param element - element that should be hidden
+   * @param element element that should be hidden
    */
   function hideElement(element) {
     removeClass("show", element);
