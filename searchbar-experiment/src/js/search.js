@@ -692,38 +692,50 @@ searchbar.SearchbarUI = (function () {
    * @return {ListElementIdProperties} list element id properties
    */
   function extractListElementIdProperties(id) {
-    var splittedId = id.split("--");
+    var separator = "--";
+    var splittedId = id.split(separator);
     if (splittedId.length < 2) {
-      console.log("expected at least one '--' separator inside the id " + id);
+      console.log("expected at least one '"+separator+"' separator inside the id " + id);
     }
     var extractedMainMenuType = splittedId[0];
     var extractedMainMenuIndex = parseInt(splittedId[1]);
     var extractedType = splittedId[splittedId.length - 2];
     var extractedIndex = parseInt(splittedId[splittedId.length - 1]);
-    var idWithoutIndex = id.substring(0, id.lastIndexOf(extractedIndex) - 2);
+    var idWithoutIndex = id.substring(0, id.lastIndexOf(extractedIndex) - separator.length);
     return {
       id: id,
       type: extractedType,
       index: extractedIndex,
-      previousId: idWithoutIndex + "--" + (extractedIndex - 1),
-      nextId: idWithoutIndex + "--" + (extractedIndex + 1),
-      firstId: idWithoutIndex + "--1",
-      lastId: idWithoutIndex + "--" + document.getElementById(id).parentElement.childNodes.length,
+      previousId: idWithoutIndex + separator + (extractedIndex - 1),
+      nextId: idWithoutIndex + separator + (extractedIndex + 1),
+      firstId: idWithoutIndex + separator + "1",
+      lastId: idWithoutIndex + separator + document.getElementById(id).parentElement.childNodes.length,
+      mainMenuId: extractedMainMenuType + separator + extractedMainMenuIndex,
+      mainMenuIndex: extractedMainMenuIndex,
+      hiddenFieldsId: id + separator + "fields",
+      isFirstElement: extractedIndex <= 1,
+      isSubMenu: splittedId.length > 3,
       subMenuId: function (typeName) {
-        return id + "--" + typeName + "--1";
+        return id + separator + typeName + separator + "1";
       },
-      reIndex: function (index) {
-        return idWithoutIndex + "--" + index;
+      replaceMainMenuIndex: function(newIndex) {
+        var newMainMenuIndex = extractedMainMenuType + separator + newIndex;
+        return newMainMenuIndex + id.substring(this.mainMenuId.length);
       },
-      mainMenuId: extractedMainMenuType + "--" + extractedMainMenuIndex,
-      hiddenFieldsId: id + "--fields",
+      getNewIndexAfterRemovedMainMenuIndex: function (removedIndex) {
+        if (extractedMainMenuIndex < removedIndex) {
+          return id;
+        }
+        if (extractedMainMenuIndex == removedIndex) {
+          throw new Error("index " + removedIndex + " should had been removed.");
+        }
+        return this.replaceMainMenuIndex(extractedMainMenuIndex - 1);
+      },
       hiddenFields: function () {
-        var hiddenFieldsElement = document.getElementById(id + "--fields");
+        var hiddenFieldsElement = document.getElementById(id + separator + "fields");
         var hiddenFieldsJson = (typeof hiddenFieldsElement.textContent !== "undefined")? hiddenFieldsElement.textContent : hiddenFieldsElement.innerText;
         return JSON.parse(hiddenFieldsJson);
-      },
-      isFirstElement: extractedIndex <= 1,
-      isSubMenu: splittedId.length > 3
+      }
     };
   }
 
@@ -1133,12 +1145,24 @@ searchbar.SearchbarUI = (function () {
    * @param {InputEvent} event
    */
   function removeChildElement(event) {
-    //TODO must also reindex sub menus. a changed selection inside the filters should not lead to an error.
     var element = getEventTarget(event);
     var parentElement = element.parentElement;
+    var indexOfRemovedElement = extractListElementIdProperties(element.id).mainMenuIndex;
     parentElement.removeChild(element);
-    forEachEntryIn(parentElement.childNodes, function(entry, index) {
-      entry.id = extractListElementIdProperties(entry.id).reIndex(index);
+    forEachChildRecursively(parentElement, 0, 5, function(entry, index) {
+      if (entry.id) {
+        entry.id = extractListElementIdProperties(entry.id).getNewIndexAfterRemovedMainMenuIndex(indexOfRemovedElement);
+      }
+    });
+  }
+
+  function forEachChildRecursively(element, depth, maxDepth, callback) {
+    if ((depth > maxDepth) || (!element.childNodes)) {
+      return;
+    }
+    forEachEntryIn(element.childNodes, function(entry, index) {
+      callback(entry, index);
+      forEachChildRecursively(entry, depth + 1, maxDepth, callback);
     });
   }
 
