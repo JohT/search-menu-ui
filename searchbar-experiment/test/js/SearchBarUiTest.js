@@ -191,6 +191,9 @@ describe("search.js", function () {
       spyOn(newElement, "appendChild").and.callThrough();
       spyOn(newElement, "parentElement").and.callThrough();
       spyOn(newElement, "childNodes").and.callThrough();
+      spyOn(newElement, "cloneNode").and.callFake(function () {
+        return newElement; // cloneNode needs to return the exact same element here to retain the spies and the register.
+      });
     }
 
     function setUpFixture(config) {
@@ -198,22 +201,18 @@ describe("search.js", function () {
       var searchInputElement = document.getElementById(config.inputElementId);
       searchAreaElement.appendChild(searchInputElement);
 
-      var searchResultsElement = document.getElementById(config.resultsView.viewElementId);
-      searchAreaElement.appendChild(searchResultsElement);
-      var searchMatchesElement = document.getElementById(config.resultsView.listParentElementId);
-      searchResultsElement.appendChild(searchMatchesElement);
-      var searchFiltersElement = document.getElementById(config.filtersView.listParentElementId);
-      searchResultsElement.appendChild(searchFiltersElement);
+      setUpFixtureViewElement(searchAreaElement, config.resultsView);
+      setUpFixtureViewElement(searchAreaElement, config.filtersView);
+      setUpFixtureViewElement(searchAreaElement, config.detailView);
+      setUpFixtureViewElement(searchAreaElement, config.filterOptionsView);
+    }
 
-      var searchDetailsElement = document.getElementById(config.detailView.viewElementId);
-      searchAreaElement.appendChild(searchDetailsElement);
-      var searchDetailEntriesElement = document.getElementById(config.detailView.listParentElementId);
-      searchDetailsElement.appendChild(searchDetailEntriesElement);
-
-      var searchFilterOptionsElement = document.getElementById(config.filterOptionsView.viewElementId);
-      searchAreaElement.appendChild(searchFilterOptionsElement);
-      var searchFilterOptionsEntriesElement = document.getElementById(config.filterOptionsView.listParentElementId);
-      searchFilterOptionsElement.appendChild(searchFilterOptionsEntriesElement);
+    function setUpFixtureViewElement(searchAreaElement, view) {
+      var viewElement = document.getElementById(view.viewElementId);
+      var listElement = document.getElementById(view.listParentElementId);
+      viewElement.appendChild(listElement);
+      
+      searchAreaElement.appendChild(viewElement);
     }
 
     function getSearchInputTextElement() {
@@ -232,16 +231,24 @@ describe("search.js", function () {
       return documentElements[config.filterOptionsView.viewElementId];
     }
 
+    function getResultListElementOfPosition(position) {
+      return documentElements[config.resultsView.listEntryElementIdPrefix + "--" + position];
+    }
+
     function getFirstResultListElement() {
-      return documentElements[config.resultsView.listEntryElementIdPrefix + "--1"];
+      return getResultListElementOfPosition(1);
     }
 
     function getSecondResultListElement() {
-      return documentElements[config.resultsView.listEntryElementIdPrefix + "--2"];
+      return getResultListElementOfPosition(2);
     }
 
     function getFilterResultListElement() {
       return getSecondResultListElement();
+    }
+
+    function getCurrencyFilterResultListElement() {
+      return getResultListElementOfPosition(3);
     }
 
     function getLastElementOfIdPrefix(idPrefix) {
@@ -318,14 +325,18 @@ describe("search.js", function () {
       keyDownOnElementId(elementId, "ArrowLeft");
     }
 
-    function selectFilterOption() {
-      inputSearchCharacter("X");
-      arrowKeyDownOnElementId(config.inputElementId); //open results main menu
-      var filterElementResultElement = getFilterResultListElement();
-      arrowKeyRightOnElementId(filterElementResultElement.id); // enter result 2 that contains a filter options sub menu
+    function selectFilterOptionNr(number) {
+      var filterElementResultElement = getResultListElementOfPosition(number + 1); // Add 1 to skip the non-filter result
+      arrowKeyRightOnElementId(filterElementResultElement.id);
 
       var firstFilterOptionsSubMenuElement = getFirstFilterOptionElementOfResultId(filterElementResultElement.id);
       keyDownOnElementId(firstFilterOptionsSubMenuElement.id, "Enter"); //filter added
+    }
+
+    function selectFirstFilterOption() {
+      inputSearchCharacter("X");
+      arrowKeyDownOnElementId(config.inputElementId); //open results main menu
+      selectFilterOptionNr(1);
     }
 
     describe("should recognize key events on input text element and", function () {
@@ -580,9 +591,7 @@ describe("search.js", function () {
         var firstFilterOptionsSubMenuElement = getFirstFilterOptionElementOfResultId(filterElementResultElement.id);
         arrowKeyLeftOnElementId(firstFilterOptionsSubMenuElement.id);
 
-        //TODO should hide filter options by removing "show", but doesn't seem to work here
-        //"searchfilteroptionentries" doesn't contain a parent, even if it is clearly specified in the fixture
-        //expect(getFilterOptionsViewElement().className).not.toContain("show");
+        expect(getFilterOptionsViewElement().className).not.toContain("show");
         expect(filterElementResultElement.focus).toHaveBeenCalled();
         expect(firstFilterOptionsSubMenuElement.blur).toHaveBeenCalled();
       });
@@ -598,8 +607,7 @@ describe("search.js", function () {
         var firstFilterOptionsSubMenuElement = getFirstFilterOptionElementOfResultId(filterElementResultElement.id);
         keyDownOnElementId(firstFilterOptionsSubMenuElement.id, "Escape");
 
-        //TODO should hide filter options by removing "show", work but doesn't work here
-        //expect(getFilterOptionsViewElement().className).not.toContain("show");
+        expect(getFilterOptionsViewElement().className).not.toContain("show");
         expect(filterElementResultElement.focus).toHaveBeenCalled();
         expect(firstFilterOptionsSubMenuElement.blur).toHaveBeenCalled();
       });
@@ -639,46 +647,56 @@ describe("search.js", function () {
 
     describe("should recognize key events on search filter elements and", function () {
       it("should delete selected filter option when backspace key is pressed", function () {
-        selectFilterOption();
+        selectFirstFilterOption();
         var selectedFilterOptionsCount = documentElements[config.filtersView.listParentElementId].childNodes.length;
         keyDownOnElementId(getLastFilterElement().id, "Backspace");
         expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(selectedFilterOptionsCount - 1);
       });
 
       it("should delete selected filter option when backspace key is signaled with keyCode 8", function () {
-        selectFilterOption();
+        selectFirstFilterOption();
         var selectedFilterOptionsCount = documentElements[config.filtersView.listParentElementId].childNodes.length;
         keyCodeDownOnElementId(getLastFilterElement().id, 8);
         expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(selectedFilterOptionsCount - 1);
       });
 
       it("should delete selected filter option when delete key is pressed", function () {
-        selectFilterOption();
+        selectFirstFilterOption();
         var selectedFilterOptionsCount = documentElements[config.filtersView.listParentElementId].childNodes.length;
         keyDownOnElementId(getLastFilterElement().id, "Delete");
         expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(selectedFilterOptionsCount - 1);
       });
 
       it("should delete selected filter option when delete key is signaled as 'Del'", function () {
-        selectFilterOption();
+        selectFirstFilterOption();
         var selectedFilterOptionsCount = documentElements[config.filtersView.listParentElementId].childNodes.length;
         keyDownOnElementId(getLastFilterElement().id, "Del");
         expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(selectedFilterOptionsCount - 1);
       });
 
       it("should delete selected filter option when delete key is signaled with keyCode 46", function () {
-        selectFilterOption();
+        selectFirstFilterOption();
         var selectedFilterOptionsCount = documentElements[config.filtersView.listParentElementId].childNodes.length;
         keyCodeDownOnElementId(getLastFilterElement().id, 46);
         expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(selectedFilterOptionsCount - 1);
       });
 
       it("should deactivate selected filter option when space bar is pressed", function () {
-        selectFilterOption();
+        selectFirstFilterOption();
         var selectedFilterElement = getLastFilterElement();
         expect(selectedFilterElement.className).not.toContain("inactive");
         keyDownOnElementId(selectedFilterElement.id, "Spacebar");
         expect(selectedFilterElement.className).toContain("inactive");
+      });
+
+      it("should delete the first of two filter options when backspace key is pressed on the first one", function () {
+        selectFirstFilterOption();
+        var firstFilterElement = getLastFilterElement();
+        selectFilterOptionNr(2);
+        var selectedFilterOptionsCount = documentElements[config.filtersView.listParentElementId].childNodes.length;
+        keyDownOnElementId(firstFilterElement.id, "Backspace");
+        expect(documentElements[config.filtersView.listParentElementId].childNodes.length).toEqual(selectedFilterOptionsCount - 1);
+        //TODO could add further expects to check, that all filter elements had been reindexed correctly.
       });
 
     });

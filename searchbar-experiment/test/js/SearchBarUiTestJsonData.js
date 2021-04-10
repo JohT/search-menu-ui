@@ -3,7 +3,6 @@
 var searchresulttestdata = module.exports={} || {};
 
 searchresulttestdata.SearchResult = (function () {
-  //TODO convert and fill in test data from comments below
   function getAccounts() {
     return {
       category: "account",
@@ -103,7 +102,7 @@ searchresulttestdata.SearchResult = (function () {
       ]
     };
   }
-  function getFilerOptions() {
+  function getProductFilerOptions() {
     return {
       category: "account",
       type: "filter",
@@ -135,6 +134,42 @@ searchresulttestdata.SearchResult = (function () {
           displayName: "Product",
           fieldName: "product",
           value: "trust"
+        }
+      ]
+    };
+  }
+  function getCurrencyFilterOptions() {
+    return {
+      category: "account",
+      type: "filter",
+      abbreviation: "&#128206;",
+      displayName: "Currency",
+      fieldName: "currency",
+      value: "EUR",
+      options: [
+        {
+          category: "account",
+          type: "filter",
+          abbreviation: "&#128206;",
+          displayName: "Currency",
+          fieldName: "currency",
+          value: "EUR"
+        },
+        {
+          category: "account",
+          type: "filter",
+          abbreviation: "&#128206;",
+          displayName: "Currency",
+          fieldName: "currency",
+          value: "CHF"
+        },
+        {
+          category: "account",
+          type: "filter",
+          abbreviation: "&#128206;",
+          displayName: "Currency",
+          fieldName: "currency",
+          value: "USD"
         }
       ]
     };
@@ -219,7 +254,7 @@ searchresulttestdata.SearchResult = (function () {
   }
   return {
     getJson: function () {
-      return [getAccounts(), getFilerOptions(), getSites()];
+      return [getAccounts(), getProductFilerOptions(), getCurrencyFilterOptions(), getSites()];
     }
   };
 }());
