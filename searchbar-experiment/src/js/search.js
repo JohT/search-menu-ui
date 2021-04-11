@@ -18,8 +18,8 @@ function datarestructorInternalCreateIfNotExists(objectToCheck) {
  var searchbar = module.exports={}; // Export module for npm...
  searchbar.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
 
-//TODO must find a way to use the "dist" module
-//TODO must find a way to use ie compatible module
+//TODO should find a way to use the "dist" module
+//TODO should find a way to use ie compatible module
 var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
 var described_field = described_field || require("data-restructor/devdist/describedfield"); // supports vanilla js & npm
 var eventtarget = eventtarget || require("./ponyfills//eventCurrentTargetPonyfill"); // supports vanilla js & npm
@@ -31,29 +31,30 @@ var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfi
  * @property {string} viewElementId id of the element (e.g. "div"), that contains the view with all list elements and their parent.
  * @property {string} listParentElementId id of the element (e.g. "ul"), that contains all list entries and is located inside the view.
  * @property {string} listEntryElementIdPrefix id prefix (followed by "--" and the index number) for every list entry
- * @property {string} [listEntryElementTag=li] element tag for list entries. defaults to "li".
- * @property {string} [listEntryTextTemplate={{displayName}}: {{value}}] template for the text of each list entry
- * @property {string} [listEntrySummaryTemplate={{displayName}}: {{value}}] template for the text of each list entry, if the data group "summary" exists.
+ * @property {string} [listEntryElementTag="li"] element tag for list entries. defaults to "li".
+ * @property {string} [listEntryTextTemplate="{{displayName}}: {{value}}"] template for the text of each list entry
+ * @property {string} [listEntrySummaryTemplate="{{displayName}}: {{value}}"] template for the text of each list entry, if the data group "summary" exists.
+ * @property {string} [listEntryStyleClassTemplate="{{view.listEntryElementIdPrefix}} {{category}}"] template for the style class of each list entry.
  * @property {boolean} [isSelectableFilterOption=false] Specifies, if the list entry can be selected as filter option
  */
 
-/**
- * SearchViewDescription
- * Describes a part of the search view (e.g. search result details).
- *
- * @namespace
- */
 searchbar.SearchViewDescriptionBuilder = (function () {
   "use strict";
 
   /**
-   * Constructor function and container for everything, that needs to exist per instance.
+   * SearchViewDescription
    * @param {SearchViewDescription} template optional parameter that contains a template to clone
+   * @constructs SearchViewDescriptionBuilder
+   * @alias module:searchbar.SearchViewDescriptionBuilder
    */
   function SearchViewDescription(template) {
     var defaultTemplate = "{{displayName}}: {{value}}";
     var defaultSummaryTemplate = "{{summaries[0].displayName}}: {{summaries[0].value}}";
+    var defaultStyleClassTemplate = "{{view.listEntryElementIdPrefix}} {{category}}";
     var defaultTag = "li";
+    /**
+     * @type {SearchViewDescription}
+     */
     this.description = {
       viewElementId: template ? template.viewElementId : "",
       listParentElementId: template ? template.listParentElementId : "",
@@ -61,12 +62,14 @@ searchbar.SearchViewDescriptionBuilder = (function () {
       listEntryElementTag: template ? template.listEntryElementTag : defaultTag,
       listEntryTextTemplate: template ? template.listEntryTextTemplate : defaultTemplate,
       listEntrySummaryTemplate: template ? template.listEntrySummaryTemplate : defaultSummaryTemplate,
+      listEntryStyleClassTemplate: template ? template.listEntryStyleClassTemplate : defaultStyleClassTemplate,
       isSelectableFilterOption: template ? template.isSelectableFilterOption : false
     };
     /**
      * ID of the element (e.g. "div"), that contains the view with all list elements and their parent.
      *
      * @param {string} value view element ID.
+     * @returns {module:searchbar.SearchViewDescriptionBuilder}
      */
     this.viewElementId = function (value) {
       this.description.viewElementId = withDefault(value, "");
@@ -75,6 +78,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
     /**
      * ID of the element (e.g. "ul"), that contains all list entries and is located inside the view.
      * @param {string} value parent element ID
+     * @returns {module:searchbar.SearchViewDescriptionBuilder}
      */
     this.listParentElementId = function (value) {
       this.description.listParentElementId = withDefault(value, "");
@@ -83,6 +87,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
     /**
      * ID prefix (followed by "--" and the index number) for every list entry.
      * @param {string} value ID prefix for every list entry element
+     * @returns {module:searchbar.SearchViewDescriptionBuilder}
      */
     this.listEntryElementIdPrefix = function (value) {
       //TODO Should be checked to not contain the index separation chars "--"
@@ -93,6 +98,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * Element tag for list entries. defaults to "li".
      * Defaults to "li".
      * @param {string} value tag for every list entry element
+     * @returns {module:searchbar.SearchViewDescriptionBuilder}
      */
     this.listEntryElementTag = function (value) {
       this.description.listEntryElementTag = withDefault(value, defaultTag);
@@ -104,6 +110,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * May contain variables in double curly brackets.
      *
      * @param {string} value list entry text template when there is no summary data group
+     * @returns {module:searchbar.SearchViewDescriptionBuilder}
      */
     this.listEntryTextTemplate = function (value) {
       this.description.listEntryTextTemplate = withDefault(value, defaultTemplate);
@@ -115,15 +122,30 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * May contain variables in double curly brackets.
      *
      * @param {string} value list entry text template when there is a summary data group
+     * @returns {module:searchbar.SearchViewDescriptionBuilder}
      */
     this.listEntrySummaryTemplate = function (value) {
       this.description.listEntrySummaryTemplate = withDefault(value, defaultSummaryTemplate);
       return this;
     };
     /**
+     * Template for the style classes of each list entry.
+     * Defaults to "{{view.listEntryElementIdPrefix}} {{category}}".
+     * May contain variables in double curly brackets.
+     * To use the property values of this view, prefix them with "view", e.g.: "{{view.listEntryElementIdPrefix}}".
+     *
+     * @param {string} value list entry style classes template
+     * @returns {module:searchbar.SearchViewDescriptionBuilder}
+     */
+     this.listEntryStyleClassTemplate = function (value) {
+      this.description.listEntryStyleClassTemplate = withDefault(value, defaultStyleClassTemplate);
+      return this;
+    };
+    /**
      * Specifies, if the list entry can be selected as filter option.
      * Defaults to "false".
      * @param {boolean} value if a list entry is selectable as filter option
+     * @returns {module:searchbar.SearchViewDescriptionBuilder}
      */
     this.isSelectableFilterOption = function (value) {
       this.description.isSelectableFilterOption = value === true;
@@ -131,7 +153,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
     };
     /**
      * Finishes the build of the description and returns its final (meant to be immutable) object.
-     * @returns {SearchViewDescription}
+     * @returns {module:searchbar.SearchViewDescription}
      */
     this.build = function () {
       return this.description;
@@ -452,7 +474,7 @@ searchbar.SearchbarUI = (function () {
         if (this.focusOutTimer != null) {
           clearTimeout(this.focusOutTimer);
         }
-        //TODO only show results if there are some
+        //TODO should only show results if there are some
         show(config.resultsView.viewElementId);
       }
     });
@@ -764,7 +786,7 @@ searchbar.SearchbarUI = (function () {
       var next = null;
       if (menuEntryIdProperties.type === config.resultsView.listEntryElementIdPrefix) {
         //select first filter entry after last result/match entry
-        //TODO could analyze better way (without config) to navigate from last search result to first options/filter entry
+        //TODO could find a better way (without config) to navigate from last search result to first options/filter entry
         next = document.getElementById(config.filterOptionsView.listEntryElementIdPrefix + "--1");
       }
       if (next === null) {
@@ -781,7 +803,7 @@ searchbar.SearchbarUI = (function () {
       var previous = null;
       if (menuEntryIdProperties.type === config.filterOptionsView.listEntryElementIdPrefix) {
         //select last result entry when arrow up is pressed on first filter entry
-        //TODO could analyze better way (without config) to navigate from first options/filter entry to last search result?
+        //TODO could find a better way (without config) to navigate from first options/filter entry to last search result?
         var resultElementsCount = getListElementCountOfType(config.resultsView.listEntryElementIdPrefix);
         previous = document.getElementById(config.resultsView.listEntryElementIdPrefix + "--" + resultElementsCount);
       }
@@ -1217,7 +1239,8 @@ searchbar.SearchbarUI = (function () {
    */
   function createListEntryElement(entry, view, id) {
     var text = createListEntryInnerHtmlText(entry, view, id);
-    var listElement = createListElement(text, id, view.listEntryElementIdPrefix, view.listEntryElementTag);
+    var listElement = createListElement(text, id, view.listEntryElementTag);
+    addClass(resolveStyleClasses(entry, view), listElement);
     var parentElement = document.getElementById(view.listParentElementId);
     parentElement.appendChild(listElement);
     return listElement;
@@ -1231,16 +1254,24 @@ searchbar.SearchbarUI = (function () {
    * @param {number} id id of the list element
    */
   function createListEntryInnerHtmlText(entry, view, id) {
-    //TODO should support template inside html e.g. referenced by id (with convention over code)
+    //TODO could support template inside html e.g. referenced by id (with convention over code)
     //TODO should limit length of resolved variables
     var resolver = new template_resolver.Resolver(entry);
     var text = resolver.resolveTemplate(view.listEntryTextTemplate);
     if (typeof entry.summaries !== "undefined") {
       text = resolver.resolveTemplate(view.listEntrySummaryTemplate);
     }
-    var json = JSON.stringify(entry); //TODO must be without spaces
+    var json = JSON.stringify(entry); //needs to be without spaces
     text += '<p id="' + id + '--fields" style="display: none">' + json + "</p>";
     return text;
+  }
+
+  function resolveStyleClasses(entry, view) {
+    var entryResolver = new template_resolver.Resolver(entry);
+    var viewResolver = new template_resolver.Resolver({view: view});
+    var resolvedClasses = entryResolver.resolveTemplate(view.listEntryStyleClassTemplate);
+    resolvedClasses = viewResolver.resolveTemplate(resolvedClasses);
+    return resolvedClasses;
   }
 
   /**
@@ -1248,15 +1279,13 @@ searchbar.SearchbarUI = (function () {
    *
    * @param {string} text inside the list element
    * @param {number} id id of the list element
-   * @param {string} className type of the list element used as prefix for its id, as class name
    * @param {string} elementTag tag (e.g. "li") for the element
    */
-  function createListElement(text, id, className, elementTag) {
+  function createListElement(text, id, elementTag) {
     var element = document.createElement(elementTag);
     element.id = id;
     element.tabIndex = "0";
     element.innerHTML = text;
-    addClass(className, element);
     return element;
   }
 

@@ -60,7 +60,7 @@ restruct.DataConverter = (function () {
       console.log("data before it gets restructured:");
       console.log(jsonData);
     }
-    var transform = new datarestructor.Transform(getDescriptions());
+    var transform = new datarestructor.Transform(getDescriptions()).setMaxRecursionDepth(3);
     if (debugMode) {
       transform.enableDebugMode();
     }
