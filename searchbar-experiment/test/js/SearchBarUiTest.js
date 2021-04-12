@@ -138,6 +138,8 @@ describe("search.js", function () {
         .searchService(searchService)
         .dataConverter(dataConverter)
         .addPredefinedParametersTo(predefinedParametersCallback)
+        .addFocusStyleClassOnEveryCreatedElement("searchresultfocus")
+        .addHoverStyleClassOnEveryCreatedElement("searchresulthover")
         .addElementCreatedHandler(function (newElement) {
           spyOnElement(newElement);
           collectEventListeners(eventListeners, newElement);

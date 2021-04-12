@@ -231,6 +231,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  * This function will be called when a new HTML is created.
  * @callback ElementCreatedListener
  * @param {Element} newlyCreatedElement
+ * @param {boolean} isParent true, if it is the created parent. false, if it is a child within the created parent. 
  */
 
 /**
@@ -257,18 +258,17 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  * @property {string} [waitBeforeMouseOver=700] time in milliseconds to wait until mouse over opens details (default=700)
  */
 
-/**
- * Searchbar UI API
- *
- * @namespace
- */
 searchbar.SearchbarAPI = (function () {
   "use strict";
   /**
-   * Constructor function and container for everything, that needs to exist per instance.
-   * @param {SearchbarConfig} optional parameter that contains a template to clone
+   * Searchbar UI API
+   * @constructs SearchbarAPI
+   * @alias module:searchbar.SearchbarAPI
    */
   function SearchbarApiBuilder() {
+    /**
+     * @type {SearchbarConfig}
+     */
     this.config = {
       triggerSearch: function (searchParameters, onSearchResultsAvailable) {
         throw new Error("search service needs to be defined.");
@@ -279,12 +279,13 @@ searchbar.SearchbarAPI = (function () {
       addPredefinedParametersTo: function (object) {
         //does nothing if not specified otherwise
       },
-      onCreatedElement: function (element) {
+      onCreatedElement: function (element, isParent) {
         //does nothing if not specified otherwise
       },
       navigateTo(destinationUrl) {
         window.location.href = destinationUrl;
       },
+      createdElementListeners: [],
       searchAreaElementId: "searcharea",
       inputElementId: "searchbar",
       searchTextParameterName: "searchtext",
@@ -323,10 +324,50 @@ searchbar.SearchbarAPI = (function () {
     };
     /**
      * Sets the listener, that will be called, when a new HTML element was created.
-     * @param {ElementCreatedListener} listener 
+     * @param {ElementCreatedListener} listener
+     */
+    this.setElementCreatedHandler = function (listener) {
+      this.config.onCreatedElement = listener;
+      return this;
+    };
+    /**
+     * Adds another listener, that will be called, when a new HTML element was created.
+     * @param {ElementCreatedListener} listener
      */
     this.addElementCreatedHandler = function (listener) {
-      this.config.onCreatedElement = listener;
+      this.config.createdElementListeners.push(listener);
+      return this;
+    };
+    this.addFocusStyleClassOnEveryCreatedElement = function (focusStyleClassName) {
+      //TODO default for focusStyleClassName
+      this.addElementCreatedHandler(function (element, isParent) {
+        if (!isParent) {
+          return;
+        }
+        addEvent("focus", element, function (event) {
+          addClass(focusStyleClassName, getEventTarget(event));
+        });
+        addEvent("blur", element, function (event) {
+          removeClass(focusStyleClassName, getEventTarget(event));
+        });
+      });
+      return this;
+    };
+    this.addHoverStyleClassOnEveryCreatedElement = function (hoverStyleClassName) {
+      //TODO default for focusStyleClassName
+      this.addElementCreatedHandler(function (element, isParent) {
+        if (!isParent) {
+          return;
+        }
+        //TODO must provide polyfill for mouseover/mouseout based on mouseenter/mouseleave (IE).
+        //TODO should move addHoverStyleClass... and addFocusStyleClass... to separate ponyfill.
+        addEvent("mouseover", element, function (event) {
+          addClass(hoverStyleClassName, getEventTarget(event));
+        });
+        addEvent("mouseout", element, function (event) {
+          removeClass(hoverStyleClassName, getEventTarget(event));
+        });
+      });
       return this;
     };
     this.searchAreaElementId = function (id) {
@@ -370,7 +411,16 @@ searchbar.SearchbarAPI = (function () {
       return this;
     };
     this.start = function () {
-      return new searchbar.SearchbarUI(this.config);
+      var config = this.config;
+      if (config.createdElementListeners.length > 0) {
+        this.setElementCreatedHandler(function (element, isParent) {
+          var index = 0;
+          for (index = 0; index < config.createdElementListeners.length; index += 1) {
+            config.createdElementListeners[index](element, isParent);
+          }
+        });
+      }
+      return new searchbar.SearchbarUI(config);
     };
   }
 
@@ -416,6 +466,36 @@ searchbar.SearchbarAPI = (function () {
   }
 
   /**
+   * Browser compatible way to add an event handler.
+   * @param {String} eventName 
+   * @param {Element} element 
+   * @param {*} eventHandler 
+   * @protected
+   */
+  function addEvent(eventName, element, eventHandler) {
+    eventlistener.addEventListener(eventName, element, eventHandler);
+  }
+
+  /**
+   * @returns {Element} the target of the event
+   * @protected
+   */
+   function getEventTarget(event) {
+    return eventtarget.getEventTarget(event);
+  }
+
+  function addClass(classToAdd, element) {
+    removeClass(classToAdd, element);
+    var separator = element.className.length > 0 ? " " : "";
+    element.className += separator + classToAdd;
+  }
+  
+  function removeClass(classToRemove, element) {
+    var regex = new RegExp("\\s?\\b" + classToRemove + "\\b", "gi");
+    element.className = element.className.replace(regex, "");
+  }
+
+  /**
    * Public interface
    * @scope searchbar.SearchbarAPI
    */
@@ -432,7 +512,7 @@ searchbar.SearchbarAPI = (function () {
  * @namespace
  */
 searchbar.SearchbarUI = (function () {
-  "use strict";
+  ("use strict");
 
   /**
    * This (constructor) function is called on "new searchbar.SearchbarUI(config)"
@@ -509,7 +589,7 @@ searchbar.SearchbarUI = (function () {
 
   function displayResults(jsonResults, config) {
     var index = 0;
-    for (index = 0; index < jsonResults.length; index+=1) {
+    for (index = 0; index < jsonResults.length; index += 1) {
       addResult(jsonResults[index], index + 1, config);
     }
   }
@@ -717,7 +797,7 @@ searchbar.SearchbarUI = (function () {
     var separator = "--";
     var splittedId = id.split(separator);
     if (splittedId.length < 2) {
-      console.log("expected at least one '"+separator+"' separator inside the id " + id);
+      console.log("expected at least one '" + separator + "' separator inside the id " + id);
     }
     var extractedMainMenuType = splittedId[0];
     var extractedMainMenuIndex = parseInt(splittedId[1]);
@@ -740,7 +820,7 @@ searchbar.SearchbarUI = (function () {
       subMenuId: function (typeName) {
         return id + separator + typeName + separator + "1";
       },
-      replaceMainMenuIndex: function(newIndex) {
+      replaceMainMenuIndex: function (newIndex) {
         var newMainMenuIndex = extractedMainMenuType + separator + newIndex;
         return newMainMenuIndex + id.substring(this.mainMenuId.length);
       },
@@ -755,7 +835,8 @@ searchbar.SearchbarUI = (function () {
       },
       hiddenFields: function () {
         var hiddenFieldsElement = document.getElementById(id + separator + "fields");
-        var hiddenFieldsJson = (typeof hiddenFieldsElement.textContent !== "undefined")? hiddenFieldsElement.textContent : hiddenFieldsElement.innerText;
+        var hiddenFieldsJson =
+          typeof hiddenFieldsElement.textContent !== "undefined" ? hiddenFieldsElement.textContent : hiddenFieldsElement.innerText;
         return JSON.parse(hiddenFieldsJson);
       }
     };
@@ -882,11 +963,7 @@ searchbar.SearchbarUI = (function () {
   function createFilterOption(selectedEntryData, entries, view, config) {
     var filterElements = getListElementCountOfType(view.listEntryElementIdPrefix);
     var filterElementId = view.listEntryElementIdPrefix + "--" + (filterElements + 1);
-    var filterElement = getListEntryByFieldName(
-      selectedEntryData.category,
-      selectedEntryData.fieldName,
-      view.listParentElementId
-    );
+    var filterElement = getListEntryByFieldName(selectedEntryData.category, selectedEntryData.fieldName, view.listParentElementId);
     var isAlreadyExistingFilter = filterElement != null;
     if (isAlreadyExistingFilter) {
       filterElement = updateListEntryElement(selectedEntryData, view, filterElement);
@@ -1171,7 +1248,7 @@ searchbar.SearchbarUI = (function () {
     var parentElement = element.parentElement;
     var indexOfRemovedElement = extractListElementIdProperties(element.id).mainMenuIndex;
     parentElement.removeChild(element);
-    forEachChildRecursively(parentElement, 0, 5, function(entry, index) {
+    forEachChildRecursively(parentElement, 0, 5, function (entry, index) {
       if (entry.id) {
         entry.id = extractListElementIdProperties(entry.id).getNewIndexAfterRemovedMainMenuIndex(indexOfRemovedElement);
       }
@@ -1179,22 +1256,34 @@ searchbar.SearchbarUI = (function () {
   }
 
   function forEachChildRecursively(element, depth, maxDepth, callback) {
-    if ((depth > maxDepth) || (!element.childNodes)) {
+    if (depth > maxDepth || !element.childNodes) {
       return;
     }
-    forEachEntryIn(element.childNodes, function(entry, index) {
+    forEachEntryIn(element.childNodes, function (entry, index) {
       callback(entry, index);
       forEachChildRecursively(entry, depth + 1, maxDepth, callback);
     });
   }
 
+  /**
+   * This function will be called for every found element
+   * @callback ElementFoundListener
+   * @param {Element} foundElement
+   * @param {boolean} isParent true, if it is the created parent. false, if it is a child within the created parent.
+   */
+
+  /**
+   * The given callback will be called for the given parent and all its direct child nodes, that contain an id property.
+   * @param {Element} element parent to be inspected 
+   * @param {ElementFoundListener} callback will be called for every found child and the given parent itself
+   */
   function forEachIdElementIncludingChildren(element, callback) {
     if (element.id) {
-      callback(element);
+      callback(element, true);
     }
-    forEachEntryIn(element.childNodes, function(element) {
+    forEachEntryIn(element.childNodes, function (element) {
       if (element.id) {
-        callback(element);
+        callback(element, false);
       }
     });
   }
@@ -1268,7 +1357,7 @@ searchbar.SearchbarUI = (function () {
 
   function resolveStyleClasses(entry, view) {
     var entryResolver = new template_resolver.Resolver(entry);
-    var viewResolver = new template_resolver.Resolver({view: view});
+    var viewResolver = new template_resolver.Resolver({ view: view });
     var resolvedClasses = entryResolver.resolveTemplate(view.listEntryStyleClassTemplate);
     resolvedClasses = viewResolver.resolveTemplate(resolvedClasses);
     return resolvedClasses;
@@ -1420,9 +1509,9 @@ searchbar.SearchbarUI = (function () {
     addEvent("mouseover", element, function (event) {
       this.originalEvent = cloneObject(event);
       this.delayedHandlerTimer = window.setTimeout(function () {
-        eventHandler(typeof this.originalEvent !== "undefined"? this.originalEvent : event);
-      }, delayTime); 
-      this.preventEventHandling = function() {
+        eventHandler(typeof this.originalEvent !== "undefined" ? this.originalEvent : event);
+      }, delayTime);
+      this.preventEventHandling = function () {
         if (this.delayedHandlerTimer !== null) {
           clearTimeout(this.delayedHandlerTimer);
         }
@@ -1443,7 +1532,7 @@ searchbar.SearchbarUI = (function () {
     }
     return result;
   }
-  
+
   function onEscapeKey(element, eventHandler) {
     addEvent("keydown", element, function (event) {
       if (event.key == "Escape" || event.key == "Esc" || keyCodeOf(event) == 27) {
