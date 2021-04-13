@@ -45,13 +45,28 @@ describe("search.js SearchBarApi", function () {
         expect(resultingSearchUi.config.searchAreaElementId).toEqual("searcharea");
       });
 
+      it("should use `searcharea` as default searchAreaElementId when it is set to null", function () {
+        var resultingSearchUi = searchBarApiUnderTest.searchAreaElementId(null).start();
+        expect(resultingSearchUi.config.searchAreaElementId).toEqual("searcharea");
+      });
+
       it("should use `searchbar` as default inputElementId", function () {
         var resultingSearchUi = searchBarApiUnderTest.start();
         expect(resultingSearchUi.config.inputElementId).toEqual("searchbar");
       });
 
+      it("should use `searchbar` as default inputElementId when it is set to an empty string", function () {
+        var resultingSearchUi = searchBarApiUnderTest.inputElementId("").start();
+        expect(resultingSearchUi.config.inputElementId).toEqual("searchbar");
+      });
+
       it("should use `searchtext` as default searchTextParameterName", function () {
         var resultingSearchUi = searchBarApiUnderTest.start();
+        expect(resultingSearchUi.config.searchTextParameterName).toEqual("searchtext");
+      });
+
+      it("should use `searchtext` as default searchTextParameterName when the set parameter is missing", function () {
+        var resultingSearchUi = searchBarApiUnderTest.searchTextParameterName().start();
         expect(resultingSearchUi.config.searchTextParameterName).toEqual("searchtext");
       });
     });

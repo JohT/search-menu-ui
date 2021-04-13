@@ -300,6 +300,7 @@ searchbar.SearchbarAPI = (function () {
     /**
      * Defines the search service function, that will be called whenever search is triggered.
      * @param {SearchService} service function that will be called to trigger search (backend).
+     * @returns module:searchbar.SearchbarApiBuilder
      */
     this.searchService = function (service) {
       this.config.triggerSearch = service;
@@ -308,6 +309,7 @@ searchbar.SearchbarAPI = (function () {
     /**
      * Defines the converter, that converts search result data to search ui data
      * @param {DataConverter} converter function that will be called to trigger search (backend).
+     * @returns module:searchbar.SearchbarApiBuilder
      */
     this.dataConverter = function (converter) {
       this.config.convertData = converter;
@@ -317,6 +319,7 @@ searchbar.SearchbarAPI = (function () {
      * Defines the function, that adds predefined (fixed, constant, environmental) search parameters
      * to the first parameter object.
      * @param {SearchParameterAdder} adder function that will be called to before search is triggered.
+     * @returns module:searchbar.SearchbarApiBuilder
      */
     this.addPredefinedParametersTo = function (adder) {
       this.config.addPredefinedParametersTo = adder;
@@ -325,6 +328,7 @@ searchbar.SearchbarAPI = (function () {
     /**
      * Sets the listener, that will be called, when a new HTML element was created.
      * @param {ElementCreatedListener} listener
+     * @returns module:searchbar.SearchbarApiBuilder
      */
     this.setElementCreatedHandler = function (listener) {
       this.config.onCreatedElement = listener;
@@ -333,53 +337,46 @@ searchbar.SearchbarAPI = (function () {
     /**
      * Adds another listener, that will be called, when a new HTML element was created.
      * @param {ElementCreatedListener} listener
+     * @returns module:searchbar.SearchbarApiBuilder
      */
     this.addElementCreatedHandler = function (listener) {
       this.config.createdElementListeners.push(listener);
       return this;
     };
+    
+    /**
+     * Adds the given style class when an element receives focus.
+     * This is done for every element that is created dynamically (e.g. search results and filters).
+     * It is only meant to be used for browsers like old IE5 ones that doesn't support focus pseudo style class. 
+     * 
+     * @param {String} [focusStyleClassName="focus"]
+     * @returns module:searchbar.SearchbarApiBuilder
+     */
     this.addFocusStyleClassOnEveryCreatedElement = function (focusStyleClassName) {
-      //TODO default for focusStyleClassName
+      var className = withDefault(focusStyleClassName, "focus");
       this.addElementCreatedHandler(function (element, isParent) {
         if (!isParent) {
           return;
         }
         addEvent("focus", element, function (event) {
-          addClass(focusStyleClassName, getEventTarget(event));
+          addClass(className, getEventTarget(event));
         });
         addEvent("blur", element, function (event) {
-          removeClass(focusStyleClassName, getEventTarget(event));
-        });
-      });
-      return this;
-    };
-    this.addHoverStyleClassOnEveryCreatedElement = function (hoverStyleClassName) {
-      //TODO default for focusStyleClassName
-      this.addElementCreatedHandler(function (element, isParent) {
-        if (!isParent) {
-          return;
-        }
-        //TODO must provide polyfill for mouseover/mouseout based on mouseenter/mouseleave (IE).
-        //TODO should move addHoverStyleClass... and addFocusStyleClass... to separate ponyfill.
-        addEvent("mouseover", element, function (event) {
-          addClass(hoverStyleClassName, getEventTarget(event));
-        });
-        addEvent("mouseout", element, function (event) {
-          removeClass(hoverStyleClassName, getEventTarget(event));
+          removeClass(className, getEventTarget(event));
         });
       });
       return this;
     };
     this.searchAreaElementId = function (id) {
-      this.config.searchAreaElementId = id;
+      this.config.searchAreaElementId = withDefault(id, "searcharea");
       return this;
     };
     this.inputElementId = function (id) {
-      this.config.inputElementId = id;
+      this.config.inputElementId = withDefault(id, "searchbar");
       return this;
     };
     this.searchTextParameterName = function (value) {
-      this.config.searchTextParameterName = value;
+      this.config.searchTextParameterName = withDefault(value, "searchtext");
       return this;
     };
     this.resultsView = function (view) {
@@ -493,6 +490,14 @@ searchbar.SearchbarAPI = (function () {
   function removeClass(classToRemove, element) {
     var regex = new RegExp("\\s?\\b" + classToRemove + "\\b", "gi");
     element.className = element.className.replace(regex, "");
+  }
+
+  function withDefault(value, defaultValue) {
+    return isSpecifiedString(value) ? value : defaultValue;
+  }
+
+  function isSpecifiedString(value) {
+    return typeof value === "string" && value != null && value != "";
   }
 
   /**
