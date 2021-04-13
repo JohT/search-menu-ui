@@ -106,7 +106,13 @@
   background-color: #b7cafd;
 }
 
-.result:focus {
+/* focus pseudo class not ie5 compatible */
+/* .result:focus {
+  background-color: #9db7ff;
+  outline: 0;
+} */
+
+.result.searchresultfocus {
   background-color: #9db7ff;
   outline: 0;
 }
@@ -115,7 +121,13 @@
   background-color: #a1fcb8;
 }
 
-.filter:focus {
+/* focus pseudo class not ie5 compatible */
+/* .filter:focus {
+  background-color: #8ffcaa;
+  outline: 0;
+} */
+
+.filter.searchresultfocus {
   background-color: #8ffcaa;
   outline: 0;
 }
