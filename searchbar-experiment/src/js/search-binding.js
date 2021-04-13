@@ -26,5 +26,4 @@ new searchbar.SearchbarAPI().searchService(httpSearchClient.search)
     searchParameters.mandantennummer = 999;
   })
   .addFocusStyleClassOnEveryCreatedElement("searchresultfocus")
-  .addHoverStyleClassOnEveryCreatedElement("searchresulthover")
   .start();
