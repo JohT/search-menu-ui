@@ -99,7 +99,7 @@ restruct.DataConverter = (function () {
       .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
-      .propertyPattern("responses.hits.hits._source.kontonummer")
+      .propertyPattern("responses.hits.hits._source.accountnumber")
       .groupName("summaries")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
       .deduplicationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}--{{fieldName}}")
@@ -114,7 +114,7 @@ restruct.DataConverter = (function () {
       .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
-      .propertyPattern("responses.hits.hits.highlight.kontonummer")
+      .propertyPattern("responses.hits.hits.highlight.accountnumber")
       .groupName("summaries")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
       .deduplicationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}--{{fieldName}}")
@@ -129,7 +129,7 @@ restruct.DataConverter = (function () {
       .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
-      .propertyPattern("responses.hits.hits._source.verfuegungsberechtigt")
+      .propertyPattern("responses.hits.hits._source.disposer")
       .groupName("summaries")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
       .groupDestinationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
@@ -145,7 +145,7 @@ restruct.DataConverter = (function () {
       .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
-      .propertyPattern("responses.hits.hits.highlight.verfuegungsberechtigt")
+      .propertyPattern("responses.hits.hits.highlight.disposer")
       .groupName("summaries")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
       .groupDestinationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
@@ -161,7 +161,7 @@ restruct.DataConverter = (function () {
       .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
-      .propertyPattern("responses.hits.hits._source.geschaeftsart")
+      .propertyPattern("responses.hits.hits._source.businesstype")
       .groupName("summaries")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
       .groupDestinationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
@@ -212,7 +212,7 @@ restruct.DataConverter = (function () {
       .indexStartsWith("2.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.name")
-      .displayPropertyName("Ziel")
+      .displayPropertyName("Target")
       .groupName("default")
       .groupPattern("{{category}}--{{type}}")
       .build();
@@ -240,7 +240,7 @@ restruct.DataConverter = (function () {
       .indexStartsWith("3.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.name")
-      .displayPropertyName("Ziel")
+      .displayPropertyName("Target")
       .groupName("summaries")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
       .groupDestinationPattern("{{category}}--main")

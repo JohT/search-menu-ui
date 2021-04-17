@@ -1,20 +1,20 @@
-// index setup, analyzer, searches, etc. for Konten (accounts)
+// index setup, analyzer, searches, etc. for sites
 DELETE /sites
 
 PUT /sites
 {
     "mappings": {
         "properties": {
-            "mandantennummer": {
+            "tenantnumber": {
                 "type": "keyword"
             },
             "domain": {
                 "type": "keyword",
-                "normalizer": "namen_normalizer"
+                "normalizer": "name_normalizer"
             },            
-            "geschaeftsart": {
+            "businesstype": {
                 "type": "keyword",
-                "normalizer": "namen_normalizer"
+                "normalizer": "name_normalizer"
             },            
             "name": {
                 "type": "text",
@@ -25,9 +25,8 @@ PUT /sites
                         "type": "search_as_you_type"
                     }
                 }
-                //"copy_to": "suchbegriffe" // copy to common "search as you type" field
             },
-            "feldnamen": {
+            "fieldnames": {
                 "type": "text",
                 "analyzer": "german_decompound_analzer",
                 "term_vector": "with_positions_offsets", // for highlighting
@@ -36,9 +35,8 @@ PUT /sites
                         "type": "search_as_you_type"
                     }
                 }
-                //"copy_to": "suchbegriffe" // copy to common "search as you type" field
             },
-            "felder": {
+            "fields": {
                 "type": "keyword",
                 "normalizer": "lowercase_normalizer"
             },
@@ -46,25 +44,13 @@ PUT /sites
                 "type": "keyword",
                 "normalizer": "lowercase_normalizer"
             },
-            // Performance boost option that contains all search as you type contents in one property
-            // "suchbegriffe": {
-            //     "type": "text",
-            //     "analyzer": "namen_analyzer",
-            //     "term_vector": "with_positions_offsets", // for highlighting
-            //     "store": true,
-            //     "fields": {
-            //         "shingles": {
-            //             "type": "search_as_you_type"
-            //         }
-            //     }
-            // },
             "defaultsite": {
                 "type": "boolean"
             },
-            "neuanlagedatum": {
+            "creationdate": {
                 "type": "date"
             },
-            "aktualisierungsdatum": {
+            "updatetime": {
                 "type": "date"
             }
         }
@@ -84,7 +70,7 @@ PUT /sites
                 }
             },
             "normalizer": {
-                "namen_normalizer": {
+                "name_normalizer": {
                     "type": "custom",
                     "filter": [
                         "lowercase",
@@ -119,7 +105,7 @@ PUT /sites
 POST sites/_analyze
 {
   "analyzer": "german_decompound_analzer",
-  "text":     "Jack Bauer Kim Bauer Kontoübersicht"
+  "text":     "Jack Bauer Kim Bauer Account Overview"
 }
 
 // Test german analyzer
@@ -141,7 +127,7 @@ POST _analyze
             "language":   "light_german"
         }
     ],
-    "text": "Kontoübersicht"
+    "text": "Account Overview"
 }
 
 
@@ -152,85 +138,81 @@ GET sites
 // Test-Sites
 PUT sites/_doc/default
 {
-    "mandantennummer": "999",
-    "domain": "Konto",
-    "geschaeftsart": "Giro",
-    "name": "Kontoübersicht",
-    "feldnamen": [
+    "tenantnumber": "999",
+    "domain": "Account",
+    "businesstype": "Giro",
+    "name": "Account Overview",
+    "fieldnames": [
         "iban",
-        "produkt",
-        "bezeichnung"
+        "product",
+        "description"
     ],
-    "felder": [
+    "fields": [
         "iban",
         "prod",
-        "bez"
+        "desc"
     ],
-    "urltemplate": "http://127.0.0.1:5500/index.html#overview-{{summaries.kontonummer}}",
+    "urltemplate": "http://127.0.0.1:5500/index.html#overview-{{summaries.accountnumber}}",
     "defaultsite": true,
-    "neuanlagedatum": "2020-10-29",
-    "aktualisierungsdatum": "2020-10-29T08:53:30Z"
+    "creationdate": "2020-10-29",
+    "updatetime": "2021-04-29T08:53:30Z"
 }
 
 POST sites/_doc/1
 {
-    "mandantennummer": "999",
-    "domain": "Konto",
-    "geschaeftsart": "Giro",
-    "name": "Habenzinsen",
-    "feldnamen": [
-        "habenzinssatz",
-        "bonuszinssatz",
-        "zinsanpassung"
+    "tenantnumber": "999",
+    "domain": "Account",
+    "businesstype": "Giro",
+    "name": "Credit Interests",
+    "fieldnames": [
+        "creditinterest",
+        "bonusinterest"
     ],
-    "felder": [
-        "hab",
-        "bon",
-        "zan"
+    "fields": [
+        "crin",
+        "boin"
     ],
-    "urltemplate": "http://127.0.0.1:5500/index.html#creditinterest-{{summaries.kontonummer}}",
-    "neuanlagedatum": "2020-10-30",
-    "aktualisierungsdatum": "2020-10-30T09:06:30Z"
+    "urltemplate": "http://127.0.0.1:5500/index.html#creditinterest-{{summaries.accountnumber}}",
+    "creationdate": "2020-10-30",
+    "updatetime": "2021-04-30T09:06:30Z"
 }
 
 POST sites/_doc/2
 {
-    "mandantennummer": "999",
-    "domain": "Konto",
-    "geschaeftsart": "Giro",
-    "name": "Sollzinsen",
-    "feldnamen": [
-        "sollzinssatz",
-        "sollzinsmarge",
-        "zinsanpassung"
+    "tenantnumber": "999",
+    "domain": "Account",
+    "businesstype": "Giro",
+    "name": "Debit Interests",
+    "fieldnames": [
+        "debitinterest",
+        "debit interest margin"
     ],
-    "felder": [
-        "soz",
-        "smg",
-        "zan"
+    "fields": [
+        "dein",
+        "deim"
     ],
-    "urltemplate": "http://127.0.0.1:5500/index.html#debitinterest-{{summaries.kontonummer}}",
-    "neuanlagedatum": "2020-11-07",
-    "aktualisierungsdatum": "2020-11-07T09:06:30Z"
+    "urltemplate": "http://127.0.0.1:5500/index.html#debitinterest-{{summaries.accountnumber}}",
+    "creationdate": "2020-11-07",
+    "updatetime": "2021-04-07T09:06:30Z"
 }
 
 POST sites/_doc/3
 {
-    "mandantennummer": "999",
+    "tenantnumber": "999",
     "domain": "Kunde",
-    "name": "Kundenübersicht",
-    "feldnamen": [
-        "kontonummer",
-        "produkt",
-        "name"
+    "name": "Customer Overview",
+    "fieldnames": [
+        "iban",
+        "product",
+        "description"
     ],
-    "felder": [
-        "kto",
+    "fields": [
+        "iban",
         "prod",
-        "nam"
+        "desc"
     ],
     "urltemplate": "http://127.0.0.1:5500/index.html#overview-customer-{{details.kundennummer}}",
-    "neuanlagedatum": "2020-10-31"
+    "creationdate": "2021-03-31"
 }
 
 // alle sites eines mandanten
@@ -238,7 +220,7 @@ GET sites/_search
 {
     "query": {
         "match": {
-            "mandantennummer": {
+            "tenantnumber": {
                 "query": "999"
             }
         }
@@ -277,18 +259,18 @@ GET sites/_search
                             "name.shingles._2gram",
                             "name.shingles._3gram",
                             "name.shingles._index_prefix",
-                            "feldnamen",
-                            "feldnamen.shingles",
-                            "feldnamen.shingles._2gram",
-                            "feldnamen.shingles._3gram",
-                            "feldnamen.shingles._index_prefix",
-                            "felder"
+                            "fieldnames",
+                            "fieldnames.shingles",
+                            "fieldnames.shingles._2gram",
+                            "fieldnames.shingles._3gram",
+                            "fieldnames.shingles._index_prefix",
+                            "fields"
                         ]
                     }
                 },
                 {
                     "match": {
-                        "mandantennummer": {
+                        "tenantnumber": {
                             "query": "999"
                         }
                     }
@@ -297,7 +279,7 @@ GET sites/_search
             "should": [
                 {
                     "match": {
-                        "geschaeftsart": "Giro"
+                        "businesstype": "Giro"
                     }
                 }
             ]
@@ -310,23 +292,23 @@ GET sites/_search
                 "name": {}
             },
             {
-                "feldnamen": {}
+                "fieldnames": {}
             },
             {
-                "felder": {}
+                "fields": {}
             }
         ]
     }
 }
 
 // Suche alle Tags
-GET sites/_search?filter_path=aggregations.felder.buckets*
+GET sites/_search?filter_path=aggregations.fields.buckets*
 {
     "size": 0,
     "aggs": {
-        "felder": {
+        "fields": {
             "terms": {
-                "field": "felder",
+                "field": "fields",
                 "size": 100
             }
         }
@@ -351,19 +333,19 @@ GET sites/_search/template
                                 "name.shingles._2gram",
                                 "name.shingles._3gram",
                                 "name.shingles._index_prefix",
-                                "feldnamen",
-                                "feldnamen.shingles",
-                                "feldnamen.shingles._2gram",
-                                "feldnamen.shingles._3gram",
-                                "feldnamen.shingles._index_prefix",
-                                "felder"
+                                "fieldnames",
+                                "fieldnames.shingles",
+                                "fieldnames.shingles._2gram",
+                                "fieldnames.shingles._3gram",
+                                "fieldnames.shingles._index_prefix",
+                                "fields"
                             ]
                         }
                     },
                     {
                         "match": {
-                            "mandantennummer": {
-                                "query": "{{mandantennummer}}"
+                            "tenantnumber": {
+                                "query": "{{tenantnumber}}"
                             }
                         }
                     }
@@ -371,7 +353,7 @@ GET sites/_search/template
                 "should": [
                     {
                         "match": {
-                            "geschaeftsart": "{{geschaeftsart}}{{^geschaeftsart}}giro{{/geschaeftsart}}"
+                            "businesstype": "{{businesstype}}{{^businesstype}}giro{{/businesstype}}"
                         }
                     }
                 ]
@@ -384,18 +366,18 @@ GET sites/_search/template
                 "name": {}
             },
             {
-                "feldnamen": {}
+                "fieldnames": {}
             },
             {
-                "felder": {}
+                "fields": {}
             }
             ]
         }
     },
     "params": {
-        "searchtext": "über",
-        "mandantennummer": 999,
-        "geschaeftsart": "Giro"
+        "searchtext": "over",
+        "tenantnumber": 999,
+        "businesstype": "Giro"
     }
 }
 
@@ -422,8 +404,8 @@ POST _scripts/sites_default_v1
                         },
                         {
                             "match": {
-                                "mandantennummer": {
-                                    "query": "{{mandantennummer}}"
+                                "tenantnumber": {
+                                    "query": "{{tenantnumber}}"
                                 }
                             }
                         }
@@ -439,7 +421,7 @@ GET sites/_search/template?filter_path=hits.hits._source
 {
     "id": "sites_default_v1",
     "params": {
-        "mandantennummer": 999
+        "tenantnumber": 999
     }
 }
 
@@ -460,8 +442,8 @@ POST _scripts/sites_search_as_you_type_v1
                     "must": [
                         {
                             "match": {
-                                "mandantennummer": {
-                                    "query": "{{mandantennummer}}"
+                                "tenantnumber": {
+                                    "query": "{{tenantnumber}}"
                                 }
                             }
                         }
@@ -486,18 +468,18 @@ POST _scripts/sites_search_as_you_type_v1
                                     "name.shingles._2gram",
                                     "name.shingles._3gram",
                                     "name.shingles._index_prefix",
-                                    "feldnamen",
-                                    "feldnamen.shingles",
-                                    "feldnamen.shingles._2gram",
-                                    "feldnamen.shingles._3gram",
-                                    "feldnamen.shingles._index_prefix",
-                                    "felder"
+                                    "fieldnames",
+                                    "fieldnames.shingles",
+                                    "fieldnames.shingles._2gram",
+                                    "fieldnames.shingles._3gram",
+                                    "fieldnames.shingles._index_prefix",
+                                    "fields"
                                 ]
                             }
                         },
                         {
                             "match": {
-                                "geschaeftsart": "{{geschaeftsart}}{{^geschaeftsart}}giro{{/geschaeftsart}}"
+                                "businesstype": "{{businesstype}}{{^businesstype}}giro{{/businesstype}}"
                             }
                         }
                     ]
@@ -510,10 +492,10 @@ POST _scripts/sites_search_as_you_type_v1
                         "name": {}
                     },
                     {
-                        "feldnamen": {}
+                        "fieldnames": {}
                     },
                     {
-                        "felder": {}
+                        "fields": {}
                     }
                 ]
             }
@@ -526,28 +508,28 @@ GET sites/_search/template?filter_path=hits.total.value,hits.hits._source,hits.h
 {
     "id": "sites_search_as_you_type_v1",
     "params": {
-        "searchtext": "Über",
-        "mandantennummer": 999,
-        "geschaeftsart": "Giro"
+        "searchtext": "Over",
+        "tenantnumber": 999,
+        "businesstype": "Giro"
     }
 }
 
-// delete search template script - sites_felder_v1
-DELETE _scripts/sites_felder_v1
+// delete search template script - sites_fields_v1
+DELETE _scripts/sites_fields_v1
 
-// store search template script - sites_felder_v1
-POST _scripts/sites_felder_v1
+// store search template script - sites_fields_v1
+POST _scripts/sites_fields_v1
 {
     "script": {
         "lang": "mustache",
         "source": {
             "size": 0,
             "aggs": {
-                "felder": {
+                "fields": {
                     "terms": {
-                        "field": "felder",
-                        "size": "{{felder_aggregations_size}}",
-                        "include": "{{felder_aggregations_prefix}}.*"
+                        "field": "fields",
+                        "size": "{{fields_aggregations_size}}",
+                        "include": "{{fields_aggregations_prefix}}.*"
                     }
                 }
             }
@@ -556,21 +538,21 @@ POST _scripts/sites_felder_v1
 }
 
 
-//execute stored search template script - site_felder_v1
+//execute stored search template script - site_fields_v1
 GET sites/_search/template//?filter_path=aggregations.*.buckets
 {
-    "id": "sites_felder_v1",
+    "id": "sites_fields_v1",
     "params": {
-        "felder_aggregations_prefix": "p",
-        "felder_aggregations_size": 10
+        "fields_aggregations_prefix": "p",
+        "fields_aggregations_size": 10
     }
 }
 
 // Needs to be executed using postman until multi-line-json is supported here
 GET _msearch/template?filter_path=responses.hits.total.value,responses.hits.hits._source,responses.hits.hits.highlight,hits.responses.hits.highlight,responses.aggregations.*.buckets
 {"index": "sites"}
-{"id": "sites_default_v1", "params":{"mandantennummer":999}}
+{"id": "sites_default_v1", "params":{"tenantnumber":999}}
 {"index": "sites"}
-{"id": "sites_search_as_you_type_v1", "params":{"searchtext":"hab", "mandantennummer":999,"geschaeftsart":"Giro"}}
+{"id": "sites_search_as_you_type_v1", "params":{"searchtext":"cre", "tenantnumber":999,"businesstype":"Giro"}}
 //{"index": "sites"}
-//{"id": "sites_felder_v1", "params":{"felder_aggregations_prefix": "hab", "felder_aggregations_size": 10}}
+//{"id": "sites_fields_v1", "params":{"fields_aggregations_prefix": "cre", "fields_aggregations_size": 10}}
