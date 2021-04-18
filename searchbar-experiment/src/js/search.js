@@ -282,7 +282,7 @@ searchbar.SearchbarAPI = (function () {
       onCreatedElement: function (element, isParent) {
         //does nothing if not specified otherwise
       },
-      navigateTo(destinationUrl) {
+      navigateTo: function (destinationUrl) {
         window.location.href = destinationUrl;
       },
       createdElementListeners: [],
@@ -1593,7 +1593,6 @@ searchbar.SearchbarUI = (function () {
       }
     });
   }
-
   function onArrowRightKey(element, eventHandler) {
     addEvent("keydown", element, function (event) {
       if (event.key == "ArrowRight" || event.key == "Right" || keyCodeOf(event) == 39) {
