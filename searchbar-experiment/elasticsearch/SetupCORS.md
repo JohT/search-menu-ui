@@ -6,6 +6,8 @@ CORS (cross origin resource sharing) for "Live Server" in VS-Code (which runs at
 ```
 http.cors.enabled: true
 http.cors.allow-origin: http://127.0.0.1:5500
+http.cors.allow-methods: OPTIONS, HEAD, GET, POST, PUT, DELETE
+http.cors.allow-headers: X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
 ```
 
 A good location inside the configuration file is right under "http.port" in the "Network" section.
