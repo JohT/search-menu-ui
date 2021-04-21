@@ -1068,8 +1068,15 @@ datarestructor.Transform = (function () {
       return field;
     }
     var fieldGroups = new described_field.DescribedDataFieldGroup(field);
+    var duplicateCount = 0;
     forEachGroupEntry(entry, function (groupName, groupEntry) {
-      fieldGroups.addGroupEntry(groupName, toDescribedField(groupEntry, recursionDepth + 1, maxRecursionDepth));
+      //TODO should make removeDuplicationAboveRecursionDepth configurable
+      if ((groupEntry == entry) && (recursionDepth > 1)){
+        //TODO must replace debug code 
+        duplicateCount++;
+      } else {
+        fieldGroups.addGroupEntry(groupName, toDescribedField(groupEntry, recursionDepth + 1, maxRecursionDepth));
+      }
     });
     return field;
   }
