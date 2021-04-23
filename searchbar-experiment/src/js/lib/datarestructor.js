@@ -625,6 +625,14 @@ datarestructor.DescribedEntryCreator = (function () {
   return DescribedEntry;
 })();
 
+  /**
+   * @typedef {Object} module:datarestructor.TransformConfig
+   * @property {boolean} debugMode enables/disables detailed logging
+   * @property {number} [maxRecursionDepth=8] Maximum recursion depth
+   * @property {number} [removeDuplicationAboveRecursionDepth=1]  Duplications will be removed above the given recursion depth value and remain unchanged below it.
+   */
+
+
 datarestructor.Transform = (function () {
   "use strict";
 
@@ -641,25 +649,46 @@ datarestructor.Transform = (function () {
      */
     this.descriptions = descriptions;
     /**
-     * Debug mode switch, that enables/disables detailed logging.
+     * Configuration for the transformation.
      * @protected
-     * @type {boolean}
+     * @type {module:datarestructor.TransformConfig}
      */
-    this.debugMode = false;
+    this.config = {
+      /**
+       * Debug mode switch, that enables/disables detailed logging.
+       * @protected
+       * @type {boolean}
+       */
+      debugMode: false,
+      /**
+       * Maximum recursion depth. Defaults to 8.
+       * @protected
+       * @type {number}
+       */
+      maxRecursionDepth: 8,
+      /**
+       * Duplications will be removed above the given recursion depth and remain below it.
+       * Defaults to 1.
+       *
+       * Since fields can contain groups of fields that can contain groups of fields..., cyclic
+       * data structures are possible by nature and will lead to duplications. Some of them
+       * might be intended e.g. to take one (sub-)field with all (duplicated) groups.
+       * To restrict duplications and improve performance it is beneficial to define a
+       * recursion depth, above which further duplication won't be used and should be removed/avoided.
+       *
+       * @protected
+       * @type {number}
+       */
+      removeDuplicationAboveRecursionDepth: 1
+    };
     /**
      * Enables debug mode. Logs additional information.
      * @returns {module:datarestructor.Transform}
      */
     this.enableDebugMode = function () {
-      this.debugMode = true;
+      this.config.debugMode = true;
       return this;
     };
-    /**
-     * Maximum recursion depth. Defaults to 8, 
-     * @protected 
-     * @type {number}
-     */
-    this.maxRecursionDepth = 8;
 
     /**
      * Sets the maximum recursion depth. Defaults to 8 if not set.
@@ -667,10 +696,30 @@ datarestructor.Transform = (function () {
      * @returns {module:datarestructor.Transform}
      */
     this.setMaxRecursionDepth = function (value) {
-      if ((typeof value !== "number") || (value < 0)) {
+      if (typeof value !== "number" || value < 0) {
         throw "Invalid max recursion depth value: " + value;
       }
-      this.maxRecursionDepth = value;
+      this.config.maxRecursionDepth = value;
+      return this;
+    };
+    /**
+     * Sets the recursion depth above which duplication will be removed. Duplications below it remain unchanged.
+     * Defaults to 1.
+     *
+     * Since fields can contain groups of fields that can contain groups of fields..., cyclic
+     * data structures are possible by nature and will lead to duplications. Some of them
+     * might be intended e.g. to take one (sub-)field with all (duplicated) groups.
+     * To restrict duplications and improve performance it is beneficial to define a
+     * recursion depth, above which further duplication won't be used and should be removed/avoided.
+     *
+     * @param {number} value non negative number.
+     * @returns {module:datarestructor.Transform}
+     */
+    this.setRemoveDuplicationAboveRecursionDepth = function (value) {
+      if (typeof value !== "number" || value < 0) {
+        throw "Invalid remove duplications above recursion depth value: " + value;
+      }
+      this.config.removeDuplicationAboveRecursionDepth = value;
       return this;
     };
     /**
@@ -684,27 +733,26 @@ datarestructor.Transform = (function () {
      * var result = new datarestructor.Transform(allDescriptions).processJson(jsonData);
      */
     this.processJson = function (data) {
-      return processJsonUsingDescriptions(data, this.descriptions, this.debugMode, this.maxRecursionDepth);
+      return processJsonUsingDescriptions(data, this.descriptions, this.config);
     };
   }
 
   /**
    * "Assembly line", that takes the jsonData and processes it using all given descriptions in their given order.
-   * @param {object} jsonData - parsed JSON data or any other data object
+   * @param {object} jsonData parsed JSON data or any other data object
    * @param {module:datarestructor.PropertyStructureDescription[]} descriptions - already grouped entries
-   * @param {boolean} debugMode - false=default=off, true=write additional logs for detailed debugging
-   * @param {number} maxRecursionDepth - maximum recursion depth. Defaults to 8 if not set.
+   * @param {module:datarestructor.TransformConfig} config configuration for the data transformation
    * @returns {module:datarestructor.DescribedEntry[]}
    * @protected
    * @memberof module:datarestructor.Transform
    */
-  function processJsonUsingDescriptions(jsonData, descriptions, debugMode, maxRecursionDepth) {
+  function processJsonUsingDescriptions(jsonData, descriptions, config) {
     // "Flatten" the hierarchical input json to an array of property names (point separated "folders") and values.
     var processedData = internal_object_tools.flattenToArray(jsonData);
     // Fill in properties ending with the name "_comma_separated_values" for array values to make it easier to display them.
     processedData = fillInArrayValues(processedData);
 
-    if (debugMode) {
+    if (config.debugMode) {
       console.log("flattened data with array values:");
       console.log(processedData);
     }
@@ -721,7 +769,7 @@ datarestructor.Transform = (function () {
     }
     processedData = describedData;
 
-    if (debugMode) {
+    if (config.debugMode) {
       console.log("describedData data:");
       console.log(processedData);
     }
@@ -729,7 +777,7 @@ datarestructor.Transform = (function () {
     // Group entries where a groupPattern is described
     processedData = groupFlattenedData(processedData);
 
-    if (debugMode) {
+    if (config.debugMode) {
       console.log("grouped describedData data:");
       console.log(processedData);
     }
@@ -737,7 +785,7 @@ datarestructor.Transform = (function () {
     // Move group entries where a groupDestinationPattern is described
     processedData = applyGroupDestinationPattern(processedData);
 
-    if (debugMode) {
+    if (config.debugMode) {
       console.log("moved grouped describedData data:");
       console.log(processedData);
     }
@@ -746,9 +794,9 @@ datarestructor.Transform = (function () {
     processedData = propertiesAsArray(processedData);
 
     // Converts the internal described entries  into described fields
-    processedData = toDescribedFields(processedData, maxRecursionDepth);
+    processedData = toDescribedFields(processedData, config);
 
-    if (debugMode) {
+    if (config.debugMode) {
       console.log("transformed result:");
       console.log(processedData);
     }
@@ -1024,18 +1072,18 @@ datarestructor.Transform = (function () {
    * Since the structure of a described field is hierarchical, every field needs to be converted
    * in a recursive manner. The maximum recursion depth is taken as the second parameter.
    * @param {module:datarestructor.DescribedEntry[]} describedEntries
-   * @param {number} maxRecursionDepth  maximum hierarchy depth
+   * @param {module:datarestructor.TransformConfig} config configuration for the data transformation
    * @returns {module:described_field.DescribedDataField[]}
    * @protected
    * @memberof module:datarestructor.Transform
    */
-  function toDescribedFields(describedEntries, maxRecursionDepth) {
+  function toDescribedFields(describedEntries, config) {
     var result = [];
     var index;
     var describedEntity;
     for (index = 0; index < describedEntries.length; index += 1) {
       describedEntity = describedEntries[index];
-      result.push(toDescribedField(describedEntity, 0, maxRecursionDepth));
+      result.push(toDescribedField(describedEntity, 0, config));
     }
     return result;
   }
@@ -1048,12 +1096,12 @@ datarestructor.Transform = (function () {
    * and the maximum recursion depth is taken as third parameter.
    * @param {module:datarestructor.DescribedEntry} entry the internal entry that will be converted
    * @param {number} recursionDepth current hierarchy recursion depth
-   * @param {number} maxRecursionDepth  maximum hierarchy recursion depth
+   * @param {module:datarestructor.TransformConfig} config configuration for the data transformation
    * @returns {module:described_field.DescribedDataField}
    * @protected
    * @memberof module:datarestructor.Transform
    */
-  function toDescribedField(entry, recursionDepth, maxRecursionDepth) {
+  function toDescribedField(entry, recursionDepth, config) {
     var field = new described_field.DescribedDataFieldBuilder()
       .category(entry.category)
       .type(entry.type)
@@ -1064,18 +1112,26 @@ datarestructor.Transform = (function () {
       .fieldName(entry.fieldName)
       .value(entry.value)
       .build();
-    if (recursionDepth > maxRecursionDepth) {
+    if (recursionDepth > config.maxRecursionDepth) {
       return field;
     }
     var fieldGroups = new described_field.DescribedDataFieldGroup(field);
-    var duplicateCount = 0;
     forEachGroupEntry(entry, function (groupName, groupEntry) {
-      //TODO should make removeDuplicationAboveRecursionDepth configurable
-      if ((groupEntry == entry) && (recursionDepth > 1)){
-        //TODO must replace debug code 
-        duplicateCount++;
+      if (groupEntry != entry || recursionDepth <= config.removeDuplicationAboveRecursionDepth) {
+        fieldGroups.addGroupEntry(groupName, toDescribedField(groupEntry, recursionDepth + 1, config));
       } else {
-        fieldGroups.addGroupEntry(groupName, toDescribedField(groupEntry, recursionDepth + 1, maxRecursionDepth));
+        if (config.debugMode) {
+          console.log(
+            "Removed duplicate field " +
+              groupEntry.fieldName +
+              " with value " +
+              groupEntry.value +
+              " of group " +
+              groupName +
+              " at recursion depth " +
+              recursionDepth
+          );
+        }
       }
     });
     return field;
