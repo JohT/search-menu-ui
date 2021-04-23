@@ -41,10 +41,10 @@ describe("search-service-client HttpSearchConfig", function () {
       expect(httpSearchConfig.config.searchMethod).toEqual(expectedValue);
     });
 
-    it("should contain configured search url", function () {
+    it("should contain configured search url template", function () {
       var expectedValue = "http://localhost:9200/_msearch/template";
-      httpSearchConfig = httpSearchConfig.searchUrl(expectedValue);
-      expect(httpSearchConfig.config.searchUrl).toEqual(expectedValue);
+      httpSearchConfig = httpSearchConfig.searchUrlTemplate(expectedValue);
+      expect(httpSearchConfig.config.searchUrlTemplate).toEqual(expectedValue);
     });
 
     it("should contain configured search content type", function () {
@@ -57,6 +57,13 @@ describe("search-service-client HttpSearchConfig", function () {
       var expectedValue = '{"index": "customers"}';
       httpSearchConfig = httpSearchConfig.searchBodyTemplate(expectedValue);
       expect(httpSearchConfig.config.searchBodyTemplate).toEqual(expectedValue);
+    });
+
+    it("should resolve variables in the search request url template", function () {
+      var template = "{{variable1}}-{{variable2}}";
+      var variables = { variable1: "WX", variable2: "YZ" };
+      httpSearchConfig = httpSearchConfig.searchUrlTemplate(template);
+      expect(httpSearchConfig.config.resolveSearchUrl(variables)).toEqual("WX-YZ");
     });
 
     it("should resolve variables in the search request body template", function () {
@@ -100,7 +107,7 @@ describe("search-service-client HttpSearchConfig", function () {
       httpSearchConfigBuilder = new searchServiceUnderTest.HttpSearchConfig()
       .debugMode(false)
       .searchMethod("POST")
-      .searchUrl("http://localhost:9200/_msearch/template")
+      .searchUrlTemplate("http://localhost:9200/_msearch/template")
       .httpRequest(httpRequest);
 
       httpClientUnderTest = httpSearchConfigBuilder.build();
@@ -139,7 +146,7 @@ describe("search-service-client HttpSearchConfig", function () {
       var onJsonResultReceived = function () {};
       httpClientUnderTest.search(searchParameters, onJsonResultReceived);
       httpRequest.onreadystatechange();
-      expect(usedUrl).toEqual(httpSearchConfig.searchUrl);
+      expect(usedUrl).toEqual(httpSearchConfig.searchUrlTemplate);
     });
 
     it("should report failed communication", function () {

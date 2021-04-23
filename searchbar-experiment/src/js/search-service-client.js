@@ -25,7 +25,7 @@ var xmlHttpRequest = xmlHttpRequest || require("../../src/js/ponyfills/xmlHttpRe
 
 /**
  * @typedef {Object} HttpSearchConfig Configures the HTTP request for the search.
- * @property {string} searchUrl url for the HTTP request for the search
+ * @property {string} searchUrlTemplate url for the HTTP request for the search
  * @property {string} [searchMethod="POST"] HTTP method for the search. Defaults to "POST".
  * @property {string} [searchContentType="application/json"] HTTP content type of the request body. Defaults to "application/json".
  * @property {string} [searchBodyTemplate=null] HTTP request body template that may contain variables (e.g. {{searchParameters}}) in double curly brackets, or null if there is none.
@@ -43,9 +43,10 @@ searchService.HttpSearchConfig = (function () {
     this.config = {
       /**
        * URL, that is called for every search request.
+       * It may include variables in double curly brackets like {{searchtext}}.
        * @type {String}
        */
-      searchUrl: "",
+      searchUrlTemplate: "",
       /**
        * HTTP Method, that is used for every search request
        * @type {String}
@@ -63,24 +64,20 @@ searchService.HttpSearchConfig = (function () {
        */
        searchBodyTemplate: null,
       /**
+       * Resolves variables in the search url template based on the given search parameters object.
+       * The variable {{jsonSearchParameters}} will be replaced by the JSON of all search parameters.
+       * @param {Object} searchParameters object properties will be used to replace the variables of the searchUrlTemplate
+       */
+      resolveSearchUrl: function (searchParameters) {
+        return resolveTemplate(this.searchUrlTemplate, searchParameters, this.debugMode);
+      },
+      /**
        * Resolves variables in the search body template based on the given search parameters object.
-       * The variable {{jsonSearchParameters}} will be replaces by the JSON of all search parameters.
+       * The variable {{jsonSearchParameters}} will be replaced by the JSON of all search parameters.
        * @param {Object} searchParameters object properties will be used to replace the variables of the searchBodyTemplate
        */
-      resolveSearchBody: function (searchParameters) {
-        if (!this.searchBodyTemplate) {
-          return null;
-        }
-        var jsonSearchParameters = JSON.stringify(searchParameters);
-        var resolvedBody = this.searchBodyTemplate;
-        resolvedBody = resolveVariableInTemplate(resolvedBody, "jsonSearchParameters", jsonSearchParameters);
-        resolvedBody = resolveVariablesInTemplate(resolvedBody, searchParameters);
-        if (this.debugMode) {
-          console.log("template search body=" + this.searchBodyTemplate);
-          console.log("{{jsonSearchParameters}}=" + jsonSearchParameters);
-          console.log("resolved search body=" + resolvedBody);
-        }
-        return resolvedBody;
+       resolveSearchBody: function (searchParameters) {
+        return resolveTemplate(this.searchBodyTemplate, searchParameters, this.debugMode);
       },
       /**
        * Contains the XMLHttpRequest that is used to handle HTTP requests and responses.
@@ -92,11 +89,12 @@ searchService.HttpSearchConfig = (function () {
     };
     /**
      * Sets the url for the HTTP request for the search.
+     * It may include variables in double curly brackets like {{searchtext}}.
      * @param {String} value
      * @return {module:searchService.HttpSearchConfig}
      */
-    this.searchUrl = function (value) {
-      this.config.searchUrl = value;
+    this.searchUrlTemplate = function (value) {
+      this.config.searchUrlTemplate = value;
       return this;
     };
     /**
@@ -154,6 +152,29 @@ searchService.HttpSearchConfig = (function () {
       }
       return new searchService.HttpClient(this.config);
     };
+  }
+
+  /**
+   * Resolves variables in the template based on the given search parameters object.
+   * The variable {{jsonSearchParameters}} will be replaced by the JSON of all search parameters.
+   * @param {String} template contains variables in double curly brackets that should be replaced by the values of the parameterSourceObject.
+   * @param {Object} parameterSourceObject object properties will be used to replace the variables of the template
+   * @param {boolean} debugMode enables/disables extended logging for debugging
+   */
+  function resolveTemplate(template, parameterSourceObject, debugMode) {
+    if (template == null) {
+      return null;
+    }
+    var jsonSearchParameters = JSON.stringify(parameterSourceObject);
+    var resolvedBody = template;
+    resolvedBody = resolveVariableInTemplate(resolvedBody, "jsonSearchParameters", jsonSearchParameters);
+    resolvedBody = resolveVariablesInTemplate(resolvedBody, parameterSourceObject);
+    if (debugMode) {
+      console.log("template search body=" + template);
+      console.log("{{jsonSearchParameters}}=" + jsonSearchParameters);
+      console.log("resolved search body=" + resolvedBody);
+    }
+    return resolvedBody;
   }
 
   function resolveVariablesInTemplate(templateString, sourceDataObject) {
@@ -236,8 +257,9 @@ searchService.HttpClient = (function () {
       var onFailure = function (resultText, httpStatus) {
         console.error("search failed with status code " + httpStatus + ": " + resultText);
       };
+      var searchUrl = config.resolveSearchUrl(searchParameters);
       var searchBody = config.resolveSearchBody(searchParameters);
-      var request = { url: config.searchUrl, method: config.searchMethod, contentType: config.searchContentType, body: searchBody };
+      var request = { url: searchUrl, method: config.searchMethod, contentType: config.searchContentType, body: searchBody };
       if (config.debugMode) {
         onJsonResultReceived = loggedSuccess(onJsonResultReceived);
       }
