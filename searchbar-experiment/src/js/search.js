@@ -739,6 +739,7 @@ searchbar.SearchbarUI = (function () {
   function onFilterMenuEntryRemoved(element, eventHandler) {
     onDeleteKey(element, eventHandler);
     onBackspaceKey(element, eventHandler);
+    //TODO should also be possible with the mouse without using keys
   }
 
   /**
