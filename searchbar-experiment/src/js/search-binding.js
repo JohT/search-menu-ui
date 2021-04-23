@@ -1,10 +1,20 @@
 // Configure the search service client.
-var httpSearchClient = new searchService.HttpSearchConfig()
-.searchMethod("POST")
-.searchContentType("application/x-ndjson")
-.searchUrl(
-  "http://localhost:9200/_msearch/template?filter_path=responses.hits.total.value,responses.hits.hits._source,hits.responses.hits.highlight,responses.aggregations.*.buckets"
-)
+var httpSearchClient;
+
+// Locally mocked search with a view pre-queried search results (for local debugging and testing)
+httpSearchClient = new searchService.HttpSearchConfig()
+  .searchMethod("GET")
+  .searchUrlTemplate("/data/AccountSearchResult-{{searchtext}}.json")
+  .debugMode(true)
+  .build();
+
+// Search using elasticsearch multisearch
+httpSearchClient = new searchService.HttpSearchConfig()
+  .searchMethod("POST")
+  .searchContentType("application/x-ndjson")
+  .searchUrlTemplate(
+    "http://localhost:9200/_msearch/template?filter_path=responses.hits.total.value,responses.hits.hits._source,hits.responses.hits.highlight,responses.aggregations.*.buckets"
+  )
   .searchBodyTemplate(
     '{"index": "accounts"}\n' +
       '{"id": "account_search_as_you_type_v1", "params":{{jsonSearchParameters}}}\n' +
@@ -19,7 +29,8 @@ var httpSearchClient = new searchService.HttpSearchConfig()
   .build();
 
 // Configure and start the search bar functionality.
-new searchbar.SearchbarAPI().searchService(httpSearchClient.search)
+new searchbar.SearchbarAPI()
+  .searchService(httpSearchClient.search)
   .dataConverter(new restruct.DataConverter().createDataConverter(true))
   .addPredefinedParametersTo(function (searchParameters) {
     searchParameters.tenantnumber = 999;

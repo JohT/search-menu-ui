@@ -1,0 +1,270 @@
+{
+    "responses": [
+        {
+            "hits": {
+                "total": {
+                    "value": 3
+                },
+                "hits": [
+                    {
+                        "_source": {
+                            "iban": "AT424321012345678901",
+                            "accountnumber": "12345678901",
+                            "customernumber": "00001234567",
+                            "tenantnumber": "999",
+                            "businesstype": "Giro",
+                            "product": "Salary",
+                            "creationdate": "2020-08-08",
+                            "updatetime": "2021-04-08T08:31:30Z",
+                            "disposer": "Hans Mustermann",
+                            "accountmanager": "Sarah Connor",
+                            "currency": "EUR",
+                            "tags": [
+                                "active",
+                                "online"
+                            ]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "iban": "AT424321012345678907",
+                            "accountnumber": "12345678907",
+                            "customernumber": "00001234571",
+                            "tenantnumber": "999",
+                            "businesstype": "Giro",
+                            "product": "Trust",
+                            "creationdate": "2020-08-09",
+                            "updatetime": "2021-04-09T08:20:30Z",
+                            "disposer": "Carlo Martinez",
+                            "accountmanager": "Sarah Connor",
+                            "currency": "EUR",
+                            "tags": [
+                                "active"
+                            ]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "iban": "AT424321012345678908",
+                            "accountnumber": "12345678908",
+                            "customernumber": "00001234572",
+                            "tenantnumber": "999",
+                            "businesstype": "Giro",
+                            "product": "Salary",
+                            "creationdate": "2020-08-09",
+                            "updatetime": "2021-04-09T08:22:30Z",
+                            "disposer": "Carmen Martin",
+                            "accountmanager": "Clara Claton",
+                            "currency": "EUR",
+                            "tags": [
+                                "active"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "hits": {
+                "total": {
+                    "value": 8
+                }
+            },
+            "aggregations": {
+                "product": {
+                    "buckets": [
+                        {
+                            "key": "private loan",
+                            "doc_count": 2
+                        },
+                        {
+                            "key": "salary",
+                            "doc_count": 2
+                        },
+                        {
+                            "key": "commercial giro",
+                            "doc_count": 1
+                        },
+                        {
+                            "key": "housing loan",
+                            "doc_count": 1
+                        },
+                        {
+                            "key": "private giro",
+                            "doc_count": 1
+                        },
+                        {
+                            "key": "trust",
+                            "doc_count": 1
+                        }
+                    ]
+                },
+                "currency": {
+                    "buckets": [
+                        {
+                            "key": "eur",
+                            "doc_count": 7
+                        },
+                        {
+                            "key": "chf",
+                            "doc_count": 1
+                        }
+                    ]
+                },
+                "accountmanager": {
+                    "buckets": [
+                        {
+                            "key": "clara claton",
+                            "doc_count": 4
+                        },
+                        {
+                            "key": "sarah connor",
+                            "doc_count": 3
+                        },
+                        {
+                            "key": "john mcclane",
+                            "doc_count": 1
+                        }
+                    ]
+                },
+                "businesstype": {
+                    "buckets": [
+                        {
+                            "key": "giro",
+                            "doc_count": 5
+                        },
+                        {
+                            "key": "loan",
+                            "doc_count": 3
+                        }
+                    ]
+                },
+                "tags": {
+                    "buckets": [
+                        {
+                            "key": "active",
+                            "doc_count": 7
+                        },
+                        {
+                            "key": "online",
+                            "doc_count": 2
+                        },
+                        {
+                            "key": "short-term",
+                            "doc_count": 2
+                        },
+                        {
+                            "key": "bullet bond",
+                            "doc_count": 1
+                        },
+                        {
+                            "key": "deleted",
+                            "doc_count": 1
+                        },
+                        {
+                            "key": "long-term",
+                            "doc_count": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "hits": {
+                "total": {
+                    "value": 1
+                },
+                "hits": [
+                    {
+                        "_source": {
+                            "tenantnumber": "999",
+                            "domain": "Account",
+                            "businesstype": "Giro",
+                            "name": "Account Overview",
+                            "fieldnames": [
+                                "iban",
+                                "product",
+                                "description"
+                            ],
+                            "fields": [
+                                "iban",
+                                "prod",
+                                "desc"
+                            ],
+                            "urltemplate": "http://127.0.0.1:5500/index.html#overview-{{summaries.accountnumber}}",
+                            "defaultsite": true,
+                            "creationdate": "2020-10-29",
+                            "updatetime": "2021-04-29T08:53:30Z"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "hits": {
+                "total": {
+                    "value": 3
+                },
+                "hits": [
+                    {
+                        "_source": {
+                            "tenantnumber": "999",
+                            "domain": "Account",
+                            "businesstype": "Giro",
+                            "name": "Debit Interests",
+                            "fieldnames": [
+                                "debitinterest",
+                                "debit interest margin"
+                            ],
+                            "fields": [
+                                "dein",
+                                "deim"
+                            ],
+                            "urltemplate": "http://127.0.0.1:5500/index.html#debitinterest-{{summaries.accountnumber}}",
+                            "creationdate": "2020-11-07",
+                            "updatetime": "2021-04-07T09:06:30Z"
+                        }
+                    },
+                    {
+                        "_source": {
+                            "tenantnumber": "999",
+                            "domain": "Account",
+                            "businesstype": "Giro",
+                            "name": "Credit Interests",
+                            "fieldnames": [
+                                "creditinterest",
+                                "bonusinterest"
+                            ],
+                            "fields": [
+                                "crin",
+                                "boin"
+                            ],
+                            "urltemplate": "http://127.0.0.1:5500/index.html#creditinterest-{{summaries.accountnumber}}",
+                            "creationdate": "2020-10-30",
+                            "updatetime": "2021-04-30T09:06:30Z"
+                        }
+                    },
+                    {
+                        "_source": {
+                            "tenantnumber": "999",
+                            "domain": "Kunde",
+                            "name": "Customer Overview",
+                            "fieldnames": [
+                                "iban",
+                                "product",
+                                "description"
+                            ],
+                            "fields": [
+                                "iban",
+                                "prod",
+                                "desc"
+                            ],
+                            "urltemplate": "http://127.0.0.1:5500/index.html#overview-customer-{{details.kundennummer}}",
+                            "creationdate": "2021-03-31"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
