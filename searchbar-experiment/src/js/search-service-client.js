@@ -170,9 +170,9 @@ searchService.HttpSearchConfig = (function () {
     resolvedBody = resolveVariableInTemplate(resolvedBody, "jsonSearchParameters", jsonSearchParameters);
     resolvedBody = resolveVariablesInTemplate(resolvedBody, parameterSourceObject);
     if (debugMode) {
-      console.log("template search body=" + template);
+      console.log("template=" + template);
       console.log("{{jsonSearchParameters}}=" + jsonSearchParameters);
-      console.log("resolved search body=" + resolvedBody);
+      console.log("resolved template=" + resolvedBody);
     }
     return resolvedBody;
   }
@@ -300,12 +300,12 @@ searchService.HttpClient = (function () {
    */
   function httpRequestJson(request, httpRequest, onSuccess, onFailure) {
     httpRequest.onreadystatechange = function () {
-      if (this.readyState === 4) {
-        if (this.status >= 200 && this.status <= 299) {
-          var jsonResult = JSON.parse(this.responseText);
-          onSuccess(jsonResult, this.status);
+      if (httpRequest.readyState === 4) {
+        if (httpRequest.status >= 200 && httpRequest.status <= 299) {
+          var jsonResult = JSON.parse(httpRequest.responseText);
+          onSuccess(jsonResult, httpRequest.status);
         } else {
-          onFailure(this.responseText, this.status);
+          onFailure(httpRequest.responseText, httpRequest.status);
         }
       }
     };
@@ -315,4 +315,4 @@ searchService.HttpClient = (function () {
   }
 
   return instance;
-})();
+}());
