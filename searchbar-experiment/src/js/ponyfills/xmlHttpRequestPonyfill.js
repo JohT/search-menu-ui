@@ -18,7 +18,13 @@ var xmlHttpRequest = module.exports={}; // Fallback for vanilla js without modul
  */
  xmlHttpRequest.getXMLHttpRequest = function () {
   if (typeof XMLHttpRequest !== "undefined") {
-    return new XMLHttpRequest();
+    try {
+      var request = new XMLHttpRequest();
+      request.status; //try, if status is accessible. Fails in IE5.
+      return request;
+    } catch (e) {
+      console.log("XMLHttpRequest not available: " + e);
+    }
   }
   try {
     return new ActiveXObject("Msxml2.XMLHTTP.6.0");
