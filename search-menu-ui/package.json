@@ -1,31 +1,45 @@
 {
-  "name": "searchbar-experiment",
+  "name": "search-menu-ui",
   "version": "1.0.0",
-  "description": "An experiment with a generic search menu",
+  "description": "Search UI written in vanilla JavaScript. Menu structure for results. Filters are integrated as search results.",
   "main": "index.html",
   "directories": {
     "test": "test"
   },
   "scripts": {
+    "prebuild": "rm -rf dist",
+    "lint": "eslint \"./src/js/*.js\"",
     "test": "jasmine --config=./test/js/jasmine.json",
-    "coverage": "nyc npm run test"
+    "coverage": "nyc npm run test",
+    "coverage-badge": "istanbul-badges-readme",
+    "doc": "jsdoc -d docs --configure ./docs/jsdoc.json --readme ./README.md ./src/js/*.js",
+    "dev": "rm -rf devdist && parcel --out-dir devdist ./src/js/*.js",
+    "devbuild": "rm -rf devdist && NODE_ENV=development parcel build --out-dir devdist ./src/js/*.js --no-minify",
+    "build": "parcel build ./src/js/*.js",
+    "package": "npm run lint && npm run coverage && npm run coverage-badge && npm run doc && (npm run build & npm run devbuild)"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JohT/private-snippets.git"
+    "url": "git+https://github.com/JohT/search-menu-ui.git"
   },
   "keywords": [
     "search",
-    "experiement"
+    "menu",
+    "ui",
+    "elasticsearch"
   ],
   "author": "JohT",
   "license": "Apache-2.0",
   "dependencies": {
-    "data-restructor": "^3.1.0"
+    "data-restructor": "^3.2.0"
   },
   "devDependencies": {
     "jasmine": "^3.7.0",
     "jsdom": "^16.5.1",
-    "nyc": "^15.1.0"
+    "nyc": "^15.1.0",
+    "eslint": "^7.22.0",
+    "istanbul-badges-readme": "^1.2.1",
+    "jsdoc": "^3.6.6",
+    "parcel-bundler": "^1.12.4"
   }
 }

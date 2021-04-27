@@ -1,8 +1,9 @@
 /**
- * @file "Searchbar" for the web client
- * @version ${project.version}
+ * @file Search UI written in vanilla JavaScript. Menu structure for results. Filters are integrated as search results.
+ * @version {@link https://github.com/JohT/search-menu-ui/releases/latest latest version}
  * @author JohT
  */
+
 //TODO JSDoc
 
 var module = datarestructorInternalCreateIfNotExists(module); // Fallback for vanilla js without modules
@@ -13,16 +14,16 @@ function datarestructorInternalCreateIfNotExists(objectToCheck) {
 
 /**
  * Contains all functions for the "search as you type" feature.
- * @module searchbar
+ * @module searchmenu
  */
- var searchbar = module.exports={}; // Export module for npm...
- searchbar.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
+ var searchmenu = module.exports={}; // Export module for npm...
+ searchmenu.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
 
 //TODO should find a way to use the "dist" module
 //TODO should find a way to use ie compatible module
 var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
 var described_field = described_field || require("data-restructor/devdist/describedfield"); // supports vanilla js & npm
-var eventtarget = eventtarget || require("./ponyfills//eventCurrentTargetPonyfill"); // supports vanilla js & npm
+var eventtarget = eventtarget || require("./ponyfills/eventCurrentTargetPonyfill"); // supports vanilla js & npm
 var selectionrange = selectionrange || require("./ponyfills/selectionRangePonyfill"); // supports vanilla js & npm
 var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfill"); // supports vanilla js & npm
 
@@ -38,14 +39,14 @@ var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfi
  * @property {boolean} [isSelectableFilterOption=false] Specifies, if the list entry can be selected as filter option
  */
 
-searchbar.SearchViewDescriptionBuilder = (function () {
+searchmenu.SearchViewDescriptionBuilder = (function () {
   "use strict";
 
   /**
    * SearchViewDescription
    * @param {SearchViewDescription} template optional parameter that contains a template to clone
    * @constructs SearchViewDescriptionBuilder
-   * @alias module:searchbar.SearchViewDescriptionBuilder
+   * @alias module:searchmenu.SearchViewDescriptionBuilder
    */
   function SearchViewDescription(template) {
     var defaultTemplate = "{{displayName}}: {{value}}";
@@ -69,7 +70,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * ID of the element (e.g. "div"), that contains the view with all list elements and their parent.
      *
      * @param {string} value view element ID.
-     * @returns {module:searchbar.SearchViewDescriptionBuilder}
+     * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
     this.viewElementId = function (value) {
       this.description.viewElementId = withDefault(value, "");
@@ -78,7 +79,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
     /**
      * ID of the element (e.g. "ul"), that contains all list entries and is located inside the view.
      * @param {string} value parent element ID
-     * @returns {module:searchbar.SearchViewDescriptionBuilder}
+     * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
     this.listParentElementId = function (value) {
       this.description.listParentElementId = withDefault(value, "");
@@ -87,7 +88,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
     /**
      * ID prefix (followed by "--" and the index number) for every list entry.
      * @param {string} value ID prefix for every list entry element
-     * @returns {module:searchbar.SearchViewDescriptionBuilder}
+     * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
     this.listEntryElementIdPrefix = function (value) {
       //TODO Should be checked to not contain the index separation chars "--"
@@ -98,7 +99,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * Element tag for list entries. defaults to "li".
      * Defaults to "li".
      * @param {string} value tag for every list entry element
-     * @returns {module:searchbar.SearchViewDescriptionBuilder}
+     * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
     this.listEntryElementTag = function (value) {
       this.description.listEntryElementTag = withDefault(value, defaultTag);
@@ -110,7 +111,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * May contain variables in double curly brackets.
      *
      * @param {string} value list entry text template when there is no summary data group
-     * @returns {module:searchbar.SearchViewDescriptionBuilder}
+     * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
     this.listEntryTextTemplate = function (value) {
       this.description.listEntryTextTemplate = withDefault(value, defaultTemplate);
@@ -122,7 +123,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * May contain variables in double curly brackets.
      *
      * @param {string} value list entry text template when there is a summary data group
-     * @returns {module:searchbar.SearchViewDescriptionBuilder}
+     * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
     this.listEntrySummaryTemplate = function (value) {
       this.description.listEntrySummaryTemplate = withDefault(value, defaultSummaryTemplate);
@@ -135,7 +136,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * To use the property values of this view, prefix them with "view", e.g.: "{{view.listEntryElementIdPrefix}}".
      *
      * @param {string} value list entry style classes template
-     * @returns {module:searchbar.SearchViewDescriptionBuilder}
+     * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
      this.listEntryStyleClassTemplate = function (value) {
       this.description.listEntryStyleClassTemplate = withDefault(value, defaultStyleClassTemplate);
@@ -145,7 +146,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
      * Specifies, if the list entry can be selected as filter option.
      * Defaults to "false".
      * @param {boolean} value if a list entry is selectable as filter option
-     * @returns {module:searchbar.SearchViewDescriptionBuilder}
+     * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
     this.isSelectableFilterOption = function (value) {
       this.description.isSelectableFilterOption = value === true;
@@ -153,7 +154,7 @@ searchbar.SearchViewDescriptionBuilder = (function () {
     };
     /**
      * Finishes the build of the description and returns its final (meant to be immutable) object.
-     * @returns {module:searchbar.SearchViewDescription}
+     * @returns {module:searchmenu.SearchViewDescription}
      */
     this.build = function () {
       return this.description;
@@ -170,23 +171,10 @@ searchbar.SearchViewDescriptionBuilder = (function () {
 
   /**
    * Public interface
-   * @scope searchbar.SearchViewDescription
+   * @scope searchmenu.SearchViewDescription
    */
   return SearchViewDescription;
 })();
-
-/**
- * This function will be called, when search results are available.
- * @callback SearchServiceResultAvailable
- * @param {Object} searchResultData already parsed data object containing the result of the search
- */
-
-/**
- * This function will be called to trigger search (calling the search backend).
- * @callback SearchService
- * @param {Object} searchParameters object that contains all parameters as properties. It will be converted to JSON.
- * @param {SearchServiceResultAvailable} onSearchResultsAvailable will be called when search results are available.
- */
 
 /**
  * @callback ResolveTemplateFunction replaces variables with object properties.
@@ -212,6 +200,19 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  * @property {SearchUiData[]} options contains filter options that can be selected as search parameters 
  * @property {SearchUiData[]} default array with one element representing the default filter option (selected automatically)
  * @property {SearchUiData[]} summaries fields that are used to display the main search entry/result
+ */
+
+/**
+ * This function will be called, when search results are available.
+ * @callback SearchServiceResultAvailable
+ * @param {Object} searchResultData already parsed data object containing the result of the search
+ */
+
+/**
+ * This function will be called to trigger search (calling the search backend).
+ * @callback SearchService
+ * @param {Object} searchParameters object that contains all parameters as properties. It will be converted to JSON.
+ * @param {SearchServiceResultAvailable} onSearchResultsAvailable will be called when search results are available.
  */
 
 /**
@@ -241,14 +242,14 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  */
 
 /**
- * @typedef {Object} SearchbarConfig
+ * @typedef {Object} SearchMenuConfig
  * @property {SearchService} triggerSearch triggers search (backend)
  * @property {DataConverter} convertData converts search result data to search ui data
  * @property {SearchParameterAdder} addPredefinedParametersTo adds custom search parameters 
  * @property {ElementCreatedListener} onCreatedElement this function will be called when a new HTML is created.
  * @property {NavigateToFunction} navigateTo this function will be called to navigate to a selected search result url.
  * @property {string} searchAreaElementId id of the whole search area (default="searcharea")
- * @property {string} inputElementId id of the search input field (default="searchbar")
+ * @property {string} inputElementId id of the search input field (default="searchmenu")
  * @property {SearchViewDescription} resultsView describes the main view containing the search results
  * @property {SearchViewDescription} detailView describes the details view
  * @property {SearchViewDescription} filterOptionsView describes the filter options view
@@ -258,28 +259,28 @@ searchbar.SearchViewDescriptionBuilder = (function () {
  * @property {string} [waitBeforeMouseOver=700] time in milliseconds to wait until mouse over opens details (default=700)
  */
 
-searchbar.SearchbarAPI = (function () {
+searchmenu.SearchMenuAPI = (function () {
   "use strict";
   /**
-   * Searchbar UI API
-   * @constructs SearchbarAPI
-   * @alias module:searchbar.SearchbarAPI
+   * Search Menu UI API
+   * @constructs SearchMenuAPI
+   * @alias module:searchmenu.SearchMenuAPI
    */
-  function SearchbarApiBuilder() {
+  function SearchMenuApiBuilder() {
     /**
-     * @type {SearchbarConfig}
+     * @type {SearchMenuConfig}
      */
     this.config = {
-      triggerSearch: function (searchParameters, onSearchResultsAvailable) {
+      triggerSearch: function (/* searchParameters, onSearchResultsAvailable */) {
         throw new Error("search service needs to be defined.");
       },
-      convertData: function (sourceData) {
+      convertData: function (/* sourceData */) {
         throw new Error("data converter needs to be defined.");
       },
-      addPredefinedParametersTo: function (object) {
+      addPredefinedParametersTo: function (/* object */) {
         //does nothing if not specified otherwise
       },
-      onCreatedElement: function (element, isParent) {
+      onCreatedElement: function (/* element, isParent */) {
         //does nothing if not specified otherwise
       },
       navigateTo: function (destinationUrl) {
@@ -287,7 +288,7 @@ searchbar.SearchbarAPI = (function () {
       },
       createdElementListeners: [],
       searchAreaElementId: "searcharea",
-      inputElementId: "searchbar",
+      inputElementId: "searchmenu",
       searchTextParameterName: "searchtext",
       resultsView: defaultResultsView(),
       detailView: defaultDetailView(),
@@ -300,7 +301,7 @@ searchbar.SearchbarAPI = (function () {
     /**
      * Defines the search service function, that will be called whenever search is triggered.
      * @param {SearchService} service function that will be called to trigger search (backend).
-     * @returns module:searchbar.SearchbarApiBuilder
+     * @returns module:searchmenu.SearchMenuApiBuilder
      */
     this.searchService = function (service) {
       this.config.triggerSearch = service;
@@ -309,7 +310,7 @@ searchbar.SearchbarAPI = (function () {
     /**
      * Defines the converter, that converts search result data to search ui data
      * @param {DataConverter} converter function that will be called to trigger search (backend).
-     * @returns module:searchbar.SearchbarApiBuilder
+     * @returns module:searchmenu.SearchMenuApiBuilder
      */
     this.dataConverter = function (converter) {
       this.config.convertData = converter;
@@ -319,7 +320,7 @@ searchbar.SearchbarAPI = (function () {
      * Defines the function, that adds predefined (fixed, constant, environmental) search parameters
      * to the first parameter object.
      * @param {SearchParameterAdder} adder function that will be called to before search is triggered.
-     * @returns module:searchbar.SearchbarApiBuilder
+     * @returns module:searchmenu.SearchMenuApiBuilder
      */
     this.addPredefinedParametersTo = function (adder) {
       this.config.addPredefinedParametersTo = adder;
@@ -328,7 +329,7 @@ searchbar.SearchbarAPI = (function () {
     /**
      * Sets the listener, that will be called, when a new HTML element was created.
      * @param {ElementCreatedListener} listener
-     * @returns module:searchbar.SearchbarApiBuilder
+     * @returns module:searchmenu.SearchMenuApiBuilder
      */
     this.setElementCreatedHandler = function (listener) {
       this.config.onCreatedElement = listener;
@@ -337,7 +338,7 @@ searchbar.SearchbarAPI = (function () {
     /**
      * Adds another listener, that will be called, when a new HTML element was created.
      * @param {ElementCreatedListener} listener
-     * @returns module:searchbar.SearchbarApiBuilder
+     * @returns module:searchmenu.SearchMenuApiBuilder
      */
     this.addElementCreatedHandler = function (listener) {
       this.config.createdElementListeners.push(listener);
@@ -350,7 +351,7 @@ searchbar.SearchbarAPI = (function () {
      * It is only meant to be used for browsers like old IE5 ones that doesn't support focus pseudo style class. 
      * 
      * @param {String} [focusStyleClassName="focus"]
-     * @returns module:searchbar.SearchbarApiBuilder
+     * @returns module:searchmenu.SearchMenuApiBuilder
      */
     this.addFocusStyleClassOnEveryCreatedElement = function (focusStyleClassName) {
       var className = withDefault(focusStyleClassName, "focus");
@@ -372,7 +373,7 @@ searchbar.SearchbarAPI = (function () {
       return this;
     };
     this.inputElementId = function (id) {
-      this.config.inputElementId = withDefault(id, "searchbar");
+      this.config.inputElementId = withDefault(id, "searchmenu");
       return this;
     };
     this.searchTextParameterName = function (value) {
@@ -417,12 +418,12 @@ searchbar.SearchbarAPI = (function () {
           }
         });
       }
-      return new searchbar.SearchbarUI(config);
+      return new searchmenu.SearchMenuUI(config);
     };
   }
 
   function defaultResultsView() {
-    return new searchbar.SearchViewDescriptionBuilder()
+    return new searchmenu.SearchViewDescriptionBuilder()
       .viewElementId("searchresults")
       .listParentElementId("searchmatches")
       .listEntryElementIdPrefix("result")
@@ -434,7 +435,7 @@ searchbar.SearchbarAPI = (function () {
   }
 
   function defaultDetailView() {
-    return new searchbar.SearchViewDescriptionBuilder()
+    return new searchmenu.SearchViewDescriptionBuilder()
       .viewElementId("searchdetails")
       .listParentElementId("searchdetailentries")
       .listEntryElementIdPrefix("detail")
@@ -443,7 +444,7 @@ searchbar.SearchbarAPI = (function () {
   }
 
   function defaultFilterOptionsView() {
-    return new searchbar.SearchViewDescriptionBuilder()
+    return new searchmenu.SearchViewDescriptionBuilder()
       .viewElementId("searchfilteroptions")
       .listParentElementId("searchfilteroptionentries")
       .listEntryElementIdPrefix("filter")
@@ -454,7 +455,7 @@ searchbar.SearchbarAPI = (function () {
   }
 
   function defaultFiltersView() {
-    return new searchbar.SearchViewDescriptionBuilder()
+    return new searchmenu.SearchViewDescriptionBuilder()
       .viewElementId("searchresults")
       .listParentElementId("searchfilters")
       .listEntryElementIdPrefix("filter")
@@ -502,13 +503,13 @@ searchbar.SearchbarAPI = (function () {
 
   /**
    * Public interface
-   * @scope searchbar.SearchbarAPI
+   * @scope searchmenu.SearchMenuAPI
    */
-  return SearchbarApiBuilder;
+  return SearchMenuApiBuilder;
 }());
 
 /**
- * Searchbar UI.
+ * SearchMenu UI.
  *
  * Contains the "behavior" of the search bar. It submits the search query,
  * parses the results, displays matches and filters and responds to
@@ -516,13 +517,13 @@ searchbar.SearchbarAPI = (function () {
  *
  * @namespace
  */
-searchbar.SearchbarUI = (function () {
-  ("use strict");
+searchmenu.SearchMenuUI = (function () {
+  "use strict";
 
   /**
-   * This (constructor) function is called on "new searchbar.SearchbarUI(config)"
+   * This (constructor) function is called on "new searchmenu.SearchMenuUI(config)"
    * with the search configuration as parameter. It contains everything that needs
-   * to be initialized and constructed for this specific searchbar instance.
+   * to be initialized and constructed for this specific searchmenu instance.
    *
    * Functions outside of this object can be considered as static (for every instance).
    * They can also be considered to be "private", since they can not be accessed from outside.
@@ -553,7 +554,7 @@ searchbar.SearchbarUI = (function () {
     });
 
     var searchareaElement = document.getElementById(config.searchAreaElementId);
-    addEvent("focusin", searchareaElement, function (event) {
+    addEvent("focusin", searchareaElement, function () {
       var searchInputElement = document.getElementById(config.inputElementId);
       if (searchInputElement.value !== "") {
         if (this.focusOutTimer != null) {
@@ -563,7 +564,7 @@ searchbar.SearchbarUI = (function () {
         show(config.resultsView.viewElementId);
       }
     });
-    addEvent("focusout", searchareaElement, function (event) {
+    addEvent("focusout", searchareaElement, function () {
       this.focusOutTimer = window.setTimeout(function () {
         hideMenu(config);
       }, config.waitBeforeClose);
@@ -611,7 +612,7 @@ searchbar.SearchbarUI = (function () {
         config.waitBeforeMouseOver,
         handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails)
       );
-      onMenuEntryChosen(resultElement, function (event) {
+      onMenuEntryChosen(resultElement, function () {
         var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId, entry.category);
         if (selectedUrlTemplate) {
           config.navigateTo(new template_resolver.Resolver(entry).resolveTemplate(selectedUrlTemplate));
@@ -693,7 +694,7 @@ searchbar.SearchbarUI = (function () {
    * Reacts to input events (keys, ...) to navigate through main menu entries.
    *
    * @param {Element} element to add event handlers
-   * @param {SearchbarConfig} config search configuration
+   * @param {SearchMenuConfig} config search configuration
    */
   function addMainMenuNavigationHandlers(element, config) {
     onArrowDownKey(element, handleEventWithConfig(config, focusNextSearchResult));
@@ -743,7 +744,7 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
-   * @param {SearchbarConfig} config search configuration
+   * @param {SearchMenuConfig} config search configuration
    * @param {EventListener} eventHandler event handler
    */
   function handleEventWithConfig(config, eventHandler) {
@@ -754,7 +755,7 @@ searchbar.SearchbarUI = (function () {
 
   /**
    * @param {Object[]} entries raw data of the entry
-   * @param {SearchbarConfig} config search configuration
+   * @param {SearchMenuConfig} config search configuration
    * @param {EventListener} eventHandler event handler
    */
   function handleEventWithEntriesAndConfig(entries, config, eventHandler) {
@@ -925,7 +926,6 @@ searchbar.SearchbarUI = (function () {
     if (next != null) {
       menuEntry.blur();
       next.focus();
-      scrollToFocus(next, false);
     }
   }
 
@@ -951,7 +951,6 @@ searchbar.SearchbarUI = (function () {
     if (previous != null) {
       menuEntry.blur();
       previous.focus();
-      scrollToFocus(previous, true);
     }
   }
 
@@ -1175,22 +1174,6 @@ searchbar.SearchbarUI = (function () {
   }
 
   /**
-   * Scrolls to where the given element is visible.
-   * @param {HTMLElement} element
-   * @param {boolean} up true if the focus moved up, false otherwise
-   */
-  //TODO should be fixed to work as expected even in IE
-  function scrollToFocus(element, up) {
-    /*
-    if (up == true) {
-      element.scrollIntoView({ block: "start" });
-    } else {
-      element.scrollIntoView({ block: "end" });
-    }
-    */
-  }
-
-  /**
    * Browser compatible Y position of the given element.
    */
   function getYPositionOfElement(element) {
@@ -1254,7 +1237,7 @@ searchbar.SearchbarUI = (function () {
     var parentElement = element.parentElement;
     var indexOfRemovedElement = extractListElementIdProperties(element.id).mainMenuIndex;
     parentElement.removeChild(element);
-    forEachChildRecursively(parentElement, 0, 5, function (entry, index) {
+    forEachChildRecursively(parentElement, 0, 5, function (entry) {
       if (entry.id) {
         entry.id = extractListElementIdProperties(entry.id).getNewIndexAfterRemovedMainMenuIndex(indexOfRemovedElement);
       }
@@ -1265,8 +1248,8 @@ searchbar.SearchbarUI = (function () {
     if (depth > maxDepth || !element.childNodes) {
       return;
     }
-    forEachEntryIn(element.childNodes, function (entry, index) {
-      callback(entry, index);
+    forEachEntryIn(element.childNodes, function (entry) {
+      callback(entry);
       forEachChildRecursively(entry, depth + 1, maxDepth, callback);
     });
   }
@@ -1454,28 +1437,6 @@ searchbar.SearchbarUI = (function () {
         return parentNode;
       }
       parentNode = parentNode.parentNode;
-    }
-    return null;
-  }
-
-  /**
-   * Returns the child of the element (or the element itself), that matches the given predicate.
-   * Returns null, if no element had been found.
-   * @param {Element} element
-   * @param {ElementPredicate} predicate
-   */
-  function childThatMatches(element, predicate) {
-    var node = element;
-    if (predicate(node)) {
-      return node;
-    }
-    var i, childElement, matchingChild;
-    for (i = 0; i < node.childNodes.length; i += 1) {
-      childElement = node.childNodes[i];
-      matchingChild = childThatMatches(childElement, predicate);
-      if (matchingChild != null) {
-        return matchingChild;
-      }
     }
     return null;
   }

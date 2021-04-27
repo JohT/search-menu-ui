@@ -1,5 +1,13 @@
-// Configure the search service client.
+/**
+ * @file Configures the search service client, assembles all parts and attaches it to the ui (start()).
+ * @version {@link https://github.com/JohT/search-menu-ui/releases/latest latest version}
+ * @author JohT
+ */
+
 var httpSearchClient;
+var searchService = searchService || require("./search-service-client"); // supports vanilla js & npm
+var searchmenu = searchmenu || require("./search-menu-ui"); // supports vanilla js & npm
+var restruct = restruct || require("./restruct-data-client"); // supports vanilla js & npm
 
 // Locally mocked search with a view pre-queried search results (for local debugging and testing)
 httpSearchClient = new searchService.HttpSearchConfig()
@@ -29,7 +37,7 @@ httpSearchClient = new searchService.HttpSearchConfig()
   .build();
 
 // Configure and start the search bar functionality.
-new searchbar.SearchbarAPI()
+new searchmenu.SearchMenuAPI()
   .searchService(httpSearchClient.search)
   .dataConverter(new restruct.DataConverter().createDataConverter(true))
   .addPredefinedParametersTo(function (searchParameters) {

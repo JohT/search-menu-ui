@@ -70,3 +70,10 @@ coverage/
 
 # development build directory
 #devdist/
+
+# ignore all build results (temporarily)
+devdist/
+dist/
+docs/**
+!jsdoc.json
+coverage/

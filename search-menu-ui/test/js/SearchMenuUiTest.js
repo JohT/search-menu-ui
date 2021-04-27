@@ -1,14 +1,14 @@
 "use strict";
 
-var searchbar = searchbar || require("../../src/js/search"); // supports vanilla js & npm
-var searchresulttestdata = searchresulttestdata || require("../../test/js/SearchBarUiTestJsonData");
+var searchmenu = searchmenu || require("../../src/js/search-menu-ui"); // supports vanilla js & npm
+var searchresulttestdata = searchresulttestdata || require("./SearchMenuUiTestJsonData");
 
 describe("search.js", function () {
   var searchUnderTest;
   var searchTestData;
 
   beforeEach(function () {
-    searchUnderTest = searchbar;
+    searchUnderTest = searchmenu;
     searchTestData = searchresulttestdata;
   });
 
@@ -115,8 +115,8 @@ describe("search.js", function () {
     });
   });
 
-  describe("SearchBarUI", function () {
-    var searchBarUiUnderTest;
+  describe("SearchMenuUI", function () {
+    var searchMenuUiUnderTest;
     var config;
     var searchResultData;
     var searchService = jasmine.createSpy("searchServiceSpy").and.callFake(function (searchParameters, callback) {
@@ -129,12 +129,12 @@ describe("search.js", function () {
 
     var documentElements; // Contains all document elements that are set up, created or read during the test
     var eventListeners; // Contains all event listeners that are involved.
-    var nonExistingElements; // Array of element id Strings that should return "null" on the first getElementById. e.g. ["searchbar"]
+    var nonExistingElements; // Array of element id Strings that should return "null" on the first getElementById. e.g. ["searchmenu"]
     var globalParentElement; // Every test element will be created as child of this parent element if present.
 
     beforeEach(function () {
       initializeDocumentElements();
-      var searchBarApiConfig = new searchUnderTest.SearchbarAPI()
+      var searchMenuApiConfig = new searchUnderTest.SearchMenuAPI()
         .searchService(searchService)
         .dataConverter(dataConverter)
         .addPredefinedParametersTo(predefinedParametersCallback)
@@ -144,7 +144,7 @@ describe("search.js", function () {
           collectEventListeners(eventListeners, newElement);
           documentElements[newElement.id] = newElement;
         });
-      config = searchBarApiConfig.config;
+      config = searchMenuApiConfig.config;
       setUpFixture(config);
 
       nonExistingElements = [];
@@ -155,10 +155,10 @@ describe("search.js", function () {
       nonExistingElements.push(config.filterOptionsView.listEntryElementIdPrefix + "--0");
       nonExistingElements.push(config.filterOptionsView.listEntryElementIdPrefix + "--1");
 
-      searchBarUiUnderTest = searchBarApiConfig.start();
+      searchMenuUiUnderTest = searchMenuApiConfig.start();
       searchResultData = searchTestData.SearchResult.getJson();
       globalParentElement = document.getElementById(config.searchAreaElementId);
-      replaceTimeoutWithin(searchBarUiUnderTest);
+      replaceTimeoutWithin(searchMenuUiUnderTest);
     });
 
     function initializeDocumentElements() {
@@ -290,24 +290,24 @@ describe("search.js", function () {
       var searchInputTextElement = getSearchInputTextElement();
       searchInputTextElement.value = searchCharacter;
       var keyEvent = createKeyEvent(searchCharacter, searchInputTextElement);
-      eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
+      eventListeners.searchmenu.keyup.call(searchMenuUiUnderTest, keyEvent);
     }
 
     function eraseInputSearchText() {
       var searchInputTextElement = getSearchInputTextElement();
       searchInputTextElement.value = "";
       var keyEvent = createKeyEvent("Backspace", searchInputTextElement);
-      eventListeners.searchbar.keyup.call(searchBarUiUnderTest, keyEvent);
+      eventListeners.searchmenu.keyup.call(searchMenuUiUnderTest, keyEvent);
     }
 
     function keyDownOnElementId(elementId, keyName) {
       var keyEvent = createKeyEvent(keyName, documentElements[elementId]);
-      eventListeners[elementId].keydown.call(searchBarUiUnderTest, keyEvent);
+      eventListeners[elementId].keydown.call(searchMenuUiUnderTest, keyEvent);
     }
 
     function keyCodeDownOnElementId(elementId, keyCode) {
       var keyEvent = createKeyCodeEvent(keyCode, documentElements[elementId]);
-      eventListeners[elementId].keydown.call(searchBarUiUnderTest, keyEvent);
+      eventListeners[elementId].keydown.call(searchMenuUiUnderTest, keyEvent);
     }
 
     function arrowKeyDownOnElementId(elementId) {
@@ -343,17 +343,17 @@ describe("search.js", function () {
     describe("should recognize key events on input text element and", function () {
       it("should reset search input text when escape key is pressed there", function () {
         keyDownOnElementId(getSearchInputTextElement().id, "Escape");
-        expect(documentElements.searchbar.value).toEqual("");
+        expect(documentElements.searchmenu.value).toEqual("");
       });
 
       it("should reset search input text when escape key event is signaled as 'Esc'", function () {
         keyDownOnElementId(getSearchInputTextElement().id, "Esc");
-        expect(documentElements.searchbar.value).toEqual("");
+        expect(documentElements.searchmenu.value).toEqual("");
       });
 
       it("should reset search input text when escape key event is signaled as keyCode 27", function () {
         keyCodeDownOnElementId(getSearchInputTextElement().id, 27);
-        expect(documentElements.searchbar.value).toEqual("");
+        expect(documentElements.searchmenu.value).toEqual("");
       });
 
       it("should hide search area when escape key is pressed on input text", function () {
@@ -373,7 +373,7 @@ describe("search.js", function () {
         arrowKeyDownOnElementId(config.inputElementId);
         var firstResultListElement = getFirstResultListElement();
         var mouseEvent = { currentTarget: firstResultListElement };
-        eventListeners[firstResultListElement.id].mouseover.call(searchBarUiUnderTest, mouseEvent);
+        eventListeners[firstResultListElement.id].mouseover.call(searchMenuUiUnderTest, mouseEvent);
         expect(getDetailsViewElement().className).toContain("show");
       });
     });

@@ -1,6 +1,6 @@
 /**
  * @file Provides the (http) client/connection to the search backend service.
- * @version ${project.version}
+ * @version {@link https://github.com/JohT/search-menu-ui/releases/latest latest version}
  * @author JohT
  */
 //TODO JSDoc

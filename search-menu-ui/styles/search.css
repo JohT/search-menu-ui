@@ -9,7 +9,7 @@
   /* font-family: 'Open Sans', sans-serif; */
 }
 
-/* The container for searchbar and searchresults needed to position the dropdown content */
+/* The container for searchmenu and searchresults needed to position the dropdown content */
 .searcharea {
   position: relative;
   display: inline-block;

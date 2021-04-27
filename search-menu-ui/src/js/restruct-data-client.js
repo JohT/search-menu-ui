@@ -1,6 +1,6 @@
 /**
  * @file restruct-data-client adapts the search result JSON from the server to the data structure needed by the search UI.
- * @version
+ * @version {@link https://github.com/JohT/search-menu-ui/releases/latest latest version}
  * @author JohT
  */
 //TODO JSDoc
@@ -75,9 +75,7 @@ restruct.DataConverter = (function () {
   function getDescriptions() {
     var descriptions = [];
     descriptions.push(summarizedAccountNumberDescription());
-    // allDescriptions.push(highlightedAccountNumberDescription());
     descriptions.push(summarizedAccountNameDescription());
-    // allDescriptions.push(highlightedAccountNameDescription());
     descriptions.push(summarizedAccountTypeDescription());
     
     descriptions.push(detailsDescription());
@@ -106,21 +104,6 @@ restruct.DataConverter = (function () {
       .build();
   }
 
-  function highlightedAccountNumberDescription() {
-    return new datarestructor.PropertyStructureDescriptionBuilder()
-      .type("summary")
-      .category("account")
-      // .abbreviation("&#128176;") //money bag symbol
-      .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
-      .indexStartsWith("0.")
-      .propertyPatternEqualMode()
-      .propertyPattern("responses.hits.hits.highlight.accountnumber")
-      .groupName("summaries")
-      .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
-      .deduplicationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}--{{fieldName}}")
-      .build();
-  }
-
   function summarizedAccountNameDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
@@ -130,22 +113,6 @@ restruct.DataConverter = (function () {
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.disposer")
-      .groupName("summaries")
-      .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
-      .groupDestinationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
-      .deduplicationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}--{{fieldName}}")
-      .build();
-  }
-
-  function highlightedAccountNameDescription() {
-    return new datarestructor.PropertyStructureDescriptionBuilder()
-      .type("summary")
-      .category("account")
-      // .abbreviation("&#128176;") //money bag symbol
-      .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
-      .indexStartsWith("0.")
-      .propertyPatternEqualMode()
-      .propertyPattern("responses.hits.hits.highlight.disposer")
       .groupName("summaries")
       .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
       .groupDestinationPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
