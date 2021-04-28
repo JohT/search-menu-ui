@@ -50,14 +50,14 @@ describe("search.js SearchMenuApi", function () {
         expect(resultingSearchUi.config.searchAreaElementId).toEqual("searcharea");
       });
 
-      it("should use `searchmenu` as default inputElementId", function () {
+      it("should use `searchinputtext` as default inputElementId", function () {
         var resultingSearchUi = searchMenuApiUnderTest.start();
-        expect(resultingSearchUi.config.inputElementId).toEqual("searchmenu");
+        expect(resultingSearchUi.config.inputElementId).toEqual("searchinputtext");
       });
 
-      it("should use `searchmenu` as default inputElementId when it is set to an empty string", function () {
+      it("should use `searchinputtext` as default inputElementId when it is set to an empty string", function () {
         var resultingSearchUi = searchMenuApiUnderTest.inputElementId("").start();
-        expect(resultingSearchUi.config.inputElementId).toEqual("searchmenu");
+        expect(resultingSearchUi.config.inputElementId).toEqual("searchinputtext");
       });
 
       it("should use `searchtext` as default searchTextParameterName", function () {

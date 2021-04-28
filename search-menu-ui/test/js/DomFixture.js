@@ -4,7 +4,7 @@ var JSDOM = jsdom.JSDOM;
 // var dom = new JSDOM(
 //   '<html><head></head><body>' +
 //     '<div id="searcharea">' +
-//     '  <input type="text" id="searchmenu" tabindex="0"/><br>' +
+//     '  <input type="text" id="searchinputtext^" tabindex="0"/><br>' +
 //     '  <div id="searchresults"> ' +
 //     '    <ul id="searchmatches"></ul>' +
 //     '    <ul id="searchfilters"></ul>' +

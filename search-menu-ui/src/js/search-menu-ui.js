@@ -4,8 +4,6 @@
  * @author JohT
  */
 
-//TODO JSDoc
-
 var module = datarestructorInternalCreateIfNotExists(module); // Fallback for vanilla js without modules
 
 function datarestructorInternalCreateIfNotExists(objectToCheck) {
@@ -13,13 +11,12 @@ function datarestructorInternalCreateIfNotExists(objectToCheck) {
 }
 
 /**
- * Contains all functions for the "search as you type" feature.
+ * Contains the main ui component of the search menu ui.
  * @module searchmenu
  */
  var searchmenu = module.exports={}; // Export module for npm...
  searchmenu.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
 
-//TODO should find a way to use the "dist" module
 //TODO should find a way to use ie compatible module
 var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
 var described_field = described_field || require("data-restructor/devdist/describedfield"); // supports vanilla js & npm
@@ -28,13 +25,13 @@ var selectionrange = selectionrange || require("./ponyfills/selectionRangePonyfi
 var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfill"); // supports vanilla js & npm
 
 /**
- * @typedef {Object} SearchViewDescription Describes a part of the search view (e.g. search result details).
+ * @typedef {Object} module:searchmenu.SearchViewDescription Describes a part of the search view (e.g. search result details).
  * @property {string} viewElementId id of the element (e.g. "div"), that contains the view with all list elements and their parent.
  * @property {string} listParentElementId id of the element (e.g. "ul"), that contains all list entries and is located inside the view.
  * @property {string} listEntryElementIdPrefix id prefix (followed by "--" and the index number) for every list entry
  * @property {string} [listEntryElementTag="li"] element tag for list entries. defaults to "li".
  * @property {string} [listEntryTextTemplate="{{displayName}}: {{value}}"] template for the text of each list entry
- * @property {string} [listEntrySummaryTemplate="{{displayName}}: {{value}}"] template for the text of each list entry, if the data group "summary" exists.
+ * @property {string} [listEntrySummaryTemplate="{{summaries[0].displayName}}: {{summaries[0].value}}"] template for the text of each list entry, if the data group "summary" exists.
  * @property {string} [listEntryStyleClassTemplate="{{view.listEntryElementIdPrefix}} {{category}}"] template for the style class of each list entry.
  * @property {boolean} [isSelectableFilterOption=false] Specifies, if the list entry can be selected as filter option
  */
@@ -43,8 +40,19 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
   "use strict";
 
   /**
-   * SearchViewDescription
-   * @param {SearchViewDescription} template optional parameter that contains a template to clone
+   * Builds a {@link module:searchmenu.SearchViewDescription}, which describes a part of the search menu called "view".  
+   * Examples for views are: results, details, filters, filter options. There might be more in future.
+   * 
+   * The description contains the id's of the html elements, that will be used as "binding", to
+   * add elements like results. The "viewElementId" is the main parent (may be a "div" tag) of all view elements,
+   * that contains the "listParentElementId", which is the parent of the list entries (may be a "ul" tag).
+   * 
+   * The text content of each entry is described by the text templates. 
+   * 
+   * Furthermore, the css style class can be given as a template, 
+   * so search result field values can be used as a part of the style class.
+   * 
+   * @param {module:searchmenu.SearchViewDescription} template optional parameter that contains a template to clone
    * @constructs SearchViewDescriptionBuilder
    * @alias module:searchmenu.SearchViewDescriptionBuilder
    */
@@ -54,7 +62,8 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
     var defaultStyleClassTemplate = "{{view.listEntryElementIdPrefix}} {{category}}";
     var defaultTag = "li";
     /**
-     * @type {SearchViewDescription}
+     * @type {module:searchmenu.SearchViewDescription}
+     * @protected
      */
     this.description = {
       viewElementId: template ? template.viewElementId : "",
@@ -96,9 +105,8 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
       return this;
     };
     /**
-     * Element tag for list entries. defaults to "li".
-     * Defaults to "li".
-     * @param {string} value tag for every list entry element
+     * Element tag for list entries.
+     * @param {string} [value="li"] tag for every list entry element
      * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
     this.listEntryElementTag = function (value) {
@@ -107,10 +115,9 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
     };
     /**
      * Template for the text of each list entry.
-     * Defaults to "{{displayName}}: {{value}}".
      * May contain variables in double curly brackets.
      *
-     * @param {string} value list entry text template when there is no summary data group
+     * @param {string} [value="{{displayName}}: {{value}}"] list entry text template when there is no summary data group
      * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
     this.listEntryTextTemplate = function (value) {
@@ -119,10 +126,9 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
     };
     /**
      * Template for the text of each list entry, if the data group "summary" exists.
-     * Defaults to "{{displayName}}: {{value}}".
      * May contain variables in double curly brackets.
      *
-     * @param {string} value list entry text template when there is a summary data group
+     * @param {string} [value="{{summaries[0].displayName}}: {{summaries[0].value}}"] list entry text template when there is a summary data group
      * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
     this.listEntrySummaryTemplate = function (value) {
@@ -131,11 +137,10 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
     };
     /**
      * Template for the style classes of each list entry.
-     * Defaults to "{{view.listEntryElementIdPrefix}} {{category}}".
      * May contain variables in double curly brackets.
      * To use the property values of this view, prefix them with "view", e.g.: "{{view.listEntryElementIdPrefix}}".
      *
-     * @param {string} value list entry style classes template
+     * @param {string} [value="{{view.listEntryElementIdPrefix}} {{category}}"] list entry style classes template
      * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
      this.listEntryStyleClassTemplate = function (value) {
@@ -144,8 +149,7 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
     };
     /**
      * Specifies, if the list entry can be selected as filter option.
-     * Defaults to "false".
-     * @param {boolean} value if a list entry is selectable as filter option
+     * @param {boolean} [value=false] if a list entry is selectable as filter option
      * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
     this.isSelectableFilterOption = function (value) {
@@ -169,37 +173,33 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
     return typeof value === "string" && value != null && value != "";
   }
 
-  /**
-   * Public interface
-   * @scope searchmenu.SearchViewDescription
-   */
   return SearchViewDescription;
 })();
 
+//TODO could a separate value object be defined and mapped to get some decoupling to data-reconstructor-js?
 /**
- * @callback ResolveTemplateFunction replaces variables with object properties.
+ * @typedef {Object} module:searchmenu.SearchUiData 
+ * @property {String} [category=""] name of the category. Default = "". Could contain a short domain name. (e.g. "city")
+ * @property {String} fieldName field name that will be used e.g. as a search parameter name for filter options.
+ * @property {String} [displayName=""] readable display name for e.g. the list of results.
+ * @property {String} [abbreviation=""] one optional character, a symbol character or a short abbreviation of the category
+ * @property {String} value value of the field
+ * @property {module:searchmenu.SearchUiData[]} details if there are further details that will be displayed e.g. on mouse over
+ * @property {module:searchmenu.SearchUiData[]} options contains filter options that can be selected as search parameters 
+ * @property {module:searchmenu.SearchUiData[]} default array with one element representing the default filter option (selected automatically)
+ * @property {module:searchmenu.SearchUiData[]} summaries fields that are used to display the main search entry/result
+ */
+
+/**
+ * @callback module:searchmenu.ResolveTemplateFunction replaces variables with object properties.
  * @param {String} template may contain variables in double curly brackets. T
  * Typically supported variables would be: {{category}} {{fieldName}}, {{displayName}}, {{abbreviation}}, {{value}}
  * @return {String} string with resolved/replaced variables
  */
 
 /**
- * @callback FieldsJson returns the fields as JSON
+ * @callback module:searchmenu.FieldsJson returns the fields as JSON
  * @return {String} JSON of all contained fields
- */
-
-//TODO could a separate value object be defined and mapped to get some decoupling to data-reconstructor-js?
-/**
- * @typedef {Object} SearchUiData 
- * @property {String} [category=""] name of the category. Default = "". Could contain a short domain name. (e.g. "city")
- * @property {String} fieldName field name that will be used e.g. as a search parameter name for filter options.
- * @property {String} [displayName=""] readable display name for e.g. the list of results.
- * @property {String} [abbreviation=""] one optional character, a symbol character or a short abbreviation of the category
- * @property {String} value value of the field
- * @property {SearchUiData[]} details if there are further details that will be displayed e.g. on mouse over
- * @property {SearchUiData[]} options contains filter options that can be selected as search parameters 
- * @property {SearchUiData[]} default array with one element representing the default filter option (selected automatically)
- * @property {SearchUiData[]} summaries fields that are used to display the main search entry/result
  */
 
 /**
@@ -210,50 +210,50 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
 
 /**
  * This function will be called to trigger search (calling the search backend).
- * @callback SearchService
+ * @callback module:searchmenu.SearchService
  * @param {Object} searchParameters object that contains all parameters as properties. It will be converted to JSON.
- * @param {SearchServiceResultAvailable} onSearchResultsAvailable will be called when search results are available.
+ * @param {module:searchmenu.SearchServiceResultAvailable} onSearchResultsAvailable will be called when search results are available.
  */
 
 /**
  * This function converts the data from search backend to the structure needed by the search UI.
- * @callback DataConverter
+ * @callback module:searchmenu.DataConverter
  * @param {Object} searchData
- * @returns {SearchUiData} converted and structured data for search UI
+ * @returns {module:searchmenu.SearchUiData} converted and structured data for search UI
  */
 
 /**
  * This function adds predefined search parameters before search is triggered, e.g. constants, environment parameters, ...
- * @callback SearchParameterAdder
+ * @callback module:searchmenu.SearchParameterAdder
  * @param {Object} searchParametersObject
  */
 
 /**
  * This function will be called when a new HTML is created.
- * @callback ElementCreatedListener
+ * @callback module:searchmenu.ElementCreatedListener
  * @param {Element} newlyCreatedElement
  * @param {boolean} isParent true, if it is the created parent. false, if it is a child within the created parent. 
  */
 
 /**
  * This function will be called to navigate to a selected search result url.
- * @callback NavigateToFunction
+ * @callback module:searchmenu.NavigateToFunction
  * @param {String} destinationUrl
  */
 
 /**
- * @typedef {Object} SearchMenuConfig
- * @property {SearchService} triggerSearch triggers search (backend)
- * @property {DataConverter} convertData converts search result data to search ui data
- * @property {SearchParameterAdder} addPredefinedParametersTo adds custom search parameters 
- * @property {ElementCreatedListener} onCreatedElement this function will be called when a new HTML is created.
- * @property {NavigateToFunction} navigateTo this function will be called to navigate to a selected search result url.
+ * @typedef {Object} module:searchmenu.SearchMenuConfig
+ * @property {module:searchmenu.SearchService} triggerSearch triggers search (backend)
+ * @property {module:searchmenu.DataConverter} convertData converts search result data to search ui data
+ * @property {module:searchmenu.searchParameterAdder} addPredefinedParametersTo adds custom search parameters 
+ * @property {module:searchmenu.ElementCreatedListener} onCreatedElement this function will be called when a new HTML is created.
+ * @property {module:searchmenu.NavigateToFunction} navigateTo this function will be called to navigate to a selected search result url.
  * @property {string} searchAreaElementId id of the whole search area (default="searcharea")
- * @property {string} inputElementId id of the search input field (default="searchmenu")
- * @property {SearchViewDescription} resultsView describes the main view containing the search results
- * @property {SearchViewDescription} detailView describes the details view
- * @property {SearchViewDescription} filterOptionsView describes the filter options view
- * @property {SearchViewDescription} filtersView describes the filters view
+ * @property {string} inputElementId id of the search input field (default="searchinputtext")
+ * @property {module:searchmenu.SearchViewDescription} resultsView describes the main view containing the search results
+ * @property {module:searchmenu.SearchViewDescription} detailView describes the details view
+ * @property {module:searchmenu.SearchViewDescription} filterOptionsView describes the filter options view
+ * @property {module:searchmenu.SearchViewDescription} filtersView describes the filters view
  * @property {string} [waitBeforeClose=700] timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
  * @property {string} [waitBeforeSearch=500] time in milliseconds to wait until typing is finished and search starts (default=500)
  * @property {string} [waitBeforeMouseOver=700] time in milliseconds to wait until mouse over opens details (default=700)
@@ -267,9 +267,6 @@ searchmenu.SearchMenuAPI = (function () {
    * @alias module:searchmenu.SearchMenuAPI
    */
   function SearchMenuApiBuilder() {
-    /**
-     * @type {SearchMenuConfig}
-     */
     this.config = {
       triggerSearch: function (/* searchParameters, onSearchResultsAvailable */) {
         throw new Error("search service needs to be defined.");
@@ -288,7 +285,7 @@ searchmenu.SearchMenuAPI = (function () {
       },
       createdElementListeners: [],
       searchAreaElementId: "searcharea",
-      inputElementId: "searchmenu",
+      inputElementId: "searchinputtext",
       searchTextParameterName: "searchtext",
       resultsView: defaultResultsView(),
       detailView: defaultDetailView(),
@@ -300,7 +297,7 @@ searchmenu.SearchMenuAPI = (function () {
     };
     /**
      * Defines the search service function, that will be called whenever search is triggered.
-     * @param {SearchService} service function that will be called to trigger search (backend).
+     * @param {module:searchmenu.SearchService} service function that will be called to trigger search (backend).
      * @returns module:searchmenu.SearchMenuApiBuilder
      */
     this.searchService = function (service) {
@@ -309,7 +306,7 @@ searchmenu.SearchMenuAPI = (function () {
     };
     /**
      * Defines the converter, that converts search result data to search ui data
-     * @param {DataConverter} converter function that will be called to trigger search (backend).
+     * @param {module:searchmenu.DataConverter} converter function that will be called to trigger search (backend).
      * @returns module:searchmenu.SearchMenuApiBuilder
      */
     this.dataConverter = function (converter) {
@@ -319,7 +316,7 @@ searchmenu.SearchMenuAPI = (function () {
     /**
      * Defines the function, that adds predefined (fixed, constant, environmental) search parameters
      * to the first parameter object.
-     * @param {SearchParameterAdder} adder function that will be called to before search is triggered.
+     * @param {module:searchmenu.SearchParameterAdder} adder function that will be called to before search is triggered.
      * @returns module:searchmenu.SearchMenuApiBuilder
      */
     this.addPredefinedParametersTo = function (adder) {
@@ -328,7 +325,7 @@ searchmenu.SearchMenuAPI = (function () {
     };
     /**
      * Sets the listener, that will be called, when a new HTML element was created.
-     * @param {ElementCreatedListener} listener
+     * @param {module:searchmenu.ElementCreatedListener} listener
      * @returns module:searchmenu.SearchMenuApiBuilder
      */
     this.setElementCreatedHandler = function (listener) {
@@ -337,7 +334,7 @@ searchmenu.SearchMenuAPI = (function () {
     };
     /**
      * Adds another listener, that will be called, when a new HTML element was created.
-     * @param {ElementCreatedListener} listener
+     * @param {module:searchmenu.ElementCreatedListener} listener
      * @returns module:searchmenu.SearchMenuApiBuilder
      */
     this.addElementCreatedHandler = function (listener) {
@@ -368,46 +365,104 @@ searchmenu.SearchMenuAPI = (function () {
       });
       return this;
     };
+    /**
+     * Sets the element ID of the parent, that represents the whole search menu component.
+     * @param {String} [id="searcharea"] id of the parent element, that represents the whole search menu component. 
+     * @returns module:searchmenu.SearchMenuApiBuilder
+     */
     this.searchAreaElementId = function (id) {
       this.config.searchAreaElementId = withDefault(id, "searcharea");
       return this;
     };
+    /**
+     * Sets the input search text element ID,. 
+     * @param {String} [id="searchinputtext"] id of the input element, that contains the search text. 
+     * @returns module:searchmenu.SearchMenuApiBuilder
+     */
     this.inputElementId = function (id) {
-      this.config.inputElementId = withDefault(id, "searchmenu");
+      this.config.inputElementId = withDefault(id, "searchinputtext");
       return this;
     };
+    /**
+     * Sets the name of the backend search service parameter, that contains the input search text.
+     * @param {String} [value="searchtext"] name of the parameter, that contains the input search text and that can be used as a variable inside the url or body template for the backend service
+     * @returns module:searchmenu.SearchMenuApiBuilder
+     */
     this.searchTextParameterName = function (value) {
       this.config.searchTextParameterName = withDefault(value, "searchtext");
       return this;
     };
+    /**
+     * Sets the view, that is used to display all search results.
+     * @param {module:searchmenu.SearchViewDescription} view connects the part of the search menu, that displays all search results
+     * @returns module:searchmenu.SearchMenuApiBuilder
+     */
     this.resultsView = function (view) {
       this.config.resultsView = view;
       return this;
     };
+    /**
+     * Sets the view, that is used to display details of a selected search result.
+     * @param {module:searchmenu.SearchViewDescription} view connects the part of the search menu, that displays details of a selected search result
+     * @returns module:searchmenu.SearchMenuApiBuilder
+     */
     this.detailView = function (view) {
       this.config.detailView = view;
       return this;
     };
+    /**
+     * Sets the view, that is used to display currently selected filter options.
+     * @param {module:searchmenu.SearchViewDescription} view connects the part of the search menu, that displays currently selected filter options
+     * @returns module:searchmenu.SearchMenuApiBuilder
+     */
     this.filterOptionsView = function (view) {
       this.config.filterOptionsView = view;
       return this;
     };
+    /**
+     * Sets the view, that is used to display search results, that represent filter options.
+     * @param {module:searchmenu.SearchViewDescription} view connects the part of the search menu, that displays search results, that represent filter options
+     * @returns module:searchmenu.SearchMenuApiBuilder
+     */
     this.filtersView = function (view) {
       this.config.filtersView = view;
       return this;
     };
+    /**
+     * Sets the time the search menu will remain open, when it has lost focus.  
+     * Prevents the menu to disappear while using it.  
+     * @param {number} [ms=700] time in milliseconds the search menu will remain open until it is closed after loosing focus.
+     * @returns module:searchmenu.SearchMenuApiBuilder
+     */
     this.waitBeforeClose = function (ms) {
       this.config.waitBeforeClose = ms;
       return this;
     };
+    /**
+     * Sets the time to wait before the search service is called.    
+     * Prevents calls to the search backend while changing the search input.  
+     * @param {number} [ms=500] time in milliseconds to wait before the search service is called
+     * @returns module:searchmenu.SearchMenuApiBuilder
+     */
     this.waitBeforeSearch = function (ms) {
       this.config.waitBeforeSearch = ms;
       return this;
     };
+    /**
+     * Sets the time to  wait before search result details are opened on mouse over.  
+     * Doesn't affect keyboard selection, which will immediately open the search details.  
+     * Prevents details to open on search results, that are only touched by the mouse pointer for a short period of time.
+     * @param {number} [ms=700] time in milliseconds to wait before search result details are opened on mouse over.
+     * @returns module:searchmenu.SearchMenuApiBuilder
+     */
     this.waitBeforeMouseOver = function (ms) {
       this.config.waitBeforeMouseOver = ms;
       return this;
     };
+    /**
+     * Finishes the configuration and creates the {@link module:searchmenu.SearchMenuUI}.
+     * @returns module:searchmenu.SearchMenuUI
+     */
     this.start = function () {
       var config = this.config;
       if (config.createdElementListeners.length > 0) {
@@ -422,6 +477,11 @@ searchmenu.SearchMenuAPI = (function () {
     };
   }
 
+  /**
+   * Contains the default settings for the results view.
+   * @returns {module:searchmenu.SearchViewDescription} default settings for the results view
+   * @protected
+   */
   function defaultResultsView() {
     return new searchmenu.SearchViewDescriptionBuilder()
       .viewElementId("searchresults")
@@ -434,6 +494,11 @@ searchmenu.SearchMenuAPI = (function () {
       .build();
   }
 
+  /**
+   * Contains the default settings for the details view.
+   * @returns {module:searchmenu.SearchViewDescription} default settings for the details view
+   * @protected
+   */
   function defaultDetailView() {
     return new searchmenu.SearchViewDescriptionBuilder()
       .viewElementId("searchdetails")
@@ -443,6 +508,11 @@ searchmenu.SearchMenuAPI = (function () {
       .build();
   }
 
+  /**
+   * Contains the default settings for the filter options view.
+   * @returns {module:searchmenu.SearchViewDescription} default settings for the filter options view
+   * @protected
+   */
   function defaultFilterOptionsView() {
     return new searchmenu.SearchViewDescriptionBuilder()
       .viewElementId("searchfilteroptions")
@@ -454,6 +524,11 @@ searchmenu.SearchMenuAPI = (function () {
       .build();
   }
 
+  /**
+   * Contains the default settings for the filters view.
+   * @returns {module:searchmenu.SearchViewDescription} default settings for the filters view
+   * @protected
+   */
   function defaultFiltersView() {
     return new searchmenu.SearchViewDescriptionBuilder()
       .viewElementId("searchresults")
@@ -463,21 +538,10 @@ searchmenu.SearchMenuAPI = (function () {
       .build();
   }
 
-  /**
-   * Browser compatible way to add an event handler.
-   * @param {String} eventName 
-   * @param {Element} element 
-   * @param {*} eventHandler 
-   * @protected
-   */
   function addEvent(eventName, element, eventHandler) {
     eventlistener.addEventListener(eventName, element, eventHandler);
   }
 
-  /**
-   * @returns {Element} the target of the event
-   * @protected
-   */
    function getEventTarget(event) {
     return eventtarget.getEventTarget(event);
   }
@@ -501,37 +565,46 @@ searchmenu.SearchMenuAPI = (function () {
     return typeof value === "string" && value != null && value != "";
   }
 
-  /**
-   * Public interface
-   * @scope searchmenu.SearchMenuAPI
-   */
   return SearchMenuApiBuilder;
 }());
 
-/**
- * SearchMenu UI.
- *
- * Contains the "behavior" of the search bar. It submits the search query,
- * parses the results, displays matches and filters and responds to
- * clicks and key presses.
- *
- * @namespace
- */
 searchmenu.SearchMenuUI = (function () {
   "use strict";
 
   /**
-   * This (constructor) function is called on "new searchmenu.SearchMenuUI(config)"
-   * with the search configuration as parameter. It contains everything that needs
-   * to be initialized and constructed for this specific searchmenu instance.
+   * Search Menu UI.
    *
-   * Functions outside of this object can be considered as static (for every instance).
-   * They can also be considered to be "private", since they can not be accessed from outside.
+   * Contains the "behavior" of the search bar. It submits the search query,
+   * parses the results, displays matches and filters and responds to
+   * clicks and key presses.
+   * 
+   * @constructs SearchMenuUI
+   * @alias module:searchmenu.SearchMenuUI
    */
   var instance = function (config) {
+    /**
+     * Configuration.
+     * @type {module:searchmenu.SearchMenuConfig}
+     * @protected 
+     */
     this.config = config;
+    /**
+     * Search text that correspondents to the currently shown results.
+     * @type {String}
+     * @protected 
+     */
     this.currentSearchText = "";
+    /**
+     * Timer that is used to wait before the menu is closed.
+     * @type {Timer}
+     * @protected 
+     */
     this.focusOutTimer = null;
+    /**
+     * Timer that is used to wait before the search service is called.
+     * @type {Timer}
+     * @protected 
+     */
     this.waitBeforeSearchTimer = null;
 
     var search = document.getElementById(config.inputElementId);
@@ -1263,7 +1336,7 @@ searchmenu.SearchMenuUI = (function () {
 
   /**
    * The given callback will be called for the given parent and all its direct child nodes, that contain an id property.
-   * @param {Element} element parent to be inspected 
+   * @param {Element} element parent to be inspected
    * @param {ElementFoundListener} callback will be called for every found child and the given parent itself
    */
   function forEachIdElementIncludingChildren(element, callback) {

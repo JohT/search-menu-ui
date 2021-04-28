@@ -129,7 +129,7 @@ describe("search.js", function () {
 
     var documentElements; // Contains all document elements that are set up, created or read during the test
     var eventListeners; // Contains all event listeners that are involved.
-    var nonExistingElements; // Array of element id Strings that should return "null" on the first getElementById. e.g. ["searchmenu"]
+    var nonExistingElements; // Array of element id Strings that should return "null" on the first getElementById. e.g. ["searchinputtext"]
     var globalParentElement; // Every test element will be created as child of this parent element if present.
 
     beforeEach(function () {
@@ -290,14 +290,14 @@ describe("search.js", function () {
       var searchInputTextElement = getSearchInputTextElement();
       searchInputTextElement.value = searchCharacter;
       var keyEvent = createKeyEvent(searchCharacter, searchInputTextElement);
-      eventListeners.searchmenu.keyup.call(searchMenuUiUnderTest, keyEvent);
+      eventListeners.searchinputtext.keyup.call(searchMenuUiUnderTest, keyEvent);
     }
 
     function eraseInputSearchText() {
       var searchInputTextElement = getSearchInputTextElement();
       searchInputTextElement.value = "";
       var keyEvent = createKeyEvent("Backspace", searchInputTextElement);
-      eventListeners.searchmenu.keyup.call(searchMenuUiUnderTest, keyEvent);
+      eventListeners.searchinputtext.keyup.call(searchMenuUiUnderTest, keyEvent);
     }
 
     function keyDownOnElementId(elementId, keyName) {
@@ -343,17 +343,17 @@ describe("search.js", function () {
     describe("should recognize key events on input text element and", function () {
       it("should reset search input text when escape key is pressed there", function () {
         keyDownOnElementId(getSearchInputTextElement().id, "Escape");
-        expect(documentElements.searchmenu.value).toEqual("");
+        expect(documentElements.searchinputtext.value).toEqual("");
       });
 
       it("should reset search input text when escape key event is signaled as 'Esc'", function () {
         keyDownOnElementId(getSearchInputTextElement().id, "Esc");
-        expect(documentElements.searchmenu.value).toEqual("");
+        expect(documentElements.searchinputtext.value).toEqual("");
       });
 
       it("should reset search input text when escape key event is signaled as keyCode 27", function () {
         keyCodeDownOnElementId(getSearchInputTextElement().id, 27);
-        expect(documentElements.searchmenu.value).toEqual("");
+        expect(documentElements.searchinputtext.value).toEqual("");
       });
 
       it("should hide search area when escape key is pressed on input text", function () {
