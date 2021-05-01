@@ -11,7 +11,7 @@ Overview of the commands to test, run and build this project as well as those th
 - `npm run doc` Generates JSDoc Documentation in folder "docs"
 - `npm run build` Builds the application for production including minification,...
 - `npm run dev` Builds the application for development (without minification) and starts the live server
-- `npm run watch` Builds the application for development (without minification) without starting the server.
+- `npm run devbuild` Builds the application for development (without minification) without starting the server.
 
 ## Commands used to setup the project:
 - `npm init` Initialize node package manager, creates `package.json` file.
