@@ -18,8 +18,8 @@ function datarestructorInternalCreateIfNotExists(objectToCheck) {
  searchmenu.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
 
 //TODO should find a way to use ie compatible module
+//TODO remove template_resolver dependency, should be "attachable" inside the configuration
 var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
-var described_field = described_field || require("data-restructor/devdist/describedfield"); // supports vanilla js & npm
 var eventtarget = eventtarget || require("./ponyfills/eventCurrentTargetPonyfill"); // supports vanilla js & npm
 var selectionrange = selectionrange || require("./ponyfills/selectionRangePonyfill"); // supports vanilla js & npm
 var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfill"); // supports vanilla js & npm
