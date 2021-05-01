@@ -1,0 +1,15 @@
+graph TD
+    A[searchtext entered] -->|triggers| B(search service call)
+    B -->|returns| C(data)
+    C -->|is converted to| D(searchmenu data)
+    D -->|is displayed as| E(results)
+    E -->|contain| J(details)
+    E -->|text resolver uses| L(summaries)
+    E -->|can be selected to| I(open target url)
+    D -->|is displayed as| G(filters)
+    G -->|contain| K(filter options)
+    K -->|can be selected as| H(search parameters)
+    D -->|is displayed as| F(navigation targets)
+    F -->|selection resolves| I
+    H -->|are used for| B
+    M(configuration) -->|configures| B
