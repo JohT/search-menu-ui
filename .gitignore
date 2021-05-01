@@ -50,11 +50,10 @@ pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
 
+# keep the wrapper jar
+!.mvn/wrapper/maven-wrapper.jar
+
 # Others
 ObjectStore/
 *.iml
 **/*.iml
-
-# keep the wrapper jar
-!.mvn/wrapper/maven-wrapper.jar
-/quarkus-kafka-quickstart/
