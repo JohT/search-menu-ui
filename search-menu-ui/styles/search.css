@@ -17,7 +17,7 @@
 
 .searchinput {
   /* "https://img.icons8.com/android/24/000000/search.png"/> */
-  background-image: url("/images/searchicon-small.png");
+  background-image: url("../images/searchicon-small.png");
   background-position: 0.5em center;
   background-repeat: no-repeat;
   width: 100%;
