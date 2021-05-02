@@ -119,4 +119,4 @@ A detailed description of everything that can be configured can be found in the 
 
 This flow chart visualizes what happens, when search text is entered:
 
-![Search Flow-Chart](https://github.com/JohT/search-menu-ui/blob/master/search-menu-ui/diagrams/searchflowchart.png?raw=true)
+![Search Flow-Chart](https://github.com/JohT/search-menu-ui/blob/master/search-menu-ui/diagrams/searchflowchart-2.png?raw=true)
