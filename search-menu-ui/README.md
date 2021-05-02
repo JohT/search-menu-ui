@@ -11,11 +11,11 @@
 
 # search-menu-js
 
-Highly flexible and compatible search UI written in vanilla JavaScript.
+Search UI written in vanilla JavaScript.
 
 ## Features:
 * Search as you type
-* Results, details, filters and navigation targets are organized in one place
+* All in one place: Results, details, filters and navigation targets
 * **"Data-Driven, Data-Agnostic"** approach:   
   * Search data is the source of all contents configured once using templates
   * Search data may also be used to set additional css style classes dynamically
@@ -29,7 +29,7 @@ Highly flexible and compatible search UI written in vanilla JavaScript.
   * New fields, new categories, new filters and new navigation targets shouldn't entail
   any changes in most cases.
 * Full keyboard support
-* Highly flexible and configurable 
+* Flexible and configurable 
 * Supports most browsers including IE 5
 * Can be used without further dependencies
 * Integrates perfectly with [data-restructor-js](https://github.com/JohT/data-restructor-js) for data conversion and template resolving
@@ -46,3 +46,19 @@ Highly flexible and compatible search UI written in vanilla JavaScript.
 * specialized filters for date and time
 * paging
 * configuration in html
+
+# Getting started
+
+# Structure
+
+## Results and Details
+
+![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/search-menu-ui/screenshots/ScreenshotExampleDetails.png?raw=true)
+
+## Filter-Options
+
+![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/search-menu-ui/screenshots/ScreenshotExampleFilterOptions.png?raw=true)
+
+## Selected Filter
+
+![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/search-menu-ui/screenshots/ScreenshotExampleSelectedFilter.png?raw=true)
