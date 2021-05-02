@@ -11,11 +11,8 @@
 
 # search-menu-js
 
-Search UI written in vanilla JavaScript.
-
+All in one place search UI providing "search as you type" written in vanilla JavaScript.
 ## Features:
-* Search as you type
-* All in one place: Results, details, filters and navigation targets
 * **"Data-Driven, Data-Agnostic"** approach:   
   * Search data is the source of all contents configured once using templates
   * Search data may also be used to set additional css style classes dynamically
@@ -39,7 +36,6 @@ Search UI written in vanilla JavaScript.
 * a type-safe, non data-agnostic and non-generic strategy is key
 * the things that can be searched are pretty well known and stable (don't change that much)
 * changing client code is much easier than changing the search service
-* key features are missing
 
 ## Might be added in future:
 * specialized filters for numeric limits 
@@ -49,16 +45,52 @@ Search UI written in vanilla JavaScript.
 
 # Getting started
 
-# Structure
+# Screenshots
+
+These screenshots were taken from the example, that is included in this repository. 
+Since the search menu UI only takes element IDs, it can be attached in many ways.
+Furthermore, anything can be styled using CSS. The following screenshots are therefore
+only one of many possible ways on how the search might look like. At least they explain the base structure and parts.
 
 ## Results and Details
 
 ![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/search-menu-ui/screenshots/ScreenshotExampleDetails.png?raw=true)
 
+**&#x2460;** shows search results. In this example the text of each entry consists of a symbol followed by the name and a second line with the business type and the account number. 
+This is configured using a template that contains all these parts as variables.
+
+**&#x2461;** shows the search details. The details are opened by pressing the space bar or moving the mouse over the result for some time. Here, every entry consists of a emphasized field name followed by its value. This is also configured using a template.
+
+When one of the results is selected using the enter key or a mouse click, the url template of the currently selected navigation target is resolved by the fields of the selected result and then
+opened. This enables highly flexible and context and data dependent navigation.
+
 ## Filter-Options
 
 ![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/search-menu-ui/screenshots/ScreenshotExampleFilterOptions.png?raw=true)
 
+**&#x2460;** shows filter results. These are searched and treated like "normal" search results.
+They are configured with a separate template. In this example, only a symbol and the selected filter value are displayed.
+
+**&#x2461;** shows the filter options. In contrast to the details of "normal" search results, 
+the filter options can be selected as described below.
+
 ## Selected Filter
 
 ![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/search-menu-ui/screenshots/ScreenshotExampleSelectedFilter.png?raw=true)
+
+## HTML Elements
+```html
+<div id="searcharea">
+    <input type="text" id="searchinputtext"/><br>
+    <div id="searchresults">
+        <ul id="searchmatches"></ul>
+        <ul id="searchfilters"></ul>
+    </div>
+    <div id="searchdetails">
+        <ul id="searchdetailentries"></ul>
+    </div>
+    <div id="searchfilteroptions">
+        <ul id="searchfilteroptionentries"></ul>
+    </div>
+</div>
+```
