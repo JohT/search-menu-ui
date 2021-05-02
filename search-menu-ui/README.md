@@ -45,12 +45,12 @@ All in one place search UI providing "search as you type" written in vanilla Jav
 
 # Getting started
 
-# Screenshots
+# Structure
 
-These screenshots were taken from the example, that is included in this repository. 
+The following screenshots were taken from the example, that is included in this repository. 
 Since the search menu UI only takes element IDs, it can be attached in many ways.
-Furthermore, anything can be styled using CSS. The following screenshots are therefore
-only one of many possible ways on how the search might look like. At least they explain the base structure and parts.
+Furthermore, anything can be styled using CSS. The screenshots below are therefore
+only one of many possible ways on how the search might look like. At least they explain the base structure and parts visually very well.
 
 ## Results and Details
 
@@ -77,6 +77,20 @@ the filter options can be selected as described below.
 ## Selected Filter
 
 ![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/search-menu-ui/screenshots/ScreenshotExampleSelectedFilter.png?raw=true)
+
+**&#x2460;** shows previously selected filters that are provided as search parameters. 
+They can be included as variables in the search service url or the search request body template.
+
+**&#x2461;** shows the same filter options view as in [Filter-Options](#Filter-Options). The selected filter can be changed here as well.
+
+**&#x2461;** shows a special case of a filter option, that not only has a preselected default
+value but also contains navigation target url templates. Choosing a target and its (hidden)
+url template changes the site that is opened when a result is selected. 
+
+If e.g. "Account Overview" is selected, a click on the first result will open the account overview of this account. If it is changed to "Customer Overview", a click on the first result will open the customer overview of the customer, that owns that account, using the customer number of the details.
+
+Since navigation targets are searchable, it is possible to search for a field inside the application, listing the views where it can be found, selecting the right one and then searching
+for e.g. an account, that should be shown in the previously selected view. Since the url templates are all provided by data, only data needs to be updated when a url changes.
 
 ## HTML Elements
 ```html
