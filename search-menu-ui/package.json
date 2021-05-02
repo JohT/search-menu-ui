@@ -1,6 +1,6 @@
 {
   "name": "search-menu-ui",
-  "version": "1.0.0",
+  "version": "0.8.0",
   "description": "Search UI written in vanilla JavaScript. Menu structure for results. Filters are integrated as search results.",
   "main": "index.html",
   "directories": {
