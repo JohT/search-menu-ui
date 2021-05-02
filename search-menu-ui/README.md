@@ -9,9 +9,9 @@
 ![nyc](https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/search-menu-ui/dev/nyc)
 ![parcel-bundler](https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/search-menu-ui/dev/parcel-bundler)
 
-# search-menu-js
+# search-menu-ui
 
-All in one place search UI providing "search as you type" written in vanilla JavaScript.
+"All in one place" search UI providing "search as you type" written in vanilla JavaScript.
 ## Features:
 * **"Data-Driven, Data-Agnostic"** approach:   
   * Search data is the source of all contents configured once using templates
@@ -32,27 +32,27 @@ All in one place search UI providing "search as you type" written in vanilla Jav
 * Integrates perfectly with [data-restructor-js](https://github.com/JohT/data-restructor-js) for data conversion and template resolving
 * Integrates perfectly with [elasticsearch](https://www.elastic.co/de/elasticsearch/)
 
-## Not intended to be used when
+### Not intended to be used when
 * a type-safe, non data-agnostic and non-generic strategy is key
 * the things that can be searched are pretty well known and stable (don't change that much)
 * changing client code is much easier than changing the search service
 
-## Might be added in future:
+### Might be added in future:
 * specialized filters for numeric limits 
 * specialized filters for date and time
 * paging
 * configuration in html
 
-# Getting started
+## Getting started
 
-# Structure
+## Structure
 
 The following screenshots were taken from the example, that is included in this repository. 
 Since the search menu UI only takes element IDs, it can be attached in many ways.
 Furthermore, anything can be styled using CSS. The screenshots below are therefore
-only one of many possible ways on how the search might look like. At least they explain the base structure and parts visually very well.
+only one of many possible ways on how the search might look like. At least they explain the base structure and parts of it visually.
 
-## Results and Details
+### Results and Details
 
 ![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/search-menu-ui/screenshots/ScreenshotExampleDetails.png?raw=true)
 
@@ -64,7 +64,7 @@ This is configured using a template that contains all these parts as variables.
 When one of the results is selected using the enter key or a mouse click, the url template of the currently selected navigation target is resolved by the fields of the selected result and then
 opened. This enables highly flexible and context and data dependent navigation.
 
-## Filter-Options
+### Filter-Options
 
 ![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/search-menu-ui/screenshots/ScreenshotExampleFilterOptions.png?raw=true)
 
@@ -74,7 +74,7 @@ They are configured with a separate template. In this example, only a symbol and
 **&#x2461;** shows the filter options. In contrast to the details of "normal" search results, 
 the filter options can be selected as described below.
 
-## Selected Filter
+### Selected Filter
 
 ![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/search-menu-ui/screenshots/ScreenshotExampleSelectedFilter.png?raw=true)
 
@@ -92,7 +92,9 @@ If e.g. "Account Overview" is selected, a click on the first result will open th
 Since navigation targets are searchable, it is possible to search for a field inside the application, listing the views where it can be found, selecting the right one and then searching
 for e.g. an account, that should be shown in the previously selected view. Since the url templates are all provided by data, only data needs to be updated when a url changes.
 
-## HTML Elements
+### HTML Elements
+
+The HTML of the example, that is included in this repository, is essentially this:
 ```html
 <div id="searcharea">
     <input type="text" id="searchinputtext"/><br>
@@ -108,3 +110,13 @@ for e.g. an account, that should be shown in the previously selected view. Since
     </div>
 </div>
 ```
+
+These are the default IDs in the default structure, that doesn't need additional configuration.
+A detailed description of everything that can be configured can be found in the [SearchMenuAPI JSDoc](https://joht.github.io/search-menu-ui/docs/module-searchmenu.SearchMenuAPI.html). 
+
+
+### Flow Chart
+
+This flow chart visualizes what happens, when search text is entered:
+
+![Search Flow-Chart](https://github.com/JohT/search-menu-ui/blob/master/search-menu-ui/diagrams/searchflowchart.png?raw=true)
