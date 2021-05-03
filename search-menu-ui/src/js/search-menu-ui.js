@@ -18,8 +18,6 @@ function datarestructorInternalCreateIfNotExists(objectToCheck) {
  searchmenu.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
 
 //TODO should find a way to use ie compatible module
-//TODO remove template_resolver dependency, should be "attachable" inside the configuration
-var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
 var eventtarget = eventtarget || require("./ponyfills/eventCurrentTargetPonyfill"); // supports vanilla js & npm
 var selectionrange = selectionrange || require("./ponyfills/selectionRangePonyfill"); // supports vanilla js & npm
 var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfill"); // supports vanilla js & npm
@@ -223,6 +221,14 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
  */
 
 /**
+ * This function replaces variables in double curly brackets with the property values of the given object.
+ * @callback module:searchmenu.TemplateResolver
+ * @param {String} templateToResolve may contain variables in double curly brackets e.g. like `"{{searchtext}}"`.
+ * @param {Object} sourceObject the fields of this object are used to replace the variables in the template
+ * @returns {module:searchmenu.SearchUiData} converted and structured data for search UI
+ */
+
+/**
  * This function adds predefined search parameters before search is triggered, e.g. constants, environment parameters, ...
  * @callback module:searchmenu.SearchParameterAdder
  * @param {Object} searchParametersObject
@@ -260,7 +266,7 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
  */
 
 searchmenu.SearchMenuAPI = (function () {
-  ("use strict");
+  "use strict";
   /**
    * Search Menu UI API
    * @constructs SearchMenuAPI
@@ -273,6 +279,9 @@ searchmenu.SearchMenuAPI = (function () {
       },
       convertData: function (/* sourceData */) {
         throw new Error("data converter needs to be defined.");
+      },
+      resolveTemplate: function (/* sourceData */) {
+        throw new Error("template resolver needs to be defined.");
       },
       addPredefinedParametersTo: function (/* object */) {
         //does nothing if not specified otherwise
@@ -311,6 +320,15 @@ searchmenu.SearchMenuAPI = (function () {
      */
     this.dataConverter = function (converter) {
       this.config.convertData = converter;
+      return this;
+    };
+    /**
+     * Defines the template resolver, that replaces variables in double curly brackets with the property values of the given object.
+     * @param {module:searchmenu.TemplateResolver} resolver function that will be called to resolve strings with variables.
+     * @returns module:searchmenu.SearchMenuAPI
+     */
+     this.templateResolver = function (resolver) {
+      this.config.resolveTemplate = resolver;
       return this;
     };
     /**
@@ -718,7 +736,9 @@ searchmenu.SearchMenuUI = (function () {
 
   function addResult(entry, i, config) {
     var listElementId = config.resultsView.listEntryElementIdPrefix + "--" + i;
-    var resultElement = createListEntryElement(entry, config.resultsView, listElementId);
+    var resultElementText = createListEntryInnerHtmlText(entry, config.resultsView, listElementId, config.resolveTemplate);
+    var resultElement = createListEntryElement(entry, config.resultsView, listElementId, resultElementText);
+    addClass(resolveStyleClasses(entry, config.resultsView, config.resolveTemplate), resultElement);
     forEachIdElementIncludingChildren(resultElement, config.onCreatedElement);
 
     if (isMenuEntryWithFurtherDetails(entry)) {
@@ -731,7 +751,9 @@ searchmenu.SearchMenuUI = (function () {
       onMenuEntryChosen(resultElement, function () {
         var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId, entry.category);
         if (selectedUrlTemplate) {
-          config.navigateTo(new template_resolver.Resolver(entry).resolveTemplate(selectedUrlTemplate));
+          //TODO should add domain, baseurl, ... as data sources for variables to use inside the template
+          var targetURL = config.resolveTemplate(selectedUrlTemplate, entry);
+          config.navigateTo(targetURL);
         }
       });
     }
@@ -770,6 +792,8 @@ searchmenu.SearchMenuUI = (function () {
    * @param {Object} entryToAdd
    * @param {boolean} equalMatcher takes the existing and the new entry as parameters and returns true if they are considered "equal".
    * @returns {Object[]}
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function insertAtBeginningIfMissing(entries, entryToAdd, equalMatcher) {
     if (!entryToAdd) {
@@ -811,6 +835,8 @@ searchmenu.SearchMenuUI = (function () {
    *
    * @param {Element} element to add event handlers
    * @param {SearchMenuConfig} config search configuration
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function addMainMenuNavigationHandlers(element, config) {
     onArrowDownKey(element, handleEventWithConfig(config, focusNextSearchResult));
@@ -823,6 +849,8 @@ searchmenu.SearchMenuUI = (function () {
    * Reacts to input events (keys, ...) to navigate through sub menu entries.
    *
    * @param {Element} element to add event handlers
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function addSubMenuNavigationHandlers(element) {
     onArrowDownKey(element, focusNextMenuEntry);
@@ -862,6 +890,8 @@ searchmenu.SearchMenuUI = (function () {
   /**
    * @param {SearchMenuConfig} config search configuration
    * @param {EventListener} eventHandler event handler
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function handleEventWithConfig(config, eventHandler) {
     return function (event) {
@@ -871,8 +901,10 @@ searchmenu.SearchMenuUI = (function () {
 
   /**
    * @param {Object[]} entries raw data of the entry
-   * @param {SearchMenuConfig} config search configuration
+   * @param {module:searchmenu.SearchMenuConfig} config search configuration
    * @param {EventListener} eventHandler event handler
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function handleEventWithEntriesAndConfig(entries, config, eventHandler) {
     return function (event) {
@@ -884,17 +916,17 @@ searchmenu.SearchMenuUI = (function () {
    * This callback will be called, if there is not next or previous menu entry to navigate to.
    * The implementation can decide, what to do using the given id properties.
    *
-   * @callback MenuEntryNotFoundHandler
-   * @param {ListElementIdProperties} properties of the element id
+   * @callback module:searchmenu.MenuEntryNotFoundHandler
+   * @param {module:searchmenu.ListElementIdProperties} properties of the element id
    */
   /**
    * This function returns the ID for the first sub menu entry using the given type name (= name of the sub menu).
    *
-   * @callback SubMenuId
+   * @callback module:searchmenu.SubMenuId
    * @param {string} type name of the sub menu entries
    */
   /**
-   * @typedef {Object} ListElementIdProperties
+   * @typedef {Object} module:searchmenu.ListElementIdProperties
    * @property {id} id Original ID
    * @property {string} type Type of the list element
    * @property {number} index Index of the list element
@@ -902,7 +934,7 @@ searchmenu.SearchMenuUI = (function () {
    * @property {string} nextId ID of the next list element
    * @property {string} firstId ID of the first list element
    * @property {string} lastId ID of the last list element
-   * @property {SubMenuId} subMenuId  Returns the ID of the first sub menu entry (with the given type name as parameter)
+   * @property {module:searchmenu.SubMenuId} subMenuId  Returns the ID of the first sub menu entry (with the given type name as parameter)
    * @property {string} mainMenuId ID of the main menu entry e.g. to leave the sub menu. Equals to the id, if it already is a main menu entry
    * @property {boolean} hiddenFieldsId ID of the embedded hidden field, that contains all public information of the described entry as JSON.
    * @property {boolean} hiddenFields Parses the JSON inside the "hiddenFieldsId"-Element and returns the object with the described entry.
@@ -914,7 +946,9 @@ searchmenu.SearchMenuUI = (function () {
    * from the given list element id string.
    *
    * @param {string} id
-   * @return {ListElementIdProperties} list element id properties
+   * @return {module:searchmenu.ListElementIdProperties} list element id properties
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function extractListElementIdProperties(id) {
     var separator = "--";
@@ -1024,7 +1058,9 @@ searchmenu.SearchMenuUI = (function () {
    * Selects and focusses the next menu entry.
    *
    * @param {Event} event
-   * @param {MenuEntryNotFoundHandler} onMissingNext is called, if no "next" entry could be found.
+   * @param {module:searchmenu.MenuEntryNotFoundHandler} onMissingNext is called, if no "next" entry could be found.
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function focusNextMenuEntry(event, onMissingNext) {
     var menuEntry = getEventTarget(event);
@@ -1049,7 +1085,9 @@ searchmenu.SearchMenuUI = (function () {
    * Selects and focusses the previous menu entry.
    *
    * @param {Event} event
-   * @param {MenuEntryNotFoundHandler} onMissingPrevious is called, if no "previous" entry could be found.
+   * @param {module:searchmenu.MenuEntryNotFoundHandler} onMissingPrevious is called, if no "previous" entry could be found.
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function focusPreviousMenuEntry(event, onMissingPrevious) {
     var menuEntry = getEventTarget(event);
@@ -1072,6 +1110,11 @@ searchmenu.SearchMenuUI = (function () {
 
   /**
    * Gets called when a filter option is selected and copies it into the filter view, where all selected filters are collected.
+   * @param {Event} event 
+   * @param {DescribedEntry} entries 
+   * @param {module:searchmenu.SearchMenuConfig} config 
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function selectFilterOption(event, entries, config) {
     var selectedEntry = getEventTarget(event);
@@ -1087,10 +1130,13 @@ searchmenu.SearchMenuUI = (function () {
     var filterElement = getListEntryByFieldName(selectedEntryData.category, selectedEntryData.fieldName, view.listParentElementId);
     var isAlreadyExistingFilter = filterElement != null;
     if (isAlreadyExistingFilter) {
-      filterElement = updateListEntryElement(selectedEntryData, view, filterElement);
+      var updatedText = createListEntryInnerHtmlText(selectedEntryData, view, filterElement.id, config.resolveTemplate);
+      filterElement = updateListEntryElement(filterElement, updatedText);
       return;
     }
-    filterElement = createListEntryElement(selectedEntryData, view, filterElementId);
+    var filterElementText = createListEntryInnerHtmlText(selectedEntryData, view, filterElementId, config.resolveTemplate);
+    filterElement = createListEntryElement(selectedEntryData, view, filterElementId, filterElementText);
+    addClass(resolveStyleClasses(selectedEntryData, view, config.resolveTemplate), filterElement);
     forEachIdElementIncludingChildren(filterElement, config.onCreatedElement);
 
     onFilterMenuEntrySelected(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
@@ -1115,6 +1161,8 @@ searchmenu.SearchMenuUI = (function () {
    * @param {String} fieldName of the element to search for
    * @param {String} listParentElementId id of the parent element that child nodes will be searched
    * @returns {HTMLElement} returns the element that matches the given fieldName or null, if it hadn't been found.
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function getListEntryByFieldName(category, fieldName, listParentElementId) {
     return forEachListEntryElement(listParentElementId, function (element) {
@@ -1133,6 +1181,8 @@ searchmenu.SearchMenuUI = (function () {
    * @param {String} listParentElementId id of the parent element that child nodes will be searched
    * @param {String} category the url template needs to belong to the same category
    * @returns {String} returns the url template or null, if nothing could be found
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function getSelectedUrlTemplate(listParentElementId, category) {
     return forEachListEntryElement(listParentElementId, function (element) {
@@ -1167,9 +1217,22 @@ searchmenu.SearchMenuUI = (function () {
   }
 
   /**
+   * This function is called for every html element of a given parent.
+   *
+   * @callback module:searchmenu.ListElementFunction
+   * @param {Element} listElement name of the sub menu entries
+   * @return {Object} optional result to exit the loop or null otherwise.
+   */
+
+  /**
    * Iterates through all child nodes of the given parent and calls the given function.
    * If the function returns a value, it will be returned directly.
    * If the function returns nothing, the iteration continues.
+   * @param {String} listParentElementId 
+   * @param {module:searchmenu.ListElementFunction} listEntryElementFunction 
+   * @returns {Object} result of the first entry element function, that had returned one, or null.
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function forEachListEntryElement(listParentElementId, listEntryElementFunction) {
     var listParentElement = document.getElementById(listParentElementId);
@@ -1190,6 +1253,8 @@ searchmenu.SearchMenuUI = (function () {
    * @param {DescribedEntry[]} array of described entries
    * @param {boolean} equalMatcher takes the existing and the new entry as parameters and returns true if they are considered "equal".
    * @returns {DescribedEntry} described entry out of the given entries, that suits the element given by its id.
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function findSelectedEntry(id, entries, equalsMatcher) {
     var selectedEntryIdProperties = extractListElementIdProperties(id);
@@ -1226,10 +1291,13 @@ searchmenu.SearchMenuUI = (function () {
     var subMenuIndex = 0;
     var subMenuEntryId = selectedElement.id + "--" + subMenuView.listEntryElementIdPrefix;
     var subMenuFirstEntry = null;
+    var subMenuElementText;
     for (subMenuIndex = 0; subMenuIndex < entries.length; subMenuIndex += 1) {
       subMenuEntry = entries[subMenuIndex];
       subMenuEntryId = selectedElement.id + "--" + subMenuView.listEntryElementIdPrefix + "--" + (subMenuIndex + 1);
-      subMenuElement = createListEntryElement(subMenuEntry, subMenuView, subMenuEntryId);
+      subMenuElementText = createListEntryInnerHtmlText(subMenuEntry, subMenuView, subMenuEntryId, config.resolveTemplate);
+      subMenuElement = createListEntryElement(subMenuEntry, subMenuView, subMenuEntryId, subMenuElementText);
+      addClass(resolveStyleClasses(subMenuEntry, subMenuView, config.resolveTemplate), subMenuElement);
       forEachIdElementIncludingChildren(subMenuElement, config.onCreatedElement);
 
       if (subMenuView.isSelectableFilterOption) {
@@ -1260,6 +1328,8 @@ searchmenu.SearchMenuUI = (function () {
   /**
    * Exit sub menu from event entry and return to main menu.
    * @param {InputEvent} event
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function returnToMainMenu(event) {
     var subMenuEntryToExit = getEventTarget(event);
@@ -1279,7 +1349,9 @@ searchmenu.SearchMenuUI = (function () {
    * Prevents the given event inside an event handler to get handled anywhere else.
    * Pressing the arrow key up can lead to scrolling up the view. This is not useful,
    * if the arrow key navigates the focus inside a sub menu, that is fully contained inside the current view.
-   * @param {InputEvent}
+   * @param {InputEvent} inputevent
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function preventDefaultEventHandling(inputevent) {
     if (typeof inputevent.preventDefault !== "undefined") {
@@ -1289,10 +1361,14 @@ searchmenu.SearchMenuUI = (function () {
     }
   }
 
+  //TODO could be extracted as ponyfill
   /**
    * Browser compatible Y position of the given element.
+   * @returns {number} y position in pixel
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
-  function getYPositionOfElement(element) {
+   function getYPositionOfElement(element) {
     var selectedElementPosition = element.getBoundingClientRect();
     if (typeof selectedElementPosition.y !== "undefined") {
       return selectedElementPosition.y;
@@ -1300,8 +1376,12 @@ searchmenu.SearchMenuUI = (function () {
     return selectedElementPosition.top;
   }
 
+  //TODO could be extracted as ponyfill
   /**
    * Browser compatible version of the standard "window.scrollY".
+   * @returns {number} y scroll position in pixel
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function getScrollY() {
     var supportPageOffset = typeof window.pageYOffset !== "undefined";
@@ -1331,6 +1411,8 @@ searchmenu.SearchMenuUI = (function () {
   /**
    * Toggles a filter to inactive and vice versa.
    * @param {InputEvent} event
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function toggleFilterEntry(event) {
     preventDefaultEventHandling(event);
@@ -1347,6 +1429,8 @@ searchmenu.SearchMenuUI = (function () {
   /**
    * Removes the event target element from its parent.
    * @param {InputEvent} event
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function removeChildElement(event) {
     var element = getEventTarget(event);
@@ -1372,7 +1456,7 @@ searchmenu.SearchMenuUI = (function () {
 
   /**
    * This function will be called for every found element
-   * @callback ElementFoundListener
+   * @callback module:searchmenu.ElementFoundListener
    * @param {Element} foundElement
    * @param {boolean} isParent true, if it is the created parent. false, if it is a child within the created parent.
    */
@@ -1380,7 +1464,9 @@ searchmenu.SearchMenuUI = (function () {
   /**
    * The given callback will be called for the given parent and all its direct child nodes, that contain an id property.
    * @param {Element} element parent to be inspected
-   * @param {ElementFoundListener} callback will be called for every found child and the given parent itself
+   * @param {module:searchmenu.ElementFoundListener} callback will be called for every found child and the given parent itself
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function forEachIdElementIncludingChildren(element, callback) {
     if (element.id) {
@@ -1401,7 +1487,10 @@ searchmenu.SearchMenuUI = (function () {
   }
 
   /**
+   * @param {String} list element type name e.g. "li".
    * @return {number} list element count of the given type
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function getListElementCountOfType(listelementtype) {
     var firstListEntry = document.getElementById(listelementtype + "--1");
@@ -1414,12 +1503,12 @@ searchmenu.SearchMenuUI = (function () {
   /**
    * Updates an already existing list entry element to be used for search results, filter options, details and filters.
    *
-   * @param {DescribedEntry} entry entry data
-   * @param {SearchViewDescription} view description
    * @param {Node} already existing element
+   * @param {String} text updated element text
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
-  function updateListEntryElement(entry, view, existingElement) {
-    var text = createListEntryInnerHtmlText(entry, view, existingElement.id);
+  function updateListEntryElement(existingElement, text) {
     existingElement.innerHTML = text;
     return existingElement;
   }
@@ -1428,13 +1517,14 @@ searchmenu.SearchMenuUI = (function () {
    * Creates a new list entry element to be used for search results, filter options, details and filters.
    *
    * @param {DescribedEntry} entry entry data
-   * @param {SearchViewDescription} view description
+   * @param {module:searchmenu.SearchViewDescription} view description
    * @param {number} id id of the list element
+   * @param {String} text text of the list element
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
-  function createListEntryElement(entry, view, id) {
-    var text = createListEntryInnerHtmlText(entry, view, id);
+  function createListEntryElement(entry, view, id, text) {
     var listElement = createListElement(text, id, view.listEntryElementTag);
-    addClass(resolveStyleClasses(entry, view), listElement);
     var parentElement = document.getElementById(view.listParentElementId);
     parentElement.appendChild(listElement);
     return listElement;
@@ -1444,27 +1534,27 @@ searchmenu.SearchMenuUI = (function () {
    * Creates the inner HTML Text for a list entry to be used for search results, filter options, details and filters.
    *
    * @param {DescribedEntry} entry entry data
-   * @param {SearchViewDescription} view description
+   * @param {module:searchmenu.SearchViewDescription} view description
    * @param {number} id id of the list element
+   * @param {module:searchmenu.TemplateResolver} resolveTemplate function that resolves variables inside a template with contents of a source object
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
-  function createListEntryInnerHtmlText(entry, view, id) {
+  function createListEntryInnerHtmlText(entry, view, id, resolveTemplate) {
     //TODO could support template inside html e.g. referenced by id (with convention over code)
     //TODO should limit length of resolved variables
-    var resolver = new template_resolver.Resolver(entry);
-    var text = resolver.resolveTemplate(view.listEntryTextTemplate);
+    var text = resolveTemplate(view.listEntryTextTemplate, entry);
     if (typeof entry.summaries !== "undefined") {
-      text = resolver.resolveTemplate(view.listEntrySummaryTemplate);
+      text = resolveTemplate(view.listEntrySummaryTemplate, entry);
     }
     var json = JSON.stringify(entry); //needs to be without spaces
     text += '<p id="' + id + '--fields" style="display: none">' + json + "</p>";
     return text;
   }
 
-  function resolveStyleClasses(entry, view) {
-    var entryResolver = new template_resolver.Resolver(entry);
-    var viewResolver = new template_resolver.Resolver({ view: view });
-    var resolvedClasses = entryResolver.resolveTemplate(view.listEntryStyleClassTemplate);
-    resolvedClasses = viewResolver.resolveTemplate(resolvedClasses);
+  function resolveStyleClasses(entry, view, resolveTemplate) {
+    var resolvedClasses = resolveTemplate(view.listEntryStyleClassTemplate, entry);
+    resolvedClasses = resolveTemplate(resolvedClasses, { view: view });
     return resolvedClasses;
   }
 
@@ -1474,6 +1564,8 @@ searchmenu.SearchMenuUI = (function () {
    * @param {string} text inside the list element
    * @param {number} id id of the list element
    * @param {string} elementTag tag (e.g. "li") for the element
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function createListElement(text, id, elementTag) {
     var element = document.createElement(elementTag);
@@ -1496,7 +1588,9 @@ searchmenu.SearchMenuUI = (function () {
 
   /**
    * Shows the element given by its id.
-   * @param elementId ID of the element that should be shown
+   * @param {Element}  elementId ID of the element that should be shown
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function show(elementId) {
     showElement(document.getElementById(elementId));
@@ -1504,7 +1598,9 @@ searchmenu.SearchMenuUI = (function () {
 
   /**
    * Shows the given element.
-   * @param element element that should be shown
+   * @param {Element} element element that should be shown
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function showElement(element) {
     addClass("show", element);
@@ -1513,6 +1609,8 @@ searchmenu.SearchMenuUI = (function () {
   /**
    * Hides the element given by its id.
    * @param elementId ID of the element that should be hidden
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function hide(elementId) {
     hideElement(document.getElementById(elementId));
@@ -1522,6 +1620,8 @@ searchmenu.SearchMenuUI = (function () {
    * Hides the view (by removing the class "show"), that contains the given element.
    * The view is identified by the existing style class "show".
    * @param {Element} element
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function hideViewOf(element) {
     var parentWithShowClass = parentThatMatches(element, function (parent) {
@@ -1534,7 +1634,7 @@ searchmenu.SearchMenuUI = (function () {
   }
 
   /**
-   * @callback ElementPredicate
+   * @callback module:searchmenu.ElementPredicate
    * @param {Element} element
    * @returns {boolean} true, when the predicate matches the given element, false otherwise.
    */
@@ -1544,7 +1644,9 @@ searchmenu.SearchMenuUI = (function () {
    * Returns null, if no element had been found.
    *
    * @param {Element} element
-   * @param {ElementPredicate} predicate
+   * @param {module:searchmenu.ElementPredicate} predicate
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function parentThatMatches(element, predicate) {
     var parentNode = element;
@@ -1560,6 +1662,8 @@ searchmenu.SearchMenuUI = (function () {
   /**
    * Hides the given element.
    * @param element element that should be hidden
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function hideElement(element) {
     removeClass("show", element);
@@ -1702,11 +1806,12 @@ searchmenu.SearchMenuUI = (function () {
    * Returns the key code of the event or -1 if it is no available.
    * @param {KeyboardEvent} event
    * @return key code or -1 if not available
+   * @protected
+   * @memberof module:searchmenu.SearchMenuUI
    */
   function keyCodeOf(event) {
     return typeof event.keyCode === "undefined" ? -1 : event.keyCode;
   }
 
-  // Returns the instance
   return instance;
 })();

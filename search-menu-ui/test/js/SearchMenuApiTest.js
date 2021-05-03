@@ -205,13 +205,25 @@ describe("search.js SearchMenuApi", function () {
 
     it("should use the specified data converter", function () {
       var expectedSourceData = { parameter: "value" };
-      var searchService = jasmine.createSpy("dataConverterSpy");
+      var dataConverter = jasmine.createSpy("dataConverterSpy");
 
-      searchMenuApiUnderTest.dataConverter(searchService);
+      searchMenuApiUnderTest.dataConverter(dataConverter);
       var resultingSearchUi = searchMenuApiUnderTest.start();
 
       resultingSearchUi.config.convertData(expectedSourceData);
-      expect(searchService).toHaveBeenCalledWith(expectedSourceData);
+      expect(dataConverter).toHaveBeenCalledWith(expectedSourceData);
+    });
+
+    it("should use the specified template resolver", function () {
+      var expectedTemplate = "test template with {{value}}";
+      var expectedSourceData = { parameter: "value" };
+      var templateResolver = jasmine.createSpy("templateResolverSpy");
+
+      searchMenuApiUnderTest.templateResolver(templateResolver);
+      var resultingSearchUi = searchMenuApiUnderTest.start();
+
+      resultingSearchUi.config.resolveTemplate(expectedTemplate, expectedSourceData);
+      expect(templateResolver).toHaveBeenCalledWith(expectedTemplate, expectedSourceData);
     });
 
     it("should use the specified `addPredefinedParametersTo` function", function () {

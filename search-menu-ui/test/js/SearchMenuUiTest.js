@@ -2,6 +2,7 @@
 
 var searchmenu = searchmenu || require("../../src/js/search-menu-ui"); // supports vanilla js & npm
 var searchresulttestdata = searchresulttestdata || require("./SearchMenuUiTestJsonData");
+var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
 
 describe("search.js", function () {
   var searchUnderTest;
@@ -125,6 +126,10 @@ describe("search.js", function () {
     var dataConverter = jasmine.createSpy("dataConverterSpy").and.callFake(function (data) {
       return data;
     });
+    var templateResolver = jasmine.createSpy("dataConverterSpy").and.callFake(function (template, sourceObject) {
+      return new template_resolver.Resolver(sourceObject).resolveTemplate(template);
+    });
+    
     var predefinedParametersCallback;
 
     var documentElements; // Contains all document elements that are set up, created or read during the test
@@ -137,6 +142,7 @@ describe("search.js", function () {
       var searchMenuApiConfig = new searchUnderTest.SearchMenuAPI()
         .searchService(searchService)
         .dataConverter(dataConverter)
+        .templateResolver(templateResolver)
         .addPredefinedParametersTo(predefinedParametersCallback)
         .addFocusStyleClassOnEveryCreatedElement("searchresultfocus")
         .addElementCreatedHandler(function (newElement) {

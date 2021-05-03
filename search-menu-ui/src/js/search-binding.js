@@ -8,6 +8,7 @@ var httpSearchClient;
 var searchService = searchService || require("./search-service-client"); // supports vanilla js & npm
 var searchmenu = searchmenu || require("./search-menu-ui"); // supports vanilla js & npm
 var restruct = restruct || require("./restruct-data-client"); // supports vanilla js & npm
+var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
 
 // Locally mocked search with a view pre-queried search results (for local debugging and testing)
 httpSearchClient = new searchService.HttpSearchConfig()
@@ -40,6 +41,9 @@ httpSearchClient = new searchService.HttpSearchConfig()
 new searchmenu.SearchMenuAPI()
   .searchService(httpSearchClient.search)
   .dataConverter(new restruct.DataConverter().createDataConverter(true))
+  .templateResolver(function (template, sourceObject) {
+    return new template_resolver.Resolver(sourceObject).resolveTemplate(template);
+  })
   .addPredefinedParametersTo(function (searchParameters) {
     searchParameters.tenantnumber = 999;
   })
