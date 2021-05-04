@@ -12,39 +12,33 @@ jobs:
         node-version: '12'
     - name: Install nodes packages
       run: npm ci
-      working-directory: search-menu-ui
     - name: Run tests
       run: npm test
-      working-directory: search-menu-ui
     - name: Measure test coverage
       run: npm run coverage
-      working-directory: search-menu-ui
     - name: Run linter
       run: npm run lint
-      working-directory: search-menu-ui
     - name: Generate documentation
       run: npm run doc
-      working-directory: search-menu-ui
     - name: Build
       run: npm run build --if-present
-      working-directory: search-menu-ui
     - name: Archive code coverage results
       uses: actions/upload-artifact@v2
       with:
         name: code-coverage-report
-        path: search-menu-ui/coverage
+        path: coverage
         retention-days: 2
     - name: Archive documentation
       uses: actions/upload-artifact@v2
       with:
         name: documentation
-        path: search-menu-ui/docs
+        path: docs
         retention-days: 2
     - name: Archive build artifacts
       uses: actions/upload-artifact@v2
       with:
         name: dist-without-markdown
         path: |
-          search-menu-ui/dist
-          !search-menu-ui/dist/**/*.md
+          dist
+          !dist/**/*.md
         retention-days: 2
