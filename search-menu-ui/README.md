@@ -15,7 +15,7 @@
 ## Features:
 * **"Data-Driven, Data-Agnostic"** approach:   
   * Search data is the source of all contents configured once using templates
-  * Search data may also be used to set additional css style classes dynamically
+  * Search data may also be used to set additional css style classes
   * Search data determines which filters and thus which filter parameters are available
   * Search data determines which target url to open, when a result is selected
 * **"Everything Is Searchable"** approach:
