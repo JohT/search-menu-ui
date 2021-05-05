@@ -1,0 +1,59 @@
+</html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <link rel="stylesheet" href="styles/search.css" type="text/css" media="screen" />
+    <link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">    
+    <title>search ui example</title>
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Baumans&family=Comfortaa&family=Open+Sans&family=Roboto&display=swap" rel="stylesheet">    <title>search ui experiment</title> -->
+  </head>
+  <body>
+    <h2 class="header">Search UI Example</h2>
+
+    <div id="searcharea">
+      <input type="text" id="searchinputtext" class="searchinput" placeholder="Type to search" title="Type to search" tabindex="0"/><br>
+      <div id="searchresults" class="searchresults searchmenu">
+        <ul id="searchmatches" class="searchmatches searchresultentries"></ul>
+        <ul id="searchfilters" class="searchfilters searchresultentries"></ul>
+      </div>
+      <div id="searchdetails" class="searchdetails searchmenu">
+        <ul id="searchdetailentries" class="searchdetailentries searchresultentries">
+        </ul>
+      </div>
+      <div id="searchfilteroptions" class="searchfilteroptions searchmenu">
+        <ul id="searchfilteroptionentries" class="searchfilteroptionentries searchresultentries">
+        </ul>
+      </div>
+    </div>
+    <h4>Some other content....</h4>
+    <!-- TODO should not declare every direct and transitive dependency and should be done using parcel -->
+    <script src="../src/js/polyfills/isArrayPolyfill.js"></script>
+    <script src="../src/js/polyfills/createPolyfill.js"></script>
+    <script src="../src/js/polyfills/arrayFilterPolyfill.js"></script>
+    <script src="../src/js/polyfills/arrayForEachPolyfill.js"></script>
+    <script src="../src/js/polyfills/indexOfPolyfill.js"></script>
+    <script src="../src/js/polyfills/jsonParsePolyfill.js"></script>
+    <script src="../src/js/polyfills/objectKeysPolyfill.js"></script>
+    
+    <script src="../src/js/ponyfills/eventCurrentTargetPonyfill.js"></script>
+    <script src="../src/js/ponyfills/selectionRangePonyfill.js"></script>
+    <script src="../src/js/ponyfills/xmlHttpRequestPonyfill.js"></script>
+    <script src="../src/js/ponyfills/addEventListenerPonyfill.js"></script>
+    
+    <script src="../src/js/lib/moduledummy.js"></script>
+    <script src="../src/js/lib/flattenToArray.js"></script>
+    <script src="../src/js/lib/describedfield.js"></script>
+    <script src="../src/js/lib/datarestructor.js"></script>
+    <script src="../src/js/lib/templateResolver.js"></script>
+    <script src="../src/js/search-menu-ui.js"></script>
+
+    <script src="src/js/restruct-data-client.js"></script>
+    <script src="src/js/search-service-client.js"></script>
+    <script src="src/js/search-binding.js"></script>
+  </body>
+</html>

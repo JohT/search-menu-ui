@@ -1,7 +1,7 @@
 {
-  "name": "search-menu-ui",
+  "name": "search-menu-ui-example",
   "version": "0.8.0",
-  "description": "Search UI written in vanilla JavaScript. Menu structure for results. Filters are integrated as search results.",
+  "description": "Search UI example.",
   "main": "index.html",
   "directories": {
     "test": "test"
@@ -14,9 +14,9 @@
     "coverage-badge": "istanbul-badges-readme",
     "doc": "jsdoc -d docs --configure ./docs/jsdoc.json --readme ./README.md ./src/js/*.js",
     "dev": "rm -rf devdist && parcel --out-dir devdist ./src/js/*.js",
-    "devbuild": "rm -rf devdist && NODE_ENV=development parcel build --out-dir devdist ./src/js/*.js --no-minify --no-source-maps --target node",
+    "devbuild": "rm -rf devdist && NODE_ENV=development parcel build --out-dir devdist ./src/js/*.js --no-minify --target node",
     "build": "parcel build ./src/js/*.js",
-    "package": "npm run lint && npm run coverage && npm run coverage-badge && npm run doc && (npm run build & npm run devbuild)"
+    "package": "npm run lint && npm run coverage && npm run coverage-badge && npm run doc && npm run devbuild && npm run build"
   },
   "repository": {
     "type": "git",
@@ -26,7 +26,8 @@
     "search",
     "menu",
     "ui",
-    "elasticsearch"
+    "elasticsearch",
+    "example"
   ],
   "author": "JohT",
   "license": "Apache-2.0",

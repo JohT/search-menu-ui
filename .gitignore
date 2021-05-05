@@ -89,5 +89,5 @@ coverage/
 # ignore all build results (temporarily)
 devdist/
 dist/
-docs/**
+docs/
 !jsdoc.json

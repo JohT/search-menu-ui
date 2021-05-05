@@ -5,7 +5,6 @@
 ![![jasmine](./src/jasmine.svg)](https://aleen42.github.io/badges/src/jasmine.svg)
 ![![eslint](./src/eslint.svg)](https://aleen42.github.io/badges/src/eslint.svg)
 ![JSDoc](https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/jsdoc)
-![JSDoc](https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/jsdoc)
 ![nyc](https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/nyc)
 ![parcel-bundler](https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/parcel-bundler)
 
