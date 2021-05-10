@@ -1,7 +1,14 @@
+//--------------------------------------------------------
 // index setup, analyzer, searches, etc. for accounts
+//--------------------------------------------------------
 
+// Delete index and all data to start from scratch
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-delete-index.html
 DELETE /accounts
 
+// Altough it is no neccessary to define the index with all its fields and types,
+// it provides much more options and control.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html
 PUT /accounts
 {
     "mappings": {
@@ -120,18 +127,25 @@ PUT /accounts
     }
 }
 
-//test analyzer
+//The behaviour of the desclared "name_analyzer" can be tested with an given text.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-analyze.html
 POST accounts/_analyze
 {
   "analyzer": "name_analyzer",
   "text":     "1234 AT1234 Jack Bauer Kim Bauer"
 }
 
+// Index Statistics
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-stats.html
 GET accounts/_stats
 
+// Query index definition
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-get-index.html
 GET accounts
 
-// Test Accounts
+
+// Adds some test data documents to the index.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html
 PUT accounts/_doc/99912345678901
 {
     "iban": "AT424321012345678901",
@@ -283,7 +297,10 @@ PUT accounts/_doc/99912345678908
     ]
 }
 
-// All accounts of one tenant
+// Query all accounts that match the given tenant number.
+// References: 
+// - https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html
+// - https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html
 GET accounts/_search
 {
     "query": {
@@ -295,9 +312,13 @@ GET accounts/_search
     }
 }
 
-//search as you type for "accounts"
-//?filter_path=hits.total.value,hits.hits._source
-//?stored_fields=true
+// Query "search as you type" fieldd
+// Query-Parameter to filter response: ?filter_path=hits.total.value,hits.hits._source
+// Query-Parameter to only return stored fields (e.g. "highlight") without document sources: ?stored_fields=true
+// References:
+// - https://www.elastic.co/guide/en/elasticsearch/reference/current/search-as-you-type.html
+// - https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html
+// - https://www.elastic.co/guide/en/elasticsearch/reference/current/highlighting.html
 GET accounts/_search
 {
     "size": "20",
@@ -368,7 +389,9 @@ GET accounts/_search
     }
 }
 
-// Search for all tags
+// Aggregate query for all distinct values of the field "tags" and how often they occur (limited to 100 entries).
+// Similar to "SELECT TAG, COUNT(*) GROUP BY TAG" in SQL.
+// Reference https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations.html
 GET accounts/_search?filter_path=aggregations.tags.buckets.key,aggregations.tags.buckets.doc_count
 {
     "size": 0,
@@ -382,7 +405,8 @@ GET accounts/_search?filter_path=aggregations.tags.buckets.key,aggregations.tags
     }
 }
 
-// test search template script
+// Tests a search template script. Provides fast feedback for developing. Supports mustache for pre rendering.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html
 GET accounts/_search/template
 {
     "source": {
@@ -472,10 +496,12 @@ GET accounts/_search/template
     }
 }
 
-// delete search template script
+// Delete search template script.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-stored-script-api.html
 DELETE _scripts/account_search_as_you_type_v1
 
-// store search template script
+// Store search template script.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html
 POST _scripts/account_search_as_you_type_v1
 {
     "script": {
@@ -559,7 +585,8 @@ POST _scripts/account_search_as_you_type_v1
     }
 }
 
-//run stored search template script with given parameters and filtered response
+// Execute the stored search template script with given parameters and filtered response (using GET).
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html#use-registered-templates
 GET accounts/_search/template?filter_path=hits.total.value,hits.hits._source,hits.hits.highlight
 {
     "id": "account_search_as_you_type_v1",
@@ -574,7 +601,8 @@ GET accounts/_search/template?filter_path=hits.total.value,hits.hits._source,hit
     }
 }
 
-//run stored search template script using post with given parameters and filtered response
+// Execute the stored search template script with given parameters and filtered response (using POST).
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html#use-registered-templates
 POST accounts/_search/template?filter_path=hits.total.value,hits.hits._source,hits.hits.highlight
 {
     "id": "account_search_as_you_type_v1",
@@ -589,10 +617,12 @@ POST accounts/_search/template?filter_path=hits.total.value,hits.hits._source,hi
     }
 }
 
-// delete search template script - account_tags_v1
+// Delete search template script.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-stored-script-api.html
 DELETE _scripts/account_tags_v1
 
-// store search template script - account_tags_v1
+// Store search template script.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html
 POST _scripts/account_tags_v1
 {
     "script": {
@@ -641,7 +671,8 @@ POST _scripts/account_tags_v1
 }
 
 
-//execute stored search template script - account_tags_v1
+// Execute the stored search template script with given parameters and filtered response (using POST).
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html#use-registered-templates
 GET accounts/_search/template//?filter_path=aggregations.*.buckets
 {
     "id": "account_tags_v1",
@@ -651,7 +682,11 @@ GET accounts/_search/template//?filter_path=aggregations.*.buckets
     }
 }
 
-// Needs to be executed using postman until multi-line-json is supported here
+// Executes multiple search templates within one request using the given parameters.
+// Combines multiple searches into one request. 
+// Templates provide encapsulation / implementation hiding to decouple search tweaks from code changes.
+// Needs to be executed using postman until multi-line-json (new line separated) is supported here.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/multi-search-template.html
 GET _msearch/template?filter_path=responses.hits.total.value,responses.hits.hits._source,responses.hits.hits.highlight,hits.responses.hits.highlight,responses.aggregations.*.buckets
 {"index": "accounts"}
 {"id": "account_search_as_you_type_v1", "params":{"searchtext":"at", "tenantnumber":999,"accountmanager":"Sarah Connor"}}
