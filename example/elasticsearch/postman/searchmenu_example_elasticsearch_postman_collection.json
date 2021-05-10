@@ -1,0 +1,154 @@
+{
+	"info": {
+		"_postman_id": "683a52be-327d-4e76-8be0-54068845132a",
+		"name": "SearchMenu",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Accounts",
+			"item": [
+				{
+					"name": "Accounts Mulit Search Template (Accounts)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-ndjson",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"index\": \"accounts\"}\n{\"id\": \"account_search_as_you_type_v1\", \"params\":{\"searchtext\":\"at\", \"tenantnumber\":999,\"accountsmanager\":\"Sarah Connor\"}}\n{\"index\": \"accounts\"}\n{\"id\": \"account_tags_v1\", \"params\":{\"account_aggregations_prefix\": \"\", \"account_aggregations_size\": 10}}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9200/_msearch/template?filter_path=responses.hits.total.value,responses.hits.hits._source,hits.responses.hits.highlight,responses.aggregations.*.buckets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_msearch",
+								"template"
+							],
+							"query": [
+								{
+									"key": "filter_path",
+									"value": "responses.hits.total.value,responses.hits.hits._source,hits.responses.hits.highlight,responses.aggregations.*.buckets"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accounts Mulit Search Template (All)",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/x-ndjson"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"index\": \"accounts\"}\n{\"id\": \"account_search_as_you_type_v1\", \"params\":{\"searchtext\":\"at\", \"tenantnumber\":999,\"accountmanager\":\"Sarah Connor\"}}\n{\"index\": \"accounts\"}\n{\"id\": \"account_tags_v1\", \"params\":{\"account_aggregations_prefix\": \"\", \"account_aggregations_size\": 10}}\n{\"index\": \"sites\"}\n{\"id\": \"sites_default_v1\", \"params\":{\"tenantnumber\":999}}\n{\"index\": \"sites\"}\n{\"id\": \"sites_search_as_you_type_v1\", \"params\":{\"searchtext\":\"cre\", \"tenantnumber\":999,\"businesstype\":\"Giro\"}}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9200/_msearch/template?filter_path=responses.hits.total.value,responses.hits.hits._source,hits.responses.hits.highlight,responses.aggregations.*.buckets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_msearch",
+								"template"
+							],
+							"query": [
+								{
+									"key": "filter_path",
+									"value": "responses.hits.total.value,responses.hits.hits._source,hits.responses.hits.highlight,responses.aggregations.*.buckets"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accounts Mulit Search Template (Sites)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/x-ndjson"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"index\": \"sites\"}\n{\"id\": \"sites_default_v1\", \"params\":{\"tenantnumber\":999}}\n{\"index\": \"sites\"}\n{\"id\": \"sites_search_as_you_type_v1\", \"params\":{\"site_prefix\":\"hab\", \"tenantnumber\":999,\"businesstype\":\"Giro\"}}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9200/_msearch/template?filter_path=responses.hits.total.value,responses.hits.hits._source,hits.responses.hits.highlight,responses.aggregations.*.buckets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_msearch",
+								"template"
+							],
+							"query": [
+								{
+									"key": "filter_path",
+									"value": "responses.hits.total.value,responses.hits.hits._source,hits.responses.hits.highlight,responses.aggregations.*.buckets"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
