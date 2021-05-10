@@ -1,6 +1,6 @@
-//This test shows how "constant_keyword" could be used.
-//Similar to "alias", this type is not stored and therefore
-//not shown in the result "_source".
+// This test shows how "constant_keyword" could be used.
+// Similar to "alias", this type is not stored and therefore
+// not shown in the result "_source".
 
 DELETE /constantkeywordtest 
 

@@ -1,6 +1,6 @@
-//This test shows how "alias" fields could be used.
-//Similar to "constant_keyword", this type is not stored and therefore
-//not shown in the result "_source".
+// This test shows how "alias" fields could be used.
+// Similar to "constant_keyword", this type is not stored and therefore
+// not shown in the result "_source".
 
 DELETE /aliasfieldtest 
 

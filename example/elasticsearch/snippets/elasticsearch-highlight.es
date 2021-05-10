@@ -1,13 +1,5 @@
-
-
-
-
-
-
-
-//
-//Example from
-//  https://stackoverflow.com/questions/59677406/how-do-i-get-elasticsearch-to-highlight-a-partial-word-from-a-search-as-you-type
+// Example from
+// https://stackoverflow.com/questions/59677406/how-do-i-get-elasticsearch-to-highlight-a-partial-word-from-a-search-as-you-type
 
 DELETE /highlighttest
 
