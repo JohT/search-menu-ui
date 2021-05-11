@@ -1,6 +1,14 @@
+//--------------------------------------------------------
 // index setup, analyzer, searches, etc. for sites
+//--------------------------------------------------------
+
+// Delete index and all data to start from scratch
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-delete-index.html
 DELETE /sites
 
+// Altough it is no neccessary to define the index with all its fields and types,
+// it provides much more options and control.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html
 PUT /sites
 {
     "mappings": {
@@ -101,14 +109,18 @@ PUT /sites
     }
 }
 
-//test analyzer
+//The behaviour of the declared "name_analyzer" can be tested with an given text.
+// Testing parts like filters and analyzers in isolation provides is adviseable to learn fast.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-analyze.html
 POST sites/_analyze
 {
   "analyzer": "german_decompound_analzer",
   "text":     "Jack Bauer Kim Bauer Account Overview"
 }
 
-// Test german analyzer
+// The behaviour of the declared "german_decompounder" can be tested with an given text.
+// Testing parts like filters and analyzers in isolation provides is adviseable to learn fast.
+// Reference: https://github.com/uschindler/german-decompounder
 POST _analyze
 {
     "tokenizer": "standard",
@@ -130,12 +142,20 @@ POST _analyze
     "text": "Account Overview"
 }
 
-
+// Index Statistics
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-stats.html
 GET sites/_stats
 
+// Query index definition
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-get-index.html
 GET sites
 
-// Test-Sites
+// The "default" ID is chosen to distinguish this entry from others.
+// It can then be treated as pre selected navigation filter in the search menu UI.
+// If the navigation filter isn't change, the url template of this entry will be used when a result is selected.
+
+// Adds some test data documents to the index.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html
 PUT sites/_doc/default
 {
     "tenantnumber": "999",
@@ -215,7 +235,10 @@ POST sites/_doc/3
     "creationdate": "2021-03-31"
 }
 
-// alle sites eines mandanten
+// Query all accounts that match the given tenant number.
+// References: 
+// - https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html
+// - https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html
 GET sites/_search
 {
     "query": {
@@ -227,7 +250,10 @@ GET sites/_search
     }
 }
 
-// default site
+// Query all entries except the default one (marked with defaultsite=true).
+// References: 
+// - https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html
+// - https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html
 GET sites/_search
 {
     "query": {
@@ -239,10 +265,13 @@ GET sites/_search
     }
 }
 
-//TODO
-//search as you type for "sites"
-//?filter_path=hits.total.value,hits.hits._source
-//?stored_fields=true
+// Query "search as you type" fields.
+// Query-Parameter to filter response: ?filter_path=hits.total.value,hits.hits._source
+// Query-Parameter to only return stored fields (e.g. "highlight") without document sources: ?stored_fields=true
+// References:
+// - https://www.elastic.co/guide/en/elasticsearch/reference/current/search-as-you-type.html
+// - https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html
+// - https://www.elastic.co/guide/en/elasticsearch/reference/current/highlighting.html
 GET sites/_search
 {
     "size": "20",
@@ -301,7 +330,9 @@ GET sites/_search
     }
 }
 
-// Suche alle Tags
+// Aggregate query for all distinct values of the field "fields" and how often they occur (limited to 100 entries).
+// Similar to "SELECT FIELD, COUNT(*) GROUP BY FIELD" in SQL.
+// Reference https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations.html
 GET sites/_search?filter_path=aggregations.fields.buckets*
 {
     "size": 0,
@@ -315,7 +346,9 @@ GET sites/_search?filter_path=aggregations.fields.buckets*
     }
 }
 
-// test search template script
+// Tests a search template script. Provides fast feedback for developing. Supports mustache for pre rendering.
+// Testing search template in isolation provides is adviseable to learn fast.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html
 GET sites/_search/template
 {
     "source": {
@@ -381,11 +414,14 @@ GET sites/_search/template
     }
 }
 
-
-// delete search template script
+// Delete search template script.
+// Provides a distinct search for the default navigation target based on the given parameters.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-stored-script-api.html
 DELETE _scripts/sites_default_v1
 
-// store search template script
+// Store search template script.
+// Provides a distinct search for the default navigation target based on the given parameters.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html
 POST _scripts/sites_default_v1
 {
     "script": {
@@ -416,7 +452,9 @@ POST _scripts/sites_default_v1
     }
 }
 
-//run stored search template script with given parameters and filtered response
+// Execute the stored search template script with given parameters and filtered response (using GET).
+// Provides a distinct search for the default navigation target based on the given parameters.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html#use-registered-templates
 GET sites/_search/template?filter_path=hits.hits._source
 {
     "id": "sites_default_v1",
@@ -425,12 +463,14 @@ GET sites/_search/template?filter_path=hits.hits._source
     }
 }
 
-
-
-// delete search template script
+// Delete search template script.
+// Provides "search as you type" for sites (navigation targets), their descriptions and their fields.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-stored-script-api.html
 DELETE _scripts/sites_search_as_you_type_v1
 
-// store search template script
+// Store search template script.
+// Provides "search as you type" for sites (navigation targets), their descriptions and their fields.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html
 POST _scripts/sites_search_as_you_type_v1
 {
     "script": {
@@ -503,7 +543,9 @@ POST _scripts/sites_search_as_you_type_v1
     }
 }
 
-//run stored search template script with given parameters and filtered response
+// Execute the stored search template script with given parameters and filtered response (using GET).
+// Provides "search as you type" for sites (navigation targets), their descriptions and their fields.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html#use-registered-templates
 GET sites/_search/template?filter_path=hits.total.value,hits.hits._source,hits.hits.highlight
 {
     "id": "sites_search_as_you_type_v1",
@@ -514,10 +556,15 @@ GET sites/_search/template?filter_path=hits.total.value,hits.hits._source,hits.h
     }
 }
 
-// delete search template script - sites_fields_v1
+// Delete search template script.
+// Provides an aggregation of all fields for a given fieldname prefix.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-stored-script-api.html
 DELETE _scripts/sites_fields_v1
 
-// store search template script - sites_fields_v1
+// Store search template script.
+// Provides an aggregation of all fields for a given fieldname prefix.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html
+
 POST _scripts/sites_fields_v1
 {
     "script": {
@@ -537,8 +584,9 @@ POST _scripts/sites_fields_v1
     }
 }
 
-
-//execute stored search template script - site_fields_v1
+// Execute the stored search template script with given parameters and filtered response (using GET).
+// Provides an aggregation of all fields for a given fieldname prefix.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html#use-registered-templates
 GET sites/_search/template//?filter_path=aggregations.*.buckets
 {
     "id": "sites_fields_v1",
@@ -548,11 +596,17 @@ GET sites/_search/template//?filter_path=aggregations.*.buckets
     }
 }
 
-// Needs to be executed using postman until multi-line-json is supported here
+// Executes multiple search templates within one request using the given parameters.
+// Combines multiple searches in one request. 
+// Templates provide encapsulation / implementation hiding to decouple search tweaks from code changes.
+// Needs to be executed using postman until multi-line-json (new line separated) is supported here.
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/multi-search-template.html
 GET _msearch/template?filter_path=responses.hits.total.value,responses.hits.hits._source,responses.hits.hits.highlight,hits.responses.hits.highlight,responses.aggregations.*.buckets
 {"index": "sites"}
 {"id": "sites_default_v1", "params":{"tenantnumber":999}}
 {"index": "sites"}
 {"id": "sites_search_as_you_type_v1", "params":{"searchtext":"cre", "tenantnumber":999,"businesstype":"Giro"}}
+
+// To add fields search use:
 //{"index": "sites"}
 //{"id": "sites_fields_v1", "params":{"fields_aggregations_prefix": "cre", "fields_aggregations_size": 10}}

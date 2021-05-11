@@ -6,6 +6,7 @@
 // Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-delete-index.html
 DELETE /accounts
 
+
 // Altough it is no neccessary to define the index with all its fields and types,
 // it provides much more options and control.
 // Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html
@@ -127,7 +128,8 @@ PUT /accounts
     }
 }
 
-//The behaviour of the desclared "name_analyzer" can be tested with an given text.
+//The behaviour of the declared "name_analyzer" can be tested with an given text.
+// Testing parts like filters and analyzers in isolation provides is adviseable to learn fast.
 // Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-analyze.html
 POST accounts/_analyze
 {
@@ -312,7 +314,7 @@ GET accounts/_search
     }
 }
 
-// Query "search as you type" fieldd
+// Query "search as you type" field
 // Query-Parameter to filter response: ?filter_path=hits.total.value,hits.hits._source
 // Query-Parameter to only return stored fields (e.g. "highlight") without document sources: ?stored_fields=true
 // References:
@@ -406,6 +408,7 @@ GET accounts/_search?filter_path=aggregations.tags.buckets.key,aggregations.tags
 }
 
 // Tests a search template script. Provides fast feedback for developing. Supports mustache for pre rendering.
+// Testing search template in isolation provides is adviseable to learn fast.
 // Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html
 GET accounts/_search/template
 {
@@ -497,10 +500,12 @@ GET accounts/_search/template
 }
 
 // Delete search template script.
+// Provides parametrized "search as you type" for accounts.
 // Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-stored-script-api.html
 DELETE _scripts/account_search_as_you_type_v1
 
 // Store search template script.
+// Provides parametrized "search as you type" for accounts.
 // Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html
 POST _scripts/account_search_as_you_type_v1
 {
@@ -586,6 +591,7 @@ POST _scripts/account_search_as_you_type_v1
 }
 
 // Execute the stored search template script with given parameters and filtered response (using GET).
+// Provides parametrized "search as you type" for accounts.
 // Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html#use-registered-templates
 GET accounts/_search/template?filter_path=hits.total.value,hits.hits._source,hits.hits.highlight
 {
@@ -602,6 +608,7 @@ GET accounts/_search/template?filter_path=hits.total.value,hits.hits._source,hit
 }
 
 // Execute the stored search template script with given parameters and filtered response (using POST).
+// Provides parametrized "search as you type" for accounts.
 // Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html#use-registered-templates
 POST accounts/_search/template?filter_path=hits.total.value,hits.hits._source,hits.hits.highlight
 {
@@ -618,10 +625,12 @@ POST accounts/_search/template?filter_path=hits.total.value,hits.hits._source,hi
 }
 
 // Delete search template script.
+// Provides all kinds of aggregations like products, tags, ... for search filters.
 // Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-stored-script-api.html
 DELETE _scripts/account_tags_v1
 
 // Store search template script.
+// Provides all kinds of aggregations like products, tags, ... for search filters.
 // Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html
 POST _scripts/account_tags_v1
 {
@@ -672,6 +681,7 @@ POST _scripts/account_tags_v1
 
 
 // Execute the stored search template script with given parameters and filtered response (using POST).
+// Provides all kinds of aggregations like products, tags, ... for search filters.
 // Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html#use-registered-templates
 GET accounts/_search/template//?filter_path=aggregations.*.buckets
 {
@@ -683,7 +693,7 @@ GET accounts/_search/template//?filter_path=aggregations.*.buckets
 }
 
 // Executes multiple search templates within one request using the given parameters.
-// Combines multiple searches into one request. 
+// Combines multiple searches in one request. 
 // Templates provide encapsulation / implementation hiding to decouple search tweaks from code changes.
 // Needs to be executed using postman until multi-line-json (new line separated) is supported here.
 // Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/multi-search-template.html
