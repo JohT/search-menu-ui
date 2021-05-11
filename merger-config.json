@@ -1,0 +1,55 @@
+{
+	"mergerJsLinks": {
+		"npm": "https://www.npmjs.com/package/merger-js",
+		"github": "https://github.com/joao-neves95/merger-js",
+		"readme": "https://github.com/joao-neves95/merger-js/blob/master/README.md",
+		"changelog": "https://github.com/joao-neves95/merger-js/blob/master/CHANGELOG.md"
+	},
+	"autoBuild": false,
+	"notifications": false,
+	"updateOnLaunch": false,
+	"lastUpdateCheck": "2021-05-09T07:08:40.000Z",
+	"sourceFiles": [
+		{
+			"source": "./src/header/search-menu-ui-global-all.h",
+			"output": {
+				"path": "./devdist",
+				"name": "search-menu-ui-global-all.js"
+			},
+			"config": {
+				"uglify": false
+			}
+		},
+		{
+			"source": "./src/header/search-menu-ui-global-all-min.h",
+			"output": {
+				"path": "./dist",
+				"name": "search-menu-ui-global-all-min.js"
+			},
+			"config": {
+				"uglify": true
+			}
+		},
+		{
+			"source": "./src/header/search-menu-ui-ie-global-all.h",
+			"output": {
+				"path": "./devdist",
+				"name": "search-menu-ui-ie-global-all.js"
+			},
+			"config": {
+				"uglify": false
+			}
+		},
+		{
+			"source": "./src/header/search-menu-ui-ie-global-all-min.h",
+			"output": {
+				"path": "./dist",
+				"name": "search-menu-ui-ie-global-all-min.js"
+			},
+			"config": {
+				"uglify": true
+			}
+		}
+	],
+	"nodeModulesPath": "/Users/johannestroppacher/git/search-menu-ui/node_modules"
+}
