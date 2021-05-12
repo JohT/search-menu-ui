@@ -15,8 +15,8 @@
     "doc": "jsdoc -d docs --configure ./docs/jsdoc.json --readme ./README.md ./src/js/*.js",
     "merger": "merger build",
     "dev": "rm -rf devdist && parcel --out-dir devdist ./src/js/*.js",
-    "devbuild": "rm -rf devdist && NODE_ENV=development parcel build --out-dir devdist ./src/js/*.js --no-minify --no-source-maps --target node --global data_restructor_js --no-content-hash --bundle-node-modules --detailed-report",
-    "build": "parcel build ./src/js/*.js --target node --bundle-node-modules",
+    "devbuild": "rm -rf devdist && NODE_ENV=development parcel build --out-dir devdist ./src/js/*.js --no-minify --no-source-maps --target node --global search_menu_ui --no-content-hash --bundle-node-modules --detailed-report",
+    "build": "parcel build ./src/js/*.js --global search_menu_ui --target node --bundle-node-modules",
     "package": "npm run lint && npm run coverage && npm run coverage-badge && npm run doc && npm run devbuild && npm run build && merger"
   },
   "repository": {
