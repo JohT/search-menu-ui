@@ -31,25 +31,21 @@
       </div>
     </div>
     <h4>Some other content....</h4>
-    <!-- TODO should not declare every direct and transitive dependency and should be done using parcel -->
-    <script src="../src/js/polyfills/isArrayPolyfill.js"></script>
-    <script src="../src/js/polyfills/createPolyfill.js"></script>
-    <script src="../src/js/polyfills/arrayFilterPolyfill.js"></script>
+
+    <!-- polyfills for search-menu-ui -->
     <script src="../src/js/polyfills/arrayForEachPolyfill.js"></script>
-    <script src="../src/js/polyfills/indexOfPolyfill.js"></script>
+    <script src="../src/js/polyfills/createPolyfill.js"></script>
     <script src="../src/js/polyfills/jsonParsePolyfill.js"></script>
-    <script src="../src/js/polyfills/objectKeysPolyfill.js"></script>
-    
+
+    <!-- ponyfills for search-menu-ui -->
     <script src="../src/js/ponyfills/eventCurrentTargetPonyfill.js"></script>
     <script src="../src/js/ponyfills/selectionRangePonyfill.js"></script>
-    <script src="../src/js/ponyfills/xmlHttpRequestPonyfill.js"></script>
     <script src="../src/js/ponyfills/addEventListenerPonyfill.js"></script>
-    
-    <script src="../src/js/lib/moduledummy.js"></script>
-    <script src="../src/js/lib/flattenToArray.js"></script>
-    <script src="../src/js/lib/describedfield.js"></script>
-    <script src="../src/js/lib/datarestructor.js"></script>
-    <script src="../src/js/lib/templateResolver.js"></script>
+
+    <!-- ponyfills for this example (search-service-client) -->
+    <script src="src/js/ponyfills/xmlHttpRequestPonyfill.js"></script>
+
+    <script src="node_modules/data-restructor/devdist/datarestructor-ie-global-all.js"></script>
     <script src="../src/js/search-menu-ui.js"></script>
 
     <script src="src/js/restruct-data-client.js"></script>
