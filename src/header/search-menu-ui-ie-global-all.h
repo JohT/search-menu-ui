@@ -6,4 +6,5 @@
 // @import './../../src/js/polyfills/arrayForEachPolyfill'
 // @import './../../src/js/polyfills/jsonParsePolyfill'
 // @import<<dir ./../../src/js/ponyfills/'
+// @import './../../src/js/search-service-client'
 // @import './../../src/js/search-menu-ui'

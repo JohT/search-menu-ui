@@ -5,17 +5,11 @@
  */
 
 var httpSearchClient;
-var searchService = searchService || require("./search-service-client"); // supports vanilla js & npm
+//TODO should include "search-menu-ui" and "search-service-client" as node dependency, not directly from root directory.
+var searchService = searchService || require("../../../search-service-client"); // supports vanilla js & npm
 var searchmenu = searchmenu || require("../../../src/js/search-menu-ui"); // supports vanilla js & npm
-var restruct = restruct || require("./restruct-data-client"); // supports vanilla js & npm
 var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
-
-// Locally mocked search with a view pre-queried search results (for local debugging and testing)
-httpSearchClient = new searchService.HttpSearchConfig()
-  .searchMethod("GET")
-  .searchUrlTemplate("/data/AccountSearchResult-{{searchtext}}.json")
-  .debugMode(true)
-  .build();
+var restruct = restruct || require("./restruct-data-client"); // supports vanilla js & npm
 
 // Search using elasticsearch multisearch
 httpSearchClient = new searchService.HttpSearchConfig()
@@ -36,6 +30,14 @@ httpSearchClient = new searchService.HttpSearchConfig()
   )
   .debugMode(true)
   .build();
+
+// Locally mocked search with a view pre-queried search results (for local debugging and testing)
+// Uncomment this section to try search without elasticsearch with some prerecorded data responses.
+// httpSearchClient = new searchService.HttpSearchConfig()
+//   .searchMethod("GET")
+//   .searchUrlTemplate("/data/AccountSearchResult-{{searchtext}}.json")
+//   .debugMode(true)
+//   .build();
 
 // Configure and start the search bar functionality.
 new searchmenu.SearchMenuAPI()

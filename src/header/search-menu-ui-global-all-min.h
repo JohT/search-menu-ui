@@ -3,4 +3,5 @@
  */
 // @import './../../src/js/polyfills/moduledummy'
 // @import<<dir ./../../src/js/ponyfills/'
+// @import './../../src/js/search-service-client'
 // @import './../../src/js/search-menu-ui'

@@ -3,7 +3,6 @@
  * @version {@link https://github.com/JohT/search-menu-ui/releases/latest latest version}
  * @author JohT
  */
-//TODO JSDoc
 
 "use strict";
 
