@@ -119,3 +119,16 @@ A detailed description of everything that can be configured can be found in the 
 This flow chart visualizes what happens, when search text is entered:
 
 ![Search Flow-Chart](https://github.com/JohT/search-menu-ui/blob/master/diagrams/searchflowchart-2.png?raw=true)
+
+## Credits
+
+Although this project doesn't use any runtime dependencies, it is created using these great tools:
+
+* [ESLint](https://eslint.org) - [MIT License](https://github.com/eslint/eslint/blob/master/LICENSE)
+* [istanbul-badges-readme](https://www.npmjs.com/package/istanbul-badges-readme) - [MIT License](https://github.com/olavoparno/istanbul-badges-readme/blob/develop/LICENSE)
+* [Jasmine](https://jasmine.github.io) - [MIT License](https://github.com/jasmine/jasmine/blob/main/MIT.LICENSE)
+* [JSDoc](https://jsdoc.app) - [Apache Licence 2.0](https://github.com/jsdoc/jsdoc/blob/master/LICENSE)
+* [JSDom](https://github.com/jsdom/jsdom) - [MIT License](https://github.com/jsdom/jsdom/blob/master/LICENSE.txt)
+* [merger-js](https://github.com/joao-neves95/merger-js) - [GNU General Public License v3.0](https://github.com/joao-neves95/merger-js/blob/master/LICENSE.md)
+* [NYC aka Istanbul](https://istanbul.js.org) - [ISC License](https://github.com/istanbuljs/nyc/blob/master/LICENSE.txt)
+* [PARCEL](https://parceljs.org) - [MIT License](https://github.com/parcel-bundler/parcel/blob/v2/LICENSE)
