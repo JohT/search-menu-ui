@@ -231,7 +231,7 @@ POST sites/_doc/3
         "prod",
         "desc"
     ],
-    "urltemplate": "http://127.0.0.1:5500/index.html#overview-customer-{{details.kundennummer}}",
+    "urltemplate": "http://127.0.0.1:5500/index.html#overview-customer-{{details.customernumber}}",
     "creationdate": "2021-03-31"
 }
 
