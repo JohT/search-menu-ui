@@ -2,7 +2,6 @@
   "name": "search-menu-ui-example",
   "version": "0.8.0",
   "description": "Search UI example.",
-  "main": "index.html",
   "directories": {
     "test": "test"
   },
@@ -13,8 +12,8 @@
     "coverage": "nyc npm run test",
     "coverage-badge": "istanbul-badges-readme",
     "doc": "jsdoc -d docs --configure ./docs/jsdoc.json --readme ./README.md ./src/js/*.js",
-    "dev": "rm -rf devdist && parcel --out-dir devdist ./src/js/*.js",
-    "devbuild": "rm -rf devdist && NODE_ENV=development parcel build --out-dir devdist ./src/js/*.js --no-minify --target node",
+    "dev": "rm -rf devdist && parcel --dist-dir devdist ./src/js/*.js",
+    "devbuild": "rm -rf devdist && NODE_ENV=development parcel build --dist-dir devdist ./src/js/*.js --no-optimize",
     "build": "parcel build ./src/js/*.js",
     "package": "npm run lint && npm run coverage && npm run coverage-badge && npm run doc && npm run devbuild && npm run build"
   },
@@ -36,11 +35,10 @@
   },
   "devDependencies": {
     "eslint": "^7.26.0",
-    "istanbul-badges-readme": "^1.2.1",
+    "istanbul-badges-readme": "1.2.1",
     "jasmine": "^3.7.0",
     "jsdoc": "^3.6.6",
-    "jsdom": "^16.5.1",
     "nyc": "^15.1.0",
-    "parcel-bundler": "^1.12.5"
+    "parcel": "^2.0.0-beta.2"
   }
 }

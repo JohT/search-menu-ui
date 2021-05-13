@@ -2,6 +2,7 @@
 
 var searchmenu = searchmenu || require("../../src/js/search-menu-ui"); // supports vanilla js & npm
 var searchresulttestdata = searchresulttestdata || require("./SearchMenuUiTestJsonData");
+// TODO should get rid of template resolver or provide a local one only for the tests
 var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
 
 describe("search.js", function () {
