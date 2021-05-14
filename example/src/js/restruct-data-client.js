@@ -60,7 +60,7 @@ restruct.DataConverter = (function () {
       console.log("data before it gets restructured:");
       console.log(jsonData);
     }
-    var transform = new datarestructor.Transform(getDescriptions()).setRemoveDuplicationAboveRecursionDepth(1).setMaxRecursionDepth(2);
+    var transform = new datarestructor.Transform(getDescriptions()).setRemoveDuplicationAboveRecursionDepth(0).setMaxRecursionDepth(2);
     if (debugMode) {
       transform.enableDebugMode();
     }
@@ -93,8 +93,7 @@ restruct.DataConverter = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("account") 
-      // .abbreviation("&#128176;") //money bag symbol
-      .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
+      .abbreviation("&#x1F4B6;") //banknote with euro sign
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.accountnumber")
@@ -108,8 +107,6 @@ restruct.DataConverter = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("account") 
-      // .abbreviation("&#128176;") //money bag symbol
-      .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.disposer")
@@ -124,8 +121,6 @@ restruct.DataConverter = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("account") 
-      // .abbreviation("&#128176;") //money bag symbol
-      .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
       .indexStartsWith("0.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.businesstype")
@@ -140,8 +135,6 @@ restruct.DataConverter = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("detail")
       .category("account")
-      // .abbreviation("&#128176;") //money bag symbol
-      .abbreviation("&#x1F4B6;") //Banknote with Euro Sign
       .indexStartsWith("0.")
       .propertyPatternTemplateMode()
       .propertyPattern("responses.hits.hits._source.{{fieldName}}")
@@ -155,13 +148,6 @@ restruct.DataConverter = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("filter")
       .category("account")
-      //TODO delete not needed symbols
-      //.abbreviation("&#10729;") //Down-Pointing Triangle with Right Half Black symbol
-      //.abbreviation("&#128142;") //gem stone symbol
-      //.abbreviation("&#127993;") //bow an arrow symbol
-      //.abbreviation("&#128071;") //White Down Pointing Backhand Index symbol
-      //.abbreviation("&#128205;") //Round Pushpin symbol
-      //.abbreviation("&#128204;") //Pushpin symbol
       .abbreviation("&#128206;") //Paperclip symbol
       .indexStartsWith("1.")
       .propertyPatternTemplateMode()
@@ -174,7 +160,7 @@ restruct.DataConverter = (function () {
   function sitesMainDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("main")
-      .category("account") //finger left navigation symbol
+      .category("account") 
       .abbreviation("&#x261c;") //finger left navigation symbol
       .indexStartsWith("2.")
       .propertyPatternEqualMode()
@@ -189,7 +175,6 @@ restruct.DataConverter = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("url")
       .category("account")
-      .abbreviation("&#x261c;") //finger left navigation symbol
       .indexStartsWith("2.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.urltemplate")
@@ -203,7 +188,6 @@ restruct.DataConverter = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("summary")
       .category("account")
-      .abbreviation("&#x261c;") //finger left navigation symbol
       .indexStartsWith("3.")
       .propertyPatternEqualMode()
       .propertyPattern("responses.hits.hits._source.name")
@@ -219,7 +203,6 @@ restruct.DataConverter = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("details")
       .category("account")
-      .abbreviation("&#x261c;") //finger left navigation symbol
       .indexStartsWith("3.")
       .propertyPatternTemplateMode()
       .propertyPattern("responses.hits.hits._source.{{fieldName}}")
@@ -233,7 +216,6 @@ restruct.DataConverter = (function () {
     return new datarestructor.PropertyStructureDescriptionBuilder()
       .type("url")
       .category("account")
-      .abbreviation("&#x261c;") //finger left navigation symbol
       .indexStartsWith("3.")
       .propertyPatternTemplateMode()
       .propertyPattern("responses.hits.hits._source.urltemplate")
