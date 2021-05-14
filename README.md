@@ -11,25 +11,28 @@
 # search-menu-ui
 
 "All in one place" search UI providing "search as you type" written in vanilla JavaScript.
-## Features:
-* **"Data-Driven, Data-Agnostic"** approach:   
+## Approaches
+
+### Data-Driven & Data-Agnostic
   * Search data is the source of all contents configured once using templates
-  * Search data may also be used to set additional css style classes
   * Search data determines which filters and thus which filter parameters are available
   * Search data determines which target url to open, when a result is selected
-* **"Everything Is Searchable"** approach:
-  * Filters are search results.
-  * Navigation targets are search results.
-* **"Set And Forget"** approach:
-  * After initial configuration mostly anything else depends on the search response. 
+  * Search data may also be used to set additional css style classes
+### Everything Is Searchable
+  * Filters are search results and thus searchable
+  * Navigation targets are search results and thus searchable
+### Set And Forget
+  * After initial configuration mostly anything else depends on the search response
   * New fields, new categories, new filters and new navigation targets shouldn't entail
-  any changes in most cases.
+  any changes in most cases
+  * Embrace changes by not depending on them at all
+## Features:
 * Full keyboard support
 * Flexible and configurable 
 * Supports most browsers including IE 5
-* Can be used without further dependencies
-* Integrates perfectly with [data-restructor-js](https://github.com/JohT/data-restructor-js) for data conversion and template resolving
-* Integrates perfectly with [elasticsearch](https://www.elastic.co/de/elasticsearch/)
+* Can be used without any runtime dependencies
+* Integrates perfectly with [data-restructor-js](https://github.com/JohT/data-restructor-js) for data conversion and template resolving as a single runtime dependency
+* Built with [elasticsearch](https://www.elastic.co/de/elasticsearch/) in mind
 
 ### Not intended to be used when
 * a type-safe, non data-agnostic and non-generic strategy is key
@@ -44,7 +47,9 @@
 
 ## Getting started
 
-## Structure
+The best way to get started is by having a look at the fully working [example](example/README.md).
+
+## UI Structure
 
 The following screenshots were taken from the example, that is included in this repository. 
 Since the search menu UI only takes element IDs, it can be attached in many ways.
@@ -53,7 +58,7 @@ only one of many possible ways on how the search might look like. At least they 
 
 ### Results and Details
 
-![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/screenshots/ScreenshotExampleDetails.png?raw=true)
+![Screenshot Details](screenshots/ScreenshotExampleDetails.png?raw=true)
 
 **&#x2460;** shows search results. In this example the text of each entry consists of a symbol followed by the name and a second line with the business type and the account number. 
 This is configured using a template that contains all these parts as variables.
@@ -65,7 +70,7 @@ opened. This enables highly flexible and context and data dependent navigation.
 
 ### Filter-Options
 
-![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/screenshots/ScreenshotExampleFilterOptions.png?raw=true)
+![Screenshot Details](screenshots/ScreenshotExampleFilterOptions.png?raw=true)
 
 **&#x2460;** shows filter results. These are searched and treated like "normal" search results.
 They are configured with a separate template. In this example, only a symbol and the selected filter value are displayed.
@@ -75,7 +80,7 @@ the filter options can be selected as described below.
 
 ### Selected Filter
 
-![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/screenshots/ScreenshotExampleSelectedFilter.png?raw=true)
+![Screenshot Details](screenshots/ScreenshotExampleSelectedFilter.png?raw=true)
 
 **&#x2460;** shows previously selected filters that are provided as search parameters. 
 They can be included as variables in the search service url or the search request body template.
@@ -113,12 +118,35 @@ The HTML of the example, that is included in this repository, is essentially thi
 These are the default IDs in the default structure, that doesn't need additional configuration.
 A detailed description of everything that can be configured can be found in the [SearchMenuAPI JSDoc](https://joht.github.io/search-menu-ui/docs/module-searchmenu.SearchMenuAPI.html). 
 
-
-### Flow Chart
+## Flow Chart
 
 This flow chart visualizes what happens, when search text is entered:
 
-![Search Flow-Chart](https://github.com/JohT/search-menu-ui/blob/master/diagrams/searchflowchart-2.png?raw=true)
+![Search Flow-Chart](diagrams/searchflowchart-2.png?raw=true)
+
+## Unified Search Menu Data Structure
+
+The unified search menu data structure contains basically of an array of "described fields" borrowed from [data-restructor-js](https://joht.github.io/data-restructor-js) in detail documented in the [DescribedDataField JSDoc](https://joht.github.io/data-restructor-js/module-described_field.html#.DescribedDataField). 
+
+### Described Field Object
+
+Every "described field" object contains the following fields:
+
+| Field         | Example           | Description                                                  |
+| ------------- |:----------------- | ------------------------------------------------------------ |
+| category      | "`account`"       | Name of the category. Contains a short domain name.          |
+| type          | "`summary`"       | Type of the data element. Used for grouping.                 |
+| abbreviation  | "`&#x1F4B6;`"     | Optional (symbol) character or a short abbreviation.         |
+| image         | ""                | Optional path to an image resource.                          |
+| index         | `[0, 0]`          | Array of numbers containing source data position.            |
+| groupNames    | `["summaries"]`   | Array of property names that contain arrays of group fields. |
+| displayName   | "`Accountnumber`" | Display field name.                                          |
+| fieldName     | "`accountnumber`" | Technical field name.                                        |
+| value         | "`12345678902`"   | Value of the field.                                          |
+
+### Groups
+
+Every "described field" may contain field groups. Each of them again contains an array of described fields. 
 
 ## Credits
 

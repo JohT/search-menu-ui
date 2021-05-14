@@ -15,7 +15,7 @@ There are many ways to integrate and design a search UI, this is only one of the
 
 **Notice:** It is not recommended to directly access [Elasticsearch](https://github.com/elastic/elasticsearch) from the browser. It should be encapsulated and secured within a server application. For prototyping and examples like this, it is handy to directly access it, as long as the HTTP CORS settings work.
 
-## Getting started
+## 1. Setup elasticsearch
 
 - Download [elasticsearch]: https://www.elastic.co/de/downloads/elasticsearch
 - Install [elasticsearch]: https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html
@@ -23,6 +23,10 @@ There are many ways to integrate and design a search UI, this is only one of the
 - (Alternative) All following elasticsearch commands can be executed with any HTTP Client (curl, postman, ...).
 - Setup example index "accounts" with the commands listed und described in [elasticsearch-accounts.es](elasticsearch/accounts/elasticsearch-accounts.es). 
 - Setup example index "sites" with the commands listed und described in [elasticsearch-sites.es](elasticsearch/sites/elasticsearch-sites.es). 
+
+## 2. Convert elasticsearch results to the unified search menu data structure
+
+
 
 ## Credits
 
@@ -45,3 +49,4 @@ This project is created using these great tools as development dependencies:
 
 [elasticsearch]: https://www.elastic.co/products/elasticsearch
 [Visual Studio Code]: https://code.visualstudio.com
+[search-menu-ui]: https://joht.github.io/search-menu-ui/
