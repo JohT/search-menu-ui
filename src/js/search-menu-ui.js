@@ -250,7 +250,7 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
 /**
  * @typedef {Object} module:searchmenu.SearchMenuConfig
  * @property {module:searchmenu.SearchService} triggerSearch triggers search (backend)
- * @property {module:searchmenu.DataConverter} convertData converts search result data to search ui data
+ * @property {module:searchmenu.DataConverter} convertData converts search result data to search ui data. Lets data through unchanged by default.
  * @property {module:searchmenu.searchParameterAdder} addPredefinedParametersTo adds custom search parameters 
  * @property {module:searchmenu.ElementCreatedListener} onCreatedElement this function will be called when a new HTML is created.
  * @property {module:searchmenu.NavigateToFunction} navigateTo this function will be called to navigate to a selected search result url.
@@ -277,8 +277,8 @@ searchmenu.SearchMenuAPI = (function () {
       triggerSearch: function (/* searchParameters, onSearchResultsAvailable */) {
         throw new Error("search service needs to be defined.");
       },
-      convertData: function (/* sourceData */) {
-        throw new Error("data converter needs to be defined.");
+      convertData: function (sourceData) {
+        return sourceData;
       },
       resolveTemplate: function (/* sourceData */) {
         throw new Error("template resolver needs to be defined.");
@@ -314,8 +314,10 @@ searchmenu.SearchMenuAPI = (function () {
       return this;
     };
     /**
-     * Defines the converter, that converts search result data to search ui data
-     * @param {module:searchmenu.DataConverter} converter function that will be called to trigger search (backend).
+     * Defines the converter, that converts search result data to search ui data.
+     * Without setting a data converter, data is taken directly from the backend service,
+     * that needs to provide the results in the search menu data structure.
+     * @param {module:searchmenu.DataConverter} converter function that will be called to create the search menu data structure
      * @returns module:searchmenu.SearchMenuAPI
      */
     this.dataConverter = function (converter) {
