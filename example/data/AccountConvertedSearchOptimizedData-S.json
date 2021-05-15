@@ -1,0 +1,465 @@
+[
+    {
+        "category": "account",
+        "type": "summary",
+        "abbreviation": "&#x1F4B6;",
+        "groupNames": [
+            "summaries",
+            "details"
+        ],
+        "displayName": "Accountnumber",
+        "fieldName": "accountnumber",
+        "value": "12345678903",
+        "summaries": [
+            {
+                "category": "account",
+                "type": "summary",
+                "abbreviation": "&#x1F4B6;",
+                "displayName": "Accountnumber",
+                "fieldName": "accountnumber",
+                "value": "12345678903"
+            },
+            {
+                "category": "account",
+                "type": "summary",
+                "displayName": "Disposer",
+                "fieldName": "disposer",
+                "value": "Carlo Solér"
+            },
+            {
+                "category": "account",
+                "type": "summary",
+                "displayName": "Businesstype",
+                "fieldName": "businesstype",
+                "value": "Loan"
+            }
+        ],
+        "details": [
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Iban",
+                "fieldName": "iban",
+                "value": "AT424321012345678903"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Accountnumber",
+                "fieldName": "accountnumber",
+                "value": "12345678903"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Customernumber",
+                "fieldName": "customernumber",
+                "value": "00001234569"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Tenantnumber",
+                "fieldName": "tenantnumber",
+                "value": "999"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Businesstype",
+                "fieldName": "businesstype",
+                "value": "Loan"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Product",
+                "fieldName": "product",
+                "value": "Housing Loan"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Creationdate",
+                "fieldName": "creationdate",
+                "value": "2020-08-08"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Updatetime",
+                "fieldName": "updatetime",
+                "value": "2021-04-08T08:42:30Z"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Disposer",
+                "fieldName": "disposer",
+                "value": "Carlo Solér"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Accountmanager",
+                "fieldName": "accountmanager",
+                "value": "Sarah Connor"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Currency",
+                "fieldName": "currency",
+                "value": "EUR"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "deleted"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "bullet bond"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "long-term"
+            },
+            {
+                "category": "account",
+                "type": "detail",
+                "displayName": "Tags",
+                "fieldName": "tags_comma_separated_values",
+                "value": "deleted, bullet bond, long-term"
+            }
+        ]
+    },
+    {
+        "category": "account",
+        "type": "filter",
+        "abbreviation": "&#128206;",
+        "groupNames": [
+            "options"
+        ],
+        "displayName": "Product",
+        "fieldName": "product",
+        "value": "private loan",
+        "options": [
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Product",
+                "fieldName": "product",
+                "value": "private loan"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Product",
+                "fieldName": "product",
+                "value": "salary"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Product",
+                "fieldName": "product",
+                "value": "commercial giro"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Product",
+                "fieldName": "product",
+                "value": "housing loan"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Product",
+                "fieldName": "product",
+                "value": "private giro"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Product",
+                "fieldName": "product",
+                "value": "trust"
+            }
+        ]
+    },
+    {
+        "category": "account",
+        "type": "filter",
+        "abbreviation": "&#128206;",
+        "groupNames": [
+            "options"
+        ],
+        "displayName": "Currency",
+        "fieldName": "currency",
+        "value": "eur",
+        "options": [
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Currency",
+                "fieldName": "currency",
+                "value": "eur"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Currency",
+                "fieldName": "currency",
+                "value": "chf"
+            }
+        ]
+    },
+    {
+        "category": "account",
+        "type": "filter",
+        "abbreviation": "&#128206;",
+        "groupNames": [
+            "options"
+        ],
+        "displayName": "Accountmanager",
+        "fieldName": "accountmanager",
+        "value": "clara claton",
+        "options": [
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Accountmanager",
+                "fieldName": "accountmanager",
+                "value": "clara claton"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Accountmanager",
+                "fieldName": "accountmanager",
+                "value": "sarah connor"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Accountmanager",
+                "fieldName": "accountmanager",
+                "value": "john mcclane"
+            }
+        ]
+    },
+    {
+        "category": "account",
+        "type": "filter",
+        "abbreviation": "&#128206;",
+        "groupNames": [
+            "options"
+        ],
+        "displayName": "Businesstype",
+        "fieldName": "businesstype",
+        "value": "giro",
+        "options": [
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Businesstype",
+                "fieldName": "businesstype",
+                "value": "giro"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Businesstype",
+                "fieldName": "businesstype",
+                "value": "loan"
+            }
+        ]
+    },
+    {
+        "category": "account",
+        "type": "filter",
+        "abbreviation": "&#128206;",
+        "groupNames": [
+            "options"
+        ],
+        "displayName": "Tags",
+        "fieldName": "tags",
+        "value": "active",
+        "options": [
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "active"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "online"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "short-term"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "bullet bond"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "deleted"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "long-term"
+            }
+        ]
+    },
+    {
+        "category": "account",
+        "type": "main",
+        "abbreviation": "&#x261c;",
+        "groupNames": [
+            "default",
+            "urltemplate",
+            "options"
+        ],
+        "displayName": "Target",
+        "fieldName": "name",
+        "value": "Account Overview",
+        "default": [
+            {
+                "category": "account",
+                "type": "main",
+                "abbreviation": "&#x261c;",
+                "groupNames": [
+                    "urltemplate"
+                ],
+                "displayName": "Target",
+                "fieldName": "name",
+                "value": "Account Overview",
+                "urltemplate": [
+                    {
+                        "category": "account",
+                        "type": "url",
+                        "displayName": "Urltemplate",
+                        "fieldName": "urltemplate",
+                        "value": "http://127.0.0.1:5500/example/index.html#overview-{{summaries.accountnumber}}"
+                    }
+                ]
+            }
+        ],
+        "urltemplate": [
+            {
+                "category": "account",
+                "type": "url",
+                "displayName": "Urltemplate",
+                "fieldName": "urltemplate",
+                "value": "http://127.0.0.1:5500/example/index.html#overview-{{summaries.accountnumber}}"
+            }
+        ],
+        "options": [
+            {
+                "category": "account",
+                "type": "summary",
+                "groupNames": [
+                    "urltemplate"
+                ],
+                "displayName": "Target",
+                "fieldName": "name",
+                "value": "Credit Interests",
+                "urltemplate": [
+                    {
+                        "category": "account",
+                        "type": "url",
+                        "displayName": "",
+                        "fieldName": "",
+                        "value": "http://127.0.0.1:5500/example/index.html#creditinterest-{{summaries.accountnumber}}"
+                    }
+                ]
+            },
+            {
+                "category": "account",
+                "type": "summary",
+                "groupNames": [
+                    "urltemplate"
+                ],
+                "displayName": "Target",
+                "fieldName": "name",
+                "value": "Debit Interests",
+                "urltemplate": [
+                    {
+                        "category": "account",
+                        "type": "url",
+                        "displayName": "",
+                        "fieldName": "",
+                        "value": "http://127.0.0.1:5500/example/index.html#debitinterest-{{summaries.accountnumber}}"
+                    }
+                ]
+            },
+            {
+                "category": "account",
+                "type": "summary",
+                "groupNames": [
+                    "urltemplate"
+                ],
+                "displayName": "Target",
+                "fieldName": "name",
+                "value": "Customer Overview",
+                "urltemplate": [
+                    {
+                        "category": "account",
+                        "type": "url",
+                        "displayName": "",
+                        "fieldName": "",
+                        "value": "http://127.0.0.1:5500/example/index.html#overview-customer-{{details.kundennummer}}"
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -3,8 +3,48 @@
         {
             "hits": {
                 "total": {
-                    "value": 0
-                }
+                    "value": 2
+                },
+                "hits": [
+                    {
+                        "_source": {
+                            "iban": "AT424321012345678902",
+                            "accountnumber": "12345678902",
+                            "customernumber": "00001234568",
+                            "tenantnumber": "999",
+                            "businesstype": "Giro",
+                            "product": "Commercial Giro",
+                            "creationdate": "2020-08-08",
+                            "updatetime": "2021-04-08T08:37:30Z",
+                            "disposer": "Howard Joel Wolowitz",
+                            "owner": "Wolowitz KG",
+                            "accountmanager": "Clara Claton",
+                            "currency": "EUR",
+                            "tags": [
+                                "active",
+                                "online"
+                            ]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "iban": "AT424321012345678904",
+                            "accountnumber": "12345678904",
+                            "customernumber": "00001234569",
+                            "tenantnumber": "999",
+                            "businesstype": "Giro",
+                            "product": "Private Giro",
+                            "creationdate": "2020-08-08",
+                            "updatetime": "2021-04-08T08:58:30Z",
+                            "disposer": "Howard Joel Wolowitz",
+                            "accountmanager": "Clara Claton",
+                            "currency": "EUR",
+                            "tags": [
+                                "active"
+                            ]
+                        }
+                    }
+                ]
             }
         },
         {
@@ -202,7 +242,7 @@
                                 "prod",
                                 "desc"
                             ],
-                            "urltemplate": "http://127.0.0.1:5500/example/index.html#overview-customer-{{details.kundennummer}}",
+                            "urltemplate": "http://127.0.0.1:5500/example/index.html#overview-customer-{{details.customernumber}}",
                             "creationdate": "2021-03-31"
                         }
                     }
