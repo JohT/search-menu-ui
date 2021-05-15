@@ -84,7 +84,7 @@ restruct.DataConverter = (function () {
     descriptions.push(sitesMainDescription());
     descriptions.push(sitesOptionDefaultUrlPatternDescription());
     descriptions.push(sitesOptionsSummaryDescription());
-    descriptions.push(sitesOptionDetailsDescription());
+    //descriptions.push(sitesOptionDetailsDescription()); //TODO could add details to filter options
     descriptions.push(sitesOptionUrlPatternDescription());
     return descriptions;
   }
