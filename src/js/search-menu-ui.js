@@ -751,7 +751,7 @@ searchmenu.SearchMenuUI = (function () {
         handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails)
       );
       onMenuEntryChosen(resultElement, function () {
-        var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId, entry.category);
+        var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId, getPropertyValueWithUndefinedDefault(entry, "category", ""));
         if (selectedUrlTemplate) {
           //TODO should add domain, baseurl, ... as data sources for variables to use inside the template
           var targetURL = config.resolveTemplate(selectedUrlTemplate, entry);
@@ -994,8 +994,7 @@ searchmenu.SearchMenuUI = (function () {
       },
       hiddenFields: function () {
         var hiddenFieldsElement = document.getElementById(id + separator + "fields");
-        var hiddenFieldsJson =
-          typeof hiddenFieldsElement.textContent !== "undefined" ? hiddenFieldsElement.textContent : hiddenFieldsElement.innerText;
+        var hiddenFieldsJson = getPropertyValueWithUndefinedDefault(hiddenFieldsElement, "textContent", hiddenFieldsElement.innerText);
         return JSON.parse(hiddenFieldsJson);
       }
     };
@@ -1129,7 +1128,8 @@ searchmenu.SearchMenuUI = (function () {
   function createFilterOption(selectedEntryData, entries, view, config) {
     var filterElements = getListElementCountOfType(view.listEntryElementIdPrefix);
     var filterElementId = view.listEntryElementIdPrefix + "--" + (filterElements + 1);
-    var filterElement = getListEntryByFieldName(selectedEntryData.category, selectedEntryData.fieldName, view.listParentElementId);
+    var filterCategory = getPropertyValueWithUndefinedDefault(selectedEntryData, "category", "");
+    var filterElement = getListEntryByFieldName(filterCategory, selectedEntryData.fieldName, view.listParentElementId);
     var isAlreadyExistingFilter = filterElement != null;
     if (isAlreadyExistingFilter) {
       var updatedText = createListEntryInnerHtmlText(selectedEntryData, view, filterElement.id, config.resolveTemplate);
@@ -1145,7 +1145,7 @@ searchmenu.SearchMenuUI = (function () {
     addMainMenuNavigationHandlers(filterElement, config);
 
     var filterElementHiddenFields = extractListElementIdProperties(filterElement.id).hiddenFields();
-    var isFilterWithDefaultOption = typeof filterElementHiddenFields["default"] !== "undefined";
+    var isFilterWithDefaultOption = isMenuEntryWithDefault(filterElementHiddenFields);
     if (isFilterWithDefaultOption) {
       onSpaceKey(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
       //TODO could reset elements to their default value upon deletion.
@@ -1167,14 +1167,33 @@ searchmenu.SearchMenuUI = (function () {
    * @memberof module:searchmenu.SearchMenuUI
    */
   function getListEntryByFieldName(category, fieldName, listParentElementId) {
-    return forEachListEntryElement(listParentElementId, function (element) {
+    var globalCategoryResult = null;
+    var result = forEachListEntryElement(listParentElementId, function (element) {
       var listElementHiddenFields = extractListElementIdProperties(element.id).hiddenFields();
-      //TODO could additionally match empty ("global") category
-      //A global parameter should be found even from an foreign category and shouldn't be selected twice (per category).
-      if (listElementHiddenFields.fieldName === fieldName && listElementHiddenFields.category == category) {
-        return element;
+      if (listElementHiddenFields.fieldName === fieldName) {
+        var elementCategory = getPropertyValueWithUndefinedDefault(listElementHiddenFields, "category", "");
+        if (elementCategory === "") {
+          globalCategoryResult = element;
+        } else if (elementCategory === category) {
+          return element;
+        }
       }
     });
+    return (result != null)? result : globalCategoryResult;
+  }
+
+  /**
+   * Returns the property value of the object or - if undefined - the default value.
+   * @param {Object} object 
+   * @param {String} propertyName 
+   * @param {Object} defaultValue 
+   * @returns the property value of the object or - if not set - the default value.
+   */
+  function getPropertyValueWithUndefinedDefault(object, propertyName, defaultValue) {
+    if (typeof object[propertyName] === "undefined") {
+      return defaultValue;
+    } 
+    return object[propertyName];
   }
 
   /**
@@ -1189,17 +1208,18 @@ searchmenu.SearchMenuUI = (function () {
   function getSelectedUrlTemplate(listParentElementId, category) {
     return forEachListEntryElement(listParentElementId, function (element) {
       var listElementHiddenFields = extractListElementIdProperties(element.id).hiddenFields();
-      if (typeof listElementHiddenFields.urltemplate === "undefined") {
+      var urlTemplate = getPropertyValueWithUndefinedDefault(listElementHiddenFields, "urltemplate", [""])[0];
+      if (urlTemplate === "") {
         return null; // entry has no url template
       }
-      //TODO could also match empty ("global") category.
-      if (listElementHiddenFields.category != category) {
+      var elementCategory = getPropertyValueWithUndefinedDefault(listElementHiddenFields, category, "");
+      if ((elementCategory != category) && (elementCategory !== "")) {
         return null; // entry belongs to another category
       }
       if (hasClass("inactive", element)) {
         return null; // entry is inactive
       }
-      return listElementHiddenFields.urltemplate[0].value;
+      return urlTemplate.value;
     });
   }
 

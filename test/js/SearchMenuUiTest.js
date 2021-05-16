@@ -255,10 +255,6 @@ describe("search.js", function () {
       return getSecondResultListElement();
     }
 
-    function getCurrencyFilterResultListElement() {
-      return getResultListElementOfPosition(3);
-    }
-
     function getLastElementOfIdPrefix(idPrefix) {
       var index = 0;
       var resultElement = null;

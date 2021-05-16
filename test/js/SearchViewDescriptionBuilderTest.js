@@ -22,6 +22,16 @@ describe("search.js SearchViewDescription", function () {
         expect(searchViewDescriptionBuilderUnderTest.description.listEntryTextTemplate).toEqual(expectedValue);
       });
 
+      it("should contain listEntrySummaryTemplate", function () {
+        var expectedValue = "{{summaries[0].displayName}}: {{summaries[0].value}}";
+        expect(searchViewDescriptionBuilderUnderTest.description.listEntrySummaryTemplate).toEqual(expectedValue);
+      });
+
+      it("should contain listEntryStyleClassTemplate", function () {
+        var expectedValue = "{{view.listEntryElementIdPrefix}} {{category}}";
+        expect(searchViewDescriptionBuilderUnderTest.description.listEntryStyleClassTemplate).toEqual(expectedValue);
+      });
+
       it("should contain li as default list entry element tag", function () {
         var expectedValue = "li";
         expect(searchViewDescriptionBuilderUnderTest.description.listEntryElementTag).toEqual(expectedValue);
@@ -72,6 +82,12 @@ describe("search.js SearchViewDescription", function () {
       var expectedValue = "{{summaries[0].abbreviation}}";
       searchViewDescriptionBuilderUnderTest.listEntrySummaryTemplate(expectedValue);
       expect(searchViewDescriptionBuilderUnderTest.description.listEntrySummaryTemplate).toEqual(expectedValue);
+    });
+
+    it("should contain listEntryStyleClassTemplate", function () {
+      var expectedValue = "{{summaries[0].type}}";
+      searchViewDescriptionBuilderUnderTest.listEntryStyleClassTemplate(expectedValue);
+      expect(searchViewDescriptionBuilderUnderTest.description.listEntryStyleClassTemplate).toEqual(expectedValue);
     });
 
     it("should contain isSelectableFilterOption", function () {
@@ -135,6 +151,13 @@ describe("search.js SearchViewDescription", function () {
       var template = searchViewDescriptionBuilderUnderTest.listEntrySummaryTemplate(expectedValue).build();
       searchViewDescriptionBuilderUnderTest = new searchUnderTest.SearchViewDescriptionBuilder(template);
       expect(searchViewDescriptionBuilderUnderTest.description.listEntrySummaryTemplate).toEqual(expectedValue);
+    });
+
+    it("should contain listEntryStyleClassTemplate", function () {
+      var expectedValue = "{{summaries[0].category}}";
+      var template = searchViewDescriptionBuilderUnderTest.listEntryStyleClassTemplate(expectedValue).build();
+      searchViewDescriptionBuilderUnderTest = new searchUnderTest.SearchViewDescriptionBuilder(template);
+      expect(searchViewDescriptionBuilderUnderTest.description.listEntryStyleClassTemplate).toEqual(expectedValue);
     });
 
     it("should contain isSelectableFilterOption", function () {
