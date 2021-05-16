@@ -10,31 +10,72 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: '12'
-    - name: Install nodes packages
+    - name: (Main) Install nodes packages
       run: npm ci
-    - name: Run tests
+    - name: (Main) Run tests
       run: npm test
-    - name: Measure test coverage
+    - name: (Main) Measure test coverage
       run: npm run coverage
-    - name: Run linter
+    - name: (Main) Run linter
       run: npm run lint
-    - name: Generate documentation
+    - name: (Main) Generate documentation
       run: npm run doc
-    - name: Build
+    - name: (Main) Build
       run: npm run build --if-present
-    - name: Archive code coverage results
+    - name: (Main) Archive code coverage results
       uses: actions/upload-artifact@v2
       with:
         name: code-coverage-report
         path: coverage
         retention-days: 2
-    - name: Archive documentation
+    - name: (Main) Archive documentation
       uses: actions/upload-artifact@v2
       with:
         name: documentation
         path: docs
         retention-days: 2
-    - name: Archive build artifacts
+    - name: (Main) Archive build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist-without-markdown
+        path: |
+          dist
+          !dist/**/*.md
+        retention-days: 2
+            - name: (Main) Install nodes packages
+    - name: (Example) Install nodes packages
+      working-directory: example
+      run: npm ci
+    - name: (Example) Run tests
+      working-directory: example
+      run: npm test
+    - name: (Example) Measure test coverage
+      working-directory: example
+      run: npm run coverage
+    - name: (Example) Run linter
+      working-directory: example
+      run: npm run lint
+    - name: (Main) Generate documentation
+      working-directory: example
+      run: npm run doc
+    - name: (Example) Build
+      working-directory: example
+    - name: (Example) Archive code coverage results
+      working-directory: example
+      uses: actions/upload-artifact@v2
+      with:
+        name: code-coverage-report
+        path: coverage
+        retention-days: 2
+    - name: (Example) Archive documentation
+      working-directory: example
+      uses: actions/upload-artifact@v2
+      with:
+        name: documentation
+        path: docs
+        retention-days: 2
+    - name: (Example) Archive build artifacts
+      working-directory: example
       uses: actions/upload-artifact@v2
       with:
         name: dist-without-markdown
