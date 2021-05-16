@@ -48,8 +48,8 @@ describe("restruct-data-client.Data", function () {
       return count;
     }
 
-    it("should contain at least 10 entries", function () {
-      expect(descriptions.length).toBeGreaterThanOrEqual(10);
+    it("should contain at least 9 entries", function () {
+      expect(descriptions.length).toBeGreaterThanOrEqual(9);
     });
 
     it("should contain summaries", function () {
@@ -92,10 +92,11 @@ describe("restruct-data-client.Data", function () {
       });
     });
 
-    it("should all define an abbreviation", function () {
-      forEachDescription(function (description) {
-        expect(description.abbreviation.length).toBeGreaterThanOrEqual(1);
+    it("should optionally define an abbreviation", function () {
+      var count = forEachDescriptionCount(function (description) {
+        return (typeof description.abbreviation !== "undefined");
       });
+      expect(count).toBeGreaterThanOrEqual(2);
     });
 
   });
