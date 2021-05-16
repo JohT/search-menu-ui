@@ -1,6 +1,6 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![Language](https://img.shields.io/github/languages/top/JohT/search-menu-ui)
-![Branches](https://img.shields.io/badge/Coverage-80.27%25-yellow.svg)
+![Branches](https://img.shields.io/badge/Coverage-80.41%25-yellow.svg)
 ![![npm](./src/npm.svg)](https://aleen42.github.io/badges/src/npm.svg)
 ![![jasmine](./src/jasmine.svg)](https://aleen42.github.io/badges/src/jasmine.svg)
 ![![eslint](./src/eslint.svg)](https://aleen42.github.io/badges/src/eslint.svg)
@@ -124,30 +124,85 @@ This flow chart visualizes what happens, when search text is entered:
 
 ![Search Flow-Chart](diagrams/searchflowchart-2.png?raw=true)
 
-## Unified Search Menu Data Structure
+## Search Menu Data Structure
 
-The unified search menu data structure contains basically of an array of "described fields" borrowed from [data-restructor-js](https://joht.github.io/data-restructor-js) in detail documented in the [DescribedDataField JSDoc](https://joht.github.io/data-restructor-js/module-described_field.html#.DescribedDataField). 
+The search menu data structure consists basically of an array of "described fields" borrowed from [data-restructor-js](https://joht.github.io/data-restructor-js) in detail documented in the [DescribedDataField JSDoc](https://joht.github.io/data-restructor-js/module-described_field.html#.DescribedDataField). 
 
 ### Described Field Object
 
-Every "described field" object contains the following fields:
+#### Mandatory Properties
 
-| Field         | Example           | Description                                                  |
-| ------------- |:----------------- | ------------------------------------------------------------ |
-| category      | "`account`"       | Name of the category. Contains a short domain name.          |
-| type          | "`summary`"       | Type of the data element. Used for grouping.                 |
-| abbreviation  | "`&#x1F4B6;`"     | Optional (symbol) character or a short abbreviation.         |
-| image         | ""                | Optional path to an image resource.                          |
-| index         | `[0, 0]`          | Array of numbers containing source data position.            |
-| groupNames    | `["summaries"]`   | Array of property names that contain arrays of group fields. |
-| displayName   | "`Accountnumber`" | Display field name.                                          |
-| fieldName     | "`accountnumber`" | Technical field name.                                        |
-| value         | "`12345678902`"   | Value of the field.                                          |
+Every "described field" needs to contain the following fields:
 
+| Field        | Example           | Description                                                  |
+| ------------ |:----------------- | ------------------------------------------------------------ |
+| displayName  | "`Accountnumber`" | Display field name.                                          |
+| fieldName    | "`accountnumber`" | Technical field name.                                        |
+| value        | "`12345678902`"   | Value of the field.                                          |
+
+#### Special Properties
+
+The `category` is a special field that is only necessary for multi category searches that should provide different navigation targets to react differently on selected results according to their category.
+
+| Field        | Example           | Description                                                     |
+| ------------ |:----------------- | --------------------------------------------------------------- |
+| category     | "`account`"       | For multi category search results and their navigation targets. |
+
+
+#### Optional Properties
+
+Every "described field" may additionally contain these optional fields (amongst others),
+that can be used as template variables if present. 
+
+| Field        | Example           | Description                                                     |
+| ------------ |:----------------- | --------------------------------------------------------------- |
+| type         | "`summary`"       | Mainly used for grouping within data convertion.                |
+| abbreviation | "`&#x1F4B6;`"     | Optional (symbol) character or a short abbreviation.            |
+| image        | ""                | Optional path to an image resource.                             |
+| index        | `[0, 0]`          | Array of numbers containing source data position.               |
+| groupNames   | `["summaries"]`   | Array of property names that contain arrays of group fields.    |
+
+   
 ### Groups
 
-Every "described field" may contain field groups. Each of them again contains an array of described fields. 
+Every "described field" may contain groups. Each group contains another array of described fields. 
+These groups have a special meaning for the search menu ui.
 
+| Group        | Description                                                                  |
+| ------------ | ---------------------------------------------------------------------------- |
+| summaries    | Contains the fields (template variables) for the result/filter entry itself. |
+| details      | Contains the fields with (not selectable) details for each search result.    |
+| options      | Contains the selectable filter options that are used as search parameters.   |
+
+
+### Data for Results and Details 
+
+The UI of [Results and Details](#Results-and-Details) is a consequence of the following data structure stripped down to the first result and its most essential parts.
+```yaml
+category: "account"
+abbreviation: "&#x1F4B6;"
+# ....
+summaries: 
+  - category: "account" # Optional. Used for multi category search navigation targets.
+    abbreviation: "&#x1F4B6;" # Optional. Contains the money icon in the example.
+    displayName: "Accountnumber"
+    fieldName: "accountnumber"
+    value: "12345678901"
+  - displayName: "Disposer",
+    fieldName: "disposer",
+    value: "Howard Joel Wolowitz"
+  - displayName: "Businesstype"
+    fieldName: "businesstype"
+    value: "Giro"
+details:
+  - displayName: "Iban"
+    fieldName: "iban"
+    value: "AT424321012345678902"
+  - displayName: "Accountnumber"
+    fieldName: "accountnumber"
+    value: "12345678902"
+  # ...
+```
 ## Credits
 
 Although this project doesn't use any runtime dependencies, it is created using these great tools:
@@ -160,3 +215,4 @@ Although this project doesn't use any runtime dependencies, it is created using 
 * [merger-js](https://github.com/joao-neves95/merger-js) - [GNU General Public License v3.0](https://github.com/joao-neves95/merger-js/blob/master/LICENSE.md)
 * [NYC aka Istanbul](https://istanbul.js.org) - [ISC License](https://github.com/istanbuljs/nyc/blob/master/LICENSE.txt)
 * [PARCEL](https://parceljs.org) - [MIT License](https://github.com/parcel-bundler/parcel/blob/v2/LICENSE)
+* [mermaid Javascript based diagramming and charting tool](https://mermaid-js.github.io/mermaid/#/) - [MIT License](https://github.com/mermaid-js/mermaid/blob/develop/LICENSE)
