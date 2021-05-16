@@ -199,18 +199,19 @@ restruct.DataConverter = (function () {
       .build();
   }
 
-  function sitesOptionDetailsDescription() {
-    return new datarestructor.PropertyStructureDescriptionBuilder()
-      .type("details")
-      .category("account")
-      .indexStartsWith("3.")
-      .propertyPatternTemplateMode()
-      .propertyPattern("responses.hits.hits._source.{{fieldName}}")
-      .groupName("details")
-      .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
-      .groupDestinationPattern("{{category}}--summary--{{index[0]}}--{{index[1]}}")
-      .build();
-  }
+  // TODO could add details to filter/navigation options
+  // function sitesOptionDetailsDescription() {
+  //   return new datarestructor.PropertyStructureDescriptionBuilder()
+  //     .type("details")
+  //     .category("account")
+  //     .indexStartsWith("3.")
+  //     .propertyPatternTemplateMode()
+  //     .propertyPattern("responses.hits.hits._source.{{fieldName}}")
+  //     .groupName("details")
+  //     .groupPattern("{{category}}--{{type}}--{{index[0]}}--{{index[1]}}")
+  //     .groupDestinationPattern("{{category}}--summary--{{index[0]}}--{{index[1]}}")
+  //     .build();
+  // }
 
   function sitesOptionUrlPatternDescription() {
     return new datarestructor.PropertyStructureDescriptionBuilder()
