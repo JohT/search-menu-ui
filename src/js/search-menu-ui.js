@@ -765,7 +765,8 @@ searchmenu.SearchMenuUI = (function () {
       //TODO could be used for constants (pre selected single filter options) like "tenant-number", "current-account"
       if (isMenuEntryWithDefault(entry)) {
         options = insertAtBeginningIfMissing(entry.options, entry["default"][0], equalProperties(["value"]));
-        createFilterOption(entry["default"][0], options, config.filtersView, config);
+        var filterOptionsElement = createFilterOption(entry["default"][0], options, config.filtersView, config);
+        addDefaultFilterOptionModificationHandler(filterOptionsElement, options, config);
       }
       onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
       onMenuEntryChosen(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
@@ -1120,7 +1121,8 @@ searchmenu.SearchMenuUI = (function () {
   function selectFilterOption(event, entries, config) {
     var selectedEntry = getEventTarget(event);
     var selectedEntryData = findSelectedEntry(selectedEntry.id, entries, equalProperties(["fieldName", "value"]));
-    createFilterOption(selectedEntryData, entries, config.filtersView, config);
+    var filterOptionsElement = createFilterOption(selectedEntryData, entries, config.filtersView, config);
+    addFilterOptionModificationHandler(filterOptionsElement, entries, config); //TODO should detect default entry
     preventDefaultEventHandling(event);
     returnToMainMenu(event);
   }
@@ -1134,7 +1136,7 @@ searchmenu.SearchMenuUI = (function () {
     if (isAlreadyExistingFilter) {
       var updatedText = createListEntryInnerHtmlText(selectedEntryData, view, filterElement.id, config.resolveTemplate);
       filterElement = updateListEntryElement(filterElement, updatedText);
-      return;
+      return filterElement;
     }
     var filterElementText = createListEntryInnerHtmlText(selectedEntryData, view, filterElementId, config.resolveTemplate);
     filterElement = createListEntryElement(selectedEntryData, view, filterElementId, filterElementText);
@@ -1144,15 +1146,17 @@ searchmenu.SearchMenuUI = (function () {
     onFilterMenuEntrySelected(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
     addMainMenuNavigationHandlers(filterElement, config);
 
-    var filterElementHiddenFields = extractListElementIdProperties(filterElement.id).hiddenFields();
-    var isFilterWithDefaultOption = isMenuEntryWithDefault(filterElementHiddenFields);
-    if (isFilterWithDefaultOption) {
-      onSpaceKey(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
-      //TODO could reset elements to their default value upon deletion.
-    } else {
-      onSpaceKey(filterElement, toggleFilterEntry);
-      onFilterMenuEntryRemoved(filterElement, handleEventWithConfig(config, removeFilterElement));
-    }
+    return filterElement;
+  }
+
+  function addFilterOptionModificationHandler(filterElement, entries, config) {
+    onSpaceKey(filterElement, toggleFilterEntry);
+    onFilterMenuEntryRemoved(filterElement, handleEventWithConfig(config, removeFilterElement));
+  }
+
+  function addDefaultFilterOptionModificationHandler(filterElement, entries, config) {
+    onSpaceKey(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
+    //TODO could reset elements to their default value upon deletion.
   }
 
   /**
