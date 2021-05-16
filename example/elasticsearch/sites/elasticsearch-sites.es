@@ -172,7 +172,7 @@ PUT sites/_doc/default
         "prod",
         "desc"
     ],
-    "urltemplate": "http://127.0.0.1:5500/index.html#overview-{{summaries.accountnumber}}",
+    "urltemplate": "http://127.0.0.1:5500/example/index.html#overview-{{summaries.accountnumber}}",
     "defaultsite": true,
     "creationdate": "2020-10-29",
     "updatetime": "2021-04-29T08:53:30Z"
@@ -192,7 +192,7 @@ POST sites/_doc/1
         "crin",
         "boin"
     ],
-    "urltemplate": "http://127.0.0.1:5500/index.html#creditinterest-{{summaries.accountnumber}}",
+    "urltemplate": "http://127.0.0.1:5500/example/index.html#creditinterest-{{summaries.accountnumber}}",
     "creationdate": "2020-10-30",
     "updatetime": "2021-04-30T09:06:30Z"
 }
@@ -211,7 +211,7 @@ POST sites/_doc/2
         "dein",
         "deim"
     ],
-    "urltemplate": "http://127.0.0.1:5500/index.html#debitinterest-{{summaries.accountnumber}}",
+    "urltemplate": "http://127.0.0.1:5500/example/index.html#debitinterest-{{summaries.accountnumber}}",
     "creationdate": "2020-11-07",
     "updatetime": "2021-04-07T09:06:30Z"
 }
@@ -231,7 +231,7 @@ POST sites/_doc/3
         "prod",
         "desc"
     ],
-    "urltemplate": "http://127.0.0.1:5500/index.html#overview-customer-{{details.customernumber}}",
+    "urltemplate": "http://127.0.0.1:5500/example/index.html#overview-customer-{{details.customernumber}}",
     "creationdate": "2021-03-31"
 }
 
