@@ -6,7 +6,7 @@
 
 var httpSearchClient;
 //TODO include "search-menu-ui" and "search-service-client" as node dependency?
-var searchService = searchService || require("../../../search-service-client"); // supports vanilla js & npm
+var searchService = searchService || require("../../../src/js/search-service-client"); // supports vanilla js & npm
 var searchmenu = searchmenu || require("../../../src/js/search-menu-ui"); // supports vanilla js & npm
 var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
 var restruct = restruct || require("./restruct-data-client"); // supports vanilla js & npm
