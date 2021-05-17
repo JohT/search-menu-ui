@@ -168,16 +168,17 @@ that can be used as template variables if present.
 Every "described field" may contain groups. Each group contains another array of described fields. 
 These groups have a special meaning for the search menu ui.
 
-| Group        | Description                                                                  |
-| ------------ | ---------------------------------------------------------------------------- |
-| summaries    | Contains the fields (template variables) for the result/filter entry itself. |
-| details      | Contains the fields with (not selectable) details for each search result.    |
-| options      | Contains the selectable filter options that are used as search parameters.   |
-
+| Group        | Description                                                                              |
+| ------------ | ---------------------------------------------------------------------------------------- |
+| summaries    | Contains the fields (template variables) for the result/filter entry itself.             |
+| details      | Contains the fields with (not selectable) details for each search result.                |
+| options      | Contains the selectable filter options that are used as search parameters.               |
+| urltemplate  | Contains a single urltemplate field as navigation target. Belongs to a filter option.    |
+| default      | Contains a single filter option that is selected by default. Belongs to a filter option. |
 
 ### Data for Results and Details 
 
-The UI of [Results and Details](#Results-and-Details) is a consequence of the following data structure stripped down to the first result and its most essential parts.
+The [Results and Details](#Results-and-Details) UI is a consequence of the following data structure stripped down to the first result and its most essential parts.
 ```yaml
 category: "account"
 abbreviation: "&#x1F4B6;"
@@ -203,6 +204,44 @@ details:
     value: "12345678902"
   # ...
 ```
+
+### Data for Filter-Options
+
+The [Filter-Options](#Filter-Options) UI is a consequence of the following data structure stripped down to the first filter `product` and its most essential parts.
+
+```yaml
+category: "account"
+abbreviation: "&#128206;"
+options:
+  - displayName: "Product"
+    fieldName": "product"
+    value": "private loan"
+  - displayName: "Product"
+    fieldName: "product"
+    value: "salary"
+  - displayName: "Product"
+    fieldName: "product"
+    value": "commercial giro"
+  - displayName: "Product"
+    fieldName: "product"
+    value: "private giro"
+  - displayName: "Product"
+    fieldName: "product"
+    value: "trust"
+```
+
+### Data for the Navigation Target
+
+A special case of search filters are the navigation targets, as depicted in the [Flow-Chart](#Flow-Chart).
+These are selectable filter options that contain the group `urltemplate` with a single field. When a result entry is selected, all active filter options of that category (or the global category `""`) that contain a `urltemplate` are looked up. The first url template will be used to navigate to 
+the selected target. URL templates may contain variables in double curly brackets, that are replaced
+by the fields (details, summaries) of the selected result. 
+
+```yaml
+category: "account"
+abbreviation: "&#128206;"
+```
+
 ## Credits
 
 Although this project doesn't use any runtime dependencies, it is created using these great tools:
