@@ -18,10 +18,10 @@
   * Search data determines which filters and thus which filter parameters are available
   * Search data determines which target url to open, when a result is selected
   * Search data may also be used to set additional css style classes
-### Everything Is Searchable
+### Everything is searchable
   * Filters are search results and thus searchable
   * Navigation targets are search results and thus searchable
-### Set And Forget
+### Set and forget
   * After initial configuration mostly anything else depends on the search response
   * New fields, new categories, new filters and new navigation targets shouldn't entail
   any changes in most cases
@@ -49,14 +49,14 @@
 
 The best way to get started is by having a look at the fully working [example](example/README.md).
 
-## UI Structure
+## UI structure
 
 The following screenshots were taken from the example, that is included in this repository. 
 Since the search menu UI only takes element IDs, it can be attached in many ways.
 Furthermore, anything can be styled using CSS. The screenshots below are therefore
 only one of many possible ways on how the search might look like. At least they explain the base structure and parts of it visually.
 
-### Results and Details
+### Results and details
 
 ![Screenshot Details](screenshots/ScreenshotExampleDetails.png?raw=true)
 
@@ -68,7 +68,7 @@ This is configured using a template that contains all these parts as variables.
 When one of the results is selected using the enter key or a mouse click, the url template of the currently selected navigation target is resolved by the fields of the selected result and then
 opened. This enables highly flexible and context and data dependent navigation.
 
-### Filter-Options
+### Filter options
 
 ![Screenshot Details](screenshots/ScreenshotExampleFilterOptions.png?raw=true)
 
@@ -78,7 +78,7 @@ They are configured with a separate template. In this example, only a symbol and
 **&#x2461;** shows the filter options. In contrast to the details of "normal" search results, 
 the filter options can be selected as described below.
 
-### Selected Filter
+### Selected filter
 
 ![Screenshot Details](screenshots/ScreenshotExampleSelectedFilter.png?raw=true)
 
@@ -124,32 +124,35 @@ This flow chart visualizes what happens, when search text is entered:
 
 ![Search Flow-Chart](diagrams/searchflowchart-2.png?raw=true)
 
-## Search Menu Data Structure
+## Data structure
 
-The search menu data structure consists basically of an array of "described fields" borrowed from [data-restructor-js](https://joht.github.io/data-restructor-js) in detail documented in the [DescribedDataField JSDoc](https://joht.github.io/data-restructor-js/module-described_field.html#.DescribedDataField). 
+The data structure consists basically of an array of "described fields" borrowed from [data-restructor-js](https://joht.github.io/data-restructor-js) in detail documented in the [DescribedDataField JSDoc](https://joht.github.io/data-restructor-js/module-described_field.html#.DescribedDataField). This is why [data-restructor-js](https://joht.github.io/data-restructor-js)  perfectly integrates as data converter for the search menu.
 
 ### Described Field Object
 
-#### Mandatory Properties
+In contrast to the [DescribedDataField](https://joht.github.io/data-restructor-js/module-described_field.html#.DescribedDataField) of [data-restructor-js](https://joht.github.io/data-restructor-js) only a subset of these fields are used by the search menu. The tables 
+below describe, which fields are important and what they are used for.
+#### Mandatory properties
 
 Every "described field" needs to contain the following fields:
 
 | Field        | Example           | Description                                                  |
 | ------------ |:----------------- | ------------------------------------------------------------ |
-| displayName  | "`Accountnumber`" | Display field name.                                          |
-| fieldName    | "`accountnumber`" | Technical field name.                                        |
-| value        | "`12345678902`"   | Value of the field.                                          |
+| displayName  | "`Accountnumber`" | Display field name. Used in most view templates.             |
+| fieldName    | "`accountnumber`" | Technical field name. Needed to recognize selected fields.   |
+| value        | "`12345678902`"   | Value of the field. Used in most of the view templates.      |
+<br/>
 
-#### Special Properties
+#### Special properties
 
 The `category` is a special field that is only necessary for multi category searches that should provide different navigation targets to react differently on selected results according to their category.
 
 | Field        | Example           | Description                                                     |
 | ------------ |:----------------- | --------------------------------------------------------------- |
 | category     | "`account`"       | For multi category search results and their navigation targets. |
+<br/>
 
-
-#### Optional Properties
+#### Optional properties
 
 Every "described field" may additionally contain these optional fields (amongst others),
 that can be used as template variables if present. 
@@ -176,13 +179,12 @@ These groups have a special meaning for the search menu ui.
 | urltemplate  | Contains a single urltemplate field as navigation target. Belongs to a filter option.    |
 | default      | Contains a single filter option that is selected by default. Belongs to a filter option. |
 
-### Data for Results and Details 
+### Data for results and details 
 
 The [Results and Details](#Results-and-Details) UI is a consequence of the following data structure stripped down to the first result and its most essential parts.
 ```yaml
 category: "account"
 abbreviation: "&#x1F4B6;"
-# ....
 summaries: 
   - category: "account" # Optional. Used for multi category search navigation targets.
     abbreviation: "&#x1F4B6;" # Optional. Contains the money icon in the example.
@@ -205,7 +207,7 @@ details:
   # ...
 ```
 
-### Data for Filter-Options
+### Data for filter options
 
 The [Filter-Options](#Filter-Options) UI is a consequence of the following data structure stripped down to the first filter `product` and its most essential parts.
 
@@ -230,16 +232,59 @@ options:
     value: "trust"
 ```
 
-### Data for the Navigation Target
+### Data for default filter options
 
-A special case of search filters are the navigation targets, as depicted in the [Flow-Chart](#Flow-Chart).
-These are selectable filter options that contain the group `urltemplate` with a single field. When a result entry is selected, all active filter options of that category (or the global category `""`) that contain a `urltemplate` are looked up. The first url template will be used to navigate to 
-the selected target. URL templates may contain variables in double curly brackets, that are replaced
-by the fields (details, summaries) of the selected result. 
+A filter option, that should be selected by default as shown in the [Selected Filter](#Selected-Filter) UI, is contained as a single field in the `default` group. The following data structure for example leads to an pre selected product filter for private loans.
 
 ```yaml
 category: "account"
 abbreviation: "&#128206;"
+options:
+  - displayName: "Product"
+    fieldName": "product"
+    value": "private loan"
+```
+
+### Data for navigation targets
+
+A special case of search filters are the navigation targets, as depicted in the [Flow-Chart](#Flow-Chart).
+These are selectable filter options marked by the group `urltemplate` containing a single field. When a result entry is selected, all active filter options of that category (or the global category `""`) that contain a `urltemplate` are looked up. The first url template will be used to navigate to 
+the selected target.
+
+URL templates may contain variables in double curly brackets, that are replaced
+by the fields (details, summaries) of the selected result. 
+
+The following data structure leads to the pre selected default target `"Account Overview"`,
+as well as to the selectable options `"Credit Interests"` and `"Debit Interests"`. All of them
+define a url template that contains the account number of the summaries as variable. The selected and best suited url template will be used to navigate to the target, when a [result entry](#Data-for-results-and-details) is selected.
+
+```yaml
+category: "account"
+abbreviation: "&#x261c;"
+default: 
+  - displayName: "Target"
+    fieldName: "name"
+    value: "Account Overview"
+    urltemplate:
+      - displayName: "Urltemplate"
+        fieldName: "urltemplate"
+        value: "http://127.0.0.1:5500/example/index.html#overview-{{summaries.accountnumber}}"
+options:
+  - displayName: "Target"
+    fieldName: "name"
+    value: "Credit Interests"
+    urltemplate:
+      - displayName: ""
+        fieldName: ""
+        value: "http://127.0.0.1:5500/example/index.html#creditinterest-{{summaries.accountnumber}}"
+  - displayName: "Target"
+    fieldName: "name"
+    value: "Debit Interests"
+    urltemplate:
+      - displayName: ""
+        fieldName: ""
+        value: "http://127.0.0.1:5500/example/index.html#debitinterest-{{summaries.accountnumber}}"
+
 ```
 
 ## Credits

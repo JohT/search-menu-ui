@@ -24,9 +24,15 @@ There are many ways to integrate and design a search UI, this is only one of the
 - Setup example index "accounts" with the commands listed und described in [elasticsearch-accounts.es](elasticsearch/accounts/elasticsearch-accounts.es). 
 - Setup example index "sites" with the commands listed und described in [elasticsearch-sites.es](elasticsearch/sites/elasticsearch-sites.es). 
 
-## 2. Convert elasticsearch results to the unified search menu data structure
+## 2. Convert elasticsearch results to the search menu data structure
 
+- [data-restructor-js](https://joht.github.io/data-restructor-js) makes it easy to convert the [elasticsearch] response to the search menu data structure (see [Data Structure Reference](../README.md#Data-structure)). 
+- The example [restruct-data-client.js](src/js/restruct-data-client.js) describes the 
+expected data and how it should be structured for the search menu. The configured data converter 
+is then created with `new restruct.DataConverter().createDataConverter(debuMode)`.
+- The data converter is attached to the search menu using the [SearchMenuAPI](https://joht.github.io/search-menu-ui/docs/module-searchmenu.SearchMenuAPI.html) as shown in [restruct-data-client.js](src/js/search-binding.js#L53).
 
+## 3. Configure search menu and bind it to the HTML
 
 ## Credits
 
