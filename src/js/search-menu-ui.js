@@ -761,8 +761,10 @@ searchmenu.SearchMenuUI = (function () {
     }
     if (isMenuEntryWithOptions(entry)) {
       var options = entry.options;
+      //TODO should support details for filter options.
       //TODO could skip sub menu, if there is only one option (with/without being default).
       //TODO could be used for constants (pre selected single filter options) like "tenant-number", "current-account"
+      //TODO could remove the original search result filter when the default option is pre selected (and its options are copied).
       if (isMenuEntryWithDefault(entry)) {
         options = insertAtBeginningIfMissing(entry.options, entry["default"][0], equalProperties(["value"]));
         var filterOptionsElement = createFilterOption(entry["default"][0], options, config.filtersView, config);
