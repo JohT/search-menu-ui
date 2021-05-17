@@ -54,31 +54,29 @@ jobs:
     - name: (Example) Run linter
       working-directory: example
       run: npm run lint
-    - name: (Main) Generate documentation
+    - name: (Example) Generate documentation
       working-directory: example
       run: npm run doc
     - name: (Example) Build
       working-directory: example
+      run: npm run build --if-present
     - name: (Example) Archive code coverage results
-      working-directory: example
       uses: actions/upload-artifact@v2
       with:
         name: code-coverage-report
-        path: coverage
+        path: example/coverage
         retention-days: 2
     - name: (Example) Archive documentation
-      working-directory: example
       uses: actions/upload-artifact@v2
       with:
         name: documentation
-        path: docs
+        path: example/docs
         retention-days: 2
     - name: (Example) Archive build artifacts
-      working-directory: example
       uses: actions/upload-artifact@v2
       with:
         name: dist-without-markdown
         path: |
-          dist
-          !dist/**/*.md
+          example/dist
+          !example/dist/**/*.md
         retention-days: 2
