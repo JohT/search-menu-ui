@@ -42,7 +42,6 @@ jobs:
           dist
           !dist/**/*.md
         retention-days: 2
-            - name: (Main) Install nodes packages
     - name: (Example) Install nodes packages
       working-directory: example
       run: npm ci
