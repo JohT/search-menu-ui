@@ -365,7 +365,6 @@
         "abbreviation": "&#x261c;",
         "groupNames": [
             "default",
-            "urltemplate",
             "options"
         ],
         "displayName": "Target",
@@ -375,7 +374,6 @@
             {
                 "category": "account",
                 "type": "main",
-                "abbreviation": "&#x261c;",
                 "groupNames": [
                     "urltemplate"
                 ],
@@ -391,15 +389,6 @@
                         "value": "http://127.0.0.1:5500/example/index.html#overview-{{summaries.accountnumber}}"
                     }
                 ]
-            }
-        ],
-        "urltemplate": [
-            {
-                "category": "account",
-                "type": "url",
-                "displayName": "Urltemplate",
-                "fieldName": "urltemplate",
-                "value": "http://127.0.0.1:5500/example/index.html#overview-{{summaries.accountnumber}}"
             }
         ],
         "options": [
