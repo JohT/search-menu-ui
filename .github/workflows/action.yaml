@@ -54,9 +54,6 @@ jobs:
     - name: (Example) Run linter
       working-directory: example
       run: npm run lint
-    - name: (Example) Generate documentation
-      working-directory: example
-      run: npm run doc
     - name: (Example) Build
       working-directory: example
       run: npm run build --if-present

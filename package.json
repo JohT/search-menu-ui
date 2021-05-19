@@ -28,7 +28,8 @@
     "dev": "rm -rf devdist && parcel --out-dir devdist ./src/js/*.js",
     "devbuild": "rm -rf devdist && NODE_ENV=development parcel build --dist-dir devdist ./src/js/*.js --no-optimize --no-source-maps --no-content-hash --detailed-report",
     "build": "parcel build ./src/js/*.js",
-    "package": "npm run lint && npm run coverage && npm run coverage-badge && npm run doc && npm run devbuild && npm run build && merger"
+    "package": "npm run lint && npm run coverage && npm run coverage-badge && npm run doc && npm run devbuild && npm run build && merger",
+    "all": "npm run package && cd example && npm run package"
   },
   "repository": {
     "type": "git",
@@ -47,9 +48,9 @@
   },
   "devDependencies": {
     "eslint": "^7.26.0",
-    "istanbul-badges-readme": "1.2.1",
+    "istanbul-badges-readme": "^1.3.0",
     "jasmine": "^3.7.0",
-    "jsdoc": "^3.6.6",
+    "jsdoc": "^3.6.7",
     "jsdom": "^16.5.3",
     "nyc": "^15.1.0",
     "parcel": "^2.0.0-beta.2"
