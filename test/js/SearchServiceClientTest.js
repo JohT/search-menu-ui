@@ -1,23 +1,23 @@
 "use strict";
 
-var searchService = searchService || require("../../src/js/search-service-client"); // supports vanilla js & npm
+var searchMenuServiceClient = searchMenuServiceClient || require("../../src/js/search-service-client"); // supports vanilla js & npm
 
 describe("search-service-client HttpSearchConfig", function () {
   var searchServiceUnderTest;
 
   beforeEach(function () {
-    searchServiceUnderTest = searchService;
+    searchServiceUnderTest = searchMenuServiceClient;
   });
 
   describe("detect empty objects and", function () {
     it("should create a new object if the given one doesn't exist", function () {
-      var result = searchService.internalCreateIfNotExists(null);
+      var result = searchMenuServiceClient.internalCreateIfNotExists(null);
       expect(result).toEqual({});
     });
   
     it("should use the given object if it exists", function () {
       var expectedExistingObject = {anytestproperty: 3};
-      var result = searchService.internalCreateIfNotExists(expectedExistingObject);
+      var result = searchMenuServiceClient.internalCreateIfNotExists(expectedExistingObject);
       expect(result).toEqual(expectedExistingObject);
     });
   });

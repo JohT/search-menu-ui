@@ -6,13 +6,13 @@
 
 var httpSearchClient;
 //TODO include "search-menu-ui" and "search-service-client" as node dependency?
-var searchService = searchService || require("../../../src/js/search-service-client"); // supports vanilla js & npm
+var searchMenuServiceClient = searchMenuServiceClient || require("../../../src/js/search-service-client"); // supports vanilla js & npm
 var searchmenu = searchmenu || require("../../../src/js/search-menu-ui"); // supports vanilla js & npm
 var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
 var restruct = restruct || require("./restruct-data-client"); // supports vanilla js & npm
 
 // Search using elasticsearch multisearch
-httpSearchClient = new searchService.HttpSearchConfig()
+httpSearchClient = new searchMenuServiceClient.HttpSearchConfig()
   .searchMethod("POST")
   .searchContentType("application/x-ndjson")
   .searchUrlTemplate(
@@ -33,7 +33,7 @@ httpSearchClient = new searchService.HttpSearchConfig()
 
 // Locally mocked search with a few pre-queried search results (for local debugging and testing)
 // Uncomment this section to try search without elasticsearch with some prerecorded data responses.
-// httpSearchClient = new searchService.HttpSearchConfig()
+// httpSearchClient = new searchMenuServiceClient.HttpSearchConfig()
 //   .searchMethod("GET")
 //   .searchUrlTemplate("/example/data/AccountSearchResult-{{searchtext}}.json")
 //   .debugMode(true)
@@ -41,7 +41,7 @@ httpSearchClient = new searchService.HttpSearchConfig()
 
 // Locally mocked ALREADY CONVERTED AND OPTIMIZED search menu data with a few pre-queried search results (for local debugging and testing)
 // Uncomment this section and the dataConverter-Assignment to try search without elasticsearch with some prerecorded data responses.
-// httpSearchClient = new searchService.HttpSearchConfig()
+// httpSearchClient = new searchMenuServiceClient.HttpSearchConfig()
 //   .searchMethod("GET")
 //   .searchUrlTemplate("/example/data/AccountConvertedSearchOptimizedData-{{searchtext}}.json")
 //   .debugMode(true)
