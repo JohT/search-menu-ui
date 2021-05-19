@@ -30,9 +30,21 @@ There are many ways to integrate and design a search UI, this is only one of the
 - The example [restruct-data-client.js](src/js/restruct-data-client.js) describes the 
 expected data and how it should be structured for the search menu. The configured data converter 
 is then created with `new restruct.DataConverter().createDataConverter(debuMode)`.
-- The data converter is attached to the search menu using the [SearchMenuAPI](https://joht.github.io/search-menu-ui/docs/module-searchmenu.SearchMenuAPI.html) as shown in [restruct-data-client.js](src/js/search-binding.js#L53).
+- The data converter is attached to the search menu using the [SearchMenuAPI](https://joht.github.io/search-menu-ui/docs/module-searchmenu.SearchMenuAPI.html) as shown in [search-binding.js](src/js/search-binding.js#L53).
 
-## 3. Configure search menu and bind it to the HTML
+## 3. Configure search service backend request
+
+The build-in module `search-service-client.js` contains a very simple yet useable
+HTTP client adapter to attach a `XMLHttpRequest` to the search menu. The example configuration is located inside the [search-binding.js](src/js/search-binding.js). More details can
+be found here: [search-service-client JSDoc](https://joht.github.io/search-menu-ui/docs/module-searchMenuServiceClient.HttpSearchConfig.html).
+
+## 4. Configure and attach the search menu UI
+
+Finally everything gets assembled and bound to the HTML for this example inside 
+[search-binding.js](src/js/search-binding.js#L51). This example mainly uses default 
+bindings and settings. The only thing that is left is the definition of the modules for the search service, the data converter and the template resolver. `addFocusStyleClassOnEveryCreatedElement` is additionally used for better browser compatibility (to not depend on CSS `:focus` selector). 
+
+More details and all configuration options can be found here: [SearchMenuAPI JSDoc](https://joht.github.io/search-menu-ui/docs/module-searchmenu.SearchMenuAPI.html)
 
 ## Credits
 
