@@ -5,13 +5,16 @@
  */
 
 var httpSearchClient;
-//TODO include "search-menu-ui" and "search-service-client" as node dependency?
+// The modules "search-menu-ui" and "search-service-client" are included directly, 
+// because this example is also used during development.
+// When used as a starting point, change these imports to use the node package manager e.g. like the "template_resolver".
 var searchMenuServiceClient = searchMenuServiceClient || require("../../../src/js/search-service-client"); // supports vanilla js & npm
 var searchmenu = searchmenu || require("../../../src/js/search-menu-ui"); // supports vanilla js & npm
 var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
 var restruct = restruct || require("./restruct-data-client"); // supports vanilla js & npm
 
-// Search using elasticsearch multisearch
+// Search using elasticsearch "Multi search API"
+// Reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html
 httpSearchClient = new searchMenuServiceClient.HttpSearchConfig()
   .searchMethod("POST")
   .searchContentType("application/x-ndjson")
@@ -46,6 +49,9 @@ httpSearchClient = new searchMenuServiceClient.HttpSearchConfig()
 //   .searchUrlTemplate("/example/data/AccountConvertedSearchOptimizedData-{{searchtext}}.json")
 //   .debugMode(true)
 //   .build();
+
+//TODO could add an example on how to configure a view (e.g. results view)
+//TODO could add an example on how to use HTML inside a view's "listEntryTextTemplate" to further style the entries
 
 // Configure and start the search bar functionality.
 new searchmenu.SearchMenuAPI()

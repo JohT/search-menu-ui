@@ -2,9 +2,10 @@
 
 var searchmenu = searchmenu || require("../../src/js/search-menu-ui"); // supports vanilla js & npm
 var searchresulttestdata = searchresulttestdata || require("./SearchMenuUiTestJsonData");
-// TODO should get rid of template resolver or provide a local one only for the tests
+// TODO should replace template resolver by a mock or a simple dummy implementation
 var template_resolver = template_resolver || require("data-restructor/devdist/templateResolver"); // supports vanilla js & npm
 
+//TODO could be refactored to reduce "Excessive Mocking/Setup" by further decoupling "search-menu-ui" from DOM
 describe("search.js", function () {
   var searchUnderTest;
   var searchTestData;

@@ -44,6 +44,8 @@
 * specialized filters for date and time
 * paging
 * configuration in html
+* TODO comments inside the code contain further ideas.  
+They start with "should" (higher priority) and "could" (lower priority) and might become fully described issues.
 
 ## Getting started
 

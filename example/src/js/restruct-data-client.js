@@ -3,7 +3,6 @@
  * @version {@link https://github.com/JohT/search-menu-ui/releases/latest latest version}
  * @author JohT
  */
-//TODO JSDoc
 
  "use strict";
 
@@ -20,8 +19,6 @@ function datarestructorInternalCreateIfNotExists(objectToCheck) {
  var restruct = module.exports={}; // Export module for npm...
  restruct.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
  
-//TODO must find a way to use the "dist" module
-//TODO must find a way to use ie compatible module
 var datarestructor = datarestructor || require("data-restructor/devdist/datarestructor"); // supports vanilla js & npm
 
 restruct.DataConverter = (function () {
