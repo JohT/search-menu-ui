@@ -4,49 +4,40 @@
   <meta charset="utf-8">
   <title>Jasmine Spec Runner v3.6.0</title>
 
-  <link rel="shortcut icon" type="image/png" href="lib/jasmine-3.6.0/jasmine_favicon.png">
-  <link rel="stylesheet" href="lib/jasmine-3.6.0/jasmine.css">
+  <link rel="shortcut icon" type="image/png" href="../../node_modules/jasmine-core/images/jasmine_favicon.png">
+  <link rel="stylesheet" href="../../node_modules/jasmine-core/lib/jasmine-core/jasmine.css">
 
-  <script src="lib/jasmine-3.6.0/jasmine.js"></script>
-  <script src="lib/jasmine-3.6.0/jasmine-html.js"></script>
-  <script src="lib/jasmine-3.6.0/boot.js"></script>
+  <script src="../../node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
+  <script src="../../node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script>
+  <script src="../../node_modules/jasmine-core/lib/jasmine-core/boot.js"></script>
 
   <!-- polyfills -->
-  <script src="../../src/js/polyfills/isArrayPolyfill.js"></script>
-  <script src="../../src/js/polyfills/arrayFilterPolyfill.js"></script>
   <script src="../../src/js/polyfills/arrayForEachPolyfill.js"></script>
-  <script src="../../src/js/polyfills/indexOfPolyfill.js"></script>
-  <script src="../../src/js/polyfills/objectKeysPolyfill.js"></script>
   <script src="../../src/js/polyfills/createPolyfill.js"></script>
   <script src="../../src/js/polyfills/jsonParsePolyfill.js"></script>
+  <script src="../../src/js/polyfills/moduledummy.js"></script>
 
   <!-- ponyfills -->
   <script src="../../src/js/ponyfills/eventCurrentTargetPonyfill.js"></script>
   <script src="../../src/js/ponyfills/selectionRangePonyfill.js"></script>
-  <script src="../../src/js/ponyfills/xmlHttpRequestPonyfill.js"></script>
   <script src="../../src/js/ponyfills/addEventListenerPonyfill.js"></script>
 
-  <!-- include libs files here... -->
-  <script src="../../src/js/lib/flattenToArray.js"></script>
-  <script src="../../src/js/lib/moduledummy.js"></script>
-  <script src="../../src/js/lib/templateResolver.js"></script>
-  <script src="../../src/js/lib/describedfield.js"></script>
-  <script src="../../src/js/lib/datarestructor.js"></script>
+  <!-- include test-only libs here... -->
+  <script src="../../test/js/lib/flattenToArray.js"></script>
+  <script src="../../test/js/lib/templateResolver.js"></script>
 
   <!-- include source files here... -->
-  <script src="../../src/js/restruct-data-client.js"></script>
-  <script src="../../src/js/search-service-client.js"></script>
   <script src="../../src/js/search-menu-ui.js"></script>
+  <script src="../../src/js/search-service-client.js"></script>
   
   <!-- include test data files here... -->
   <script src="SearchMenuUiTestJsonData.js"></script>
   
   <!-- include test spec files here... -->
-  <script src="RestructDataClientTest.js"></script>
-  <script src="SearchServiceClientTest.js"></script>
   <script src="SearchViewDescriptionBuilderTest.js"></script>
   <script src="SearchMenuApiTest.js"></script>
   <script src="SearchMenuUiTest.js"></script>
+  <script src="SearchServiceClientTest.js"></script>
 
 </head>
 

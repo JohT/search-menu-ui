@@ -1,0 +1,42 @@
+{
+  "name": "search-menu-ui-example",
+  "version": "0.8.0",
+  "description": "Search UI example.",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "lint": "eslint \"./src/js/*.js\"",
+    "test": "jasmine --config=./test/js/jasmine.json",
+    "coverage": "nyc npm run test",
+    "coverage-badge": "istanbul-badges-readme",
+    "dev": "rm -rf devdist && parcel --dist-dir devdist ./src/js/*.js",
+    "devbuild": "rm -rf devdist && NODE_ENV=development parcel build --dist-dir devdist ./src/js/*.js --no-optimize",
+    "build": "parcel build ./src/js/*.js",
+    "package": "npm run lint && npm run coverage && npm run coverage-badge && npm run devbuild && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JohT/search-menu-ui.git"
+  },
+  "keywords": [
+    "search",
+    "menu",
+    "ui",
+    "elasticsearch",
+    "example"
+  ],
+  "author": "JohT",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "data-restructor": "^3.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.26.0",
+    "istanbul-badges-readme": "^1.3.0",
+    "jasmine": "^3.7.0",
+    "nyc": "^15.1.0",
+    "parcel": "^2.0.0-beta.2"
+  }
+}

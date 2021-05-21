@@ -1,0 +1,142 @@
+* {
+  box-sizing: border-box;
+}
+
+.header {
+  /* font-family: 'Baumans', cursive; */
+  font-family: 'Roboto', sans-serif;
+  /* font-family: 'Comfortaa', cursive; */
+  /* font-family: 'Open Sans', sans-serif; */
+}
+
+/* The container for searchmenu and searchresults needed to position the dropdown content */
+.searcharea {
+  position: relative;
+  display: inline-block;
+}
+
+.searchinput {
+  /* "https://img.icons8.com/android/24/000000/search.png"/> */
+  background-image: url("../images/searchicon-small.png");
+  background-position: 0.5em center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 3em;
+  font-size: 16px;
+  padding: 1em 3em 1em 3em; /* 12px 20px 12px 40px; */
+  border: 1px solid #ddd;
+  margin-bottom: 1em;
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.searchmenu {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  min-width: 180px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  z-index: 1;
+}
+
+.searchdetails {
+  left: 250px; 
+}
+
+.searchfilteroptions {
+  left: 250px; 
+}
+
+.show {
+  display: block;
+}
+
+.searchresultentries {
+  padding: 0;
+  margin: 0;
+  /* font-family: 'Baumans', cursive; */
+  /* font-family: 'Roboto', sans-serif; */
+  /* font-family: 'Comfortaa', cursive; */
+  font-family: 'Open Sans', sans-serif;
+}
+
+.searchmatches.searchmatches {
+  max-height: 300px; 
+  overflow: auto;
+  border-bottom: 2px solid rgb(200, 200, 200);
+}
+
+.searchresultentries li {
+  margin-top: -1px; /* Prevent double borders */
+  background-color: #f6f6f6;
+  padding: 0.2em;
+  text-decoration: none;
+  font-size: 14px;
+  color: black;
+  display: block;
+  list-style-type: none;
+  border: 1px solid rgb(233, 233, 233);
+}
+
+.searchdetailentries li {
+  padding: 0.1em;
+}
+
+.searchfilteroptionentries li {
+  /* padding: 1em; */
+}
+
+.searchresultentries em {
+  font-weight: bold;
+  font-style: normal;
+}
+
+.searchfilters li {
+  background-color: #befdce;
+}
+
+.filter.inactive {
+  background-color: #cacaca;
+  text-decoration: line-through;
+}
+
+.result:hover {
+  background-color: #b7cafd;
+}
+
+/* focus pseudo class not ie5 compatible */
+/* .result:focus {
+  background-color: #9db7ff;
+  outline: 0;
+} */
+
+.result.searchresultfocus {
+  background-color: #9db7ff;
+  outline: 0;
+}
+
+.filter:hover {
+  background-color: #a1fcb8;
+}
+
+/* focus pseudo class not ie5 compatible */
+/* .filter:focus {
+  background-color: #8ffcaa;
+  outline: 0;
+} */
+
+.filter.searchresultfocus {
+  background-color: #8ffcaa;
+  outline: 0;
+}
+
+.filter.inactivefilter:hover {
+  background-color: #aaaaaa;
+}
+
+.filter.inactivefilter:focus {
+  background-color: #949494;
+  outline: 0;
+}

@@ -26,7 +26,7 @@ describe("search.js SearchMenuApi", function () {
 
       it("should throw an exception if no data converter had been set", function () {
         var resultingSearchUi = searchMenuApiUnderTest.start();
-        expect(resultingSearchUi.config.convertData).toThrow(new Error("data converter needs to be defined."));
+        expect(resultingSearchUi.config.resolveTemplate).toThrow(new Error("template resolver needs to be defined."));
       });
     });
 
@@ -36,6 +36,12 @@ describe("search.js SearchMenuApi", function () {
         var parameters = jasmine.createSpy("searchParameters");
         resultingSearchUi.config.addPredefinedParametersTo(parameters);
         expect(parameters.calls.any()).toEqual(false);
+      });
+
+      it("should contain a data converter that lets incoming data through unchanged", function () {
+        var expectedData = {propertyA : "A"};
+        var resultingSearchUi = searchMenuApiUnderTest.start();
+        expect(resultingSearchUi.config.convertData(expectedData)).toEqual(expectedData);
       });
     });
 

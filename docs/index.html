@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><p><a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
+<img src="https://img.shields.io/github/languages/top/JohT/search-menu-ui" alt="Language">
+<img src="https://img.shields.io/badge/Coverage-80.41%25-yellow.svg" alt="Branches">
+<img src="https://aleen42.github.io/badges/src/npm.svg" alt="npm">
+<img src="https://aleen42.github.io/badges/src/jasmine.svg" alt="jasmine">
+<img src="https://aleen42.github.io/badges/src/eslint.svg" alt="eslint">
+<img src="https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/jsdoc" alt="JSDoc">
+<img src="https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/nyc" alt="nyc">
+<img src="https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/parcel-bundler" alt="parcel-bundler"></p>
+<h1>search-menu-ui</h1>
+<p>&quot;All in one place&quot; search UI providing &quot;search as you type&quot; written in vanilla JavaScript.</p>
+<h2>Approaches</h2>
+<h3>Data-Driven &amp; Data-Agnostic</h3>
+<ul>
+<li>Search data is the source of all contents configured once using templates</li>
+<li>Search data determines which filters and thus which filter parameters are available</li>
+<li>Search data determines which target url to open, when a result is selected</li>
+<li>Search data may also be used to set additional css style classes</li>
+</ul>
+<h3>Everything is searchable</h3>
+<ul>
+<li>Filters are search results and thus searchable</li>
+<li>Navigation targets are search results and thus searchable</li>
+</ul>
+<h3>Set and forget</h3>
+<ul>
+<li>After initial configuration mostly anything else depends on the search response</li>
+<li>New fields, new categories, new filters and new navigation targets shouldn't entail
+any changes in most cases</li>
+<li>Embrace changes by not depending on them at all</li>
+</ul>
+<h2>Features:</h2>
+<ul>
+<li>Full keyboard support</li>
+<li>Flexible and configurable</li>
+<li>Supports most browsers including IE 5</li>
+<li>Can be used without any runtime dependencies</li>
+<li>Integrates perfectly with <a href="https://github.com/JohT/data-restructor-js">data-restructor-js</a> for data conversion and template resolving as a single runtime dependency</li>
+<li>Built with <a href="https://www.elastic.co/de/elasticsearch/">elasticsearch</a> in mind</li>
+</ul>
+<h3>Not intended to be used when</h3>
+<ul>
+<li>a type-safe, non data-agnostic and non-generic strategy is key</li>
+<li>the things that can be searched are pretty well known and stable (don't change that much)</li>
+<li>changing client code is much easier than changing the search service</li>
+</ul>
+<h3>Might be added in future:</h3>
+<ul>
+<li>specialized filters for numeric limits</li>
+<li>specialized filters for date and time</li>
+<li>paging</li>
+<li>configuration in html</li>
+<li>TODO comments inside the code contain further ideas.<br>
+They start with &quot;should&quot; (higher priority) and &quot;could&quot; (lower priority) and might become fully described issues.</li>
+</ul>
+<h2>Getting started</h2>
+<p>The best way to get started is by having a look at the fully working <a href="example/README.md">example</a>.</p>
+<h2>UI structure</h2>
+<p>The following screenshots were taken from the example, that is included in this repository.
+Since the search menu UI only takes element IDs, it can be attached in many ways.
+Furthermore, anything can be styled using CSS. The screenshots below are therefore
+only one of many possible ways on how the search might look like. At least they explain the base structure and parts of it visually.</p>
+<h3>Results and details</h3>
+<p><img src="screenshots/ScreenshotExampleDetails.png?raw=true" alt="Screenshot Details"></p>
+<p><strong>①</strong> shows search results. In this example the text of each entry consists of a symbol followed by the name and a second line with the business type and the account number.
+This is configured using a template that contains all these parts as variables.</p>
+<p><strong>②</strong> shows the search details. The details are opened by pressing the space bar or moving the mouse over the result for some time. Here, every entry consists of a emphasized field name followed by its value. This is also configured using a template.</p>
+<p>When one of the results is selected using the enter key or a mouse click, the url template of the currently selected navigation target is resolved by the fields of the selected result and then
+opened. This enables highly flexible and context and data dependent navigation.</p>
+<h3>Filter options</h3>
+<p><img src="screenshots/ScreenshotExampleFilterOptions.png?raw=true" alt="Screenshot Details"></p>
+<p><strong>①</strong> shows filter results. These are searched and treated like &quot;normal&quot; search results.
+They are configured with a separate template. In this example, only a symbol and the selected filter value are displayed.</p>
+<p><strong>②</strong> shows the filter options. In contrast to the details of &quot;normal&quot; search results,
+the filter options can be selected as described below.</p>
+<h3>Selected filter</h3>
+<p><img src="screenshots/ScreenshotExampleSelectedFilter.png?raw=true" alt="Screenshot Details"></p>
+<p><strong>①</strong> shows previously selected filters that are provided as search parameters.
+They can be included as variables in the search service url or the search request body template.</p>
+<p><strong>②</strong> shows the same filter options view as in <a href="#Filter-Options">Filter-Options</a>. The selected filter can be changed here as well.</p>
+<p><strong>②</strong> shows a special case of a filter option, that not only has a preselected default
+value but also contains navigation target url templates. Choosing a target and its (hidden)
+url template changes the site that is opened when a result is selected.</p>
+<p>If e.g. &quot;Account Overview&quot; is selected, a click on the first result will open the account overview of this account. If it is changed to &quot;Customer Overview&quot;, a click on the first result will open the customer overview of the customer, that owns that account, using the customer number of the details.</p>
+<p>Since navigation targets are searchable, it is possible to search for a field inside the application, listing the views where it can be found, selecting the right one and then searching
+for e.g. an account, that should be shown in the previously selected view. Since the url templates are all provided by data, only data needs to be updated when a url changes.</p>
+<h3>HTML Elements</h3>
+<p>The HTML of the example, that is included in this repository, is essentially this:</p>
+<pre class="prettyprint source lang-html"><code>&lt;div id=&quot;searcharea&quot;>
+    &lt;input type=&quot;text&quot; id=&quot;searchinputtext&quot;/>&lt;br>
+    &lt;div id=&quot;searchresults&quot;>
+        &lt;ul id=&quot;searchmatches&quot;>&lt;/ul>
+        &lt;ul id=&quot;searchfilters&quot;>&lt;/ul>
+    &lt;/div>
+    &lt;div id=&quot;searchdetails&quot;>
+        &lt;ul id=&quot;searchdetailentries&quot;>&lt;/ul>
+    &lt;/div>
+    &lt;div id=&quot;searchfilteroptions&quot;>
+        &lt;ul id=&quot;searchfilteroptionentries&quot;>&lt;/ul>
+    &lt;/div>
+&lt;/div>
+</code></pre>
+<p>These are the default IDs in the default structure, that doesn't need additional configuration.
+A detailed description of everything that can be configured can be found in the <a href="https://joht.github.io/search-menu-ui/docs/module-searchmenu.SearchMenuAPI.html">SearchMenuAPI JSDoc</a>.</p>
+<h2>Flow Chart</h2>
+<p>This flow chart visualizes what happens, when search text is entered:</p>
+<p><img src="diagrams/searchflowchart-2.png?raw=true" alt="Search Flow-Chart"></p>
+<h2>Data structure</h2>
+<p>The data structure consists basically of an array of &quot;described fields&quot; borrowed from <a href="https://joht.github.io/data-restructor-js">data-restructor-js</a> in detail documented in the <a href="https://joht.github.io/data-restructor-js/module-described_field.html#.DescribedDataField">DescribedDataField JSDoc</a>. This is why <a href="https://joht.github.io/data-restructor-js">data-restructor-js</a>  perfectly integrates as data converter for the search menu.</p>
+<h3>Described Field Object</h3>
+<p>In contrast to the <a href="https://joht.github.io/data-restructor-js/module-described_field.html#.DescribedDataField">DescribedDataField</a> of <a href="https://joht.github.io/data-restructor-js">data-restructor-js</a> only a subset of these fields are used by the search menu. The tables
+below describe, which fields are important and what they are used for.</p>
+<h4>Mandatory properties</h4>
+<p>Every &quot;described field&quot; needs to contain the following fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th style="text-align:left">Example</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>displayName</td>
+<td style="text-align:left">&quot;<code>Accountnumber</code>&quot;</td>
+<td>Display field name. Used in most view templates.</td>
+</tr>
+<tr>
+<td>fieldName</td>
+<td style="text-align:left">&quot;<code>accountnumber</code>&quot;</td>
+<td>Technical field name. Needed to recognize selected fields.</td>
+</tr>
+<tr>
+<td>value</td>
+<td style="text-align:left">&quot;<code>12345678902</code>&quot;</td>
+<td>Value of the field. Used in most of the view templates.</td>
+</tr>
+</tbody>
+</table>
+<br/>
+<h4>Special properties</h4>
+<p>The <code>category</code> is a special field that is only necessary for multi category searches that should provide different navigation targets to react differently on selected results according to their category.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th style="text-align:left">Example</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>category</td>
+<td style="text-align:left">&quot;<code>account</code>&quot;</td>
+<td>For multi category search results and their navigation targets.</td>
+</tr>
+</tbody>
+</table>
+<br/>
+<h4>Optional properties</h4>
+<p>Every &quot;described field&quot; may additionally contain these optional fields (amongst others),
+that can be used as template variables if present.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th style="text-align:left">Example</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>type</td>
+<td style="text-align:left">&quot;<code>summary</code>&quot;</td>
+<td>Mainly used for grouping within data convertion.</td>
+</tr>
+<tr>
+<td>abbreviation</td>
+<td style="text-align:left">&quot;<code>&amp;#x1F4B6;</code>&quot;</td>
+<td>Optional (symbol) character or a short abbreviation.</td>
+</tr>
+<tr>
+<td>image</td>
+<td style="text-align:left">&quot;&quot;</td>
+<td>Optional path to an image resource.</td>
+</tr>
+<tr>
+<td>index</td>
+<td style="text-align:left"><code>[0, 0]</code></td>
+<td>Array of numbers containing source data position.</td>
+</tr>
+<tr>
+<td>groupNames</td>
+<td style="text-align:left"><code>[&quot;summaries&quot;]</code></td>
+<td>Array of property names that contain arrays of group fields.</td>
+</tr>
+</tbody>
+</table>
+<h3>Groups</h3>
+<p>Every &quot;described field&quot; may contain groups. Each group contains another array of described fields.
+These groups have a special meaning for the search menu ui.</p>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>summaries</td>
+<td>Contains the fields (template variables) for the result/filter entry itself.</td>
+</tr>
+<tr>
+<td>details</td>
+<td>Contains the fields with (not selectable) details for each search result.</td>
+</tr>
+<tr>
+<td>options</td>
+<td>Contains the selectable filter options that are used as search parameters.</td>
+</tr>
+<tr>
+<td>urltemplate</td>
+<td>Contains a single urltemplate field as navigation target. Belongs to a filter option.</td>
+</tr>
+<tr>
+<td>default</td>
+<td>Contains a single filter option that is selected by default. Belongs to a filter option.</td>
+</tr>
+</tbody>
+</table>
+<h3>Data for results and details</h3>
+<p>The <a href="#Results-and-Details">Results and Details</a> UI is a consequence of the following data structure stripped down to the first result and its most essential parts.</p>
+<pre class="prettyprint source lang-yaml"><code>category: &quot;account&quot;
+abbreviation: &quot;&#x1F4B6;&quot;
+summaries: 
+  - category: &quot;account&quot; # Optional. Used for multi category search navigation targets.
+    abbreviation: &quot;&#x1F4B6;&quot; # Optional. Contains the money icon in the example.
+    displayName: &quot;Accountnumber&quot;
+    fieldName: &quot;accountnumber&quot;
+    value: &quot;12345678901&quot;
+  - displayName: &quot;Disposer&quot;,
+    fieldName: &quot;disposer&quot;,
+    value: &quot;Howard Joel Wolowitz&quot;
+  - displayName: &quot;Businesstype&quot;
+    fieldName: &quot;businesstype&quot;
+    value: &quot;Giro&quot;
+details:
+  - displayName: &quot;Iban&quot;
+    fieldName: &quot;iban&quot;
+    value: &quot;AT424321012345678902&quot;
+  - displayName: &quot;Accountnumber&quot;
+    fieldName: &quot;accountnumber&quot;
+    value: &quot;12345678902&quot;
+  # ...
+</code></pre>
+<h3>Data for filter options</h3>
+<p>The <a href="#Filter-Options">Filter-Options</a> UI is a consequence of the following data structure stripped down to the first filter <code>product</code> and its most essential parts.</p>
+<pre class="prettyprint source lang-yaml"><code>category: &quot;account&quot;
+abbreviation: &quot;&#128206;&quot;
+options:
+  - displayName: &quot;Product&quot;
+    fieldName&quot;: &quot;product&quot;
+    value&quot;: &quot;private loan&quot;
+  - displayName: &quot;Product&quot;
+    fieldName: &quot;product&quot;
+    value: &quot;salary&quot;
+  - displayName: &quot;Product&quot;
+    fieldName: &quot;product&quot;
+    value&quot;: &quot;commercial giro&quot;
+  - displayName: &quot;Product&quot;
+    fieldName: &quot;product&quot;
+    value: &quot;private giro&quot;
+  - displayName: &quot;Product&quot;
+    fieldName: &quot;product&quot;
+    value: &quot;trust&quot;
+</code></pre>
+<h3>Data for default filter options</h3>
+<p>A filter option, that should be selected by default as shown in the <a href="#Selected-Filter">Selected Filter</a> UI, is contained as a single field in the <code>default</code> group. The following data structure for example leads to an pre selected product filter for private loans.</p>
+<pre class="prettyprint source lang-yaml"><code>category: &quot;account&quot;
+abbreviation: &quot;&#128206;&quot;
+options:
+  - displayName: &quot;Product&quot;
+    fieldName&quot;: &quot;product&quot;
+    value&quot;: &quot;private loan&quot;
+</code></pre>
+<h3>Data for navigation targets</h3>
+<p>A special case of search filters are the navigation targets, as depicted in the <a href="#Flow-Chart">Flow-Chart</a>.
+These are selectable filter options marked by the group <code>urltemplate</code> containing a single field. When a result entry is selected, all active filter options of that category (or the global category <code>&quot;&quot;</code>) that contain a <code>urltemplate</code> are looked up. The first url template will be used to navigate to
+the selected target.</p>
+<p>URL templates may contain variables in double curly brackets, that are replaced
+by the fields (details, summaries) of the selected result.</p>
+<p>The following data structure leads to the pre selected default target <code>&quot;Account Overview&quot;</code>,
+as well as to the selectable options <code>&quot;Credit Interests&quot;</code> and <code>&quot;Debit Interests&quot;</code>. All of them
+define a url template that contains the account number of the summaries as variable. The selected and best suited url template will be used to navigate to the target, when a <a href="#Data-for-results-and-details">result entry</a> is selected.</p>
+<pre class="prettyprint source lang-yaml"><code>category: &quot;account&quot;
+abbreviation: &quot;&#x261c;&quot;
+default: 
+  - displayName: &quot;Target&quot;
+    fieldName: &quot;name&quot;
+    value: &quot;Account Overview&quot;
+    urltemplate:
+      - displayName: &quot;Urltemplate&quot;
+        fieldName: &quot;urltemplate&quot;
+        value: &quot;http://127.0.0.1:5500/example/index.html#overview-{{summaries.accountnumber}}&quot;
+options:
+  - displayName: &quot;Target&quot;
+    fieldName: &quot;name&quot;
+    value: &quot;Credit Interests&quot;
+    urltemplate:
+      - displayName: &quot;&quot;
+        fieldName: &quot;&quot;
+        value: &quot;http://127.0.0.1:5500/example/index.html#creditinterest-{{summaries.accountnumber}}&quot;
+  - displayName: &quot;Target&quot;
+    fieldName: &quot;name&quot;
+    value: &quot;Debit Interests&quot;
+    urltemplate:
+      - displayName: &quot;&quot;
+        fieldName: &quot;&quot;
+        value: &quot;http://127.0.0.1:5500/example/index.html#debitinterest-{{summaries.accountnumber}}&quot;
+
+</code></pre>
+<h2>Credits</h2>
+<p>Although this project doesn't use any runtime dependencies, it is created using these great tools:</p>
+<ul>
+<li><a href="https://eslint.org">ESLint</a> - <a href="https://github.com/eslint/eslint/blob/master/LICENSE">MIT License</a></li>
+<li><a href="https://www.npmjs.com/package/istanbul-badges-readme">istanbul-badges-readme</a> - <a href="https://github.com/olavoparno/istanbul-badges-readme/blob/develop/LICENSE">MIT License</a></li>
+<li><a href="https://jasmine.github.io">Jasmine</a> - <a href="https://github.com/jasmine/jasmine/blob/main/MIT.LICENSE">MIT License</a></li>
+<li><a href="https://jsdoc.app">JSDoc</a> - <a href="https://github.com/jsdoc/jsdoc/blob/master/LICENSE">Apache Licence 2.0</a></li>
+<li><a href="https://github.com/jsdom/jsdom">JSDom</a> - <a href="https://github.com/jsdom/jsdom/blob/master/LICENSE.txt">MIT License</a></li>
+<li><a href="https://github.com/joao-neves95/merger-js">merger-js</a> - <a href="https://github.com/joao-neves95/merger-js/blob/master/LICENSE.md">GNU General Public License v3.0</a></li>
+<li><a href="https://istanbul.js.org">NYC aka Istanbul</a> - <a href="https://github.com/istanbuljs/nyc/blob/master/LICENSE.txt">ISC License</a></li>
+<li><a href="https://parceljs.org">PARCEL</a> - <a href="https://github.com/parcel-bundler/parcel/blob/v2/LICENSE">MIT License</a></li>
+<li><a href="https://mermaid-js.github.io/mermaid/#/">mermaid Javascript based diagramming and charting tool</a> - <a href="https://github.com/mermaid-js/mermaid/blob/develop/LICENSE">MIT License</a></li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>search-menu-ui.js</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Search UI written in vanilla JavaScript. Menu structure for results. Filters are integrated as search results.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li><a href="https://github.com/JohT/search-menu-ui/releases/latest">latest version</a></li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>JohT</li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="search-menu-ui.js.html">search-menu-ui.js</a>, <a href="search-menu-ui.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>search-service-client.js</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Provides the (http) client/connection to the search backend service.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>${project.version}</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>JohT</li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="search-service-client.js.html">search-service-client.js</a>, <a href="search-service-client.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-searchmenu.html">searchmenu</a></li><li><a href="module-searchMenuServiceClient.html">searchMenuServiceClient</a></li></ul><h3>Classes</h3><ul><li><a href="module-searchmenu.SearchMenuAPI.html">SearchMenuAPI</a></li><li><a href="module-searchmenu.SearchMenuUI.html">SearchMenuUI</a></li><li><a href="module-searchmenu.SearchViewDescriptionBuilder.html">SearchViewDescriptionBuilder</a></li><li><a href="module-searchMenuServiceClient.HttpClient.html">HttpClient</a></li><li><a href="module-searchMenuServiceClient.HttpSearchConfig.html">HttpSearchConfig</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Fri May 21 2021 07:30:37 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

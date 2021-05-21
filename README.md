@@ -1,10 +1,9 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![Language](https://img.shields.io/github/languages/top/JohT/search-menu-ui)
-![Branches](https://img.shields.io/badge/Coverage-81.67%25-yellow.svg)
+![Branches](https://img.shields.io/badge/Coverage-80.41%25-yellow.svg)
 ![![npm](./src/npm.svg)](https://aleen42.github.io/badges/src/npm.svg)
 ![![jasmine](./src/jasmine.svg)](https://aleen42.github.io/badges/src/jasmine.svg)
 ![![eslint](./src/eslint.svg)](https://aleen42.github.io/badges/src/eslint.svg)
-![JSDoc](https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/jsdoc)
 ![JSDoc](https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/jsdoc)
 ![nyc](https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/nyc)
 ![parcel-bundler](https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/parcel-bundler)
@@ -12,25 +11,28 @@
 # search-menu-ui
 
 "All in one place" search UI providing "search as you type" written in vanilla JavaScript.
-## Features:
-* **"Data-Driven, Data-Agnostic"** approach:   
+## Approaches
+
+### Data-Driven & Data-Agnostic
   * Search data is the source of all contents configured once using templates
-  * Search data may also be used to set additional css style classes
   * Search data determines which filters and thus which filter parameters are available
   * Search data determines which target url to open, when a result is selected
-* **"Everything Is Searchable"** approach:
-  * Filters are search results.
-  * Navigation targets are search results.
-* **"Set And Forget"** approach:
-  * After initial configuration mostly anything else depends on the search response. 
+  * Search data may also be used to set additional css style classes
+### Everything is searchable
+  * Filters are search results and thus searchable
+  * Navigation targets are search results and thus searchable
+### Set and forget
+  * After initial configuration mostly anything else depends on the search response
   * New fields, new categories, new filters and new navigation targets shouldn't entail
-  any changes in most cases.
+  any changes in most cases
+  * Embrace changes by not depending on them at all
+## Features:
 * Full keyboard support
 * Flexible and configurable 
 * Supports most browsers including IE 5
-* Can be used without further dependencies
-* Integrates perfectly with [data-restructor-js](https://github.com/JohT/data-restructor-js) for data conversion and template resolving
-* Integrates perfectly with [elasticsearch](https://www.elastic.co/de/elasticsearch/)
+* Can be used without any runtime dependencies
+* Integrates perfectly with [data-restructor-js](https://github.com/JohT/data-restructor-js) for data conversion and template resolving as a single runtime dependency
+* Built with [elasticsearch](https://www.elastic.co/de/elasticsearch/) in mind
 
 ### Not intended to be used when
 * a type-safe, non data-agnostic and non-generic strategy is key
@@ -42,19 +44,23 @@
 * specialized filters for date and time
 * paging
 * configuration in html
+* TODO comments inside the code contain further ideas.  
+They start with "should" (higher priority) and "could" (lower priority) and might become fully described issues.
 
 ## Getting started
 
-## Structure
+The best way to get started is by having a look at the fully working [example](example/README.md).
+
+## UI structure
 
 The following screenshots were taken from the example, that is included in this repository. 
 Since the search menu UI only takes element IDs, it can be attached in many ways.
 Furthermore, anything can be styled using CSS. The screenshots below are therefore
 only one of many possible ways on how the search might look like. At least they explain the base structure and parts of it visually.
 
-### Results and Details
+### Results and details
 
-![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/screenshots/ScreenshotExampleDetails.png?raw=true)
+![Screenshot Details](screenshots/ScreenshotExampleDetails.png?raw=true)
 
 **&#x2460;** shows search results. In this example the text of each entry consists of a symbol followed by the name and a second line with the business type and the account number. 
 This is configured using a template that contains all these parts as variables.
@@ -64,9 +70,9 @@ This is configured using a template that contains all these parts as variables.
 When one of the results is selected using the enter key or a mouse click, the url template of the currently selected navigation target is resolved by the fields of the selected result and then
 opened. This enables highly flexible and context and data dependent navigation.
 
-### Filter-Options
+### Filter options
 
-![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/screenshots/ScreenshotExampleFilterOptions.png?raw=true)
+![Screenshot Details](screenshots/ScreenshotExampleFilterOptions.png?raw=true)
 
 **&#x2460;** shows filter results. These are searched and treated like "normal" search results.
 They are configured with a separate template. In this example, only a symbol and the selected filter value are displayed.
@@ -74,9 +80,9 @@ They are configured with a separate template. In this example, only a symbol and
 **&#x2461;** shows the filter options. In contrast to the details of "normal" search results, 
 the filter options can be selected as described below.
 
-### Selected Filter
+### Selected filter
 
-![Screenshot Details](https://github.com/JohT/search-menu-ui/blob/master/screenshots/ScreenshotExampleSelectedFilter.png?raw=true)
+![Screenshot Details](screenshots/ScreenshotExampleSelectedFilter.png?raw=true)
 
 **&#x2460;** shows previously selected filters that are provided as search parameters. 
 They can be included as variables in the search service url or the search request body template.
@@ -114,9 +120,185 @@ The HTML of the example, that is included in this repository, is essentially thi
 These are the default IDs in the default structure, that doesn't need additional configuration.
 A detailed description of everything that can be configured can be found in the [SearchMenuAPI JSDoc](https://joht.github.io/search-menu-ui/docs/module-searchmenu.SearchMenuAPI.html). 
 
-
-### Flow Chart
+## Flow Chart
 
 This flow chart visualizes what happens, when search text is entered:
 
-![Search Flow-Chart](https://github.com/JohT/search-menu-ui/blob/master/diagrams/searchflowchart-2.png?raw=true)
+![Search Flow-Chart](diagrams/searchflowchart-2.png?raw=true)
+
+## Data structure
+
+The data structure consists basically of an array of "described fields" borrowed from [data-restructor-js](https://joht.github.io/data-restructor-js) in detail documented in the [DescribedDataField JSDoc](https://joht.github.io/data-restructor-js/module-described_field.html#.DescribedDataField). This is why [data-restructor-js](https://joht.github.io/data-restructor-js)  perfectly integrates as data converter for the search menu.
+
+### Described Field Object
+
+In contrast to the [DescribedDataField](https://joht.github.io/data-restructor-js/module-described_field.html#.DescribedDataField) of [data-restructor-js](https://joht.github.io/data-restructor-js) only a subset of these fields are used by the search menu. The tables 
+below describe, which fields are important and what they are used for.
+#### Mandatory properties
+
+Every "described field" needs to contain the following fields:
+
+| Field        | Example           | Description                                                  |
+| ------------ |:----------------- | ------------------------------------------------------------ |
+| displayName  | "`Accountnumber`" | Display field name. Used in most view templates.             |
+| fieldName    | "`accountnumber`" | Technical field name. Needed to recognize selected fields.   |
+| value        | "`12345678902`"   | Value of the field. Used in most of the view templates.      |
+<br/>
+
+#### Special properties
+
+The `category` is a special field that is only necessary for multi category searches that should provide different navigation targets to react differently on selected results according to their category.
+
+| Field        | Example           | Description                                                     |
+| ------------ |:----------------- | --------------------------------------------------------------- |
+| category     | "`account`"       | For multi category search results and their navigation targets. |
+<br/>
+
+#### Optional properties
+
+Every "described field" may additionally contain these optional fields (amongst others),
+that can be used as template variables if present. 
+
+| Field        | Example           | Description                                                     |
+| ------------ |:----------------- | --------------------------------------------------------------- |
+| type         | "`summary`"       | Mainly used for grouping within data convertion.                |
+| abbreviation | "`&#x1F4B6;`"     | Optional (symbol) character or a short abbreviation.            |
+| image        | ""                | Optional path to an image resource.                             |
+| index        | `[0, 0]`          | Array of numbers containing source data position.               |
+| groupNames   | `["summaries"]`   | Array of property names that contain arrays of group fields.    |
+
+   
+### Groups
+
+Every "described field" may contain groups. Each group contains another array of described fields. 
+These groups have a special meaning for the search menu ui.
+
+| Group        | Description                                                                              |
+| ------------ | ---------------------------------------------------------------------------------------- |
+| summaries    | Contains the fields (template variables) for the result/filter entry itself.             |
+| details      | Contains the fields with (not selectable) details for each search result.                |
+| options      | Contains the selectable filter options that are used as search parameters.               |
+| urltemplate  | Contains a single urltemplate field as navigation target. Belongs to a filter option.    |
+| default      | Contains a single filter option that is selected by default. Belongs to a filter option. |
+
+### Data for results and details 
+
+The [Results and Details](#Results-and-Details) UI is a consequence of the following data structure stripped down to the first result and its most essential parts.
+```yaml
+category: "account"
+abbreviation: "&#x1F4B6;"
+summaries: 
+  - category: "account" # Optional. Used for multi category search navigation targets.
+    abbreviation: "&#x1F4B6;" # Optional. Contains the money icon in the example.
+    displayName: "Accountnumber"
+    fieldName: "accountnumber"
+    value: "12345678901"
+  - displayName: "Disposer",
+    fieldName: "disposer",
+    value: "Howard Joel Wolowitz"
+  - displayName: "Businesstype"
+    fieldName: "businesstype"
+    value: "Giro"
+details:
+  - displayName: "Iban"
+    fieldName: "iban"
+    value: "AT424321012345678902"
+  - displayName: "Accountnumber"
+    fieldName: "accountnumber"
+    value: "12345678902"
+  # ...
+```
+
+### Data for filter options
+
+The [Filter-Options](#Filter-Options) UI is a consequence of the following data structure stripped down to the first filter `product` and its most essential parts.
+
+```yaml
+category: "account"
+abbreviation: "&#128206;"
+options:
+  - displayName: "Product"
+    fieldName": "product"
+    value": "private loan"
+  - displayName: "Product"
+    fieldName: "product"
+    value: "salary"
+  - displayName: "Product"
+    fieldName: "product"
+    value": "commercial giro"
+  - displayName: "Product"
+    fieldName: "product"
+    value: "private giro"
+  - displayName: "Product"
+    fieldName: "product"
+    value: "trust"
+```
+
+### Data for default filter options
+
+A filter option, that should be selected by default as shown in the [Selected Filter](#Selected-Filter) UI, is contained as a single field in the `default` group. The following data structure for example leads to an pre selected product filter for private loans.
+
+```yaml
+category: "account"
+abbreviation: "&#128206;"
+options:
+  - displayName: "Product"
+    fieldName": "product"
+    value": "private loan"
+```
+
+### Data for navigation targets
+
+A special case of search filters are the navigation targets, as depicted in the [Flow-Chart](#Flow-Chart).
+These are selectable filter options marked by the group `urltemplate` containing a single field. When a result entry is selected, all active filter options of that category (or the global category `""`) that contain a `urltemplate` are looked up. The first url template will be used to navigate to 
+the selected target.
+
+URL templates may contain variables in double curly brackets, that are replaced
+by the fields (details, summaries) of the selected result. 
+
+The following data structure leads to the pre selected default target `"Account Overview"`,
+as well as to the selectable options `"Credit Interests"` and `"Debit Interests"`. All of them
+define a url template that contains the account number of the summaries as variable. The selected and best suited url template will be used to navigate to the target, when a [result entry](#Data-for-results-and-details) is selected.
+
+```yaml
+category: "account"
+abbreviation: "&#x261c;"
+default: 
+  - displayName: "Target"
+    fieldName: "name"
+    value: "Account Overview"
+    urltemplate:
+      - displayName: "Urltemplate"
+        fieldName: "urltemplate"
+        value: "http://127.0.0.1:5500/example/index.html#overview-{{summaries.accountnumber}}"
+options:
+  - displayName: "Target"
+    fieldName: "name"
+    value: "Credit Interests"
+    urltemplate:
+      - displayName: ""
+        fieldName: ""
+        value: "http://127.0.0.1:5500/example/index.html#creditinterest-{{summaries.accountnumber}}"
+  - displayName: "Target"
+    fieldName: "name"
+    value: "Debit Interests"
+    urltemplate:
+      - displayName: ""
+        fieldName: ""
+        value: "http://127.0.0.1:5500/example/index.html#debitinterest-{{summaries.accountnumber}}"
+
+```
+
+## Credits
+
+Although this project doesn't use any runtime dependencies, it is created using these great tools:
+
+* [ESLint](https://eslint.org) - [MIT License](https://github.com/eslint/eslint/blob/master/LICENSE)
+* [istanbul-badges-readme](https://www.npmjs.com/package/istanbul-badges-readme) - [MIT License](https://github.com/olavoparno/istanbul-badges-readme/blob/develop/LICENSE)
+* [Jasmine](https://jasmine.github.io) - [MIT License](https://github.com/jasmine/jasmine/blob/main/MIT.LICENSE)
+* [JSDoc](https://jsdoc.app) - [Apache Licence 2.0](https://github.com/jsdoc/jsdoc/blob/master/LICENSE)
+* [JSDom](https://github.com/jsdom/jsdom) - [MIT License](https://github.com/jsdom/jsdom/blob/master/LICENSE.txt)
+* [merger-js](https://github.com/joao-neves95/merger-js) - [GNU General Public License v3.0](https://github.com/joao-neves95/merger-js/blob/master/LICENSE.md)
+* [NYC aka Istanbul](https://istanbul.js.org) - [ISC License](https://github.com/istanbuljs/nyc/blob/master/LICENSE.txt)
+* [PARCEL](https://parceljs.org) - [MIT License](https://github.com/parcel-bundler/parcel/blob/v2/LICENSE)
+* [mermaid Javascript based diagramming and charting tool](https://mermaid-js.github.io/mermaid/#/) - [MIT License](https://github.com/mermaid-js/mermaid/blob/develop/LICENSE)

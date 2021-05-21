@@ -1,0 +1,2507 @@
+[
+    {
+        "category": "account",
+        "type": "filter",
+        "abbreviation": "&#128206;",
+        "image": "",
+        "index": [
+            1,
+            0
+        ],
+        "groupNames": [
+            "options"
+        ],
+        "displayName": "Product",
+        "fieldName": "product",
+        "value": "private loan",
+        "options": [
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    0
+                ],
+                "groupNames": [
+                    "options"
+                ],
+                "displayName": "Product",
+                "fieldName": "product",
+                "value": "private loan",
+                "options": [
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Product",
+                        "fieldName": "product",
+                        "value": "salary"
+                    },
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            2
+                        ],
+                        "groupNames": [],
+                        "displayName": "Product",
+                        "fieldName": "product",
+                        "value": "commercial giro"
+                    },
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            3
+                        ],
+                        "groupNames": [],
+                        "displayName": "Product",
+                        "fieldName": "product",
+                        "value": "housing loan"
+                    },
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            4
+                        ],
+                        "groupNames": [],
+                        "displayName": "Product",
+                        "fieldName": "product",
+                        "value": "private giro"
+                    },
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            5
+                        ],
+                        "groupNames": [],
+                        "displayName": "Product",
+                        "fieldName": "product",
+                        "value": "trust"
+                    }
+                ]
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    1
+                ],
+                "groupNames": [],
+                "displayName": "Product",
+                "fieldName": "product",
+                "value": "salary"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    2
+                ],
+                "groupNames": [],
+                "displayName": "Product",
+                "fieldName": "product",
+                "value": "commercial giro"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    3
+                ],
+                "groupNames": [],
+                "displayName": "Product",
+                "fieldName": "product",
+                "value": "housing loan"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    4
+                ],
+                "groupNames": [],
+                "displayName": "Product",
+                "fieldName": "product",
+                "value": "private giro"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    5
+                ],
+                "groupNames": [],
+                "displayName": "Product",
+                "fieldName": "product",
+                "value": "trust"
+            }
+        ]
+    },
+    {
+        "category": "account",
+        "type": "filter",
+        "abbreviation": "&#128206;",
+        "image": "",
+        "index": [
+            1,
+            0
+        ],
+        "groupNames": [
+            "options"
+        ],
+        "displayName": "Currency",
+        "fieldName": "currency",
+        "value": "eur",
+        "options": [
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    0
+                ],
+                "groupNames": [
+                    "options"
+                ],
+                "displayName": "Currency",
+                "fieldName": "currency",
+                "value": "eur",
+                "options": [
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Currency",
+                        "fieldName": "currency",
+                        "value": "chf"
+                    }
+                ]
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    1
+                ],
+                "groupNames": [],
+                "displayName": "Currency",
+                "fieldName": "currency",
+                "value": "chf"
+            }
+        ]
+    },
+    {
+        "category": "account",
+        "type": "filter",
+        "abbreviation": "&#128206;",
+        "image": "",
+        "index": [
+            1,
+            0
+        ],
+        "groupNames": [
+            "options"
+        ],
+        "displayName": "Accountmanager",
+        "fieldName": "accountmanager",
+        "value": "clara claton",
+        "options": [
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    0
+                ],
+                "groupNames": [
+                    "options"
+                ],
+                "displayName": "Accountmanager",
+                "fieldName": "accountmanager",
+                "value": "clara claton",
+                "options": [
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Accountmanager",
+                        "fieldName": "accountmanager",
+                        "value": "sarah connor"
+                    },
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            2
+                        ],
+                        "groupNames": [],
+                        "displayName": "Accountmanager",
+                        "fieldName": "accountmanager",
+                        "value": "john mcclane"
+                    }
+                ]
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    1
+                ],
+                "groupNames": [],
+                "displayName": "Accountmanager",
+                "fieldName": "accountmanager",
+                "value": "sarah connor"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    2
+                ],
+                "groupNames": [],
+                "displayName": "Accountmanager",
+                "fieldName": "accountmanager",
+                "value": "john mcclane"
+            }
+        ]
+    },
+    {
+        "category": "account",
+        "type": "filter",
+        "abbreviation": "&#128206;",
+        "image": "",
+        "index": [
+            1,
+            0
+        ],
+        "groupNames": [
+            "options"
+        ],
+        "displayName": "Businesstype",
+        "fieldName": "businesstype",
+        "value": "giro",
+        "options": [
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    0
+                ],
+                "groupNames": [
+                    "options"
+                ],
+                "displayName": "Businesstype",
+                "fieldName": "businesstype",
+                "value": "giro",
+                "options": [
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Businesstype",
+                        "fieldName": "businesstype",
+                        "value": "loan"
+                    }
+                ]
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    1
+                ],
+                "groupNames": [],
+                "displayName": "Businesstype",
+                "fieldName": "businesstype",
+                "value": "loan"
+            }
+        ]
+    },
+    {
+        "category": "account",
+        "type": "filter",
+        "abbreviation": "&#128206;",
+        "image": "",
+        "index": [
+            1,
+            0
+        ],
+        "groupNames": [
+            "options"
+        ],
+        "displayName": "Tags",
+        "fieldName": "tags",
+        "value": "active",
+        "options": [
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    0
+                ],
+                "groupNames": [
+                    "options"
+                ],
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "active",
+                "options": [
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Tags",
+                        "fieldName": "tags",
+                        "value": "online"
+                    },
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            2
+                        ],
+                        "groupNames": [],
+                        "displayName": "Tags",
+                        "fieldName": "tags",
+                        "value": "short-term"
+                    },
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            3
+                        ],
+                        "groupNames": [],
+                        "displayName": "Tags",
+                        "fieldName": "tags",
+                        "value": "bullet bond"
+                    },
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            4
+                        ],
+                        "groupNames": [],
+                        "displayName": "Tags",
+                        "fieldName": "tags",
+                        "value": "deleted"
+                    },
+                    {
+                        "category": "account",
+                        "type": "filter",
+                        "abbreviation": "&#128206;",
+                        "image": "",
+                        "index": [
+                            1,
+                            5
+                        ],
+                        "groupNames": [],
+                        "displayName": "Tags",
+                        "fieldName": "tags",
+                        "value": "long-term"
+                    }
+                ]
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    1
+                ],
+                "groupNames": [],
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "online"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    2
+                ],
+                "groupNames": [],
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "short-term"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    3
+                ],
+                "groupNames": [],
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "bullet bond"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    4
+                ],
+                "groupNames": [],
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "deleted"
+            },
+            {
+                "category": "account",
+                "type": "filter",
+                "abbreviation": "&#128206;",
+                "image": "",
+                "index": [
+                    1,
+                    5
+                ],
+                "groupNames": [],
+                "displayName": "Tags",
+                "fieldName": "tags",
+                "value": "long-term"
+            }
+        ]
+    },
+    {
+        "category": "account",
+        "type": "main",
+        "abbreviation": "&#x261c;",
+        "image": "",
+        "index": [
+            2,
+            0
+        ],
+        "groupNames": [
+            "default",
+            "urltemplate",
+            "options"
+        ],
+        "displayName": "Target",
+        "fieldName": "name",
+        "value": "Account Overview",
+        "default": [
+            {
+                "category": "account",
+                "type": "main",
+                "abbreviation": "&#x261c;",
+                "image": "",
+                "index": [
+                    2,
+                    0
+                ],
+                "groupNames": [
+                    "urltemplate",
+                    "options"
+                ],
+                "displayName": "Target",
+                "fieldName": "name",
+                "value": "Account Overview",
+                "urltemplate": [
+                    {
+                        "category": "account",
+                        "type": "url",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            2,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Urltemplate",
+                        "fieldName": "urltemplate",
+                        "value": "http://127.0.0.1:5500/example/index.html#overview-{{summaries.accountnumber}}"
+                    }
+                ],
+                "options": [
+                    {
+                        "category": "account",
+                        "type": "summary",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0
+                        ],
+                        "groupNames": [
+                            "details",
+                            "urltemplate"
+                        ],
+                        "displayName": "Target",
+                        "fieldName": "name",
+                        "value": "Credit Interests",
+                        "details": [
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Tenantnumber",
+                                "fieldName": "tenantnumber",
+                                "value": "999"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Domain",
+                                "fieldName": "domain",
+                                "value": "Account"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Businesstype",
+                                "fieldName": "businesstype",
+                                "value": "Giro"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Name",
+                                "fieldName": "name",
+                                "value": "Credit Interests"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "creditinterest"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "bonusinterest"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames_comma_separated_values",
+                                "value": "creditinterest, bonusinterest"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "crin"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "boin"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields_comma_separated_values",
+                                "value": "crin, boin"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Urltemplate",
+                                "fieldName": "urltemplate",
+                                "value": "http://127.0.0.1:5500/example/index.html#creditinterest-{{summaries.accountnumber}}"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Creationdate",
+                                "fieldName": "creationdate",
+                                "value": "2020-10-30"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Updatetime",
+                                "fieldName": "updatetime",
+                                "value": "2021-04-30T09:06:30Z"
+                            }
+                        ],
+                        "urltemplate": [
+                            {
+                                "category": "account",
+                                "type": "url",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "",
+                                "fieldName": "",
+                                "value": "http://127.0.0.1:5500/example/index.html#creditinterest-{{summaries.accountnumber}}"
+                            }
+                        ]
+                    },
+                    {
+                        "category": "account",
+                        "type": "summary",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1
+                        ],
+                        "groupNames": [
+                            "details",
+                            "urltemplate"
+                        ],
+                        "displayName": "Target",
+                        "fieldName": "name",
+                        "value": "Debit Interests",
+                        "details": [
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Tenantnumber",
+                                "fieldName": "tenantnumber",
+                                "value": "999"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Domain",
+                                "fieldName": "domain",
+                                "value": "Account"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Businesstype",
+                                "fieldName": "businesstype",
+                                "value": "Giro"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Name",
+                                "fieldName": "name",
+                                "value": "Debit Interests"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "debitinterest"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "debit interest margin"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames_comma_separated_values",
+                                "value": "debitinterest, debit interest margin"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "dein"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "deim"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields_comma_separated_values",
+                                "value": "dein, deim"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Urltemplate",
+                                "fieldName": "urltemplate",
+                                "value": "http://127.0.0.1:5500/example/index.html#debitinterest-{{summaries.accountnumber}}"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Creationdate",
+                                "fieldName": "creationdate",
+                                "value": "2020-11-07"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Updatetime",
+                                "fieldName": "updatetime",
+                                "value": "2021-04-07T09:06:30Z"
+                            }
+                        ],
+                        "urltemplate": [
+                            {
+                                "category": "account",
+                                "type": "url",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "",
+                                "fieldName": "",
+                                "value": "http://127.0.0.1:5500/example/index.html#debitinterest-{{summaries.accountnumber}}"
+                            }
+                        ]
+                    },
+                    {
+                        "category": "account",
+                        "type": "summary",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2
+                        ],
+                        "groupNames": [
+                            "details",
+                            "urltemplate"
+                        ],
+                        "displayName": "Target",
+                        "fieldName": "name",
+                        "value": "Customer Overview",
+                        "details": [
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Tenantnumber",
+                                "fieldName": "tenantnumber",
+                                "value": "999"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Domain",
+                                "fieldName": "domain",
+                                "value": "Kunde"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Name",
+                                "fieldName": "name",
+                                "value": "Customer Overview"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "iban"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "product"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "description"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames_comma_separated_values",
+                                "value": "iban, product, description"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "iban"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "prod"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "desc"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields_comma_separated_values",
+                                "value": "iban, prod, desc"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Urltemplate",
+                                "fieldName": "urltemplate",
+                                "value": "http://127.0.0.1:5500/example/index.html#overview-customer-{{details.kundennummer}}"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Creationdate",
+                                "fieldName": "creationdate",
+                                "value": "2021-03-31"
+                            }
+                        ],
+                        "urltemplate": [
+                            {
+                                "category": "account",
+                                "type": "url",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "",
+                                "fieldName": "",
+                                "value": "http://127.0.0.1:5500/example/index.html#overview-customer-{{details.kundennummer}}"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "urltemplate": [
+            {
+                "category": "account",
+                "type": "url",
+                "abbreviation": "",
+                "image": "",
+                "index": [
+                    2,
+                    0
+                ],
+                "groupNames": [],
+                "displayName": "Urltemplate",
+                "fieldName": "urltemplate",
+                "value": "http://127.0.0.1:5500/example/index.html#overview-{{summaries.accountnumber}}"
+            }
+        ],
+        "options": [
+            {
+                "category": "account",
+                "type": "summary",
+                "abbreviation": "",
+                "image": "",
+                "index": [
+                    3,
+                    0
+                ],
+                "groupNames": [
+                    "details",
+                    "urltemplate"
+                ],
+                "displayName": "Target",
+                "fieldName": "name",
+                "value": "Credit Interests",
+                "details": [
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0
+                        ],
+                        "groupNames": [
+                            "details"
+                        ],
+                        "displayName": "Tenantnumber",
+                        "fieldName": "tenantnumber",
+                        "value": "999",
+                        "details": [
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Domain",
+                                "fieldName": "domain",
+                                "value": "Account"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Businesstype",
+                                "fieldName": "businesstype",
+                                "value": "Giro"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Name",
+                                "fieldName": "name",
+                                "value": "Credit Interests"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "creditinterest"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "bonusinterest"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames_comma_separated_values",
+                                "value": "creditinterest, bonusinterest"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "crin"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "boin"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields_comma_separated_values",
+                                "value": "crin, boin"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Urltemplate",
+                                "fieldName": "urltemplate",
+                                "value": "http://127.0.0.1:5500/example/index.html#creditinterest-{{summaries.accountnumber}}"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Creationdate",
+                                "fieldName": "creationdate",
+                                "value": "2020-10-30"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Updatetime",
+                                "fieldName": "updatetime",
+                                "value": "2021-04-30T09:06:30Z"
+                            }
+                        ]
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Domain",
+                        "fieldName": "domain",
+                        "value": "Account"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Businesstype",
+                        "fieldName": "businesstype",
+                        "value": "Giro"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Name",
+                        "fieldName": "name",
+                        "value": "Credit Interests"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fieldnames",
+                        "fieldName": "fieldnames",
+                        "value": "creditinterest"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fieldnames",
+                        "fieldName": "fieldnames",
+                        "value": "bonusinterest"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fieldnames",
+                        "fieldName": "fieldnames_comma_separated_values",
+                        "value": "creditinterest, bonusinterest"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fields",
+                        "fieldName": "fields",
+                        "value": "crin"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fields",
+                        "fieldName": "fields",
+                        "value": "boin"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fields",
+                        "fieldName": "fields_comma_separated_values",
+                        "value": "crin, boin"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Urltemplate",
+                        "fieldName": "urltemplate",
+                        "value": "http://127.0.0.1:5500/example/index.html#creditinterest-{{summaries.accountnumber}}"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Creationdate",
+                        "fieldName": "creationdate",
+                        "value": "2020-10-30"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Updatetime",
+                        "fieldName": "updatetime",
+                        "value": "2021-04-30T09:06:30Z"
+                    }
+                ],
+                "urltemplate": [
+                    {
+                        "category": "account",
+                        "type": "url",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "",
+                        "fieldName": "",
+                        "value": "http://127.0.0.1:5500/example/index.html#creditinterest-{{summaries.accountnumber}}"
+                    }
+                ]
+            },
+            {
+                "category": "account",
+                "type": "summary",
+                "abbreviation": "",
+                "image": "",
+                "index": [
+                    3,
+                    1
+                ],
+                "groupNames": [
+                    "details",
+                    "urltemplate"
+                ],
+                "displayName": "Target",
+                "fieldName": "name",
+                "value": "Debit Interests",
+                "details": [
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1
+                        ],
+                        "groupNames": [
+                            "details"
+                        ],
+                        "displayName": "Tenantnumber",
+                        "fieldName": "tenantnumber",
+                        "value": "999",
+                        "details": [
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Domain",
+                                "fieldName": "domain",
+                                "value": "Account"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Businesstype",
+                                "fieldName": "businesstype",
+                                "value": "Giro"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Name",
+                                "fieldName": "name",
+                                "value": "Debit Interests"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "debitinterest"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "debit interest margin"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames_comma_separated_values",
+                                "value": "debitinterest, debit interest margin"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "dein"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "deim"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields_comma_separated_values",
+                                "value": "dein, deim"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Urltemplate",
+                                "fieldName": "urltemplate",
+                                "value": "http://127.0.0.1:5500/example/index.html#debitinterest-{{summaries.accountnumber}}"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Creationdate",
+                                "fieldName": "creationdate",
+                                "value": "2020-11-07"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Updatetime",
+                                "fieldName": "updatetime",
+                                "value": "2021-04-07T09:06:30Z"
+                            }
+                        ]
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Domain",
+                        "fieldName": "domain",
+                        "value": "Account"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Businesstype",
+                        "fieldName": "businesstype",
+                        "value": "Giro"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Name",
+                        "fieldName": "name",
+                        "value": "Debit Interests"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fieldnames",
+                        "fieldName": "fieldnames",
+                        "value": "debitinterest"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fieldnames",
+                        "fieldName": "fieldnames",
+                        "value": "debit interest margin"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fieldnames",
+                        "fieldName": "fieldnames_comma_separated_values",
+                        "value": "debitinterest, debit interest margin"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fields",
+                        "fieldName": "fields",
+                        "value": "dein"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fields",
+                        "fieldName": "fields",
+                        "value": "deim"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fields",
+                        "fieldName": "fields_comma_separated_values",
+                        "value": "dein, deim"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Urltemplate",
+                        "fieldName": "urltemplate",
+                        "value": "http://127.0.0.1:5500/example/index.html#debitinterest-{{summaries.accountnumber}}"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Creationdate",
+                        "fieldName": "creationdate",
+                        "value": "2020-11-07"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Updatetime",
+                        "fieldName": "updatetime",
+                        "value": "2021-04-07T09:06:30Z"
+                    }
+                ],
+                "urltemplate": [
+                    {
+                        "category": "account",
+                        "type": "url",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "",
+                        "fieldName": "",
+                        "value": "http://127.0.0.1:5500/example/index.html#debitinterest-{{summaries.accountnumber}}"
+                    }
+                ]
+            },
+            {
+                "category": "account",
+                "type": "summary",
+                "abbreviation": "",
+                "image": "",
+                "index": [
+                    3,
+                    2
+                ],
+                "groupNames": [
+                    "details",
+                    "urltemplate"
+                ],
+                "displayName": "Target",
+                "fieldName": "name",
+                "value": "Customer Overview",
+                "details": [
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2
+                        ],
+                        "groupNames": [
+                            "details"
+                        ],
+                        "displayName": "Tenantnumber",
+                        "fieldName": "tenantnumber",
+                        "value": "999",
+                        "details": [
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Domain",
+                                "fieldName": "domain",
+                                "value": "Kunde"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Name",
+                                "fieldName": "name",
+                                "value": "Customer Overview"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "iban"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "product"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames",
+                                "value": "description"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fieldnames",
+                                "fieldName": "fieldnames_comma_separated_values",
+                                "value": "iban, product, description"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2,
+                                    0
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "iban"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2,
+                                    1
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "prod"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields",
+                                "value": "desc"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Fields",
+                                "fieldName": "fields_comma_separated_values",
+                                "value": "iban, prod, desc"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Urltemplate",
+                                "fieldName": "urltemplate",
+                                "value": "http://127.0.0.1:5500/example/index.html#overview-customer-{{details.kundennummer}}"
+                            },
+                            {
+                                "category": "account",
+                                "type": "details",
+                                "abbreviation": "",
+                                "image": "",
+                                "index": [
+                                    3,
+                                    2
+                                ],
+                                "groupNames": [],
+                                "displayName": "Creationdate",
+                                "fieldName": "creationdate",
+                                "value": "2021-03-31"
+                            }
+                        ]
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2
+                        ],
+                        "groupNames": [],
+                        "displayName": "Domain",
+                        "fieldName": "domain",
+                        "value": "Kunde"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2
+                        ],
+                        "groupNames": [],
+                        "displayName": "Name",
+                        "fieldName": "name",
+                        "value": "Customer Overview"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fieldnames",
+                        "fieldName": "fieldnames",
+                        "value": "iban"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fieldnames",
+                        "fieldName": "fieldnames",
+                        "value": "product"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2,
+                            2
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fieldnames",
+                        "fieldName": "fieldnames",
+                        "value": "description"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fieldnames",
+                        "fieldName": "fieldnames_comma_separated_values",
+                        "value": "iban, product, description"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2,
+                            0
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fields",
+                        "fieldName": "fields",
+                        "value": "iban"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2,
+                            1
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fields",
+                        "fieldName": "fields",
+                        "value": "prod"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2,
+                            2
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fields",
+                        "fieldName": "fields",
+                        "value": "desc"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2
+                        ],
+                        "groupNames": [],
+                        "displayName": "Fields",
+                        "fieldName": "fields_comma_separated_values",
+                        "value": "iban, prod, desc"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2
+                        ],
+                        "groupNames": [],
+                        "displayName": "Urltemplate",
+                        "fieldName": "urltemplate",
+                        "value": "http://127.0.0.1:5500/example/index.html#overview-customer-{{details.kundennummer}}"
+                    },
+                    {
+                        "category": "account",
+                        "type": "details",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2
+                        ],
+                        "groupNames": [],
+                        "displayName": "Creationdate",
+                        "fieldName": "creationdate",
+                        "value": "2021-03-31"
+                    }
+                ],
+                "urltemplate": [
+                    {
+                        "category": "account",
+                        "type": "url",
+                        "abbreviation": "",
+                        "image": "",
+                        "index": [
+                            3,
+                            2
+                        ],
+                        "groupNames": [],
+                        "displayName": "",
+                        "fieldName": "",
+                        "value": "http://127.0.0.1:5500/example/index.html#overview-customer-{{details.kundennummer}}"
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -17,7 +17,6 @@ function datarestructorInternalCreateIfNotExists(objectToCheck) {
  var searchmenu = module.exports={}; // Export module for npm...
  searchmenu.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
 
-//TODO should find a way to use ie compatible module
 var eventtarget = eventtarget || require("./ponyfills/eventCurrentTargetPonyfill"); // supports vanilla js & npm
 var selectionrange = selectionrange || require("./ponyfills/selectionRangePonyfill"); // supports vanilla js & npm
 var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfill"); // supports vanilla js & npm
@@ -98,7 +97,7 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
      * @returns {module:searchmenu.SearchViewDescriptionBuilder}
      */
     this.listEntryElementIdPrefix = function (value) {
-      //TODO Should be checked to not contain the index separation chars "--"
+      //TODO could be checked to not contain the index separation chars "--"
       this.description.listEntryElementIdPrefix = withDefault(value, "");
       return this;
     };
@@ -174,7 +173,7 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
   return SearchViewDescription;
 })();
 
-//TODO could a separate value object be defined and mapped to get some decoupling to data-reconstructor-js?
+//TODO could provide the currently only described SearchUiData as own data structure in its own module.
 /**
  * @typedef {Object} module:searchmenu.SearchUiData 
  * @property {String} [category=""] name of the category. Default = "". Could contain a short domain name. (e.g. "city")
@@ -186,6 +185,7 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
  * @property {module:searchmenu.SearchUiData[]} options contains filter options that can be selected as search parameters 
  * @property {module:searchmenu.SearchUiData[]} default array with one element representing the default filter option (selected automatically)
  * @property {module:searchmenu.SearchUiData[]} summaries fields that are used to display the main search entry/result
+ * @property {module:searchmenu.SearchUiData[]} urltemplate contains a single field with the value of the url template. Marks the entry as navigation target.
  */
 
 /**
@@ -250,7 +250,7 @@ searchmenu.SearchViewDescriptionBuilder = (function () {
 /**
  * @typedef {Object} module:searchmenu.SearchMenuConfig
  * @property {module:searchmenu.SearchService} triggerSearch triggers search (backend)
- * @property {module:searchmenu.DataConverter} convertData converts search result data to search ui data
+ * @property {module:searchmenu.DataConverter} convertData converts search result data to search ui data. Lets data through unchanged by default.
  * @property {module:searchmenu.searchParameterAdder} addPredefinedParametersTo adds custom search parameters 
  * @property {module:searchmenu.ElementCreatedListener} onCreatedElement this function will be called when a new HTML is created.
  * @property {module:searchmenu.NavigateToFunction} navigateTo this function will be called to navigate to a selected search result url.
@@ -277,8 +277,8 @@ searchmenu.SearchMenuAPI = (function () {
       triggerSearch: function (/* searchParameters, onSearchResultsAvailable */) {
         throw new Error("search service needs to be defined.");
       },
-      convertData: function (/* sourceData */) {
-        throw new Error("data converter needs to be defined.");
+      convertData: function (sourceData) {
+        return sourceData;
       },
       resolveTemplate: function (/* sourceData */) {
         throw new Error("template resolver needs to be defined.");
@@ -314,8 +314,10 @@ searchmenu.SearchMenuAPI = (function () {
       return this;
     };
     /**
-     * Defines the converter, that converts search result data to search ui data
-     * @param {module:searchmenu.DataConverter} converter function that will be called to trigger search (backend).
+     * Defines the converter, that converts search result data to search ui data.
+     * Without setting a data converter, data is taken directly from the backend service,
+     * that needs to provide the results in the search menu data structure.
+     * @param {module:searchmenu.DataConverter} converter function that will be called to create the search menu data structure
      * @returns module:searchmenu.SearchMenuAPI
      */
     this.dataConverter = function (converter) {
@@ -524,7 +526,7 @@ searchmenu.SearchMenuAPI = (function () {
       .viewElementId("searchresults")
       .listParentElementId("searchmatches")
       .listEntryElementIdPrefix("result")
-      .listEntryTextTemplate("{{abbreviation}} {{displayName}}") //TODO could display second line smaller
+      .listEntryTextTemplate("{{abbreviation}} {{displayName}}") 
       .listEntrySummaryTemplate(
         "{{summaries[0].abbreviation}} <b>{{summaries[1].value}}</b><br>{{summaries[2].value}}: {{summaries[0].value}}"
       )
@@ -547,7 +549,7 @@ searchmenu.SearchMenuAPI = (function () {
       .viewElementId("searchdetails")
       .listParentElementId("searchdetailentries")
       .listEntryElementIdPrefix("detail")
-      .listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}") //TODO could display value smaller
+      .listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}")
       .build();
   }
 
@@ -695,6 +697,7 @@ searchmenu.SearchMenuUI = (function () {
           clearTimeout(this.focusOutTimer);
         }
         //TODO should only show results if there are some
+        //TODO could add a "spinner" when search is running
         show(config.resultsView.viewElementId);
       }
     });
@@ -721,10 +724,11 @@ searchmenu.SearchMenuUI = (function () {
     var searchParameters = getSelectedOptions(config.filtersView.listParentElementId);
     searchParameters[config.searchTextParameterName] = searchText;
     config.addPredefinedParametersTo(searchParameters);
-    // TODO could provide optional build in search text highlighting
+    //TODO could provide optional build in search text highlighting
     config.triggerSearch(searchParameters, function (jsonResult) {
       displayResults(config.convertData(jsonResult), config);
     });
+    //TODO should provide some info if search fails (service temporary unavailable, ...)
   }
 
   function displayResults(jsonResults, config) {
@@ -749,7 +753,7 @@ searchmenu.SearchMenuUI = (function () {
         handleEventWithEntriesAndConfig(entry.details, config, selectSearchResultToDisplayDetails)
       );
       onMenuEntryChosen(resultElement, function () {
-        var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId, entry.category);
+        var selectedUrlTemplate = getSelectedUrlTemplate(config.filtersView.listParentElementId, getPropertyValueWithUndefinedDefault(entry, "category", ""));
         if (selectedUrlTemplate) {
           //TODO should add domain, baseurl, ... as data sources for variables to use inside the template
           var targetURL = config.resolveTemplate(selectedUrlTemplate, entry);
@@ -759,11 +763,14 @@ searchmenu.SearchMenuUI = (function () {
     }
     if (isMenuEntryWithOptions(entry)) {
       var options = entry.options;
+      //TODO should support details for filter options.
       //TODO could skip sub menu, if there is only one option (with/without being default).
       //TODO could be used for constants (pre selected single filter options) like "tenant-number", "current-account"
+      //TODO could remove the original search result filter when the default option is pre selected (and its options are copied).
       if (isMenuEntryWithDefault(entry)) {
         options = insertAtBeginningIfMissing(entry.options, entry["default"][0], equalProperties(["value"]));
-        createFilterOption(entry["default"][0], options, config.filtersView, config);
+        var filterOptionsElement = createFilterOption(entry["default"][0], options, config.filtersView, config);
+        addDefaultFilterOptionModificationHandler(filterOptionsElement, options, config);
       }
       onMenuEntrySelected(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
       onMenuEntryChosen(resultElement, handleEventWithEntriesAndConfig(entry.options, config, selectSearchResultToDisplayFilterOptions));
@@ -884,7 +891,7 @@ searchmenu.SearchMenuUI = (function () {
   function onFilterMenuEntryRemoved(element, eventHandler) {
     onDeleteKey(element, eventHandler);
     onBackspaceKey(element, eventHandler);
-    //TODO should also be possible with the mouse without using keys
+    //TODO should also be possible with mouse (without using keys)
   }
 
   /**
@@ -992,8 +999,7 @@ searchmenu.SearchMenuUI = (function () {
       },
       hiddenFields: function () {
         var hiddenFieldsElement = document.getElementById(id + separator + "fields");
-        var hiddenFieldsJson =
-          typeof hiddenFieldsElement.textContent !== "undefined" ? hiddenFieldsElement.textContent : hiddenFieldsElement.innerText;
+        var hiddenFieldsJson = getPropertyValueWithUndefinedDefault(hiddenFieldsElement, "textContent", hiddenFieldsElement.innerText);
         return JSON.parse(hiddenFieldsJson);
       }
     };
@@ -1024,7 +1030,7 @@ searchmenu.SearchMenuUI = (function () {
       var next = null;
       if (menuEntryIdProperties.type === config.resultsView.listEntryElementIdPrefix) {
         //select first filter entry after last result/match entry
-        //TODO could find a better way (without config) to navigate from last search result to first options/filter entry
+        //TODO could find a better way (without config?) to navigate from last search result to first options/filter entry
         next = document.getElementById(config.filterOptionsView.listEntryElementIdPrefix + "--1");
       }
       if (next === null) {
@@ -1041,7 +1047,7 @@ searchmenu.SearchMenuUI = (function () {
       var previous = null;
       if (menuEntryIdProperties.type === config.filterOptionsView.listEntryElementIdPrefix) {
         //select last result entry when arrow up is pressed on first filter entry
-        //TODO could find a better way (without config) to navigate from first options/filter entry to last search result?
+        //TODO could find a better way (without config?) to navigate from first options/filter entry to last search result?
         var resultElementsCount = getListElementCountOfType(config.resultsView.listEntryElementIdPrefix);
         previous = document.getElementById(config.resultsView.listEntryElementIdPrefix + "--" + resultElementsCount);
       }
@@ -1119,7 +1125,9 @@ searchmenu.SearchMenuUI = (function () {
   function selectFilterOption(event, entries, config) {
     var selectedEntry = getEventTarget(event);
     var selectedEntryData = findSelectedEntry(selectedEntry.id, entries, equalProperties(["fieldName", "value"]));
-    createFilterOption(selectedEntryData, entries, config.filtersView, config);
+    var filterOptionsElement = createFilterOption(selectedEntryData, entries, config.filtersView, config);
+    //TODO could detect default entry if necessary and call "addDefaultFilterOptionModificationHandler" instead
+    addFilterOptionModificationHandler(filterOptionsElement, entries, config);
     preventDefaultEventHandling(event);
     returnToMainMenu(event);
   }
@@ -1127,12 +1135,13 @@ searchmenu.SearchMenuUI = (function () {
   function createFilterOption(selectedEntryData, entries, view, config) {
     var filterElements = getListElementCountOfType(view.listEntryElementIdPrefix);
     var filterElementId = view.listEntryElementIdPrefix + "--" + (filterElements + 1);
-    var filterElement = getListEntryByFieldName(selectedEntryData.category, selectedEntryData.fieldName, view.listParentElementId);
+    var filterCategory = getPropertyValueWithUndefinedDefault(selectedEntryData, "category", "");
+    var filterElement = getListEntryByFieldName(filterCategory, selectedEntryData.fieldName, view.listParentElementId);
     var isAlreadyExistingFilter = filterElement != null;
     if (isAlreadyExistingFilter) {
       var updatedText = createListEntryInnerHtmlText(selectedEntryData, view, filterElement.id, config.resolveTemplate);
       filterElement = updateListEntryElement(filterElement, updatedText);
-      return;
+      return filterElement;
     }
     var filterElementText = createListEntryInnerHtmlText(selectedEntryData, view, filterElementId, config.resolveTemplate);
     filterElement = createListEntryElement(selectedEntryData, view, filterElementId, filterElementText);
@@ -1142,15 +1151,17 @@ searchmenu.SearchMenuUI = (function () {
     onFilterMenuEntrySelected(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
     addMainMenuNavigationHandlers(filterElement, config);
 
-    var filterElementHiddenFields = extractListElementIdProperties(filterElement.id).hiddenFields();
-    var isFilterWithDefaultOption = typeof filterElementHiddenFields["default"] !== "undefined";
-    if (isFilterWithDefaultOption) {
-      onSpaceKey(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
-      //TODO could reset elements to their default value upon deletion.
-    } else {
-      onSpaceKey(filterElement, toggleFilterEntry);
-      onFilterMenuEntryRemoved(filterElement, handleEventWithConfig(config, removeFilterElement));
-    }
+    return filterElement;
+  }
+
+  function addFilterOptionModificationHandler(filterElement, entries, config) {
+    onSpaceKey(filterElement, toggleFilterEntry);
+    onFilterMenuEntryRemoved(filterElement, handleEventWithConfig(config, removeFilterElement));
+  }
+
+  function addDefaultFilterOptionModificationHandler(filterElement, entries, config) {
+    onSpaceKey(filterElement, handleEventWithEntriesAndConfig(entries, config, selectSearchResultToDisplayFilterOptions));
+    //TODO could reset elements to their default value upon deletion.
   }
 
   /**
@@ -1165,14 +1176,33 @@ searchmenu.SearchMenuUI = (function () {
    * @memberof module:searchmenu.SearchMenuUI
    */
   function getListEntryByFieldName(category, fieldName, listParentElementId) {
-    return forEachListEntryElement(listParentElementId, function (element) {
+    var globalCategoryResult = null;
+    var result = forEachListEntryElement(listParentElementId, function (element) {
       var listElementHiddenFields = extractListElementIdProperties(element.id).hiddenFields();
-      //TODO could additionally match empty ("global") category
-      //A global parameter should be found even from an foreign category and shouldn't be selected twice (per category).
-      if (listElementHiddenFields.fieldName === fieldName && listElementHiddenFields.category == category) {
-        return element;
+      if (listElementHiddenFields.fieldName === fieldName) {
+        var elementCategory = getPropertyValueWithUndefinedDefault(listElementHiddenFields, "category", "");
+        if (elementCategory === "") {
+          globalCategoryResult = element;
+        } else if (elementCategory === category) {
+          return element;
+        }
       }
     });
+    return (result != null)? result : globalCategoryResult;
+  }
+
+  /**
+   * Returns the property value of the object or - if undefined - the default value.
+   * @param {Object} object 
+   * @param {String} propertyName 
+   * @param {Object} defaultValue 
+   * @returns the property value of the object or - if not set - the default value.
+   */
+  function getPropertyValueWithUndefinedDefault(object, propertyName, defaultValue) {
+    if (typeof object[propertyName] === "undefined") {
+      return defaultValue;
+    } 
+    return object[propertyName];
   }
 
   /**
@@ -1187,17 +1217,18 @@ searchmenu.SearchMenuUI = (function () {
   function getSelectedUrlTemplate(listParentElementId, category) {
     return forEachListEntryElement(listParentElementId, function (element) {
       var listElementHiddenFields = extractListElementIdProperties(element.id).hiddenFields();
-      if (typeof listElementHiddenFields.urltemplate === "undefined") {
+      var urlTemplate = getPropertyValueWithUndefinedDefault(listElementHiddenFields, "urltemplate", [""])[0];
+      if (urlTemplate === "") {
         return null; // entry has no url template
       }
-      //TODO could also match empty ("global") category.
-      if (listElementHiddenFields.category != category) {
+      var elementCategory = getPropertyValueWithUndefinedDefault(listElementHiddenFields, category, "");
+      if ((elementCategory != category) && (elementCategory !== "")) {
         return null; // entry belongs to another category
       }
       if (hasClass("inactive", element)) {
         return null; // entry is inactive
       }
-      return listElementHiddenFields.urltemplate[0].value;
+      return urlTemplate.value;
     });
   }
 
@@ -1337,7 +1368,6 @@ searchmenu.SearchMenuUI = (function () {
     var mainMenuEntryToSelect = document.getElementById(subMenuEntryToExitProperties.mainMenuId);
     subMenuEntryToExit.blur();
     mainMenuEntryToSelect.focus();
-    //TODO could hide all neighbor sub menus (elements containing class "show"), not only the current view
     hideViewOf(subMenuEntryToExit);
   }
 
