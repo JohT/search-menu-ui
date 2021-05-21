@@ -87,7 +87,7 @@ coverage/
 #devdist/
 
 # ignore all build results (temporarily)
-devdist/
-dist/
-**/docs/**
-!jsdoc.json
+#devdist/
+#dist/
+#**/docs/**
+#!jsdoc.json
