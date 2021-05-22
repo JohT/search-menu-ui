@@ -54,9 +54,6 @@ jobs:
     - name: (Example) Run linter
       working-directory: example
       run: npm run lint
-    - name: (Example) Build
-      working-directory: example
-      run: npm run build --if-present
     - name: (Example) Archive code coverage results
       uses: actions/upload-artifact@v2
       with:
