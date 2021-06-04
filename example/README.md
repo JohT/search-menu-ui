@@ -11,7 +11,9 @@ This example shows how to use [search-menu-ui](https://github.com/JohT/search-me
 
 There are many ways to integrate and design a search UI, this is only one of them.
 
-**Notice:** It is not recommended to directly access [Elasticsearch](https://github.com/elastic/elasticsearch) from the browser. It should be encapsulated and secured within a server application. For prototyping and examples like this, it is handy to directly access it, as long as the HTTP CORS settings work.
+**Notice:** It is not recommended to directly access [Elasticsearch](https://github.com/elastic/elasticsearch) from the browser. It should be encapsulated and secured within a server application. For fast prototyping and examples like this, it might be handy to directly access it, as long as the HTTP CORS settings work. 
+
+The included [search-example-servlet](./search-example-servlet/README.md) shows how to implement a java application using a standard servlet container to integrate elasticsearch into a application like a database.
 
 **Notice:** This example does not use a bundler and includes all scripts without module system to show, that a minimal-dependencies approach is possible. Both [search-menu-ui](https://github.com/JohT/search-menu-ui) and [data-restructor-js](https://github.com/JohT/data-restructor-js) provide built modules and also support the use of bundler.
 

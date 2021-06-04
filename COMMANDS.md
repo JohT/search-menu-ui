@@ -18,7 +18,9 @@ Overview of the commands to test, run and build this project as well as those th
 - `npm run devbuild` Builds the application for development (without minification) without starting the server.
 
 ## Commands that needs to be installed globally to build the project
-- `npm install merger-js -g` Cross-platform CLI build tool to bundle JavaScript files without modules
+- `npm install merger-js -g` Cross-platform CLI build tool to bundle JavaScript files without modules. **Notice:** merger needs manual input in the console and prompts to select the source.
+Select "all" to continue the build. Since this is currently the only manual step needed,
+a better solution for this should be found someday.
 
 ## Commands used to setup the project:
 - `npm init` Initialize node package manager, creates `package.json` file.

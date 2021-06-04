@@ -49,8 +49,17 @@ They start with "should" (higher priority) and "could" (lower priority) and migh
 
 ## Getting started
 
-The best way to get started is by having a look at the fully working [example](example/README.md).
+The best way to get started is by having a look at the fully working [example](example/README.md). It includes a sub project that shows how to integrate the search into a java application
+using a Servlet container: [example](example/search-example-servlet/README.md).
 
+### Build all
+Use the following command to build everything including the example and the example servlet
+in the directory of this README.md file:
+```shell script
+./npm run all
+```
+
+**Note:** merger.js prompt to select a source file. Please select the last option "ALL". This is the only thing, that couldn't be automated yet.
 ## UI structure
 
 The following screenshots were taken from the example, that is included in this repository. 

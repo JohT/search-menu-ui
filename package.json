@@ -29,7 +29,7 @@
     "devbuild": "rm -rf devdist && NODE_ENV=development parcel build --dist-dir devdist ./src/js/*.js --no-optimize --no-source-maps --no-content-hash --detailed-report",
     "build": "parcel build ./src/js/*.js",
     "package": "npm run lint && npm run coverage && npm run coverage-badge && npm run doc && npm run devbuild && npm run build && merger",
-    "all": "npm run package && cd example && npm run package"
+    "all": "npm run package && cd example && npm run package && cd search-example-servlet && mvn clean package"
   },
   "repository": {
     "type": "git",
