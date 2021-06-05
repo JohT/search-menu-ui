@@ -16,12 +16,12 @@
 ### Data-Driven & Data-Agnostic
   * Search data is the source of all contents configured once using templates
   * Search data determines which filters and thus which filter parameters are available
-  * Search data determines which target url to open, when a result is selected
-  * Search data may also be used to set additional css style classes
-### Everything is searchable
+  * Search data determines which target url to open when a result is selected
+  * Search data may also be used to set additional CSS style classes
+### Everything is Searchable
   * Filters are search results and thus searchable
   * Navigation targets are search results and thus searchable
-### Set and forget
+### Set and Forget
   * After initial configuration mostly anything else depends on the search response
   * New fields, new categories, new filters and new navigation targets shouldn't entail
   any changes in most cases
@@ -53,13 +53,17 @@ The best way to get started is by having a look at the fully working [example](e
 using a Servlet container: [example](example/search-example-servlet/README.md).
 
 ### Build all
-Use the following command to build everything including the example and the example servlet
-in the directory of this README.md file:
-```shell script
-./npm run all
-```
 
-**Note:** merger.js prompt to select a source file. Please select the last option "ALL". This is the only thing, that couldn't be automated yet.
+Use the following [commands](COMMANDS.md) to build everything including the example and the example servlet within the current directory. A list of all commands can be found in [COMMANDS.md](COMMANDS.md).
+```shell script
+npm install merger-js -g
+cd example
+npm install
+cd ..
+npm install
+npm run all
+```
+**Note:** merger.js prompts to select a source file. Please select "ALL" using the arrow keys and press enter to continue.
 ## UI structure
 
 The following screenshots were taken from the example, that is included in this repository. 

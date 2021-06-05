@@ -4,10 +4,15 @@ Overview of the commands to test, run and build this project as well as those th
 
 ## Most important commands for development:
 - `npm install` Installs all dependencies and creates the folder `node_modules`, that is needed for all following commands.
-- `npm run package` Ready to publish build incl. test, coverage, doc generation, dev+prod build
-- `npm login` + `npm publish` To publish a new release. Be sure to run npm run package first.
+- `npm run all` Ready to publish build with test, coverage, doc generation, dev+prod build incl. examples
+
+## Commands that needs to be installed globally to build the project
+- `npm install merger-js -g` Cross-platform CLI build tool to bundle JavaScript files without modules.   
+**Notice:** merger needs manual input in the console and prompts to select the source.
+Select "all" using the arrow down key followed by enter to continue the build. If there is a better solution for that, propose it by creating an issue. `merger.js` is helpful to create additional JavaScript bundles without module system.
 
 ## Commands to test, run and build the project:
+- `npm run all` Runs all builds including those of the examples
 - `npm run package` Runs all steps incl. test, coverage, doc generation and build
 - `npm run coverage` Run all unit tests (using jasmine) **with** reporting coverage (using nyc/istanbul)
 - `npm test` Only all unit tests (using jasmine) **without** coverage report
@@ -16,11 +21,6 @@ Overview of the commands to test, run and build this project as well as those th
 - `npm run build` Builds the application for production including minification,...
 - `npm run dev` Builds the application for development (without minification) and starts the live server
 - `npm run devbuild` Builds the application for development (without minification) without starting the server.
-
-## Commands that needs to be installed globally to build the project
-- `npm install merger-js -g` Cross-platform CLI build tool to bundle JavaScript files without modules. **Notice:** merger needs manual input in the console and prompts to select the source.
-Select "all" to continue the build. Since this is currently the only manual step needed,
-a better solution for this should be found someday.
 
 ## Commands used to setup the project:
 - `npm init` Initialize node package manager, creates `package.json` file.
@@ -33,6 +33,9 @@ a better solution for this should be found someday.
 - `npx eslint --init` Initialize linter configuration file
 - `npm install istanbul-badges-readme --save-dev` Setup for code coverage badge for README.MD.
 - `npm audit fix` Fixes vulnerabilities
+
+## Commands for maintainer:
+- `npm login` + `npm publish` To publish a new release. Be sure to run npm run package first.
 
 ## Further steps:
 - It would be great to get SpecRunner.html up and running in dev mode like: "dev": "parcel ./test/js/SpecRunner.html". [parcel issue 3407](https://github.com/parcel-bundler/parcel/issues/3407) may be key for that.
