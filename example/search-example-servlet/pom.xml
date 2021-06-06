@@ -158,8 +158,8 @@
 						<aggregation>
 							<insertNewLine>true</insertNewLine>
 							<inputDir>${project.basedir}/..</inputDir>
-							<!--<output>${project.build.directory}/aggregated/javascript/application.js</output>-->
-							<output>${project.build.directory}/classes/META-INF/resources/application.js</output>
+							<output>${project.build.directory}/aggregated/application.js</output>
+							<!-- <output>${project.build.directory}/classes/META-INF/resources/application.js</output> -->
 							<includes>
 								<include>**/src/js/polyfills/*.js</include>
 								<include>**/src/js/ponyfills/*.js</include>
@@ -177,8 +177,8 @@
 						<aggregation>
 							<insertNewLine>true</insertNewLine>
 							<inputDir>${project.basedir}/../styles</inputDir>
-							<!--<output>${project.build.directory}/aggregated/styles/application.css</output>-->
-							<output>${project.build.directory}/classes/META-INF/resources/application.css</output>
+							<output>${project.build.directory}/aggregated/application.css</output>
+							<!-- <output>${project.build.directory}/classes/META-INF/resources/application.css</output> -->
 							<includes>
 								<include>*.css</include>
 							</includes>
@@ -186,20 +186,19 @@
 						<aggregation>
 							<insertNewLine>true</insertNewLine>
 							<inputDir>${project.basedir}/../images</inputDir>
-							<!--<output>${project.build.directory}/aggregated/styles/application.css</output>-->
 							<output>${project.build.directory}/classes/META-INF/resources/images/searchicon-small.png</output>
 							<includes>
 								<include>searchicon-small.png</include>
 							</includes>
 						</aggregation>
 					</aggregations>
-          <!-- Skip jslint, minify, optimize, ... because jslint isn't up to date with js syntax-->
-          <!--
+          <!-- skip minification and anything else that makes it hard to read the example -->
+          <!-- For production code it would make sense to use minification etc.-->
 					<nosuffix>true</nosuffix>
 					<jswarn>false</jswarn>
-					<nomunge>true</nomunge>	
-					<disableOptimizations>true</disableOptimizations>
-          -->
+					<nomunge>true</nomunge>
+					<nocompress>true</nocompress>
+          <disableOptimizations>true</disableOptimizations>
 					<sourceDirectory>${project.build.directory}/aggregated</sourceDirectory>
 					<outputDirectory>${project.build.directory}/classes/META-INF/resources</outputDirectory>
 				</configuration>
