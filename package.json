@@ -43,6 +43,10 @@
   ],
   "author": "JohT",
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/JohT/search-menu-ui/issues"
+  },
+  "homepage": "https://joht.github.io/search-menu-ui",
   "dependencies": {
     "data-restructor": "^3.3.1"
   },
