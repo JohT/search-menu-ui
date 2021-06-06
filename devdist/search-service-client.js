@@ -1,6 +1,156 @@
-var $1e05503d42807037197ee3cd64ee4d8c$var$module = $1e05503d42807037197ee3cd64ee4d8c$var$datarestructorInternalCreateIfNotExists($1e05503d42807037197ee3cd64ee4d8c$var$module);
+// modules are defined as an array
+// [ module function, map of requires ]
+//
+// map of requires is short require name -> numeric require
+//
+// anything defined in a previous bundle is accessed via the
+// orig method which is the require for previous bundles
+
+(function(modules, entry, mainEntry, parcelRequireName, globalName) {
+  /* eslint-disable no-undef */
+  var globalObject =
+    typeof globalThis !== 'undefined'
+      ? globalThis
+      : typeof self !== 'undefined'
+      ? self
+      : typeof window !== 'undefined'
+      ? window
+      : typeof global !== 'undefined'
+      ? global
+      : {};
+  /* eslint-enable no-undef */
+
+  // Save the require from previous bundle to this closure if any
+  var previousRequire =
+    typeof globalObject[parcelRequireName] === 'function' &&
+    globalObject[parcelRequireName];
+
+  var cache = previousRequire.cache || {};
+  // Do not use `require` to prevent Webpack from trying to bundle this call
+  var nodeRequire =
+    typeof module !== 'undefined' &&
+    typeof module.require === 'function' &&
+    module.require.bind(module);
+
+  function newRequire(name, jumped) {
+    if (!cache[name]) {
+      if (!modules[name]) {
+        // if we cannot find the module within our internal map or
+        // cache jump to the current global require ie. the last bundle
+        // that was added to the page.
+        var currentRequire =
+          typeof globalObject[parcelRequireName] === 'function' &&
+          globalObject[parcelRequireName];
+        if (!jumped && currentRequire) {
+          return currentRequire(name, true);
+        }
+
+        // If there are other bundles on this page the require from the
+        // previous one is saved to 'previousRequire'. Repeat this as
+        // many times as there are bundles until the module is found or
+        // we exhaust the require chain.
+        if (previousRequire) {
+          return previousRequire(name, true);
+        }
+
+        // Try the node require function if it exists.
+        if (nodeRequire && typeof name === 'string') {
+          return nodeRequire(name);
+        }
+
+        var err = new Error("Cannot find module '" + name + "'");
+        err.code = 'MODULE_NOT_FOUND';
+        throw err;
+      }
+
+      localRequire.resolve = resolve;
+      localRequire.cache = {};
+
+      var module = (cache[name] = new newRequire.Module(name));
+
+      modules[name][0].call(
+        module.exports,
+        localRequire,
+        module,
+        module.exports,
+        this
+      );
+    }
+
+    return cache[name].exports;
+
+    function localRequire(x) {
+      return newRequire(localRequire.resolve(x));
+    }
+
+    function resolve(x) {
+      return modules[name][1][x] || x;
+    }
+  }
+
+  function Module(moduleName) {
+    this.id = moduleName;
+    this.bundle = newRequire;
+    this.exports = {};
+  }
+
+  newRequire.isParcelRequire = true;
+  newRequire.Module = Module;
+  newRequire.modules = modules;
+  newRequire.cache = cache;
+  newRequire.parent = previousRequire;
+  newRequire.register = function(id, exports) {
+    modules[id] = [
+      function(require, module) {
+        module.exports = exports;
+      },
+      {},
+    ];
+  };
+
+  Object.defineProperty(newRequire, 'root', {
+    get: function() {
+      return globalObject[parcelRequireName];
+    },
+  });
+
+  globalObject[parcelRequireName] = newRequire;
+
+  for (var i = 0; i < entry.length; i++) {
+    newRequire(entry[i]);
+  }
+
+  if (mainEntry) {
+    // Expose entry point to Node, AMD or browser globals
+    // Based on https://github.com/ForbesLindesay/umd/blob/master/template.js
+    var mainExports = newRequire(mainEntry);
+
+    // CommonJS
+    if (typeof exports === 'object' && typeof module !== 'undefined') {
+      module.exports = mainExports;
+
+      // RequireJS
+    } else if (typeof define === 'function' && define.amd) {
+      define(function() {
+        return mainExports;
+      });
+
+      // <script>
+    } else if (globalName) {
+      this[globalName] = mainExports;
+    }
+  }
+})({"40JlH":[function(require,module,exports) {
+/**
+* @file Provides the (http) client/connection to the search backend service.
+* @version {@link https://github.com/JohT/search-menu-ui/releases/latest latest version}
+* @author JohT
+* @version ${project.version}
+*/
+"use strict";
+var module = datarestructorInternalCreateIfNotExists(module);
 // Fallback for vanilla js without modules
-function $1e05503d42807037197ee3cd64ee4d8c$var$datarestructorInternalCreateIfNotExists(objectToCheck) {
+function datarestructorInternalCreateIfNotExists(objectToCheck) {
   return objectToCheck || ({});
 }
 /**
@@ -8,66 +158,12 @@ function $1e05503d42807037197ee3cd64ee4d8c$var$datarestructorInternalCreateIfNot
 * It provides the (http) client/connection to the search backend service.
 * @module searchMenuServiceClient
 */
-var $1e05503d42807037197ee3cd64ee4d8c$var$searchMenuServiceClient = $1e05503d42807037197ee3cd64ee4d8c$var$module.exports = {};
+var searchMenuServiceClient = module.exports = {};
 // Export module for npm...
-$1e05503d42807037197ee3cd64ee4d8c$var$searchMenuServiceClient.internalCreateIfNotExists = $1e05503d42807037197ee3cd64ee4d8c$var$datarestructorInternalCreateIfNotExists;
-// ASSET: src/js/ponyfills/xmlHttpRequestPonyfill.js
-var $f51c4899583cf81b2832cd4bf09c618c$exports, $f51c4899583cf81b2832cd4bf09c618c$var$module, $f51c4899583cf81b2832cd4bf09c618c$var$xmlHttpRequest, $f51c4899583cf81b2832cd4bf09c618c$executed = false;
-function $f51c4899583cf81b2832cd4bf09c618c$exec() {
-  $f51c4899583cf81b2832cd4bf09c618c$exports = {};
-  $f51c4899583cf81b2832cd4bf09c618c$var$module = $f51c4899583cf81b2832cd4bf09c618c$var$module || ({});
-  $f51c4899583cf81b2832cd4bf09c618c$var$xmlHttpRequest = $f51c4899583cf81b2832cd4bf09c618c$var$module.exports = {};
-  // Fallback for vanilla js without modules
-  /**
-  * Provide the XMLHttpRequest constructor for Internet Explorer 5.x-6.x:
-  * Other browsers (including Internet Explorer 7.x-9.x) do not redefine
-  * XMLHttpRequest if it already exists.
-  *
-  * This example is based on findings at:
-  * http://blogs.msdn.com/xmlteam/archive/2006/10/23/using-the-right-version-of-msxml-in-internet-explorer.aspx
-  * @returns {XMLHttpRequest}
-  * @memberof xmlHttpRequest
-  */
-  $f51c4899583cf81b2832cd4bf09c618c$var$xmlHttpRequest.getXMLHttpRequest = function () {
-    if (typeof XMLHttpRequest !== "undefined") {
-      try {
-        var request = new XMLHttpRequest();
-        request.status;
-        // try, if status is accessible. Fails in IE5.
-        return request;
-      } catch (e) {
-        console.log("XMLHttpRequest not available: " + e);
-      }
-    }
-    try {
-      return new ActiveXObject("Msxml2.XMLHTTP.6.0");
-    } catch (e) {
-      console.log("XMLHttpRequest Msxml2.XMLHTTP.6.0 not available: " + e);
-    }
-    try {
-      return new ActiveXObject("Msxml2.XMLHTTP.3.0");
-    } catch (e) {
-      console.log("XMLHttpRequest Msxml2.XMLHTTP.3.0 not available: " + e);
-    }
-    try {
-      return new ActiveXObject("Microsoft.XMLHTTP");
-    } catch (e) {
-      console.log("XMLHttpRequest Microsoft.XMLHTTP not available: " + e);
-    }
-    // Microsoft.XMLHTTP points to Msxml2.XMLHTTP and is redundant
-    throw new Error("This browser does not support XMLHttpRequest.");
-  };
-}
-function $f51c4899583cf81b2832cd4bf09c618c$init() {
-  if (!$f51c4899583cf81b2832cd4bf09c618c$executed) {
-    $f51c4899583cf81b2832cd4bf09c618c$executed = true;
-    $f51c4899583cf81b2832cd4bf09c618c$exec();
-  }
-  return $f51c4899583cf81b2832cd4bf09c618c$exports;
-}
-var $1e05503d42807037197ee3cd64ee4d8c$var$xmlHttpRequest = $1e05503d42807037197ee3cd64ee4d8c$var$xmlHttpRequest || $f51c4899583cf81b2832cd4bf09c618c$init();
+searchMenuServiceClient.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
+var xmlHttpRequest = xmlHttpRequest || require("../../src/js/ponyfills/xmlHttpRequestPonyfill");
 // supports vanilla js & npm
-$1e05503d42807037197ee3cd64ee4d8c$var$searchMenuServiceClient.HttpSearchConfig = (function () {
+searchMenuServiceClient.HttpSearchConfig = (function () {
   /**
   * Configures and builds the {@link module:searchMenuServiceClient.HttpClient}.
   * DescribedDataField is the main element of the restructured data and therefore considered "public".
@@ -169,9 +265,9 @@ $1e05503d42807037197ee3cd64ee4d8c$var$searchMenuServiceClient.HttpSearchConfig =
     */
     this.build = function () {
       if (!this.config.httpRequest) {
-        this.config.httpRequest = $1e05503d42807037197ee3cd64ee4d8c$var$xmlHttpRequest.getXMLHttpRequest();
+        this.config.httpRequest = xmlHttpRequest.getXMLHttpRequest();
       }
-      return new $1e05503d42807037197ee3cd64ee4d8c$var$searchMenuServiceClient.HttpClient(this.config);
+      return new searchMenuServiceClient.HttpClient(this.config);
     };
   }
   /**
@@ -230,7 +326,7 @@ $1e05503d42807037197ee3cd64ee4d8c$var$searchMenuServiceClient.HttpSearchConfig =
 * @callback module:searchMenuServiceClient.HttpClient.SearchServiceResultAvailable
 * @param {Object} searchResultData already parsed data object containing the result of the search
 */
-$1e05503d42807037197ee3cd64ee4d8c$var$searchMenuServiceClient.HttpClient = (function () {
+searchMenuServiceClient.HttpClient = (function () {
   /**
   * HttpClient.
   *
@@ -331,4 +427,55 @@ $1e05503d42807037197ee3cd64ee4d8c$var$searchMenuServiceClient.HttpClient = (func
   }
   return instance;
 })();
+
+},{"../../src/js/ponyfills/xmlHttpRequestPonyfill":"vYeEj"}],"vYeEj":[function(require,module,exports) {
+"use strict";
+var module = module || ({});
+// Fallback for vanilla js without modules
+/**
+* @namespace xmlHttpRequest
+*/
+var xmlHttpRequest = module.exports = {};
+// Fallback for vanilla js without modules
+/**
+* Provide the XMLHttpRequest constructor for Internet Explorer 5.x-6.x:
+* Other browsers (including Internet Explorer 7.x-9.x) do not redefine
+* XMLHttpRequest if it already exists.
+*
+* This example is based on findings at:
+* http://blogs.msdn.com/xmlteam/archive/2006/10/23/using-the-right-version-of-msxml-in-internet-explorer.aspx
+* @returns {XMLHttpRequest}
+* @memberof xmlHttpRequest
+*/
+xmlHttpRequest.getXMLHttpRequest = function () {
+  if (typeof XMLHttpRequest !== "undefined") {
+    try {
+      var request = new XMLHttpRequest();
+      request.status;
+      // try, if status is accessible. Fails in IE5.
+      return request;
+    } catch (e) {
+      console.log("XMLHttpRequest not available: " + e);
+    }
+  }
+  try {
+    return new ActiveXObject("Msxml2.XMLHTTP.6.0");
+  } catch (e) {
+    console.log("XMLHttpRequest Msxml2.XMLHTTP.6.0 not available: " + e);
+  }
+  try {
+    return new ActiveXObject("Msxml2.XMLHTTP.3.0");
+  } catch (e) {
+    console.log("XMLHttpRequest Msxml2.XMLHTTP.3.0 not available: " + e);
+  }
+  try {
+    return new ActiveXObject("Microsoft.XMLHTTP");
+  } catch (e) {
+    console.log("XMLHttpRequest Microsoft.XMLHTTP not available: " + e);
+  }
+  // Microsoft.XMLHTTP points to Msxml2.XMLHTTP and is redundant
+  throw new Error("This browser does not support XMLHttpRequest.");
+};
+
+},{}]},["40JlH"], "40JlH", "parcelRequiref875")
 

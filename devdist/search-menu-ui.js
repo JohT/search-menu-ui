@@ -1,113 +1,168 @@
+// modules are defined as an array
+// [ module function, map of requires ]
+//
+// map of requires is short require name -> numeric require
+//
+// anything defined in a previous bundle is accessed via the
+// orig method which is the require for previous bundles
+
+(function(modules, entry, mainEntry, parcelRequireName, globalName) {
+  /* eslint-disable no-undef */
+  var globalObject =
+    typeof globalThis !== 'undefined'
+      ? globalThis
+      : typeof self !== 'undefined'
+      ? self
+      : typeof window !== 'undefined'
+      ? window
+      : typeof global !== 'undefined'
+      ? global
+      : {};
+  /* eslint-enable no-undef */
+
+  // Save the require from previous bundle to this closure if any
+  var previousRequire =
+    typeof globalObject[parcelRequireName] === 'function' &&
+    globalObject[parcelRequireName];
+
+  var cache = previousRequire.cache || {};
+  // Do not use `require` to prevent Webpack from trying to bundle this call
+  var nodeRequire =
+    typeof module !== 'undefined' &&
+    typeof module.require === 'function' &&
+    module.require.bind(module);
+
+  function newRequire(name, jumped) {
+    if (!cache[name]) {
+      if (!modules[name]) {
+        // if we cannot find the module within our internal map or
+        // cache jump to the current global require ie. the last bundle
+        // that was added to the page.
+        var currentRequire =
+          typeof globalObject[parcelRequireName] === 'function' &&
+          globalObject[parcelRequireName];
+        if (!jumped && currentRequire) {
+          return currentRequire(name, true);
+        }
+
+        // If there are other bundles on this page the require from the
+        // previous one is saved to 'previousRequire'. Repeat this as
+        // many times as there are bundles until the module is found or
+        // we exhaust the require chain.
+        if (previousRequire) {
+          return previousRequire(name, true);
+        }
+
+        // Try the node require function if it exists.
+        if (nodeRequire && typeof name === 'string') {
+          return nodeRequire(name);
+        }
+
+        var err = new Error("Cannot find module '" + name + "'");
+        err.code = 'MODULE_NOT_FOUND';
+        throw err;
+      }
+
+      localRequire.resolve = resolve;
+      localRequire.cache = {};
+
+      var module = (cache[name] = new newRequire.Module(name));
+
+      modules[name][0].call(
+        module.exports,
+        localRequire,
+        module,
+        module.exports,
+        this
+      );
+    }
+
+    return cache[name].exports;
+
+    function localRequire(x) {
+      return newRequire(localRequire.resolve(x));
+    }
+
+    function resolve(x) {
+      return modules[name][1][x] || x;
+    }
+  }
+
+  function Module(moduleName) {
+    this.id = moduleName;
+    this.bundle = newRequire;
+    this.exports = {};
+  }
+
+  newRequire.isParcelRequire = true;
+  newRequire.Module = Module;
+  newRequire.modules = modules;
+  newRequire.cache = cache;
+  newRequire.parent = previousRequire;
+  newRequire.register = function(id, exports) {
+    modules[id] = [
+      function(require, module) {
+        module.exports = exports;
+      },
+      {},
+    ];
+  };
+
+  Object.defineProperty(newRequire, 'root', {
+    get: function() {
+      return globalObject[parcelRequireName];
+    },
+  });
+
+  globalObject[parcelRequireName] = newRequire;
+
+  for (var i = 0; i < entry.length; i++) {
+    newRequire(entry[i]);
+  }
+
+  if (mainEntry) {
+    // Expose entry point to Node, AMD or browser globals
+    // Based on https://github.com/ForbesLindesay/umd/blob/master/template.js
+    var mainExports = newRequire(mainEntry);
+
+    // CommonJS
+    if (typeof exports === 'object' && typeof module !== 'undefined') {
+      module.exports = mainExports;
+
+      // RequireJS
+    } else if (typeof define === 'function' && define.amd) {
+      define(function() {
+        return mainExports;
+      });
+
+      // <script>
+    } else if (globalName) {
+      this[globalName] = mainExports;
+    }
+  }
+})({"7lRqo":[function(require,module,exports) {
 /**
 * @file Search UI written in vanilla JavaScript. Menu structure for results. Filters are integrated as search results.
 * @version {@link https://github.com/JohT/search-menu-ui/releases/latest latest version}
 * @author JohT
 */
-var $8b16b2762684afc8d64da80b2a6e9bff$var$module = $8b16b2762684afc8d64da80b2a6e9bff$var$datarestructorInternalCreateIfNotExists($8b16b2762684afc8d64da80b2a6e9bff$var$module);
+var module = datarestructorInternalCreateIfNotExists(module);
 // Fallback for vanilla js without modules
-function $8b16b2762684afc8d64da80b2a6e9bff$var$datarestructorInternalCreateIfNotExists(objectToCheck) {
+function datarestructorInternalCreateIfNotExists(objectToCheck) {
   return objectToCheck || ({});
 }
 /**
 * Contains the main ui component of the search menu ui.
 * @module searchmenu
 */
-var $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu = $8b16b2762684afc8d64da80b2a6e9bff$var$module.exports = {};
+var searchmenu = module.exports = {};
 // Export module for npm...
-$8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.internalCreateIfNotExists = $8b16b2762684afc8d64da80b2a6e9bff$var$datarestructorInternalCreateIfNotExists;
-// ASSET: src/js/ponyfills/eventCurrentTargetPonyfill.js
-var $b7a77c98dcac16610433fa5cfbfde109$exports, $b7a77c98dcac16610433fa5cfbfde109$var$module, $b7a77c98dcac16610433fa5cfbfde109$var$eventtarget, $b7a77c98dcac16610433fa5cfbfde109$executed = false;
-function $b7a77c98dcac16610433fa5cfbfde109$exec() {
-  $b7a77c98dcac16610433fa5cfbfde109$exports = {};
-  $b7a77c98dcac16610433fa5cfbfde109$var$module = $b7a77c98dcac16610433fa5cfbfde109$var$module || ({});
-  $b7a77c98dcac16610433fa5cfbfde109$var$eventtarget = $b7a77c98dcac16610433fa5cfbfde109$var$module.exports = {};
-  // Fallback for vanilla js without modules
-  /**
-  * @returns {Element} target of the event
-  * @memberof eventtarget
-  */
-  $b7a77c98dcac16610433fa5cfbfde109$var$eventtarget.getEventTarget = function (event) {
-    if (typeof event.currentTarget !== "undefined" && event.currentTarget != null) {
-      return event.currentTarget;
-    }
-    if (typeof event.srcElement !== "undefined" && event.srcElement != null) {
-      return event.srcElement;
-    } else {
-      throw new Error("Event doesn't contain bounded element: " + event);
-    }
-  };
-}
-function $b7a77c98dcac16610433fa5cfbfde109$init() {
-  if (!$b7a77c98dcac16610433fa5cfbfde109$executed) {
-    $b7a77c98dcac16610433fa5cfbfde109$executed = true;
-    $b7a77c98dcac16610433fa5cfbfde109$exec();
-  }
-  return $b7a77c98dcac16610433fa5cfbfde109$exports;
-}
-var $8b16b2762684afc8d64da80b2a6e9bff$var$eventtarget = $8b16b2762684afc8d64da80b2a6e9bff$var$eventtarget || $b7a77c98dcac16610433fa5cfbfde109$init();
-// ASSET: src/js/ponyfills/selectionRangePonyfill.js
-var $b03dd3eb9999a788ce3a5e0f9c0fec5a$exports, $b03dd3eb9999a788ce3a5e0f9c0fec5a$var$module, $b03dd3eb9999a788ce3a5e0f9c0fec5a$var$selectionrange, $b03dd3eb9999a788ce3a5e0f9c0fec5a$executed = false;
-function $b03dd3eb9999a788ce3a5e0f9c0fec5a$exec() {
-  $b03dd3eb9999a788ce3a5e0f9c0fec5a$exports = {};
-  $b03dd3eb9999a788ce3a5e0f9c0fec5a$var$module = $b03dd3eb9999a788ce3a5e0f9c0fec5a$var$module || ({});
-  $b03dd3eb9999a788ce3a5e0f9c0fec5a$var$selectionrange = $b03dd3eb9999a788ce3a5e0f9c0fec5a$var$module.exports = {};
-  // Fallback for vanilla js without modules
-  $b03dd3eb9999a788ce3a5e0f9c0fec5a$var$selectionrange.moveCursorToEndOf = function (element) {
-    if (typeof element.setSelectionRange === "function") {
-      element.setSelectionRange(element.value.length, element.value.length);
-    } else if (typeof element.selectionStart === "number" && typeof element.selectionEnd === "number") {
-      element.selectionStart = element.selectionEnd = element.value.length;
-    } else if (typeof element.createTextRange === "function") {
-      var range = element.createTextRange();
-      range.collapse(true);
-      range.moveEnd("character", element.value.length);
-      range.moveStart("character", element.value.length);
-      range.select();
-    }
-  };
-}
-function $b03dd3eb9999a788ce3a5e0f9c0fec5a$init() {
-  if (!$b03dd3eb9999a788ce3a5e0f9c0fec5a$executed) {
-    $b03dd3eb9999a788ce3a5e0f9c0fec5a$executed = true;
-    $b03dd3eb9999a788ce3a5e0f9c0fec5a$exec();
-  }
-  return $b03dd3eb9999a788ce3a5e0f9c0fec5a$exports;
-}
+searchmenu.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
+var eventtarget = eventtarget || require("./ponyfills/eventCurrentTargetPonyfill");
 // supports vanilla js & npm
-var $8b16b2762684afc8d64da80b2a6e9bff$var$selectionrange = $8b16b2762684afc8d64da80b2a6e9bff$var$selectionrange || $b03dd3eb9999a788ce3a5e0f9c0fec5a$init();
-// ASSET: src/js/ponyfills/addEventListenerPonyfill.js
-var $b0bf2b8d5457389879a62d429a9192c0$exports, $b0bf2b8d5457389879a62d429a9192c0$var$module, $b0bf2b8d5457389879a62d429a9192c0$var$eventlistener, $b0bf2b8d5457389879a62d429a9192c0$executed = false;
-function $b0bf2b8d5457389879a62d429a9192c0$exec() {
-  $b0bf2b8d5457389879a62d429a9192c0$exports = {};
-  $b0bf2b8d5457389879a62d429a9192c0$var$module = $b0bf2b8d5457389879a62d429a9192c0$var$module || ({});
-  $b0bf2b8d5457389879a62d429a9192c0$var$eventlistener = $b0bf2b8d5457389879a62d429a9192c0$var$module.exports = {};
-  // Fallback for vanilla js without modules
-  /**
-  * Adds an event listener/hander using "addEventListener" or whatever method the browser supports.
-  * @param {String} eventName
-  * @param {Element} element
-  * @param {*} eventHandler
-  * @memberof addeventlistener
-  */
-  $b0bf2b8d5457389879a62d429a9192c0$var$eventlistener.addEventListener = function (eventName, element, eventHandler) {
-    if (element.addEventListener) {
-      element.addEventListener(eventName, eventHandler, false);
-    } else if (element.attachEvent) {
-      element.attachEvent("on" + eventName, eventHandler);
-    } else {
-      element["on" + eventName] = eventHandler;
-    }
-  };
-}
-function $b0bf2b8d5457389879a62d429a9192c0$init() {
-  if (!$b0bf2b8d5457389879a62d429a9192c0$executed) {
-    $b0bf2b8d5457389879a62d429a9192c0$executed = true;
-    $b0bf2b8d5457389879a62d429a9192c0$exec();
-  }
-  return $b0bf2b8d5457389879a62d429a9192c0$exports;
-}
+var selectionrange = selectionrange || require("./ponyfills/selectionRangePonyfill");
 // supports vanilla js & npm
-var $8b16b2762684afc8d64da80b2a6e9bff$var$eventlistener = $8b16b2762684afc8d64da80b2a6e9bff$var$eventlistener || $b0bf2b8d5457389879a62d429a9192c0$init();
+var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfill");
 // supports vanilla js & npm
 /**
 * @typedef {Object} module:searchmenu.SearchViewDescription Describes a part of the search view (e.g. search result details).
@@ -120,7 +175,8 @@ var $8b16b2762684afc8d64da80b2a6e9bff$var$eventlistener = $8b16b2762684afc8d64da
 * @property {string} [listEntryStyleClassTemplate="{{view.listEntryElementIdPrefix}} {{category}}"] template for the style class of each list entry.
 * @property {boolean} [isSelectableFilterOption=false] Specifies, if the list entry can be selected as filter option
 */
-$8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchViewDescriptionBuilder = (function () {
+searchmenu.SearchViewDescriptionBuilder = (function () {
+  "use strict";
   /**
   * Builds a {@link module:searchmenu.SearchViewDescription}, which describes a part of the search menu called "view".
   * Examples for views are: results, details, filters, filter options. There might be more in future.
@@ -335,7 +391,8 @@ $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchViewDescriptionBuilder = 
 * @property {string} [waitBeforeSearch=500] time in milliseconds to wait until typing is finished and search starts (default=500)
 * @property {string} [waitBeforeMouseOver=700] time in milliseconds to wait until mouse over opens details (default=700)
 */
-$8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchMenuAPI = (function () {
+searchmenu.SearchMenuAPI = (function () {
+  "use strict";
   /**
   * Search Menu UI API
   * @constructs SearchMenuAPI
@@ -573,7 +630,7 @@ $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchMenuAPI = (function () {
           }
         });
       }
-      return new $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchMenuUI(config);
+      return new searchmenu.SearchMenuUI(config);
     };
   }
   /**
@@ -589,7 +646,7 @@ $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchMenuAPI = (function () {
   * @memberof module:searchmenu.SearchMenuAPI
   */
   function defaultResultsView() {
-    return new $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchViewDescriptionBuilder().viewElementId("searchresults").listParentElementId("searchmatches").listEntryElementIdPrefix("result").listEntryTextTemplate("{{abbreviation}} {{displayName}}").listEntrySummaryTemplate("{{summaries[0].abbreviation}} <b>{{summaries[1].value}}</b><br>{{summaries[2].value}}: {{summaries[0].value}}").build();
+    return new searchmenu.SearchViewDescriptionBuilder().viewElementId("searchresults").listParentElementId("searchmatches").listEntryElementIdPrefix("result").listEntryTextTemplate("{{abbreviation}} {{displayName}}").listEntrySummaryTemplate("{{summaries[0].abbreviation}} <b>{{summaries[1].value}}</b><br>{{summaries[2].value}}: {{summaries[0].value}}").build();
   }
   /**
   * Contains the default settings for the details view.
@@ -603,7 +660,7 @@ $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchMenuAPI = (function () {
   * @memberof module:searchmenu.SearchMenuAPI
   */
   function defaultDetailView() {
-    return new $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchViewDescriptionBuilder().viewElementId("searchdetails").listParentElementId("searchdetailentries").listEntryElementIdPrefix("detail").listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}").build();
+    return new searchmenu.SearchViewDescriptionBuilder().viewElementId("searchdetails").listParentElementId("searchdetailentries").listEntryElementIdPrefix("detail").listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}").build();
   }
   /**
   * Contains the default settings for the filter options view.
@@ -619,7 +676,7 @@ $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchMenuAPI = (function () {
   * @memberof module:searchmenu.SearchMenuAPI
   */
   function defaultFilterOptionsView() {
-    return new $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchViewDescriptionBuilder().viewElementId("searchfilteroptions").listParentElementId("searchfilteroptionentries").listEntryElementIdPrefix("filter").listEntryTextTemplate("{{value}}").listEntrySummaryTemplate("{{summaries[0].value}}").isSelectableFilterOption(true).build();
+    return new searchmenu.SearchViewDescriptionBuilder().viewElementId("searchfilteroptions").listParentElementId("searchfilteroptionentries").listEntryElementIdPrefix("filter").listEntryTextTemplate("{{value}}").listEntrySummaryTemplate("{{summaries[0].value}}").isSelectableFilterOption(true).build();
   }
   /**
   * Contains the default settings for the filters view.
@@ -632,13 +689,13 @@ $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchMenuAPI = (function () {
   * @memberof module:searchmenu.SearchMenuAPI
   */
   function defaultFiltersView() {
-    return new $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchViewDescriptionBuilder().viewElementId("searchresults").listParentElementId("searchfilters").listEntryElementIdPrefix("filter").isSelectableFilterOption(true).build();
+    return new searchmenu.SearchViewDescriptionBuilder().viewElementId("searchresults").listParentElementId("searchfilters").listEntryElementIdPrefix("filter").isSelectableFilterOption(true).build();
   }
   function addEvent(eventName, element, eventHandler) {
-    $8b16b2762684afc8d64da80b2a6e9bff$var$eventlistener.addEventListener(eventName, element, eventHandler);
+    eventlistener.addEventListener(eventName, element, eventHandler);
   }
   function getEventTarget(event) {
-    return $8b16b2762684afc8d64da80b2a6e9bff$var$eventtarget.getEventTarget(event);
+    return eventtarget.getEventTarget(event);
   }
   function addClass(classToAdd, element) {
     removeClass(classToAdd, element);
@@ -657,7 +714,8 @@ $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchMenuAPI = (function () {
   }
   return SearchMenuApiBuilder;
 })();
-$8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchMenuUI = (function () {
+searchmenu.SearchMenuUI = (function () {
+  "use strict";
   /**
   * Search Menu UI.
   *
@@ -1010,7 +1068,7 @@ $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchMenuUI = (function () {
     var inputElement = document.getElementById(config.inputElementId);
     resultEntry.blur();
     inputElement.focus();
-    $8b16b2762684afc8d64da80b2a6e9bff$var$selectionrange.moveCursorToEndOf(inputElement);
+    selectionrange.moveCursorToEndOf(inputElement);
     preventDefaultEventHandling(event);
     // skips cursor position change on key up once
     hideSubMenus(config);
@@ -1756,13 +1814,13 @@ $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchMenuUI = (function () {
     });
   }
   function addEvent(eventName, element, eventHandler) {
-    $8b16b2762684afc8d64da80b2a6e9bff$var$eventlistener.addEventListener(eventName, element, eventHandler);
+    eventlistener.addEventListener(eventName, element, eventHandler);
   }
   /**
   * @returns {Element} target of the event
   */
   function getEventTarget(event) {
-    return $8b16b2762684afc8d64da80b2a6e9bff$var$eventtarget.getEventTarget(event);
+    return eventtarget.getEventTarget(event);
   }
   /**
   * Returns the key code of the event or -1 if it is no available.
@@ -1776,4 +1834,79 @@ $8b16b2762684afc8d64da80b2a6e9bff$var$searchmenu.SearchMenuUI = (function () {
   }
   return instance;
 })();
+
+},{"./ponyfills/eventCurrentTargetPonyfill":"3K6ht","./ponyfills/selectionRangePonyfill":"6sqgb","./ponyfills/addEventListenerPonyfill":"4mvY2"}],"3K6ht":[function(require,module,exports) {
+"use strict";
+var module = module || ({});
+// Fallback for vanilla js without modules
+/**
+* @@namespace eventtarget
+*/
+var eventtarget = module.exports = {};
+// Fallback for vanilla js without modules
+/**
+* @returns {Element} target of the event
+* @memberof eventtarget
+*/
+eventtarget.getEventTarget = function (event) {
+  if (typeof event.currentTarget !== "undefined" && event.currentTarget != null) {
+    return event.currentTarget;
+  }
+  if (typeof event.srcElement !== "undefined" && event.srcElement != null) {
+    return event.srcElement;
+  } else {
+    throw new Error("Event doesn't contain bounded element: " + event);
+  }
+};
+
+},{}],"6sqgb":[function(require,module,exports) {
+"use strict";
+var module = module || ({});
+// Fallback for vanilla js without modules
+/**
+* @namespace selectionrange
+*/
+var selectionrange = module.exports = {};
+// Fallback for vanilla js without modules
+selectionrange.moveCursorToEndOf = function (element) {
+  if (typeof element.setSelectionRange === "function") {
+    element.setSelectionRange(element.value.length, element.value.length);
+  } else if (typeof element.selectionStart === "number" && typeof element.selectionEnd === "number") {
+    element.selectionStart = element.selectionEnd = element.value.length;
+  } else if (typeof element.createTextRange === "function") {
+    var range = element.createTextRange();
+    range.collapse(true);
+    range.moveEnd("character", element.value.length);
+    range.moveStart("character", element.value.length);
+    range.select();
+  }
+};
+
+},{}],"4mvY2":[function(require,module,exports) {
+"use strict";
+var module = module || ({});
+// Fallback for vanilla js without modules
+/**
+* @@namespace eventlistener
+*/
+var eventlistener = module.exports = {};
+// Fallback for vanilla js without modules
+/**
+* Adds an event listener/hander using "addEventListener" or whatever method the browser supports.
+* @param {String} eventName
+* @param {Element} element
+* @param {*} eventHandler
+* @memberof addeventlistener
+*/
+eventlistener.addEventListener = function (eventName, element, eventHandler) {
+  if (element.addEventListener) {
+    element.addEventListener(eventName, eventHandler, false);
+  } else if (element.attachEvent) {
+    element.attachEvent("on" + eventName, eventHandler);
+  } else {
+    element["on" + eventName] = eventHandler;
+  }
+};
+
+},{}]},["7lRqo"], "7lRqo", "parcelRequiref875")
 
