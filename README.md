@@ -52,6 +52,9 @@ They start with "should" (higher priority) and "could" (lower priority) and migh
 The best way to get started is by having a look at the fully working [example](example/README.md). It includes a sub project that shows how to integrate the search into a java application
 using a Servlet container: [example](example/search-example-servlet/README.md).
 
+### Code Documentation
+The [code documentation](https://joht.github.io/search-menu-ui) is generated using [JSDoc](https://jsdoc.app) and is published using [GitHub Pages](https://pages.github.com) at [https://joht.github.io/search-menu-ui](https://joht.github.io/search-menu-ui).
+
 ### Build all
 
 Use the following [commands](COMMANDS.md) to build everything including the example and the example servlet within the current directory. A list of all commands can be found in [COMMANDS.md](COMMANDS.md).
