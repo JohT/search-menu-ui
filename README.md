@@ -102,7 +102,7 @@ They can be included as variables in the search service url or the search reques
 
 **&#x2461;** shows the same filter options view as in [Filter-Options](#Filter-Options). The selected filter can be changed here as well.
 
-**&#x2461;** shows a special case of a filter option, that not only has a preselected default
+**&#x2462;** shows a special case of a filter option, that not only has a preselected default
 value but also contains navigation target url templates. Choosing a target and its (hidden)
 url template changes the site that is opened when a result is selected. 
 
