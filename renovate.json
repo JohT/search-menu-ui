@@ -1,5 +1,14 @@
 {
   "extends": [
-    "config:base"
+    "config:base",
+    ":pinAllExceptPeerDependencies",
+    ":combinePatchMinorReleases",
+    ":prConcurrentLimit10",
+    ":automergeDigest",
+    ":automergePatch",
+    ":automergeMinor",
+    ":automergeRequireAllStatusChecks",
+    ":automergeLinters",
+    ":automergeTesters"
   ]
 }
