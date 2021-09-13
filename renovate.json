@@ -10,5 +10,11 @@
     ":automergeRequireAllStatusChecks",
     ":automergeLinters",
     ":automergeTesters"
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["parcel"],
+      "enabled": false
+    }
   ]
 }

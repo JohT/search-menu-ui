@@ -10,7 +10,7 @@
       "context": "node",
       "includeNodeModules": true,
       "engines": {
-        "node": "10"
+        "node": "14"
       }
     }
   },
