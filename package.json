@@ -55,7 +55,7 @@
     "istanbul-badges-readme": "1.6.0",
     "jasmine": "3.10.0",
     "jsdoc": "3.6.7",
-    "jsdom": "18.0.0",
+    "jsdom": "18.0.1",
     "nyc": "15.1.0",
     "parcel": "2.0.0-rc.0"
   }
