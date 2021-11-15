@@ -9,12 +9,15 @@
     ":automergeMinor",
     ":automergeRequireAllStatusChecks",
     ":automergeLinters",
-    ":automergeTesters"
+    ":automergeTesters",
+    "group:recommended",
   ],
   "packageRules": [
     {
-      "matchPackageNames": ["parcel"],
-      "enabled": false
+      "matchPackagePrefixes": [
+        "io.quarkus:"
+      ],
+      "groupName": "Quarkus"
     }
   ]
 }
