@@ -10,7 +10,7 @@
     ":automergeRequireAllStatusChecks",
     ":automergeLinters",
     ":automergeTesters",
-    "group:recommended",
+    "group:recommended"
   ],
   "packageRules": [
     {
