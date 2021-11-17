@@ -1,12 +1,10 @@
 <?xml version="1.0"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.joht.search.example.servlet</groupId>
   <artifactId>search-example-servlet</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <maven.compiler.parameters>true</maven.compiler.parameters>
@@ -23,7 +21,6 @@
     <mockito-core.version>4.0.0</mockito-core.version>
     <hamcrest.version>2.2</hamcrest.version>
   </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -35,88 +32,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <pluginmanagement>
-    <plugin>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-maven-plugin</artifactId>
-      <version>${quarkus-plugin.version}</version>
-      <extensions>true</extensions>
-      <executions>
-        <execution>
-          <goals>
-            <goal>build</goal>
-            <goal>generate-code</goal>
-            <goal>generate-code-tests</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin>
-    <plugin>
-      <artifactId>maven-compiler-plugin</artifactId>
-      <version>${compiler-plugin.version}</version>
-      <configuration>
-        <parameters>${maven.compiler.parameters}</parameters>
-      </configuration>
-    </plugin>
-    <plugin>
-      <artifactId>maven-surefire-plugin</artifactId>
-      <version>${surefire-plugin.version}</version>
-      <configuration>
-        <systemPropertyVariables>
-          <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-          <maven.home>${maven.home}</maven.home>
-        </systemPropertyVariables>
-      </configuration>
-    </plugin>
-    <plugin>
-      <groupId>org.jacoco</groupId>
-      <artifactId>jacoco-maven-plugin</artifactId>
-      <version>${jacoco-maven-plugin.version}</version>
-      <executions>
-        <execution>
-          <goals>
-            <goal>prepare-agent</goal>
-          </goals>
-        </execution>
-        <execution>
-          <id>report</id>
-          <phase>prepare-package</phase>
-          <goals>
-            <goal>report</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin>
-    <plugin>
-			<groupId>net.alchim31.maven</groupId>
-			<artifactId>yuicompressor-maven-plugin</artifactId>
-			<version>1.5.1</version>
-      <executions>
-        <execution>
-          <id>aggregate_js_css</id>
-          <phase>process-resources</phase>
-          <goals>
-            <goal>compress</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin>
-    <plugin>
-      <groupId>com.google.code.maven-replacer-plugin</groupId>
-      <artifactId>replacer</artifactId>
-      <version>1.5.3</version>
-      <executions>
-        <execution>
-          <phase>process-resources</phase>
-          <goals>
-            <goal>replace</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin>
-  </pluginmanagement>
-
   <dependencies>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -169,26 +84,72 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-maven-plugin</artifactId>
+        <version>${quarkus-plugin.version}</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build</goal>
+              <goal>generate-code</goal>
+              <goal>generate-code-tests</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>${compiler-plugin.version}</version>
+        <configuration>
+          <parameters>${maven.compiler.parameters}</parameters>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire-plugin.version}</version>
+        <configuration>
+          <systemPropertyVariables>
+            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+            <maven.home>${maven.home}</maven.home>
+          </systemPropertyVariables>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-      </plugin>
+        <version>${jacoco-maven-plugin.version}</version>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>prepare-agent</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>report</id>
+                <phase>prepare-package</phase>
+                <goals>
+                    <goal>report</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
       <plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>yuicompressor-maven-plugin</artifactId>
+				<version>1.5.1</version>
+        <executions>
+          <execution>
+            <id>aggregate_js_css</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>compress</goal>
+            </goals>
+          </execution>
+        </executions>
 				<configuration>
           <!-- Gathers JavaScript, CSS and images from the upper dir example. -->
           <!-- Aggregates all JavaScript files into one application.js -->
@@ -234,7 +195,6 @@
           <!-- skip minification and anything else that makes it hard to read the example -->
           <!-- For production code it would make sense to use minification etc.-->
 					<nosuffix>true</nosuffix>
-          <force>true</force>
 					<jswarn>false</jswarn>
 					<nomunge>true</nomunge>
 					<nocompress>true</nocompress>
@@ -246,6 +206,15 @@
       <plugin>
         <groupId>com.google.code.maven-replacer-plugin</groupId>
         <artifactId>replacer</artifactId>
+        <version>1.5.3</version>
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>replace</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
           <!-- Replace hardcoded elasticsearch port number in example javascript -->
           <!-- with the local port. The servlet will delegate the call to elasticsearch -->
