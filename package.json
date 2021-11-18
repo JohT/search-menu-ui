@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "eslint": "8.2.0",
-    "istanbul-badges-readme": "1.6.0",
+    "istanbul-badges-readme": "1.7.0",
     "jasmine": "3.10.0",
     "jsdoc": "3.6.7",
     "jsdom": "18.1.0",
