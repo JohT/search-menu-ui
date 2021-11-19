@@ -2,6 +2,7 @@ package io.github.joht.search.example.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -35,8 +36,8 @@ public class MultiSearchTemplateServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        // Just a simple example configuration to get started.
-        // Use external configuration, TLS, ... especially for production.
+        // This is a simple example configuration which needs to be refined for production use.
+        // Add external configuration, TLS, ...
         restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
     }
 
@@ -51,15 +52,31 @@ public class MultiSearchTemplateServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
-        Request searchRequest = SearchRequestAdapter.adapt(httpRequest).toElasticSearchRequest();
-        Response searchResponse = restClient.performRequest(searchRequest);
-        updateHttpResponse(searchResponse.getEntity(), httpResponse);
+        try {
+            Request searchRequest = SearchRequestAdapter.adapt(httpRequest).toElasticSearchRequest();
+            Response searchResponse = restClient.performRequest(searchRequest);
+            updateHttpResponse(searchResponse.getEntity(), httpResponse);
+        } catch (IOException e) {
+            handleException(httpResponse, e);
+        }
+    }
+
+    private void handleException(HttpServletResponse httpResponse, IOException e) {
+        String logId = UUID.randomUUID().toString();
+        LOGGER.log(Level.SEVERE, e, () -> logId + " Error forwarding request to Elasticsearch");
+        try {
+            httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, logId);
+        } catch (IOException e1) {
+            LOGGER.log(Level.SEVERE, e1, () -> logId + " Error sending error response to client");
+        }
     }
 
     private void updateHttpResponse(HttpEntity entity, final HttpServletResponse httpResponse) throws IOException {
         httpResponse.setContentType(entity.getContentType().getValue());
         try (PrintWriter printWriter = httpResponse.getWriter();) {
-            printWriter.println(EntityUtils.toString(entity));
+            String elasticSearchResponse = EntityUtils.toString(entity);
+            LOGGER.finer(() -> "Response from Elasticsearch: " + elasticSearchResponse);
+            printWriter.println(elasticSearchResponse);
         }
     }
 }
