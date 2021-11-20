@@ -97,7 +97,7 @@ class SearchRequestAdapterTest {
     @ParameterizedTest(name = "it should accept the {0} header by default ({index})")
     @DisplayName("it should accept some headers by default")
     @ValueSource(strings = {"Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Connection", "Contest-Length", "es-secondary-authorization", "Host", "Origin", "Referer", "User-Agent"})
-    void headerToIgnoreByDefault(String expectedHeaderName) {
+    void headerToAllowByDefault(String expectedHeaderName) {
         assertThat(adapterUnderTest.getAllowedHeaders(), hasItem(expectedHeaderName));
     }
 
@@ -163,7 +163,7 @@ class SearchRequestAdapterTest {
     }
 
     @Test
-    @DisplayName("it should use the same custom HTTP headers as the incoming request if they are in the list of allowed headers")
+    @DisplayName("it should use the HTTP headers of the incoming request if they are in the list of allowed headers")
     void elasticSearchRequest() throws IOException {
         Collection<String> headerNames = Arrays.asList("Accept", "Origin");
         when(httpRequest.getHeaderNames()).thenReturn(Collections.enumeration(headerNames));
@@ -174,6 +174,28 @@ class SearchRequestAdapterTest {
         Map<String, String> searchHeaders = request.getOptions().getHeaders().stream().collect(Collectors.toMap(Header::getName, Header::getValue));
         assertThat(searchHeaders.get("Accept"), equalTo("*/*"));
         assertThat(searchHeaders.get("Origin"), equalTo("localhost"));
+    }
+
+    @Test
+    @DisplayName("it should sanatize the incoming HTTP header values before forwarding them")
+    void removeControlCharactersFromHttpHeaderValues() throws IOException {
+        Collection<String> headerNames = Arrays.asList("Origin");
+        when(httpRequest.getHeaderNames()).thenReturn(Collections.enumeration(headerNames));
+        when(httpRequest.getHeader("Origin")).thenReturn("localhost" + stringOfControlCharacters());
+
+        Request request = adapterUnderTest.toElasticSearchRequest();
+
+        Map<String, String> searchHeaders = request.getOptions().getHeaders().stream().collect(Collectors.toMap(Header::getName, Header::getValue));
+        assertThat(searchHeaders.get("Origin"), equalTo("localhost"));
+    }
+
+    private static String stringOfControlCharacters() {
+        String invalidCharacters = "";
+        for (int index = 0; index < 31; index++) {
+            invalidCharacters+= (char) index;
+        }
+        invalidCharacters += (char)0x7F;
+        return invalidCharacters;
     }
 
     @Test
