@@ -10,6 +10,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.json.JsonSanitizer;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.util.EntityUtils;
@@ -74,9 +77,11 @@ public class MultiSearchTemplateServlet extends HttpServlet {
     private void updateHttpResponse(HttpEntity entity, final HttpServletResponse httpResponse) throws IOException {
         httpResponse.setContentType(entity.getContentType().getValue());
         try (PrintWriter printWriter = httpResponse.getWriter();) {
-            String elasticSearchResponse = EntityUtils.toString(entity);
+            final String elasticSearchResponse = EntityUtils.toString(entity);
             LOGGER.finer(() -> "Response from Elasticsearch: " + elasticSearchResponse);
-            printWriter.println(elasticSearchResponse);
+            String encodedResponse = JsonSanitizer.sanitize(elasticSearchResponse);
+            LOGGER.finer(() -> "Encoded response from Elasticsearch: " + encodedResponse);
+            printWriter.println(encodedResponse);
         }
     }
 }
