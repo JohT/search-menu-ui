@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import org.apache.http.HttpEntity;
@@ -31,6 +32,8 @@ class SearchRequestAdapter {
 
     private static final List<String> ALLOWED_HEADERS =
             Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Connection", "Contest-Length", "es-secondary-authorization", "Host", "Origin", "Referer", "User-Agent");
+
+    private static final Pattern CONTROL_CHARACTERS = Pattern.compile("\\p{Cntrl}");
 
     private final HttpServletRequest httpRequest;
     private final Collection<String> allowedHeaders = new ArrayList<>(ALLOWED_HEADERS);
@@ -74,11 +77,18 @@ class SearchRequestAdapter {
         Builder searchRequestOptions = RequestOptions.DEFAULT.toBuilder();
         for (String headerName : Collections.list(httpRequest.getHeaderNames())) {
             if (allowedHeaders.contains(headerName)) {
-                searchRequestOptions.addHeader(headerName, httpRequest.getHeader(headerName));
-                LOGGER.finer(() -> "Adding header " + headerName + " with value " + httpRequest.getHeader(headerName));
+                String headerValue =  sanatizeHeaderValue(httpRequest.getHeader(headerName));
+                searchRequestOptions.addHeader(headerName, headerValue);
+                LOGGER.finer(() -> "Adding header " + headerName + " with value " + headerValue);
             }
         }
         return searchRequestOptions.build();
+    }
+
+    private static String sanatizeHeaderValue(final String headerValue) {
+        final String sanatizedHeaderValue = CONTROL_CHARACTERS.matcher(headerValue).replaceAll("");
+        LOGGER.finer(() -> "Sanatized header value " + headerValue + " to " + sanatizedHeaderValue);
+        return sanatizedHeaderValue;
     }
 
     private HttpEntity bodyToSearchRequestEntity() throws IOException {
