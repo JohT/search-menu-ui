@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletRequest;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -25,11 +28,15 @@ import org.elasticsearch.client.RequestOptions.Builder;
  */
 class SearchRequestAdapter {
 
-    private static final List<String> HEADERS_TO_IGNORE_BY_DEFAULT =
-            Arrays.asList("Content-Length", "Content-Type");
+    private static final Logger LOGGER = Logger.getLogger(SearchRequestAdapter.class.getName());
+
+    private static final List<String> ALLOWED_HEADERS =
+            Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Connection", "Contest-Length", "es-secondary-authorization", "Host", "Origin", "Referer", "User-Agent");
+
+    private static final Pattern CONTROL_CHARACTERS = Pattern.compile("\\p{Cntrl}");
 
     private final HttpServletRequest httpRequest;
-    private final Collection<String> headersToIgnore = new ArrayList<>(HEADERS_TO_IGNORE_BY_DEFAULT);
+    private final Collection<String> allowedHeaders = new ArrayList<>(ALLOWED_HEADERS);
     private int bodyReaderBufferSize = 1024;
 
     public static final SearchRequestAdapter adapt(HttpServletRequest httpRequest) {
@@ -40,8 +47,8 @@ class SearchRequestAdapter {
         this.httpRequest = Objects.requireNonNull(httpRequest, () -> "httpRequest may not be null");
     }
 
-    public SearchRequestAdapter addHeaderToIgnore(String headerName) {
-        headersToIgnore.add(Objects.requireNonNull(headerName, () -> "header may not be null"));
+    public SearchRequestAdapter addAllowedHeader(String headerName) {
+        allowedHeaders.add(Objects.requireNonNull(headerName, () -> "header may not be null"));
         return this;
     }
 
@@ -50,8 +57,8 @@ class SearchRequestAdapter {
         return this;
     }
 
-    public Collection<String> getHeadersToIgnore() {
-        return Collections.unmodifiableCollection(headersToIgnore);
+    public Collection<String> getAllowedHeaders() {
+        return Collections.unmodifiableCollection(allowedHeaders);
     }
 
     public int getBodyReaderBufferSize() {
@@ -69,16 +76,26 @@ class SearchRequestAdapter {
     private RequestOptions headersToSearchRequestOptions() {
         Builder searchRequestOptions = RequestOptions.DEFAULT.toBuilder();
         for (String headerName : Collections.list(httpRequest.getHeaderNames())) {
-            if (!headersToIgnore.contains(headerName)) {
-                searchRequestOptions.addHeader(headerName, httpRequest.getHeader(headerName));
+            if (allowedHeaders.contains(headerName)) {
+                String headerValue =  sanatizeHeaderValue(httpRequest.getHeader(headerName));
+                searchRequestOptions.addHeader(headerName, headerValue);
+                LOGGER.finer(() -> "Adding header " + headerName + " with value " + headerValue);
             }
         }
         return searchRequestOptions.build();
     }
 
+    private static String sanatizeHeaderValue(final String headerValue) {
+        final String sanatizedHeaderValue = CONTROL_CHARACTERS.matcher(headerValue).replaceAll("");
+        LOGGER.finer(() -> "Sanatized header value " + headerValue + " to " + sanatizedHeaderValue);
+        return sanatizedHeaderValue;
+    }
+
     private HttpEntity bodyToSearchRequestEntity() throws IOException {
         String searchBody = getBody();
         ContentType searchContentType = ContentType.create(httpRequest.getContentType());
+        LOGGER.finer(() -> "Search body: " + searchBody);
+        LOGGER.finer(() -> "Search content type: " + searchContentType);
         return new NStringEntity(searchBody, searchContentType);
     }
 
@@ -100,6 +117,7 @@ class SearchRequestAdapter {
         for (Entry<K, V[]> entry : map.entrySet()) {
             result.put(entry.getKey(), getFirstArrayValue(entry.getValue()));
         }
+        LOGGER.finer(() -> "First array values: " + result);
         return result;
     }
 
@@ -109,6 +127,7 @@ class SearchRequestAdapter {
 
     @Override
     public String toString() {
-        return "SearchRequestAdapter [httpRequest=" + httpRequest + "]";
+        return "SearchRequestAdapter [allowedHeaders=" + allowedHeaders + ", bodyReaderBufferSize="
+                + bodyReaderBufferSize + ", httpRequest=" + httpRequest + "]";
     }
 }

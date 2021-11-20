@@ -8,6 +8,15 @@ It build upon the search menu example UI in the outer directory.
 The servlet source code can be found here: [MultiSearchTemplateServlet.java](/src/main/java/io/github/joht/search/example/servlet/MultiSearchTemplateServlet.java).
 
 This is only a very simple example to get started. It doesn't accept other requests than multi template searches, doesn't include TLS (SSL) setup, has no additional authentication or authorization setup, .... 
+
+# Prerequisites
+
+- Run the following command so that the directory above contains the `node_modules` directory:
+
+```shell
+../npm install
+```
+
 ## Running the application in dev mode
 
 You can run your application in dev mode that enables live coding using:

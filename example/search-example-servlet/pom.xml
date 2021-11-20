@@ -16,6 +16,7 @@
     <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
     <quarkus.platform.version>2.4.2.Final</quarkus.platform.version>
+    <json-sanitizer.version>1.2.2</json-sanitizer.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
     <mockito-core.version>4.1.0</mockito-core.version>
@@ -54,6 +55,12 @@
     <dependency>
       <groupId>org.elasticsearch.client</groupId>
       <artifactId>elasticsearch-rest-client</artifactId>
+    </dependency>
+    <!--  OWASP JSON Sanatizer (XSS Security Protection) -->
+    <dependency>
+      <groupId>com.mikesamuel</groupId>
+      <artifactId>json-sanitizer</artifactId>
+      <version>${json-sanitizer.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

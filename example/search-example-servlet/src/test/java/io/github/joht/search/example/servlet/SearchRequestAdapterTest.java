@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.http.Header;
@@ -88,18 +87,18 @@ class SearchRequestAdapterTest {
     }
 
     @Test
-    @DisplayName("it should take an header name to ignore and return it in the list of ignored headers")
-    void nameOfHeaderToIgnoreAdded() {
-        String expectedHeaderName = "headerNameToIgnore";
-        adapterUnderTest.addHeaderToIgnore(expectedHeaderName);
-        assertThat(adapterUnderTest.getHeadersToIgnore(), hasItem(expectedHeaderName));
+    @DisplayName("it should take a header name that is added to the list of allowed headers")
+    void nameOfHeaderToBeAdded() {
+        String expectedHeaderName = "additionalAllowedHeaderName";
+        adapterUnderTest.addAllowedHeader(expectedHeaderName);
+        assertThat(adapterUnderTest.getAllowedHeaders(), hasItem(expectedHeaderName));
     }
 
-    @ParameterizedTest(name = "it should ignore the {0} header by default ({index})")
-    @DisplayName("it should ignore some headers by default")
-    @ValueSource(strings = {"Content-Length", "Content-Type"})
-    void headerToIgnoreByDefault(String expectedHeaderName) {
-        assertThat(adapterUnderTest.getHeadersToIgnore(), hasItem(expectedHeaderName));
+    @ParameterizedTest(name = "it should accept the {0} header by default ({index})")
+    @DisplayName("it should accept some headers by default")
+    @ValueSource(strings = {"Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Connection", "Contest-Length", "es-secondary-authorization", "Host", "Origin", "Referer", "User-Agent"})
+    void headerToAllowByDefault(String expectedHeaderName) {
+        assertThat(adapterUnderTest.getAllowedHeaders(), hasItem(expectedHeaderName));
     }
 
     @Test
@@ -164,21 +163,43 @@ class SearchRequestAdapterTest {
     }
 
     @Test
-    @DisplayName("it should use the same custom HTTP headers as the incoming request for elasticsearch")
+    @DisplayName("it should use the HTTP headers of the incoming request if they are in the list of allowed headers")
     void elasticSearchRequest() throws IOException {
-        Collection<String> headerNames = Arrays.asList("CustomTestHeader1", "CustomTestHeader2");
+        Collection<String> headerNames = Arrays.asList("Accept", "Origin");
         when(httpRequest.getHeaderNames()).thenReturn(Collections.enumeration(headerNames));
-        when(httpRequest.getHeader("CustomTestHeader1")).thenReturn("1");
-        when(httpRequest.getHeader("CustomTestHeader2")).thenReturn("2");
+        when(httpRequest.getHeader("Accept")).thenReturn("*/*");
+        when(httpRequest.getHeader("Origin")).thenReturn("localhost");
 
         Request request = adapterUnderTest.toElasticSearchRequest();
         Map<String, String> searchHeaders = request.getOptions().getHeaders().stream().collect(Collectors.toMap(Header::getName, Header::getValue));
-        assertThat(searchHeaders.get("CustomTestHeader1"), equalTo("1"));
-        assertThat(searchHeaders.get("CustomTestHeader2"), equalTo("2"));
+        assertThat(searchHeaders.get("Accept"), equalTo("*/*"));
+        assertThat(searchHeaders.get("Origin"), equalTo("localhost"));
     }
 
     @Test
-    @DisplayName("it shouldn't transfer headers that were defined to be ignored")
+    @DisplayName("it should sanatize the incoming HTTP header values before forwarding them")
+    void removeControlCharactersFromHttpHeaderValues() throws IOException {
+        Collection<String> headerNames = Arrays.asList("Origin");
+        when(httpRequest.getHeaderNames()).thenReturn(Collections.enumeration(headerNames));
+        when(httpRequest.getHeader("Origin")).thenReturn("localhost" + stringOfControlCharacters());
+
+        Request request = adapterUnderTest.toElasticSearchRequest();
+
+        Map<String, String> searchHeaders = request.getOptions().getHeaders().stream().collect(Collectors.toMap(Header::getName, Header::getValue));
+        assertThat(searchHeaders.get("Origin"), equalTo("localhost"));
+    }
+
+    private static String stringOfControlCharacters() {
+        String invalidCharacters = "";
+        for (int index = 0; index < 31; index++) {
+            invalidCharacters+= (char) index;
+        }
+        invalidCharacters += (char)0x7F;
+        return invalidCharacters;
+    }
+
+    @Test
+    @DisplayName("it shouldn't transfer headers that are not defined in the list of allowed headers")
     void elasticSearchRequestWithoutIgnoredHeaders() throws IOException {
         Collection<String> headerNames = Arrays.asList("Content-Type", "Content-Length");
         when(httpRequest.getHeaderNames()).thenReturn(Collections.enumeration(headerNames));
