@@ -6,7 +6,7 @@
 // anything defined in a previous bundle is accessed via the
 // orig method which is the require for previous bundles
 
-(function(modules, entry, mainEntry, parcelRequireName, globalName) {
+(function (modules, entry, mainEntry, parcelRequireName, globalName) {
   /* eslint-disable no-undef */
   var globalObject =
     typeof globalThis !== 'undefined'
@@ -80,11 +80,13 @@
     return cache[name].exports;
 
     function localRequire(x) {
-      return newRequire(localRequire.resolve(x));
+      var res = localRequire.resolve(x);
+      return res === false ? {} : newRequire(res);
     }
 
     function resolve(x) {
-      return modules[name][1][x] || x;
+      var id = modules[name][1][x];
+      return id != null ? id : x;
     }
   }
 
@@ -99,9 +101,9 @@
   newRequire.modules = modules;
   newRequire.cache = cache;
   newRequire.parent = previousRequire;
-  newRequire.register = function(id, exports) {
+  newRequire.register = function (id, exports) {
     modules[id] = [
-      function(require, module) {
+      function (require, module) {
         module.exports = exports;
       },
       {},
@@ -109,7 +111,7 @@
   };
 
   Object.defineProperty(newRequire, 'root', {
-    get: function() {
+    get: function () {
       return globalObject[parcelRequireName];
     },
   });
@@ -131,7 +133,7 @@
 
       // RequireJS
     } else if (typeof define === 'function' && define.amd) {
-      define(function() {
+      define(function () {
         return mainExports;
       });
 
@@ -140,7 +142,7 @@
       this[globalName] = mainExports;
     }
   }
-})({"k64Bb":[function(require,module,exports) {
+})({"708Ii":[function(require,module,exports) {
 /**
  * @file Provides the (http) client/connection to the search backend service.
  * @version {@link https://github.com/JohT/search-menu-ui/releases/latest latest version}
@@ -397,7 +399,7 @@ searchMenuServiceClient.HttpSearchConfig = (function() {
     return instance;
 })();
 
-},{"../../src/js/ponyfills/xmlHttpRequestPonyfill":"2tSJG"}],"2tSJG":[function(require,module,exports) {
+},{"../../src/js/ponyfills/xmlHttpRequestPonyfill":"1gr42"}],"1gr42":[function(require,module,exports) {
 "use strict";
 var module = module || {
 }; // Fallback for vanilla js without modules
@@ -424,22 +426,22 @@ var module = module || {
     }
     try {
         return new ActiveXObject("Msxml2.XMLHTTP.6.0");
-    } catch (e) {
-        console.log("XMLHttpRequest Msxml2.XMLHTTP.6.0 not available: " + e);
+    } catch (e1) {
+        console.log("XMLHttpRequest Msxml2.XMLHTTP.6.0 not available: " + e1);
     }
     try {
         return new ActiveXObject("Msxml2.XMLHTTP.3.0");
-    } catch (e) {
-        console.log("XMLHttpRequest Msxml2.XMLHTTP.3.0 not available: " + e);
+    } catch (e2) {
+        console.log("XMLHttpRequest Msxml2.XMLHTTP.3.0 not available: " + e2);
     }
     try {
         return new ActiveXObject("Microsoft.XMLHTTP");
-    } catch (e) {
-        console.log("XMLHttpRequest Microsoft.XMLHTTP not available: " + e);
+    } catch (e3) {
+        console.log("XMLHttpRequest Microsoft.XMLHTTP not available: " + e3);
     }
     // Microsoft.XMLHTTP points to Msxml2.XMLHTTP and is redundant
     throw new Error("This browser does not support XMLHttpRequest.");
 };
 
-},{}]},["k64Bb"], "k64Bb", "parcelRequire6f19")
+},{}]},["708Ii"], "708Ii", "parcelRequire6f19")
 

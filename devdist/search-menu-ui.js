@@ -6,7 +6,7 @@
 // anything defined in a previous bundle is accessed via the
 // orig method which is the require for previous bundles
 
-(function(modules, entry, mainEntry, parcelRequireName, globalName) {
+(function (modules, entry, mainEntry, parcelRequireName, globalName) {
   /* eslint-disable no-undef */
   var globalObject =
     typeof globalThis !== 'undefined'
@@ -80,11 +80,13 @@
     return cache[name].exports;
 
     function localRequire(x) {
-      return newRequire(localRequire.resolve(x));
+      var res = localRequire.resolve(x);
+      return res === false ? {} : newRequire(res);
     }
 
     function resolve(x) {
-      return modules[name][1][x] || x;
+      var id = modules[name][1][x];
+      return id != null ? id : x;
     }
   }
 
@@ -99,9 +101,9 @@
   newRequire.modules = modules;
   newRequire.cache = cache;
   newRequire.parent = previousRequire;
-  newRequire.register = function(id, exports) {
+  newRequire.register = function (id, exports) {
     modules[id] = [
-      function(require, module) {
+      function (require, module) {
         module.exports = exports;
       },
       {},
@@ -109,7 +111,7 @@
   };
 
   Object.defineProperty(newRequire, 'root', {
-    get: function() {
+    get: function () {
       return globalObject[parcelRequireName];
     },
   });
@@ -131,7 +133,7 @@
 
       // RequireJS
     } else if (typeof define === 'function' && define.amd) {
-      define(function() {
+      define(function () {
         return mainExports;
       });
 
@@ -140,7 +142,7 @@
       this[globalName] = mainExports;
     }
   }
-})({"6MKt7":[function(require,module,exports) {
+})({"akuQK":[function(require,module,exports) {
 /**
  * @file Search UI written in vanilla JavaScript. Menu structure for results. Filters are integrated as search results.
  * @version {@link https://github.com/JohT/search-menu-ui/releases/latest latest version}
@@ -1361,10 +1363,10 @@ searchmenu.SearchMenuUI = (function() {
    * @param {module:searchmenu.ElementFoundListener} callback will be called for every found child and the given parent itself
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */ function forEachIdElementIncludingChildren(element, callback) {
-        if (element.id) callback(element, true);
-        forEachEntryIn(element.childNodes, function(element1) {
-            if (element1.id) callback(element1, false);
+   */ function forEachIdElementIncludingChildren(element1, callback) {
+        if (element1.id) callback(element1, true);
+        forEachEntryIn(element1.childNodes, function(element) {
+            if (element.id) callback(element, false);
         });
     }
     function forEachEntryIn(array, callback) {
@@ -1629,7 +1631,7 @@ searchmenu.SearchMenuUI = (function() {
     return instance;
 })();
 
-},{"./ponyfills/eventCurrentTargetPonyfill":"SJ7rm","./ponyfills/selectionRangePonyfill":"8Rf1b","./ponyfills/addEventListenerPonyfill":"99QX0"}],"SJ7rm":[function(require,module,exports) {
+},{"./ponyfills/eventCurrentTargetPonyfill":"kNgz6","./ponyfills/selectionRangePonyfill":"70ybI","./ponyfills/addEventListenerPonyfill":"VQias"}],"kNgz6":[function(require,module,exports) {
 "use strict";
 var module = module || {
 }; // Fallback for vanilla js without modules
@@ -1646,7 +1648,7 @@ var module = module || {
     else throw new Error("Event doesn't contain bounded element: " + event);
 };
 
-},{}],"8Rf1b":[function(require,module,exports) {
+},{}],"70ybI":[function(require,module,exports) {
 "use strict";
 var module = module || {
 }; // Fallback for vanilla js without modules
@@ -1666,7 +1668,7 @@ selectionrange.moveCursorToEndOf = function(element) {
     }
 };
 
-},{}],"99QX0":[function(require,module,exports) {
+},{}],"VQias":[function(require,module,exports) {
 "use strict";
 var module = module || {
 }; // Fallback for vanilla js without modules
@@ -1686,5 +1688,5 @@ var module = module || {
     else element["on" + eventName] = eventHandler;
 };
 
-},{}]},["6MKt7"], "6MKt7", "parcelRequire6f19")
+},{}]},["akuQK"], "akuQK", "parcelRequire6f19")
 
