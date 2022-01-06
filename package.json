@@ -1,6 +1,6 @@
 {
   "name": "search-menu-ui",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Search UI written in vanilla JavaScript. Menu structure for results. Filters are integrated as search results.",
   "directories": {
     "test": "test"
@@ -24,11 +24,11 @@
     "coverage": "nyc npm run test",
     "coverage-badge": "istanbul-badges-readme",
     "doc": "jsdoc -d docs --configure ./docs/jsdoc.json --readme ./README.md ./src/js/*.js",
-    "merger": "merger build",
+    "merger": "echo -ne \"k\n\" | npx merger build",
     "dev": "rm -rf devdist && parcel --out-dir devdist ./src/js/*.js",
     "devbuild": "rm -rf devdist && NODE_ENV=development parcel build --dist-dir devdist ./src/js/*.js --no-optimize --no-source-maps --no-scope-hoist --no-content-hash --detailed-report",
     "build": "parcel build ./src/js/*.js",
-    "package": "npm run lint && npm run coverage && npm run coverage-badge && npm run doc && npm run devbuild && npm run build && merger",
+    "package": "npm run lint && npm run coverage && npm run coverage-badge && npm run doc && npm run devbuild && npm run build && npm run merger",
     "all": "npm run package && cd example && npm run package && cd search-example-servlet && mvn clean package"
   },
   "repository": {
@@ -52,10 +52,13 @@
   },
   "devDependencies": {
     "eslint": "8.6.0",
+    "inquirer": "8.2.0",
     "istanbul-badges-readme": "1.8.1",
     "jasmine": "3.99.0",
     "jsdoc": "3.6.7",
     "jsdom": "19.0.0",
+    "merger-js": "3.10.3",
+    "node-notifier": "10.0.0",
     "nyc": "15.1.0",
     "parcel": "2.1.0"
   }

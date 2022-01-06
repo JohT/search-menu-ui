@@ -51,5 +51,5 @@
 			}
 		}
 	],
-	"nodeModulesPath": "/Users/johannestroppacher/git/search-menu-ui/node_modules"
+	"nodeModulesPath": "./node_modules"
 }
