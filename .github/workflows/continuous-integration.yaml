@@ -1,0 +1,124 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env: 
+      CI_COMMIT_MESSAGE: Continuous Integration Build Artifacts
+      CI_COMMIT_AUTHOR: ${{ github.event.repository.name }} Continuous Integration
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+        token: ${{ secrets.WORKFLOW_GIT_ACCESS_TOKEN }}
+
+    - name: Set environment variable "commit-message"
+      run: echo "commit-message=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
+    - name: Display environment variable "commit-message"
+      run: echo "commit-message=${{ env.commit-message }}"
+
+    - name: Set environment variable "commit-author"
+      run: echo "commit-author=$(git log -1 --pretty=format:'%an')" >> $GITHUB_ENV
+    - name: Display environment variable "commit-author"
+      run: echo "commit-author=${{ env.commit-author }}"
+
+    - name: Set environment variable "is-auto-commit"
+      if: env.commit-message == env.CI_COMMIT_MESSAGE && env.commit-author == env.CI_COMMIT_AUTHOR
+      run: echo "is-auto-commit=true" >> $GITHUB_ENV
+    - name: Display environment variable "is-auto-commit"
+      run: echo "is-auto-commit=${{ env.is-auto-commit }}"
+    - name: Info message on CI auto commit 
+      if: env.is-auto-commit
+      run: echo "Continuous Integration Auto Commit - The following steps will be skipped"
+
+    - uses: actions/setup-node@v2
+      if: env.is-auto-commit == false
+      with:
+        node-version: '12'
+    - name: (Main) Install nodes packages
+      if: env.is-auto-commit == false
+      run: npm ci
+    - name: (Main) Build package (lint, test, build, package, merge)
+      if: env.is-auto-commit == false
+      run: npm run package
+
+    - name: (Main) Archive test code coverage results
+      if: env.is-auto-commit == false
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-code-coverage-report
+        path: coverage
+        retention-days: 31
+        if-no-files-found: error
+    - name: (Main) Archive documentation
+      if: env.is-auto-commit == false
+      uses: actions/upload-artifact@v2
+      with:
+        name: documentation
+        path: docs
+        retention-days: 31
+        if-no-files-found: error
+    - name: (Main) Archive build artifacts distribution-production
+      if: env.is-auto-commit == false
+      uses: actions/upload-artifact@v2
+      with:
+        name: distribution-production
+        path: dist
+        retention-days: 31
+        if-no-files-found: error
+    - name: (Main) Archive build artifacts distribution-development
+      if: env.is-auto-commit == false
+      uses: actions/upload-artifact@v2
+      with:
+        name: distribution-development
+        path: devdist
+        retention-days: 31
+        if-no-files-found: error
+
+    - name: (Example) Install nodes packages
+      if: env.is-auto-commit == false
+      working-directory: example
+      run: npm ci
+    - name: (Example) Build package (lint, test, build, package, merge)
+      if: env.is-auto-commit == false
+      working-directory: example
+      run: npm run package
+
+    - name: (Example) Archive test code coverage results
+      if: env.is-auto-commit == false
+      uses: actions/upload-artifact@v2
+      with:
+        name: example-test-code-coverage-report
+        path: example/coverage
+        retention-days: 31
+
+    - name: (Example Servlet) Set up JDK 11
+      if: env.is-auto-commit == false
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: 11
+        cache: 'maven'
+    - name: (Example Servlet) Build with Maven
+      if: env.is-auto-commit == false
+      working-directory: example/search-example-servlet
+      run: mvn -B package --file pom.xml
+
+    - name: Display event name 
+      run: echo "github.event_name=${{ github.event_name }}"
+    - name: Commit build artifacts (dist, devdist, docs, coverage)
+      # Don't run again on already pushed auto commit. Don't run on pull request events.
+      if: env.is-auto-commit == false && github.event_name != 'pull_request'
+      run: |
+        git config --global user.name '${{ env.CI_COMMIT_AUTHOR }}'
+        git config --global user.email 'joht@users.noreply.github.com'
+        git commit -a -m "${{ env.CI_COMMIT_MESSAGE }}"
+        git push
