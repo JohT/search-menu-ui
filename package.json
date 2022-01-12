@@ -60,6 +60,6 @@
     "merger-js": "3.10.3",
     "node-notifier": "10.0.0",
     "nyc": "15.1.0",
-    "parcel": "2.1.1"
+    "parcel": "2.2.0"
   }
 }
