@@ -55,7 +55,7 @@
     "inquirer": "8.2.0",
     "istanbul-badges-readme": "1.8.1",
     "jasmine": "4.0.2",
-    "jsdoc": "3.6.7",
+    "jsdoc": "3.6.9",
     "jsdom": "19.0.0",
     "merger-js": "3.10.3",
     "node-notifier": "10.0.0",
