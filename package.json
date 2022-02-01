@@ -58,7 +58,7 @@
     "jsdoc": "3.6.10",
     "jsdom": "19.0.0",
     "merger-js": "3.10.3",
-    "node-notifier": "10.0.0",
+    "node-notifier": "10.0.1",
     "nyc": "15.1.0",
     "parcel": "2.2.1"
   }
