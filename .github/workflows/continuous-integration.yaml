@@ -39,7 +39,7 @@ jobs:
       if: env.is-auto-commit
       run: echo "Continuous Integration Auto Commit - The following steps will be skipped"
 
-    - uses: actions/setup-node@v2
+    - uses: actions/setup-node@v3
       if: env.is-auto-commit == false
       with:
         node-version: '12'
