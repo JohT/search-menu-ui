@@ -52,7 +52,7 @@ jobs:
 
     - name: (Main) Archive test code coverage results
       if: env.is-auto-commit == false
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: test-code-coverage-report
         path: coverage
@@ -60,7 +60,7 @@ jobs:
         if-no-files-found: error
     - name: (Main) Archive documentation
       if: env.is-auto-commit == false
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: documentation
         path: docs
@@ -68,7 +68,7 @@ jobs:
         if-no-files-found: error
     - name: (Main) Archive build artifacts distribution-production
       if: env.is-auto-commit == false
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: distribution-production
         path: dist
@@ -76,7 +76,7 @@ jobs:
         if-no-files-found: error
     - name: (Main) Archive build artifacts distribution-development
       if: env.is-auto-commit == false
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: distribution-development
         path: devdist
@@ -94,7 +94,7 @@ jobs:
 
     - name: (Example) Archive test code coverage results
       if: env.is-auto-commit == false
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: example-test-code-coverage-report
         path: example/coverage
