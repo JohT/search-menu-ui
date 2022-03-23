@@ -149,14 +149,12 @@
  * @author JohT
  */ var module = datarestructorInternalCreateIfNotExists(module); // Fallback for vanilla js without modules
 function datarestructorInternalCreateIfNotExists(objectToCheck) {
-    return objectToCheck || {
-    };
+    return objectToCheck || {};
 }
 /**
  * Contains the main ui component of the search menu ui.
  * @module searchmenu
- */ var searchmenu = module.exports = {
-}; // Export module for npm...
+ */ var searchmenu = module.exports = {}; // Export module for npm...
 searchmenu.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
 var eventtarget = eventtarget || require("./ponyfills/eventCurrentTargetPonyfill"); // supports vanilla js & npm
 var selectionrange = selectionrange || require("./ponyfills/selectionRangePonyfill"); // supports vanilla js & npm
@@ -171,7 +169,7 @@ var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfi
  * @property {string} [listEntrySummaryTemplate="{{summaries[0].displayName}}: {{summaries[0].value}}"] template for the text of each list entry, if the data group "summary" exists.
  * @property {string} [listEntryStyleClassTemplate="{{view.listEntryElementIdPrefix}} {{category}}"] template for the style class of each list entry.
  * @property {boolean} [isSelectableFilterOption=false] Specifies, if the list entry can be selected as filter option
- */ searchmenu.SearchViewDescriptionBuilder = (function() {
+ */ searchmenu.SearchViewDescriptionBuilder = function() {
     /**
    * Builds a {@link module:searchmenu.SearchViewDescription}, which describes a part of the search menu called "view".  
    * Examples for views are: results, details, filters, filter options. There might be more in future.
@@ -293,7 +291,7 @@ var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfi
         return typeof value === "string" && value != null && value != "";
     }
     return SearchViewDescription;
-})();
+}();
 //TODO could provide the currently only described SearchUiData as own data structure in its own module.
 /**
  * @typedef {Object} module:searchmenu.SearchUiData 
@@ -364,7 +362,7 @@ var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfi
  * @property {string} [waitBeforeClose=700] timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
  * @property {string} [waitBeforeSearch=500] time in milliseconds to wait until typing is finished and search starts (default=500)
  * @property {string} [waitBeforeMouseOver=700] time in milliseconds to wait until mouse over opens details (default=700)
- */ searchmenu.SearchMenuAPI = (function() {
+ */ searchmenu.SearchMenuAPI = function() {
     /**
    * Search Menu UI API
    * @constructs SearchMenuAPI
@@ -656,8 +654,8 @@ var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfi
         return typeof value === "string" && value != null && value != "";
     }
     return SearchMenuApiBuilder;
-})();
-searchmenu.SearchMenuUI = (function() {
+}();
+searchmenu.SearchMenuUI = function() {
     /**
    * Search Menu UI.
    *
@@ -1156,8 +1154,7 @@ searchmenu.SearchMenuUI = (function() {
         });
     }
     function getSelectedOptions(listParentElementId) {
-        var result = {
-        };
+        var result = {};
         forEachListEntryElement(listParentElementId, function(element) {
             var hiddenFields = extractListElementIdProperties(element.id).hiddenFields();
             if (typeof hiddenFields.fieldName === "undefined" || typeof hiddenFields.value === "undefined") return null;
@@ -1556,8 +1553,7 @@ searchmenu.SearchMenuUI = (function() {
         });
     }
     function cloneObject(source) {
-        var result = {
-        };
+        var result = {};
         var propertyNames = Object.keys(source);
         for(var propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex++){
             var propertyName = propertyNames[propertyIndex];
@@ -1629,16 +1625,14 @@ searchmenu.SearchMenuUI = (function() {
         return typeof event.keyCode === "undefined" ? -1 : event.keyCode;
     }
     return instance;
-})();
+}();
 
 },{"./ponyfills/eventCurrentTargetPonyfill":"kNgz6","./ponyfills/selectionRangePonyfill":"70ybI","./ponyfills/addEventListenerPonyfill":"VQias"}],"kNgz6":[function(require,module,exports) {
 "use strict";
-var module = module || {
-}; // Fallback for vanilla js without modules
+var module = module || {}; // Fallback for vanilla js without modules
 /**
  * @@namespace eventtarget
- */ var eventtarget = module.exports = {
-}; // Fallback for vanilla js without modules
+ */ var eventtarget = module.exports = {}; // Fallback for vanilla js without modules
 /**
  * @returns {Element} target of the event
  * @memberof eventtarget
@@ -1650,12 +1644,10 @@ var module = module || {
 
 },{}],"70ybI":[function(require,module,exports) {
 "use strict";
-var module = module || {
-}; // Fallback for vanilla js without modules
+var module = module || {}; // Fallback for vanilla js without modules
 /**
  * @namespace selectionrange
- */ var selectionrange = module.exports = {
-}; // Fallback for vanilla js without modules
+ */ var selectionrange = module.exports = {}; // Fallback for vanilla js without modules
 selectionrange.moveCursorToEndOf = function(element) {
     if (typeof element.setSelectionRange === "function") element.setSelectionRange(element.value.length, element.value.length);
     else if (typeof element.selectionStart === "number" && typeof element.selectionEnd === "number") element.selectionStart = element.selectionEnd = element.value.length;
@@ -1670,12 +1662,10 @@ selectionrange.moveCursorToEndOf = function(element) {
 
 },{}],"VQias":[function(require,module,exports) {
 "use strict";
-var module = module || {
-}; // Fallback for vanilla js without modules
+var module = module || {}; // Fallback for vanilla js without modules
 /**
  * @@namespace eventlistener
- */ var eventlistener = module.exports = {
-}; // Fallback for vanilla js without modules
+ */ var eventlistener = module.exports = {}; // Fallback for vanilla js without modules
 /**
  * Adds an event listener/hander using "addEventListener" or whatever method the browser supports.
  * @param {String} eventName

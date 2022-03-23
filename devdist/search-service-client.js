@@ -151,18 +151,16 @@
  */ "use strict";
 var module = datarestructorInternalCreateIfNotExists(module); // Fallback for vanilla js without modules
 function datarestructorInternalCreateIfNotExists(objectToCheck) {
-    return objectToCheck || {
-    };
+    return objectToCheck || {};
 }
 /**
  * Search-Menu Service-Client.
  * It provides the (http) client/connection to the search backend service.
  * @module searchMenuServiceClient
- */ var searchMenuServiceClient = module.exports = {
-}; // Export module for npm...
+ */ var searchMenuServiceClient = module.exports = {}; // Export module for npm...
 searchMenuServiceClient.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
 var xmlHttpRequest = xmlHttpRequest || require("../../src/js/ponyfills/xmlHttpRequestPonyfill"); // supports vanilla js & npm
-searchMenuServiceClient.HttpSearchConfig = (function() {
+searchMenuServiceClient.HttpSearchConfig = function() {
     /**
    * Configures and builds the {@link module:searchMenuServiceClient.HttpClient}.
    * DescribedDataField is the main element of the restructured data and therefore considered "public".
@@ -303,12 +301,12 @@ searchMenuServiceClient.HttpSearchConfig = (function() {
         }
     }
     return HttpSearchConfig;
-})();
+}();
 /**
  * This function will be called, when search results are available.
  * @callback module:searchMenuServiceClient.HttpClient.SearchServiceResultAvailable
  * @param {Object} searchResultData already parsed data object containing the result of the search
- */ searchMenuServiceClient.HttpClient = (function() {
+ */ searchMenuServiceClient.HttpClient = function() {
     /**
    * HttpClient.
    *
@@ -397,16 +395,14 @@ searchMenuServiceClient.HttpSearchConfig = (function() {
         httpRequest.send(request.body);
     }
     return instance;
-})();
+}();
 
 },{"../../src/js/ponyfills/xmlHttpRequestPonyfill":"1gr42"}],"1gr42":[function(require,module,exports) {
 "use strict";
-var module = module || {
-}; // Fallback for vanilla js without modules
+var module = module || {}; // Fallback for vanilla js without modules
 /**
  * @namespace xmlHttpRequest
- */ var xmlHttpRequest = module.exports = {
-}; // Fallback for vanilla js without modules
+ */ var xmlHttpRequest = module.exports = {}; // Fallback for vanilla js without modules
 /**
  * Provide the XMLHttpRequest constructor for Internet Explorer 5.x-6.x:
  * Other browsers (including Internet Explorer 7.x-9.x) do not redefine
