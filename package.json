@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "eslint": "8.14.0",
-    "inquirer": "8.2.2",
+    "inquirer": "8.2.3",
     "istanbul-badges-readme": "1.8.1",
     "jasmine": "4.1.0",
     "jsdoc": "3.6.10",
