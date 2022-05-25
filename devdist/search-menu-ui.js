@@ -170,6 +170,7 @@ var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfi
  * @property {string} [listEntryStyleClassTemplate="{{view.listEntryElementIdPrefix}} {{category}}"] template for the style class of each list entry.
  * @property {boolean} [isSelectableFilterOption=false] Specifies, if the list entry can be selected as filter option
  */ searchmenu.SearchViewDescriptionBuilder = function() {
+    "use strict";
     /**
    * Builds a {@link module:searchmenu.SearchViewDescription}, which describes a part of the search menu called "view".  
    * Examples for views are: results, details, filters, filter options. There might be more in future.
@@ -363,6 +364,7 @@ var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfi
  * @property {string} [waitBeforeSearch=500] time in milliseconds to wait until typing is finished and search starts (default=500)
  * @property {string} [waitBeforeMouseOver=700] time in milliseconds to wait until mouse over opens details (default=700)
  */ searchmenu.SearchMenuAPI = function() {
+    "use strict";
     /**
    * Search Menu UI API
    * @constructs SearchMenuAPI
@@ -656,6 +658,7 @@ var eventlistener = eventlistener || require("./ponyfills/addEventListenerPonyfi
     return SearchMenuApiBuilder;
 }();
 searchmenu.SearchMenuUI = function() {
+    "use strict";
     /**
    * Search Menu UI.
    *
