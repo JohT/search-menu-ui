@@ -17,7 +17,7 @@
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
     <quarkus.platform.version>2.9.2.Final</quarkus.platform.version>
     <json-sanitizer.version>1.2.3</json-sanitizer.version>
-    <surefire-plugin.version>3.0.0-M6</surefire-plugin.version>
+    <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <mockito-core.version>4.6.1</mockito-core.version>
     <hamcrest.version>2.2</hamcrest.version>
