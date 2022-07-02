@@ -51,7 +51,7 @@
     "data-restructor": "3.3.4"
   },
   "devDependencies": {
-    "eslint": "8.18.0",
+    "eslint": "8.19.0",
     "inquirer": "9.0.0",
     "istanbul-badges-readme": "1.8.2",
     "jasmine": "4.2.1",
