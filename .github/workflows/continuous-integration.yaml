@@ -116,9 +116,11 @@ jobs:
       run: echo "github.event_name=${{ github.event_name }}"
     - name: Commit build artifacts (dist, devdist, docs, coverage)
       # Don't run again on already pushed auto commit. Don't run on pull request events.
+      # Git pull before add/commit/push to reduce race conditions on parallel builds
       if: env.is-auto-commit == false && github.event_name != 'pull_request'
       run: |
         git config --global user.name '${{ env.CI_COMMIT_AUTHOR }}'
         git config --global user.email 'joht@users.noreply.github.com'
+        git pull
         git commit -a -m "${{ env.CI_COMMIT_MESSAGE }}"
         git push
