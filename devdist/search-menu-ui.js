@@ -1363,9 +1363,9 @@ searchmenu.SearchMenuUI = function() {
    * @param {module:searchmenu.ElementFoundListener} callback will be called for every found child and the given parent itself
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */ function forEachIdElementIncludingChildren(element1, callback) {
-        if (element1.id) callback(element1, true);
-        forEachEntryIn(element1.childNodes, function(element) {
+   */ function forEachIdElementIncludingChildren(element, callback) {
+        if (element.id) callback(element, true);
+        forEachEntryIn(element.childNodes, function(element) {
             if (element.id) callback(element, false);
         });
     }
