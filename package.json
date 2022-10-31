@@ -48,7 +48,7 @@
   },
   "homepage": "https://joht.github.io/search-menu-ui",
   "dependencies": {
-    "data-restructor": "3.3.4"
+    "data-restructor": "3.4.0"
   },
   "devDependencies": {
     "eslint": "8.26.0",
