@@ -319,6 +319,11 @@ options:
 
 ```
 
+## Related blog articles
+
+- [Most effective ways to push within GitHub Actions](https://joht.github.io/johtizen/build/2022/01/20/github-actions-push-into-repository.html)
+- [Continuous Integration for JavaScript with npm](https://joht.github.io/johtizen/build/2021/02/21/continuous-integration-javascript.html)
+
 ## Credits
 
 Although this project doesn't use any runtime dependencies, it is created using these great tools:
