@@ -1,6 +1,10 @@
 # CHANGELOG.md
 
-## **v0.8.1** Automate MergerJS (latest)
+## **v0.9.0** Update Node.js to v18 (latest)
+
+This version contains version updates including an update to Node.js v18.
+
+## **v0.8.1** Automate MergerJS
 
 The command `npm run merger` is now able to run automatically.
 
