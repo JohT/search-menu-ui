@@ -43,7 +43,8 @@
 
 
     <section>
-        <article><p><a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
+        <article><h1>search-menu-ui</h1>
+<p><a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
 <img src="https://img.shields.io/github/languages/top/JohT/search-menu-ui" alt="Language">
 <img src="https://img.shields.io/badge/branches-80.41%25-yellow.svg?style=flat" alt="Branches">
 <img src="https://aleen42.github.io/badges/src/npm.svg" alt="npm">
@@ -52,7 +53,6 @@
 <img src="https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/jsdoc" alt="JSDoc">
 <img src="https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/nyc" alt="nyc">
 <img src="https://img.shields.io/github/package-json/dependency-version/JohT/search-menu-ui/dev/parcel" alt="parcel"></p>
-<h1>search-menu-ui</h1>
 <p>&quot;All in one place&quot; search UI providing &quot;search as you type&quot; written in vanilla JavaScript.</p>
 <h2>Approaches</h2>
 <h3>Data-Driven &amp; Data-Agnostic</h3>
@@ -70,11 +70,10 @@
 <h3>Set and Forget</h3>
 <ul>
 <li>After initial configuration mostly anything else depends on the search response</li>
-<li>New fields, new categories, new filters and new navigation targets shouldn't entail
-any changes in most cases</li>
+<li>New fields, new categories, new filters and new navigation targets shouldn't entail any changes in most cases</li>
 <li>Embrace changes by not depending on them at all</li>
 </ul>
-<h2>Features:</h2>
+<h2>Features</h2>
 <ul>
 <li>Full keyboard support</li>
 <li>Flexible and configurable</li>
@@ -89,7 +88,7 @@ any changes in most cases</li>
 <li>the things that can be searched are pretty well known and stable (don't change that much)</li>
 <li>changing client code is much easier than changing the search service</li>
 </ul>
-<h3>Might be added in future:</h3>
+<h3>Might be added in future</h3>
 <ul>
 <li>specialized filters for numeric limits</li>
 <li>specialized filters for date and time</li>
@@ -135,7 +134,7 @@ the filter options can be selected as described below.</p>
 <p><img src="screenshots/ScreenshotExampleSelectedFilter.png?raw=true" alt="Screenshot Details"></p>
 <p><strong>①</strong> shows previously selected filters that are provided as search parameters.
 They can be included as variables in the search service url or the search request body template.</p>
-<p><strong>②</strong> shows the same filter options view as in <a href="#Filter-Options">Filter-Options</a>. The selected filter can be changed here as well.</p>
+<p><strong>②</strong> shows the same filter options view as in <a href="#filter-options">Filter-Options</a>. The selected filter can be changed here as well.</p>
 <p><strong>③</strong> shows a special case of a filter option, that not only has a preselected default
 value but also contains navigation target url templates. Choosing a target and its (hidden)
 url template changes the site that is opened when a result is selected.</p>
@@ -297,7 +296,7 @@ These groups have a special meaning for the search menu ui.</p>
 </tbody>
 </table>
 <h3>Data for results and details</h3>
-<p>The <a href="#Results-and-Details">Results and Details</a> UI is a consequence of the following data structure stripped down to the first result and its most essential parts.</p>
+<p>The <a href="#results-and-details">Results and Details</a> UI is a consequence of the following data structure stripped down to the first result and its most essential parts.</p>
 <pre class="prettyprint source lang-yaml"><code>category: &quot;account&quot;
 abbreviation: &quot;&#x1F4B6;&quot;
 summaries: 
@@ -322,7 +321,7 @@ details:
   # ...
 </code></pre>
 <h3>Data for filter options</h3>
-<p>The <a href="#Filter-Options">Filter-Options</a> UI is a consequence of the following data structure stripped down to the first filter <code>product</code> and its most essential parts.</p>
+<p>The <a href="#filter-options">Filter-Options</a> UI is a consequence of the following data structure stripped down to the first filter <code>product</code> and its most essential parts.</p>
 <pre class="prettyprint source lang-yaml"><code>category: &quot;account&quot;
 abbreviation: &quot;&#128206;&quot;
 options:
@@ -343,7 +342,7 @@ options:
     value: &quot;trust&quot;
 </code></pre>
 <h3>Data for default filter options</h3>
-<p>A filter option, that should be selected by default as shown in the <a href="#Selected-Filter">Selected Filter</a> UI, is contained as a single field in the <code>default</code> group. The following data structure for example leads to an pre selected product filter for private loans.</p>
+<p>A filter option, that should be selected by default as shown in the <a href="#selected-filter">Selected Filter</a> UI, is contained as a single field in the <code>default</code> group. The following data structure for example leads to an pre selected product filter for private loans.</p>
 <pre class="prettyprint source lang-yaml"><code>category: &quot;account&quot;
 abbreviation: &quot;&#128206;&quot;
 options:
@@ -352,14 +351,13 @@ options:
     value&quot;: &quot;private loan&quot;
 </code></pre>
 <h3>Data for navigation targets</h3>
-<p>A special case of search filters are the navigation targets, as depicted in the <a href="#Flow-Chart">Flow-Chart</a>.
-These are selectable filter options marked by the group <code>urltemplate</code> containing a single field. When a result entry is selected, all active filter options of that category (or the global category <code>&quot;&quot;</code>) that contain a <code>urltemplate</code> are looked up. The first url template will be used to navigate to
-the selected target.</p>
+<p>A special case of search filters are the navigation targets, as depicted in the <a href="#flow-chart">Flow-Chart</a>.
+These are selectable filter options marked by the group <code>urltemplate</code> containing a single field. When a result entry is selected, all active filter options of that category (or the global category <code>&quot;&quot;</code>) that contain a <code>urltemplate</code> are looked up. The first url template will be used to navigate to the selected target.</p>
 <p>URL templates may contain variables in double curly brackets, that are replaced
 by the fields (details, summaries) of the selected result.</p>
 <p>The following data structure leads to the pre selected default target <code>&quot;Account Overview&quot;</code>,
 as well as to the selectable options <code>&quot;Credit Interests&quot;</code> and <code>&quot;Debit Interests&quot;</code>. All of them
-define a url template that contains the account number of the summaries as variable. The selected and best suited url template will be used to navigate to the target, when a <a href="#Data-for-results-and-details">result entry</a> is selected.</p>
+define a url template that contains the account number of the summaries as variable. The selected and best suited url template will be used to navigate to the target, when a <a href="#data-for-results-and-details">result entry</a> is selected.</p>
 <pre class="prettyprint source lang-yaml"><code>category: &quot;account&quot;
 abbreviation: &quot;&#x261c;&quot;
 default: 
@@ -622,7 +620,7 @@ options:
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Mon Oct 31 2022 22:55:09 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Nov 01 2022 08:09:31 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
