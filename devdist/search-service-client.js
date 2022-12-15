@@ -159,7 +159,7 @@ function datarestructorInternalCreateIfNotExists(objectToCheck) {
  * @module searchMenuServiceClient
  */ var searchMenuServiceClient = module.exports = {}; // Export module for npm...
 searchMenuServiceClient.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
-var xmlHttpRequest = xmlHttpRequest || require("../../src/js/ponyfills/xmlHttpRequestPonyfill"); // supports vanilla js & npm
+var xmlHttpRequest = xmlHttpRequest || require("4db60f31b1b60ae1"); // supports vanilla js & npm
 searchMenuServiceClient.HttpSearchConfig = function() {
     /**
    * Configures and builds the {@link module:searchMenuServiceClient.HttpClient}.
@@ -397,7 +397,7 @@ searchMenuServiceClient.HttpSearchConfig = function() {
     return instance;
 }();
 
-},{"../../src/js/ponyfills/xmlHttpRequestPonyfill":"1gr42"}],"1gr42":[function(require,module,exports) {
+},{"4db60f31b1b60ae1":"1gr42"}],"1gr42":[function(require,module,exports) {
 "use strict";
 var module = module || {}; // Fallback for vanilla js without modules
 /**
