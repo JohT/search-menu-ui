@@ -422,18 +422,18 @@ var module = module || {}; // Fallback for vanilla js without modules
     }
     try {
         return new ActiveXObject("Msxml2.XMLHTTP.6.0");
-    } catch (e1) {
-        console.log("XMLHttpRequest Msxml2.XMLHTTP.6.0 not available: " + e1);
+    } catch (e) {
+        console.log("XMLHttpRequest Msxml2.XMLHTTP.6.0 not available: " + e);
     }
     try {
         return new ActiveXObject("Msxml2.XMLHTTP.3.0");
-    } catch (e2) {
-        console.log("XMLHttpRequest Msxml2.XMLHTTP.3.0 not available: " + e2);
+    } catch (e) {
+        console.log("XMLHttpRequest Msxml2.XMLHTTP.3.0 not available: " + e);
     }
     try {
         return new ActiveXObject("Microsoft.XMLHTTP");
-    } catch (e3) {
-        console.log("XMLHttpRequest Microsoft.XMLHTTP not available: " + e3);
+    } catch (e) {
+        console.log("XMLHttpRequest Microsoft.XMLHTTP not available: " + e);
     }
     // Microsoft.XMLHTTP points to Msxml2.XMLHTTP and is redundant
     throw new Error("This browser does not support XMLHttpRequest.");
