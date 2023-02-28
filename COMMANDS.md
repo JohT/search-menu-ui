@@ -6,6 +6,7 @@ Overview of the commands to test, run and build this project as well as those th
 
 - `npm install` Installs all dependencies and creates the folder `node_modules`, that is needed for all following commands.
 - `npm run all` Ready to publish build with test, coverage, doc generation, dev+prod build incl. examples
+- `npm run changelog` Update CHANGELOG.md
 
 ## Commands to test, run and build the project
 

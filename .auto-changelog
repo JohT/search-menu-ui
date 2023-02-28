@@ -1,0 +1,9 @@
+{
+  "output": "CHANGELOG.md",
+  "template": "./.auto-changelog-template.hbs",
+  "ignoreCommitPattern": "Continuous Integration Build Artifacts",
+  "startingVersion": "v0.9.0",
+  "package": true,
+  "unreleased": true,
+  "commitLimit": false
+}
