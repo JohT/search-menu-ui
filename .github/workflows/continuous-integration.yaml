@@ -19,6 +19,7 @@ jobs:
       with:
         ref: ${{ github.event.pull_request.head.ref }}
         token: ${{ secrets.WORKFLOW_GIT_ACCESS_TOKEN }}
+        fetch-depth: 0 # checkout full GIT history for auto-changelog
 
     - name: Get GIT tags for auto-changelog generation (startingVersion config option)
       run: git fetch --tags origin
