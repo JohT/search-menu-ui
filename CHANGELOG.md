@@ -10,30 +10,9 @@ All notable changes to this project will be documented in this file.
 
 ## [v0.9.1](https://github.com/JohT/search-menu-ui/compare/v0.9.0...master) (upcoming)
 
-### Dependency Updates
+### Changes
 
-- Update dependency data-restructor to v3.4.1 [`#298`](https://github.com/JohT/search-menu-ui/pull/298)
-- Update dependency org.apache.maven.plugins:maven-compiler-plugin to v3.11.0 [`#297`](https://github.com/JohT/search-menu-ui/pull/297)
-- Update dependency jsdoc to v4.0.1 [`#292`](https://github.com/JohT/search-menu-ui/pull/292)
-- Update surefire-plugin.version to v3.0.0-M9 (patch) [`#290`](https://github.com/JohT/search-menu-ui/pull/290)
-- Update dependency eslint to v8.34.0 [`#289`](https://github.com/JohT/search-menu-ui/pull/289)
-- Update dependency io.quarkus:quarkus-maven-plugin to v2.16.2.Final [`#286`](https://github.com/JohT/search-menu-ui/pull/286)
-- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.7-1049.1675784874 [`#287`](https://github.com/JohT/search-menu-ui/pull/287)
-- Update dependency io.quarkus:quarkus-universe-bom to v2.16.1.Final [`#284`](https://github.com/JohT/search-menu-ui/pull/284)
-- Update dependency io.quarkus:quarkus-maven-plugin to v2.16.1.Final [`#283`](https://github.com/JohT/search-menu-ui/pull/283)
-- Update dependency io.quarkus:quarkus-universe-bom to v2.16.0.Final [`#279`](https://github.com/JohT/search-menu-ui/pull/279)
-- Update mockito monorepo to v5 (major) [`#272`](https://github.com/JohT/search-menu-ui/pull/272)
-- Update dependency eslint to v8.32.0 [`#273`](https://github.com/JohT/search-menu-ui/pull/273)
-- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.7-1049 [`#271`](https://github.com/JohT/search-menu-ui/pull/271)
-- Update dependency jsdom to v21 [`#268`](https://github.com/JohT/search-menu-ui/pull/268)
-- Update dependency io.quarkus:quarkus-maven-plugin to v2.15.1.Final [`#263`](https://github.com/JohT/search-menu-ui/pull/263)
-- Update dependency io.quarkus:quarkus-maven-plugin to v2.14.2.Final [`#250`](https://github.com/JohT/search-menu-ui/pull/250)
-- Update dependency io.quarkus:quarkus-maven-plugin to v2.14.1.Final [`#246`](https://github.com/JohT/search-menu-ui/pull/246)
-- Update dependency io.quarkus:quarkus-universe-bom to v2.14.0.Final [`#244`](https://github.com/JohT/search-menu-ui/pull/244)
-- Update dependency parcel to v2.8.0 [`#243`](https://github.com/JohT/search-menu-ui/pull/243)
-- Update dependency io.quarkus:quarkus-universe-bom to v2.13.4.Final [`#241`](https://github.com/JohT/search-menu-ui/pull/241)
-- Update dependency eslint to v8.27.0 [`#240`](https://github.com/JohT/search-menu-ui/pull/240)
-- Update dependency jsdoc to v4 [`#239`](https://github.com/JohT/search-menu-ui/pull/239)
+- Generate CHANGELOG using auto-changelog [`#299`](https://github.com/JohT/search-menu-ui/pull/299)
 
 ## [v0.9.0](https://github.com/JohT/search-menu-ui/compare/v0.8.0...v0.9.0) (1 November 2022)
 
