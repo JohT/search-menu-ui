@@ -1,10 +1,122 @@
-# CHANGELOG.md
+# Changelog
 
-## **v0.9.0** Update Node.js to v18 (latest)
+All notable changes to this project will be documented in this file.
 
-This version contains version updates including an update to Node.js v18.
+## References
 
-## **v0.8.1** Automate MergerJS
+- [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+- [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
+- [`auto-changelog`](https://github.com/CookPete/auto-changelog)
+
+## [v0.9.1](https://github.com/JohT/search-menu-ui/compare/v0.9.0...master) (upcoming)
+
+### Dependency Updates
+
+- Update dependency data-restructor to v3.4.1 [`#298`](https://github.com/JohT/search-menu-ui/pull/298)
+- Update dependency org.apache.maven.plugins:maven-compiler-plugin to v3.11.0 [`#297`](https://github.com/JohT/search-menu-ui/pull/297)
+- Update dependency jsdoc to v4.0.1 [`#292`](https://github.com/JohT/search-menu-ui/pull/292)
+- Update surefire-plugin.version to v3.0.0-M9 (patch) [`#290`](https://github.com/JohT/search-menu-ui/pull/290)
+- Update dependency eslint to v8.34.0 [`#289`](https://github.com/JohT/search-menu-ui/pull/289)
+- Update dependency io.quarkus:quarkus-maven-plugin to v2.16.2.Final [`#286`](https://github.com/JohT/search-menu-ui/pull/286)
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.7-1049.1675784874 [`#287`](https://github.com/JohT/search-menu-ui/pull/287)
+- Update dependency io.quarkus:quarkus-universe-bom to v2.16.1.Final [`#284`](https://github.com/JohT/search-menu-ui/pull/284)
+- Update dependency io.quarkus:quarkus-maven-plugin to v2.16.1.Final [`#283`](https://github.com/JohT/search-menu-ui/pull/283)
+- Update dependency io.quarkus:quarkus-universe-bom to v2.16.0.Final [`#279`](https://github.com/JohT/search-menu-ui/pull/279)
+- Update mockito monorepo to v5 (major) [`#272`](https://github.com/JohT/search-menu-ui/pull/272)
+- Update dependency eslint to v8.32.0 [`#273`](https://github.com/JohT/search-menu-ui/pull/273)
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.7-1049 [`#271`](https://github.com/JohT/search-menu-ui/pull/271)
+- Update dependency jsdom to v21 [`#268`](https://github.com/JohT/search-menu-ui/pull/268)
+- Update dependency io.quarkus:quarkus-maven-plugin to v2.15.1.Final [`#263`](https://github.com/JohT/search-menu-ui/pull/263)
+- Update dependency io.quarkus:quarkus-maven-plugin to v2.14.2.Final [`#250`](https://github.com/JohT/search-menu-ui/pull/250)
+- Update dependency io.quarkus:quarkus-maven-plugin to v2.14.1.Final [`#246`](https://github.com/JohT/search-menu-ui/pull/246)
+- Update dependency io.quarkus:quarkus-universe-bom to v2.14.0.Final [`#244`](https://github.com/JohT/search-menu-ui/pull/244)
+- Update dependency parcel to v2.8.0 [`#243`](https://github.com/JohT/search-menu-ui/pull/243)
+- Update dependency io.quarkus:quarkus-universe-bom to v2.13.4.Final [`#241`](https://github.com/JohT/search-menu-ui/pull/241)
+- Update dependency eslint to v8.27.0 [`#240`](https://github.com/JohT/search-menu-ui/pull/240)
+- Update dependency jsdoc to v4 [`#239`](https://github.com/JohT/search-menu-ui/pull/239)
+
+## [v0.9.0](https://github.com/JohT/search-menu-ui/compare/v0.8.0...v0.9.0) (1 November 2022)
+
+### Changes
+
+- Resolve Markdown linter warnings [`#237`](https://github.com/JohT/search-menu-ui/pull/237)
+- update dependencies with npm audit fix [`#186`](https://github.com/JohT/search-menu-ui/pull/186)
+- Auto commit build artifacts on push [`#99`](https://github.com/JohT/search-menu-ui/pull/99)
+- Automate MergerJS [`#96`](https://github.com/JohT/search-menu-ui/pull/96)
+- #18 fix security vulnerabilities in servlet example [`#68`](https://github.com/JohT/search-menu-ui/pull/68)
+- Pin dependency jasmine to v3.7.0 [`#21`](https://github.com/JohT/search-menu-ui/pull/21)
+- Pin dependencies [`#20`](https://github.com/JohT/search-menu-ui/pull/20)
+- Configure Renovate [`#19`](https://github.com/JohT/search-menu-ui/pull/19)
+
+### Dependency Updates
+
+- Update Node.js to v18 [`#231`](https://github.com/JohT/search-menu-ui/pull/231)
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.6-994 [`#233`](https://github.com/JohT/search-menu-ui/pull/233)
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.6-985 [`#232`](https://github.com/JohT/search-menu-ui/pull/232)
+- Update dependency org.mockito:mockito-junit-jupiter to v4.8.1 [`#228`](https://github.com/JohT/search-menu-ui/pull/228)
+- Update dependency io.quarkus:quarkus-maven-plugin to v2.13.2.Final [`#225`](https://github.com/JohT/search-menu-ui/pull/225)
+- Update dependency io.quarkus:quarkus-universe-bom to v2.13.0.Final [`#220`](https://github.com/JohT/search-menu-ui/pull/220)
+- Update dependency eslint to v8.24.0 [`#219`](https://github.com/JohT/search-menu-ui/pull/219)
+- Update dependency io.quarkus:quarkus-maven-plugin to v2.12.3.Final [`#216`](https://github.com/JohT/search-menu-ui/pull/216)
+- Update quay.io/quarkus/quarkus-distroless-image Docker tag to v2 [`#214`](https://github.com/JohT/search-menu-ui/pull/214)
+- Update dependency eslint to v8.23.1 [`#211`](https://github.com/JohT/search-menu-ui/pull/211)
+- Update mockito monorepo to v4.8.0 (minor) [`#210`](https://github.com/JohT/search-menu-ui/pull/210)
+- Update dependency io.quarkus:quarkus-universe-bom to v2.12.0.Final [`#206`](https://github.com/JohT/search-menu-ui/pull/206)
+- Update dependency eslint to v8.22.0 [`#201`](https://github.com/JohT/search-menu-ui/pull/201)
+- Update mockito monorepo to v4.7.0 (minor) [`#200`](https://github.com/JohT/search-menu-ui/pull/200)
+- Update dependency io.quarkus:quarkus-universe-bom to v2.11.2.Final [`#199`](https://github.com/JohT/search-menu-ui/pull/199)
+- Update dependency io.quarkus:quarkus-maven-plugin to v2.11.2.Final [`#197`](https://github.com/JohT/search-menu-ui/pull/197)
+- Update dependency inquirer to v9.1.0 [`#198`](https://github.com/JohT/search-menu-ui/pull/198)
+- Update dependency parcel to v2.7.0 [`#196`](https://github.com/JohT/search-menu-ui/pull/196)
+- Update dependency registry.access.redhat.com/ubi8/ubi-minimal to v8.6-902 [`#195`](https://github.com/JohT/search-menu-ui/pull/195)
+- Update dependency eslint to v8.21.0 [`#194`](https://github.com/JohT/search-menu-ui/pull/194)
+- Update dependency jsdoc to v3.6.11 [`#190`](https://github.com/JohT/search-menu-ui/pull/190)
+- Update dependency io.quarkus:quarkus-maven-plugin to v2.11.0.Final [`#189`](https://github.com/JohT/search-menu-ui/pull/189)
+- Update dependency jsdom to v20 [`#176`](https://github.com/JohT/search-menu-ui/pull/176)
+- Update dependency io.quarkus:quarkus-maven-plugin to v2.10.2.Final [`#182`](https://github.com/JohT/search-menu-ui/pull/182)
+- Update dependency inquirer to v9 [`#175`](https://github.com/JohT/search-menu-ui/pull/175)
+- Update dependency jasmine to v4.2.0 [`#169`](https://github.com/JohT/search-menu-ui/pull/169)
+- Update dependency parcel to v2.6.0 [`#164`](https://github.com/JohT/search-menu-ui/pull/164)
+- Update dependency io.quarkus:quarkus-universe-bom to v2.9.0.Final [`#160`](https://github.com/JohT/search-menu-ui/pull/160)
+- Update github/codeql-action action to v2 [`#152`](https://github.com/JohT/search-menu-ui/pull/152)
+- Update dependency io.quarkus:quarkus-maven-plugin to v2.7.5.Final [`#135`](https://github.com/JohT/search-menu-ui/pull/135)
+- Update dependency inquirer to v8.2.1 [`#130`](https://github.com/JohT/search-menu-ui/pull/130)
+- Update actions/upload-artifact action to v3 [`#128`](https://github.com/JohT/search-menu-ui/pull/128)
+- Update actions/checkout action to v3 [`#126`](https://github.com/JohT/search-menu-ui/pull/126)
+- Update actions/setup-node action to v3 [`#124`](https://github.com/JohT/search-menu-ui/pull/124)
+- Update actions/setup-java action to v3 [`#123`](https://github.com/JohT/search-menu-ui/pull/123)
+- Update Quarkus to v2.7.1.Final (patch) [`#116`](https://github.com/JohT/search-menu-ui/pull/116)
+- Update dependency jasmine to v4 [`#93`](https://github.com/JohT/search-menu-ui/pull/93)
+- Update dependency io.quarkus:quarkus-universe-bom to v2.5.4.Final [`#87`](https://github.com/JohT/search-menu-ui/pull/87)
+- Update mockito monorepo to v4.2.0 (minor) [`#84`](https://github.com/JohT/search-menu-ui/pull/84)
+- Update dependency istanbul-badges-readme to v1.8.1 [`#80`](https://github.com/JohT/search-menu-ui/pull/80)
+- Update dependency eslint to v8.4.0 [`#78`](https://github.com/JohT/search-menu-ui/pull/78)
+- Update dependency jsdom to v19 [`#76`](https://github.com/JohT/search-menu-ui/pull/76)
+- Update dependency com.mikesamuel:json-sanitizer to v1.2.3 [`#71`](https://github.com/JohT/search-menu-ui/pull/71)
+- Update dependency ansi-regex to 5.0.1 [SECURITY] [`#45`](https://github.com/JohT/search-menu-ui/pull/45)
+- Update Quarkus to v2.4.2.Final (minor) [`#66`](https://github.com/JohT/search-menu-ui/pull/66)
+- Update mockito monorepo to v4 (major) [`#47`](https://github.com/JohT/search-menu-ui/pull/47)
+- Update Node.js to v16 [`#58`](https://github.com/JohT/search-menu-ui/pull/58)
+- Update dependency jsdom to v18 [`#48`](https://github.com/JohT/search-menu-ui/pull/48)
+- Update dependency jasmine to v3.9.0 [`#32`](https://github.com/JohT/search-menu-ui/pull/32)
+- Update dependency jsdom to v17 [`#40`](https://github.com/JohT/search-menu-ui/pull/40)
+- Update dependency istanbul-badges-readme to v1.3.4 [`#41`](https://github.com/JohT/search-menu-ui/pull/41)
+- Update dependency jsdom to v16.7.0 [`#33`](https://github.com/JohT/search-menu-ui/pull/33)
+- Update mockito-core.version to v3.12.4 (minor) [`#34`](https://github.com/JohT/search-menu-ui/pull/34)
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.4 [`#35`](https://github.com/JohT/search-menu-ui/pull/35)
+- Update Node.js to v14 [`#36`](https://github.com/JohT/search-menu-ui/pull/36)
+- Update dependency eslint to v7.32.0 [`#30`](https://github.com/JohT/search-menu-ui/pull/30)
+- Update dependency parcel to v2.0.0-rc.0 [`#29`](https://github.com/JohT/search-menu-ui/pull/29)
+- Update dependency io.quarkus:quarkus-universe-bom to v1.13.7.Final [`#28`](https://github.com/JohT/search-menu-ui/pull/28)
+- Update dependency ws to 7.4.6 [SECURITY] [`#27`](https://github.com/JohT/search-menu-ui/pull/27)
+- Update dependency path-parse to 1.0.7 [SECURITY] [`#26`](https://github.com/JohT/search-menu-ui/pull/26)
+- Update dependency browserslist to 4.16.5 [SECURITY] [`#25`](https://github.com/JohT/search-menu-ui/pull/25)
+- Update dependency io.quarkus:quarkus-maven-plugin to v1.13.7.Final [`#24`](https://github.com/JohT/search-menu-ui/pull/24)
+- Update dependency data-restructor to v3.3.4 [`#23`](https://github.com/JohT/search-menu-ui/pull/23)
+
+<!-- auto-changelog-above -->
+
+## Automate MergerJS
 
 The command `npm run merger` is now able to run automatically.
 
@@ -12,6 +124,5 @@ The command `npm run merger` is now able to run automatically.
 
 ## **v0.8.0** First Version
 
-This is the first published version of the search menu UI including an example to try it out locally
-and a servlet to include it into a java application.
+This is the first published version of the search menu UI including an example to try it out locally and a Servlet to include it into a java application.
 Documentation is located in Markdown Files (`.md`) and inside the `docs` folder.

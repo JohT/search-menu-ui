@@ -20,6 +20,9 @@ jobs:
         ref: ${{ github.event.pull_request.head.ref }}
         token: ${{ secrets.WORKFLOW_GIT_ACCESS_TOKEN }}
 
+    - name: Get GIT tags for auto-changelog generation (startingVersion config option)
+      run: git fetch --tags origin
+
     - name: Set environment variable "commit-message"
       run: echo "commit-message=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
     - name: Display environment variable "commit-message"
@@ -64,6 +67,14 @@ jobs:
       with:
         name: documentation
         path: docs
+        retention-days: 31
+        if-no-files-found: error
+    - name: (Main) Archive CHANGELOG.md
+      if: env.is-auto-commit == false
+      uses: actions/upload-artifact@v3
+      with:
+        name: changelog
+        path: CHANGELOG.md
         retention-days: 31
         if-no-files-found: error
     - name: (Main) Archive build artifacts distribution-production
