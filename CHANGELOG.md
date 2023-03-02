@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v2.16.4.Final [`#300`](https://github.com/JohT/search-menu-ui/pull/300)
 - Update dependency data-restructor to v3.4.1 [`#298`](https://github.com/JohT/search-menu-ui/pull/298)
 - Update dependency org.apache.maven.plugins:maven-compiler-plugin to v3.11.0 [`#297`](https://github.com/JohT/search-menu-ui/pull/297)
 - Update dependency jsdoc to v4.0.1 [`#292`](https://github.com/JohT/search-menu-ui/pull/292)
