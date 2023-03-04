@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency maven-wrapper to v3 [`#278`](https://github.com/JohT/search-menu-ui/pull/278)
 - Update dependency io.quarkus:quarkus-universe-bom to v2.16.4.Final [`#301`](https://github.com/JohT/search-menu-ui/pull/301)
 - Update dependency io.quarkus:quarkus-maven-plugin to v2.16.4.Final [`#300`](https://github.com/JohT/search-menu-ui/pull/300)
 - Update dependency data-restructor to v3.4.1 [`#298`](https://github.com/JohT/search-menu-ui/pull/298)
