@@ -8,7 +8,9 @@ All notable changes to this project will be documented in this file.
 - [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - [`auto-changelog`](https://github.com/CookPete/auto-changelog)
 
-## [v0.9.1](https://github.com/JohT/search-menu-ui/compare/v0.9.0...master) (upcoming)
+## [v0.9.1](https://github.com/JohT/search-menu-ui/compare/v0.9.1...master) (upcoming)
+
+## [v0.9.1](https://github.com/JohT/search-menu-ui/compare/v0.9.0...v0.9.1) (4 March 2023)
 
 ### Changes
 
