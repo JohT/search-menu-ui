@@ -10,6 +10,10 @@ All notable changes to this project will be documented in this file.
 
 ## [v0.9.1](https://github.com/JohT/search-menu-ui/compare/v0.9.1...master) (upcoming)
 
+### Dependency Updates
+
+- Update dependency jsdom to v21.1.1 [`#304`](https://github.com/JohT/search-menu-ui/pull/304)
+
 ## [v0.9.1](https://github.com/JohT/search-menu-ui/compare/v0.9.0...v0.9.1) (4 March 2023)
 
 ### Changes
