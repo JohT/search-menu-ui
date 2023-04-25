@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency org.jacoco:jacoco-maven-plugin to v0.8.10 [`#324`](https://github.com/JohT/search-menu-ui/pull/324)
 - Update dependency eslint to v8.39.0 [`#322`](https://github.com/JohT/search-menu-ui/pull/322)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3 [`#320`](https://github.com/JohT/search-menu-ui/pull/320)
 - Update dependency eslint to v8.38.0 [`#318`](https://github.com/JohT/search-menu-ui/pull/318)
