@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency jasmine to v5 [`#338`](https://github.com/JohT/search-menu-ui/pull/338)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.0.3.Final [`#334`](https://github.com/JohT/search-menu-ui/pull/334)
 - Update dependency inquirer to v9.2.1 [`#330`](https://github.com/JohT/search-menu-ui/pull/330)
 - Update dependency jsdom to v22 [`#328`](https://github.com/JohT/search-menu-ui/pull/328)
