@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency eslint to v8.41.0 [`#342`](https://github.com/JohT/search-menu-ui/pull/342)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.8-860 [`#339`](https://github.com/JohT/search-menu-ui/pull/339)
 - Update dependency jasmine to v5 [`#338`](https://github.com/JohT/search-menu-ui/pull/338)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.0.3.Final [`#334`](https://github.com/JohT/search-menu-ui/pull/334)
