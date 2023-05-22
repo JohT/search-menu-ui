@@ -55,7 +55,7 @@
   "devDependencies": {
     "auto-changelog": "2.4.0",
     "eslint": "8.41.0",
-    "inquirer": "9.2.5",
+    "inquirer": "9.2.6",
     "istanbul-badges-readme": "1.8.5",
     "jasmine": "5.0.0",
     "jsdoc": "4.0.2",
