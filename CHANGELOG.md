@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.1.0.Final [`#345`](https://github.com/JohT/search-menu-ui/pull/345)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.0.4.Final [`#344`](https://github.com/JohT/search-menu-ui/pull/344)
 - Update dependency inquirer to v9.2.6 [`#343`](https://github.com/JohT/search-menu-ui/pull/343)
 - Update dependency eslint to v8.41.0 [`#342`](https://github.com/JohT/search-menu-ui/pull/342)
