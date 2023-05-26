@@ -156,9 +156,9 @@ function datarestructorInternalCreateIfNotExists(objectToCheck) {
  * @module searchmenu
  */ var searchmenu = module.exports = {}; // Export module for npm...
 searchmenu.internalCreateIfNotExists = datarestructorInternalCreateIfNotExists;
-var eventtarget = eventtarget || require("74090e572a5a9035"); // supports vanilla js & npm
-var selectionrange = selectionrange || require("7a63fd1584d46a8d"); // supports vanilla js & npm
-var eventlistener = eventlistener || require("1310389e5698c786"); // supports vanilla js & npm
+var eventtarget = eventtarget || require("b3cce1c1ec42ba46"); // supports vanilla js & npm
+var selectionrange = selectionrange || require("451a10c9529ea563"); // supports vanilla js & npm
+var eventlistener = eventlistener || require("82339b2a189b18c2"); // supports vanilla js & npm
 /**
  * @typedef {Object} module:searchmenu.SearchViewDescription Describes a part of the search view (e.g. search result details).
  * @property {string} viewElementId id of the element (e.g. "div"), that contains the view with all list elements and their parent.
@@ -1630,7 +1630,7 @@ searchmenu.SearchMenuUI = function() {
     return instance;
 }();
 
-},{"74090e572a5a9035":"kNgz6","7a63fd1584d46a8d":"70ybI","1310389e5698c786":"VQias"}],"kNgz6":[function(require,module,exports) {
+},{"b3cce1c1ec42ba46":"kNgz6","451a10c9529ea563":"70ybI","82339b2a189b18c2":"VQias"}],"kNgz6":[function(require,module,exports) {
 "use strict";
 var module = module || {}; // Fallback for vanilla js without modules
 /**
