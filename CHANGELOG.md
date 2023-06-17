@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency eslint to v8.43.0 [`#360`](https://github.com/JohT/search-menu-ui/pull/360)
 - Update dependency jsdom to v22.1.0 [`#348`](https://github.com/JohT/search-menu-ui/pull/348)
 - Update dependency parcel to v2.9.0 [`#347`](https://github.com/JohT/search-menu-ui/pull/347)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.0.4.Final [`#346`](https://github.com/JohT/search-menu-ui/pull/346)
