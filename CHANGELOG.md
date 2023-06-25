@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency parcel to v2.9.3 [`#362`](https://github.com/JohT/search-menu-ui/pull/362)
 - Update mockito monorepo to v5.4.0 (minor) [`#361`](https://github.com/JohT/search-menu-ui/pull/361)
 - Update dependency eslint to v8.43.0 [`#360`](https://github.com/JohT/search-menu-ui/pull/360)
 - Update dependency jsdom to v22.1.0 [`#348`](https://github.com/JohT/search-menu-ui/pull/348)
