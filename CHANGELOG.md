@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.1.3.Final [`#365`](https://github.com/JohT/search-menu-ui/pull/365)
 - Update dependency maven to v3.9.3 [`#363`](https://github.com/JohT/search-menu-ui/pull/363)
 - Update dependency parcel to v2.9.3 [`#362`](https://github.com/JohT/search-menu-ui/pull/362)
 - Update mockito monorepo to v5.4.0 (minor) [`#361`](https://github.com/JohT/search-menu-ui/pull/361)
