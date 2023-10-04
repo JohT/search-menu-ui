@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-universe-bom to v3.4.2 [`#403`](https://github.com/JohT/search-menu-ui/pull/403)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.4.1 [`#399`](https://github.com/JohT/search-menu-ui/pull/399)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.4.0 [`#396`](https://github.com/JohT/search-menu-ui/pull/396)
 - Update actions/checkout action to v4 [`#391`](https://github.com/JohT/search-menu-ui/pull/391)
