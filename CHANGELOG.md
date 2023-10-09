@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.8-1072.1696517598 [`#407`](https://github.com/JohT/search-menu-ui/pull/407)
 - Update dependency org.mockito:mockito-junit-jupiter to v5.6.0 [`#405`](https://github.com/JohT/search-menu-ui/pull/405)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.4.2 [`#403`](https://github.com/JohT/search-menu-ui/pull/403)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.4.1 [`#399`](https://github.com/JohT/search-menu-ui/pull/399)
