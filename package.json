@@ -50,7 +50,7 @@
   },
   "homepage": "https://joht.github.io/search-menu-ui",
   "dependencies": {
-    "data-restructor": "3.4.1"
+    "data-restructor": "3.4.2"
   },
   "devDependencies": {
     "auto-changelog": "2.4.0",
