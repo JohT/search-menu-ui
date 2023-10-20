@@ -1,6 +1,6 @@
 {
   "name": "search-menu-ui-example",
-  "version": "0.8.0",
+  "version": "0.9.2",
   "description": "Search UI example.",
   "directories": {
     "test": "test"
