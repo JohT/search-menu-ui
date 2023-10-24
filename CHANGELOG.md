@@ -10,6 +10,10 @@ All notable changes to this project will be documented in this file.
 
 ## [v0.9.2](https://github.com/JohT/search-menu-ui/compare/v0.9.2...master) (upcoming)
 
+### Dependency Updates
+
+- Update actions/setup-node action to v4 [`#418`](https://github.com/JohT/search-menu-ui/pull/418)
+
 ## [v0.9.2](https://github.com/JohT/search-menu-ui/compare/v0.9.1...v0.9.2) (20 October 2023)
 
 ### Dependency Updates
