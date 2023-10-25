@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-universe-bom to v3.5.0 [`#422`](https://github.com/JohT/search-menu-ui/pull/422)
 - Update actions/setup-node action to v4 [`#418`](https://github.com/JohT/search-menu-ui/pull/418)
 
 ## [v0.9.2](https://github.com/JohT/search-menu-ui/compare/v0.9.1...v0.9.2) (20 October 2023)
