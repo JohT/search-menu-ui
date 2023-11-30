@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency jsdom to v23.0.1 [`#439`](https://github.com/JohT/search-menu-ui/pull/439)
 - Update actions/setup-java action to v4 [`#438`](https://github.com/JohT/search-menu-ui/pull/438)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.6.0 [`#437`](https://github.com/JohT/search-menu-ui/pull/437)
 - Update dependency jsdom to v23 [`#436`](https://github.com/JohT/search-menu-ui/pull/436)
