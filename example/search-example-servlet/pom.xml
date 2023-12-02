@@ -19,7 +19,7 @@
     <json-sanitizer.version>1.2.3</json-sanitizer.version>
     <surefire-plugin.version>3.2.2</surefire-plugin.version>
     <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
-    <mockito-core.version>5.7.0</mockito-core.version>
+    <mockito-core.version>5.8.0</mockito-core.version>
     <hamcrest.version>2.2</hamcrest.version>
   </properties>
   <dependencyManagement>
