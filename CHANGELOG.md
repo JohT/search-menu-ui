@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.6.2 (patch) [`#445`](https://github.com/JohT/search-menu-ui/pull/445)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.6.1 [`#443`](https://github.com/JohT/search-menu-ui/pull/443)
 - Update dependency jsdom to v23.0.1 [`#439`](https://github.com/JohT/search-menu-ui/pull/439)
 - Update actions/setup-java action to v4 [`#438`](https://github.com/JohT/search-menu-ui/pull/438)
