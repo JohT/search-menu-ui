@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update surefire-plugin.version to v3.2.3 (patch) [`#448`](https://github.com/JohT/search-menu-ui/pull/448)
 - Update Node.js to v20 [`#420`](https://github.com/JohT/search-menu-ui/pull/420)
 - Update Quarkus to v3.6.2 (patch) [`#445`](https://github.com/JohT/search-menu-ui/pull/445)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.6.1 [`#443`](https://github.com/JohT/search-menu-ui/pull/443)
