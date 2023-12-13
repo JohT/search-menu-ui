@@ -10,12 +10,12 @@
       "context": "node",
       "includeNodeModules": true,
       "engines": {
-        "node": "14"
+        "node": "20"
       }
     }
   },
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "scripts": {
     "prebuild": "rm -rf dist",
