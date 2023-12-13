@@ -1,22 +1,22 @@
-var e=globalThis,t={},n={},i=e.parcelRequire6f19;null==i&&((i=function(e){if(e in t)return t[e].exports;if(e in n){var i=n[e];delete n[e];var r={id:e,exports:{}};return t[e]=r,i.call(r.exports,r,r.exports),r.exports}var l=Error("Cannot find module '"+e+"'");throw l.code="MODULE_NOT_FOUND",l}).register=function(e,t){n[e]=t},e.parcelRequire6f19=i);var r=i.register;r("frt1r",function(e,t){/**
+var e=globalThis,t={},n={},i=e.parcelRequire6f19;null==i&&((i=function(e){if(e in t)return t[e].exports;if(e in n){var i=n[e];delete n[e];var r={id:e,exports:{}};return t[e]=r,i.call(r.exports,r,r.exports),r.exports}var l=Error("Cannot find module '"+e+"'");throw l.code="MODULE_NOT_FOUND",l}).register=function(e,t){n[e]=t},e.parcelRequire6f19=i);var r=i.register;r("6Zl5q",function(e,t){/**
  * @returns {Element} target of the event
  * @memberof eventtarget
- */(($b3dfe3dc9a407745$var$module||{}).exports={}).getEventTarget=function(e){if(void 0!==e.currentTarget&&null!=e.currentTarget)return e.currentTarget;if(void 0!==e.srcElement&&null!=e.srcElement)return e.srcElement;throw Error("Event doesn't contain bounded element: "+e)}}),r("jp72d",function(e,t){(($e205cf173571b7be$var$module||{}).exports={}).moveCursorToEndOf=function(e){if("function"==typeof e.setSelectionRange)e.setSelectionRange(e.value.length,e.value.length);else if("number"==typeof e.selectionStart&&"number"==typeof e.selectionEnd)e.selectionStart=e.selectionEnd=e.value.length;else if("function"==typeof e.createTextRange){var t=e.createTextRange();t.collapse(!0),t.moveEnd("character",e.value.length),t.moveStart("character",e.value.length),t.select()}}}),r("28Ous",function(e,t){/**
+ */(($5168cbe7a8f000bf$var$module||{}).exports={}).getEventTarget=function(e){if(void 0!==e.currentTarget&&null!=e.currentTarget)return e.currentTarget;if(void 0!==e.srcElement&&null!=e.srcElement)return e.srcElement;throw Error("Event doesn't contain bounded element: "+e)}}),r("e8zLT",function(e,t){(($a4ad8f7f94ee3163$var$module||{}).exports={}).moveCursorToEndOf=function(e){if("function"==typeof e.setSelectionRange)e.setSelectionRange(e.value.length,e.value.length);else if("number"==typeof e.selectionStart&&"number"==typeof e.selectionEnd)e.selectionStart=e.selectionEnd=e.value.length;else if("function"==typeof e.createTextRange){var t=e.createTextRange();t.collapse(!0),t.moveEnd("character",e.value.length),t.moveStart("character",e.value.length),t.select()}}}),r("lTEEA",function(e,t){/**
  * Adds an event listener/hander using "addEventListener" or whatever method the browser supports.
  * @param {String} eventName
  * @param {Element} element
  * @param {*} eventHandler
  * @memberof addeventlistener
- */(($18f37e6be747ca26$var$module||{}).exports={}).addEventListener=function(e,t,n){t.addEventListener?t.addEventListener(e,n,!1):t.attachEvent?t.attachEvent("on"+e,n):t["on"+e]=n}});/**
+ */(($ff0e44fa82d1ec2e$var$module||{}).exports={}).addEventListener=function(e,t,n){t.addEventListener?t.addEventListener(e,n,!1):t.attachEvent?t.attachEvent("on"+e,n):t["on"+e]=n}});/**
  * @file Search UI written in vanilla JavaScript. Menu structure for results. Filters are integrated as search results.
  * @version {@link https://github.com/JohT/search-menu-ui/releases/latest latest version}
  * @author JohT
- */var l=s(l);// Fallback for vanilla js without modules
-function s(e){return e||{}}/**
+ */var l=o(l);// Fallback for vanilla js without modules
+function o(e){return e||{}}/**
  * Contains the main ui component of the search menu ui.
  * @module searchmenu
- */var o=l.exports={};// Export module for npm...
-o.internalCreateIfNotExists=s;var u=u||i("frt1r"),a=a||i("jp72d"),c=c||i("28Ous");// supports vanilla js & npm
+ */var s=l.exports={};// Export module for npm...
+s.internalCreateIfNotExists=o;var u=u||i("6Zl5q"),a=a||i("e8zLT"),c=c||i("lTEEA");// supports vanilla js & npm
 /**
  * @typedef {Object} module:searchmenu.SearchViewDescription Describes a part of the search view (e.g. search result details).
  * @property {string} viewElementId id of the element (e.g. "div"), that contains the view with all list elements and their parent.
@@ -27,7 +27,7 @@ o.internalCreateIfNotExists=s;var u=u||i("frt1r"),a=a||i("jp72d"),c=c||i("28Ous"
  * @property {string} [listEntrySummaryTemplate="{{summaries[0].displayName}}: {{summaries[0].value}}"] template for the text of each list entry, if the data group "summary" exists.
  * @property {string} [listEntryStyleClassTemplate="{{view.listEntryElementIdPrefix}} {{category}}"] template for the style class of each list entry.
  * @property {boolean} [isSelectableFilterOption=false] Specifies, if the list entry can be selected as filter option
- */o.SearchViewDescriptionBuilder=function(){function e(e){return"string"==typeof e&&null!=e&&""!=e}return(/**
+ */s.SearchViewDescriptionBuilder=function(){function e(e){return"string"==typeof e&&null!=e&&""!=e}return(/**
    * Builds a {@link module:searchmenu.SearchViewDescription}, which describes a part of the search menu called "view".  
    * Examples for views are: results, details, filters, filter options. There might be more in future.
    * 
@@ -160,13 +160,13 @@ this.description.listEntryElementIdPrefix=e(t)?t:"",this)},/**
  * @property {string} [waitBeforeClose=700] timeout in milliseconds when search is closed after blur (loss of focus) (default=700)
  * @property {string} [waitBeforeSearch=500] time in milliseconds to wait until typing is finished and search starts (default=500)
  * @property {string} [waitBeforeMouseOver=700] time in milliseconds to wait until mouse over opens details (default=700)
- */o.SearchMenuAPI=function(){function e(e,t,n){c.addEventListener(e,t,n)}function t(e){return u.getEventTarget(e)}function n(e,t){var n=RegExp("\\s?\\b"+e+"\\b","gi");t.className=t.className.replace(n,"")}function i(e){return"string"==typeof e&&null!=e&&""!=e}return(/**
+ */s.SearchMenuAPI=function(){function e(e,t,n){c.addEventListener(e,t,n)}function t(e){return u.getEventTarget(e)}function n(e,t){var n=RegExp("\\s?\\b"+e+"\\b","gi");t.className=t.className.replace(n,"")}function i(e){return"string"==typeof e&&null!=e&&""!=e}return(/**
    * Search Menu UI API
    * @constructs SearchMenuAPI
    * @alias module:searchmenu.SearchMenuAPI
    */function(){this.config={triggerSearch:function(){throw Error("search service needs to be defined.")},convertData:function(e){return e},resolveTemplate:function(){throw Error("template resolver needs to be defined.")},addPredefinedParametersTo:function(){//does nothing if not specified otherwise
 },onCreatedElement:function(){//does nothing if not specified otherwise
-},navigateTo:function(e){window.location.href=e},createdElementListeners:[],searchAreaElementId:"searcharea",inputElementId:"searchinputtext",searchTextParameterName:"searchtext",resultsView:new o.SearchViewDescriptionBuilder().viewElementId("searchresults").listParentElementId("searchmatches").listEntryElementIdPrefix("result").listEntryTextTemplate("{{abbreviation}} {{displayName}}").listEntrySummaryTemplate("{{summaries[0].abbreviation}} <b>{{summaries[1].value}}</b><br>{{summaries[2].value}}: {{summaries[0].value}}").build(),detailView:new o.SearchViewDescriptionBuilder().viewElementId("searchdetails").listParentElementId("searchdetailentries").listEntryElementIdPrefix("detail").listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}").build(),filterOptionsView:new o.SearchViewDescriptionBuilder().viewElementId("searchfilteroptions").listParentElementId("searchfilteroptionentries").listEntryElementIdPrefix("filter").listEntryTextTemplate("{{value}}").listEntrySummaryTemplate("{{summaries[0].value}}").isSelectableFilterOption(!0).build(),filtersView:new o.SearchViewDescriptionBuilder().viewElementId("searchresults").listParentElementId("searchfilters").listEntryElementIdPrefix("filter").isSelectableFilterOption(!0).build(),waitBeforeClose:700,waitBeforeSearch:500,waitBeforeMouseOver:700},/**
+},navigateTo:function(e){window.location.href=e},createdElementListeners:[],searchAreaElementId:"searcharea",inputElementId:"searchinputtext",searchTextParameterName:"searchtext",resultsView:new s.SearchViewDescriptionBuilder().viewElementId("searchresults").listParentElementId("searchmatches").listEntryElementIdPrefix("result").listEntryTextTemplate("{{abbreviation}} {{displayName}}").listEntrySummaryTemplate("{{summaries[0].abbreviation}} <b>{{summaries[1].value}}</b><br>{{summaries[2].value}}: {{summaries[0].value}}").build(),detailView:new s.SearchViewDescriptionBuilder().viewElementId("searchdetails").listParentElementId("searchdetailentries").listEntryElementIdPrefix("detail").listEntryTextTemplate("<b>{{displayName}}:</b> {{value}}").build(),filterOptionsView:new s.SearchViewDescriptionBuilder().viewElementId("searchfilteroptions").listParentElementId("searchfilteroptionentries").listEntryElementIdPrefix("filter").listEntryTextTemplate("{{value}}").listEntrySummaryTemplate("{{summaries[0].value}}").isSelectableFilterOption(!0).build(),filtersView:new s.SearchViewDescriptionBuilder().viewElementId("searchresults").listParentElementId("searchfilters").listEntryElementIdPrefix("filter").isSelectableFilterOption(!0).build(),waitBeforeClose:700,waitBeforeSearch:500,waitBeforeMouseOver:700},/**
      * Defines the search service function, that will be called whenever search is triggered.
      * @param {module:searchmenu.SearchService} service function that will be called to trigger search (backend).
      * @returns module:searchmenu.SearchMenuAPI
@@ -259,14 +259,14 @@ this.description.listEntryElementIdPrefix=e(t)?t:"",this)},/**
      */this.waitBeforeMouseOver=function(e){return this.config.waitBeforeMouseOver=e,this},/**
      * Finishes the configuration and creates the {@link module:searchmenu.SearchMenuUI}.
      * @returns module:searchmenu.SearchMenuUI
-     */this.start=function(){var e=this.config;return e.createdElementListeners.length>0&&this.setElementCreatedHandler(function(t,n){var i=0;for(i=0;i<e.createdElementListeners.length;i+=1)e.createdElementListeners[i](t,n)}),new o.SearchMenuUI(e)}})}(),o.SearchMenuUI=function(){function e(e){return function(t,n){var i;for(i=0;i<e.length;i+=1)if(t[e[i]]!=n[e[i]])return!1;return!0}}/**
+     */this.start=function(){var e=this.config;return e.createdElementListeners.length>0&&this.setElementCreatedHandler(function(t,n){var i=0;for(i=0;i<e.createdElementListeners.length;i+=1)e.createdElementListeners[i](t,n)}),new s.SearchMenuUI(e)}})}(),s.SearchMenuUI=function(){function e(e){return function(t,n){var i;for(i=0;i<e.length;i+=1)if(t[e[i]]!=n[e[i]])return!1;return!0}}/**
    * Reacts to input events (keys, ...) to navigate through main menu entries.
    *
    * @param {Element} element to add event handlers
    * @param {SearchMenuConfig} config search configuration
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function t(e,t){_(e,i(t,d)),Y(e,i(t,f)),j(e,i(t,s)),z(e,i(t,x))}function n(e,t){G("mousedown",e,t),q(e,t)}/**
+   */function t(e,t){Z(e,i(t,d)),Y(e,i(t,f)),q(e,i(t,o)),j(e,i(t,x))}function n(e,t){W("mousedown",e,t),z(e,t)}/**
    * @param {SearchMenuConfig} config search configuration
    * @param {EventListener} eventHandler event handler
    * @protected
@@ -311,24 +311,24 @@ this.description.listEntryElementIdPrefix=e(t)?t:"",this)},/**
    * @return {module:searchmenu.ListElementIdProperties} list element id properties
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function l(e){var t=e.split("--");t.length<2&&console.log("expected at least one '--' separator inside the id "+e);var n=t[0],i=parseInt(t[1]),r=t[t.length-2],l=parseInt(t[t.length-1]),s=e.substring(0,e.lastIndexOf(l)-2);return{id:e,type:r,index:l,previousId:s+"--"+(l-1),nextId:s+"--"+(l+1),firstId:s+"--1",lastId:s+"--"+document.getElementById(e).parentElement.childNodes.length,mainMenuId:n+"--"+i,mainMenuIndex:i,hiddenFieldsId:e+"--fields",isFirstElement:l<=1,isSubMenu:t.length>3,subMenuId:function(t){return e+"--"+t+"--1"},replaceMainMenuIndex:function(t){return n+"--"+t+e.substring(this.mainMenuId.length)},getNewIndexAfterRemovedMainMenuIndex:function(t){if(i<t)return e;if(i==t)throw Error("index "+t+" should had been removed.");return this.replaceMainMenuIndex(i-1)},hiddenFields:function(){var t=document.getElementById(e+"--fields");return JSON.parse(p(t,"textContent",t.innerText))}}}function s(e,t){var n=K(e),i=document.getElementById(t.inputElementId);return n.blur(),i.focus(),a.moveCursorToEndOf(i),S(e),D(t),i}function o(e,t){var n=K(e),i=document.getElementById(t.resultsView.listEntryElementIdPrefix+"--1");i&&(n.blur(),i.focus())}function d(e,t){m(e,function(e){var n=null;return e.type===t.resultsView.listEntryElementIdPrefix&&//TODO could find a better way (without config?) to navigate from last search result to first options/filter entry
-(n=document.getElementById(t.filterOptionsView.listEntryElementIdPrefix+"--1")),null===n&&(n=document.getElementById(t.resultsView.listEntryElementIdPrefix+"--1")),n}),D(t)}function f(e,t){h(e,function(n){var i=null;if(n.type===t.filterOptionsView.listEntryElementIdPrefix){//select last result entry when arrow up is pressed on first filter entry
+   */function l(e){var t=e.split("--");t.length<2&&console.log("expected at least one '--' separator inside the id "+e);var n=t[0],i=parseInt(t[1]),r=t[t.length-2],l=parseInt(t[t.length-1]),o=e.substring(0,e.lastIndexOf(l)-2);return{id:e,type:r,index:l,previousId:o+"--"+(l-1),nextId:o+"--"+(l+1),firstId:o+"--1",lastId:o+"--"+document.getElementById(e).parentElement.childNodes.length,mainMenuId:n+"--"+i,mainMenuIndex:i,hiddenFieldsId:e+"--fields",isFirstElement:l<=1,isSubMenu:t.length>3,subMenuId:function(t){return e+"--"+t+"--1"},replaceMainMenuIndex:function(t){return n+"--"+t+e.substring(this.mainMenuId.length)},getNewIndexAfterRemovedMainMenuIndex:function(t){if(i<t)return e;if(i==t)throw Error("index "+t+" should had been removed.");return this.replaceMainMenuIndex(i-1)},hiddenFields:function(){var t=document.getElementById(e+"--fields");return JSON.parse(p(t,"textContent",t.innerText))}}}function o(e,t){var n=G(e),i=document.getElementById(t.inputElementId);return n.blur(),i.focus(),a.moveCursorToEndOf(i),S(e),L(t),i}function s(e,t){var n=G(e),i=document.getElementById(t.resultsView.listEntryElementIdPrefix+"--1");i&&(n.blur(),i.focus())}function d(e,t){m(e,function(e){var n=null;return e.type===t.resultsView.listEntryElementIdPrefix&&//TODO could find a better way (without config?) to navigate from last search result to first options/filter entry
+(n=document.getElementById(t.filterOptionsView.listEntryElementIdPrefix+"--1")),null===n&&(n=document.getElementById(t.resultsView.listEntryElementIdPrefix+"--1")),n}),L(t)}function f(e,t){h(e,function(n){var i=null;if(n.type===t.filterOptionsView.listEntryElementIdPrefix){//select last result entry when arrow up is pressed on first filter entry
 //TODO could find a better way (without config?) to navigate from first options/filter entry to last search result?
-var r=N(t.resultsView.listEntryElementIdPrefix);i=document.getElementById(t.resultsView.listEntryElementIdPrefix+"--"+r)}return null===i?s(e,t):i}),D(t)}/**
+var r=N(t.resultsView.listEntryElementIdPrefix);i=document.getElementById(t.resultsView.listEntryElementIdPrefix+"--"+r)}return null===i?o(e,t):i}),L(t)}/**
    * Selects and focusses the next menu entry.
    *
    * @param {Event} event
    * @param {module:searchmenu.MenuEntryNotFoundHandler} onMissingNext is called, if no "next" entry could be found.
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function m(e,t){var n=K(e),i=l(n.id);i.isSubMenu&&S(e);var r=document.getElementById(i.nextId);null==r&&"function"==typeof t&&(r=t(i)),null==r&&(r=document.getElementById(i.firstId)),null!=r&&(n.blur(),r.focus())}/**
+   */function m(e,t){var n=G(e),i=l(n.id);i.isSubMenu&&S(e);var r=document.getElementById(i.nextId);null==r&&"function"==typeof t&&(r=t(i)),null==r&&(r=document.getElementById(i.firstId)),null!=r&&(n.blur(),r.focus())}/**
    * Selects and focusses the previous menu entry.
    *
    * @param {Event} event
    * @param {module:searchmenu.MenuEntryNotFoundHandler} onMissingPrevious is called, if no "previous" entry could be found.
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function h(e,t){var n=K(e),i=l(n.id);i.isSubMenu&&S(e);var r=document.getElementById(i.previousId);null==r&&"function"==typeof t&&(r=t(i)),null==r&&(r=document.getElementById(i.lastId)),null!=r&&(n.blur(),r.focus())}/**
+   */function h(e,t){var n=G(e),i=l(n.id);i.isSubMenu&&S(e);var r=document.getElementById(i.previousId);null==r&&"function"==typeof t&&(r=t(i)),null==r&&(r=document.getElementById(i.lastId)),null!=r&&(n.blur(),r.focus())}/**
    * Gets called when a filter option is selected and copies it into the filter view, where all selected filters are collected.
    * @param {Event} event 
    * @param {DescribedEntry} entries 
@@ -336,7 +336,7 @@ var r=N(t.resultsView.listEntryElementIdPrefix);i=document.getElementById(t.resu
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
    */function E(t,n,r){//TODO could detect default entry if necessary and call "addDefaultFilterOptionModificationHandler" instead
-(function(e,t,n){var r,l;J(e,b),l=r=i(n,P),G("keydown",e,function(e){("Del"==e.key||"Delete"==e.key||46==Q(e))&&l(e)}),G("keydown",e,function(e){("Backspace"==e.key||8==Q(e))&&r(e)})})(v(/**
+(function(e,t,n){var r,l;J(e,b),l=r=i(n,P),W("keydown",e,function(e){("Del"==e.key||"Delete"==e.key||46==K(e))&&l(e)}),W("keydown",e,function(e){("Backspace"==e.key||8==K(e))&&r(e)})})(v(/**
    * Extracts the entry data that it referred by the element given by its ID out of the list of data entries.
    * @param {string} element id
    * @param {DescribedEntry[]} array of described entries
@@ -344,7 +344,7 @@ var r=N(t.resultsView.listEntryElementIdPrefix);i=document.getElementById(t.resu
    * @returns {DescribedEntry} described entry out of the given entries, that suits the element given by its id.
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function(e,t,n){var i,r,s=l(e).hiddenFields();for(i=0;i<t.length;i+=1)if(n(r=t[i],s))return r;return console.log("error: no selected entry found for id "+e+" in "+t),null}(K(t).id,n,e(["fieldName","value"])),n,r.filtersView,r),0,r),S(t),T(t)}function v(e,n,i,s){var o,u,a,c,d,f,m,h=N(i.listEntryElementIdPrefix),E=i.listEntryElementIdPrefix+"--"+(h+1),v=(o=p(e,"category",""),u=e.fieldName,a=i.listParentElementId,c=null,null!=(d=y(a,function(e){var t=l(e.id).hiddenFields();if(t.fieldName===u){var n=p(t,"category","");if(""===n)c=e;else if(n===o)return e}}))?d:c);if(null!=v){var g,I=C(e,i,v.id,s.resolveTemplate);return(g=v).innerHTML=I,v=g}var T=C(e,i,E,s.resolveTemplate);return v=O(e,i,E,T),R(k(e,i,s.resolveTemplate),v),B(v,s.onCreatedElement),G("mousedown",f=v,m=r(n,s,w)),q(f,m),W(f,m),t(v,s),v}/**
+   */function(e,t,n){var i,r,o=l(e).hiddenFields();for(i=0;i<t.length;i+=1)if(n(r=t[i],o))return r;return console.log("error: no selected entry found for id "+e+" in "+t),null}(G(t).id,n,e(["fieldName","value"])),n,r.filtersView,r),0,r),S(t),T(t)}function v(e,n,i,o){var s,u,a,c,d,f,m,h=N(i.listEntryElementIdPrefix),E=i.listEntryElementIdPrefix+"--"+(h+1),v=(s=p(e,"category",""),u=e.fieldName,a=i.listParentElementId,c=null,null!=(d=y(a,function(e){var t=l(e.id).hiddenFields();if(t.fieldName===u){var n=p(t,"category","");if(""===n)c=e;else if(n===s)return e}}))?d:c);if(null!=v){var g,I=C(e,i,v.id,o.resolveTemplate);return(g=v).innerHTML=I,v=g}var T=C(e,i,E,o.resolveTemplate);return v=O(e,i,E,T),R(k(e,i,o.resolveTemplate),v),B(v,o.onCreatedElement),W("mousedown",f=v,m=r(n,o,w)),z(f,m),_(f,m),t(v,o),v}/**
    * Returns the property value of the object or - if undefined - the default value.
    * @param {Object} object 
    * @param {String} propertyName 
@@ -365,14 +365,14 @@ var r=N(t.resultsView.listEntryElementIdPrefix);i=document.getElementById(t.resu
    * @returns {Object} result of the first entry element function, that had returned one, or null.
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function y(e,t){var n,i,r=document.getElementById(e);for(n=0;n<r.childNodes.length;n+=1)if(i=t(r.childNodes[n]))return i;return null}function g(e,t,n){D(n),I(e,t,n.detailView,n),S(e)}function w(e,t,n){D(n),I(e,t,n.filterOptionsView,n)}function I(e,t,n,i){(function(e){var t=document.getElementById(e);// Fastest way to delete child nodes in Chrome and FireFox according to
+   */function y(e,t){var n,i,r=document.getElementById(e);for(n=0;n<r.childNodes.length;n+=1)if(i=t(r.childNodes[n]))return i;return null}function g(e,t,n){L(n),I(e,t,n.detailView,n),S(e)}function w(e,t,n){L(n),I(e,t,n.filterOptionsView,n)}function I(e,t,n,i){(function(e){var t=document.getElementById(e);// Fastest way to delete child nodes in Chrome and FireFox according to
 // https://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
-if("function"==typeof t.cloneNode&&"function"==typeof t.replaceChild){var n=t.cloneNode(!1);t.parentNode.replaceChild(n,t)}else t.innerHTML=""})(n.listParentElementId);var l,s,o,u,a,c=K(e),d=null,f=null,v=0,p=c.id+"--"+n.listEntryElementIdPrefix,y=null;for(v=0;v<t.length;v+=1)d=t[v],p=c.id+"--"+n.listEntryElementIdPrefix+"--"+(v+1),a=C(d,n,p,i.resolveTemplate),f=O(d,n,p,a),R(k(d,n,i.resolveTemplate),f),B(f,i.onCreatedElement),n.isSelectableFilterOption&&(_(s=f,m),Y(s,h),z(s,T),j(s,T),G("mousedown",o=f,u=r(t,i,E)),q(o,u),J(o,u)),0===v&&(y=f);var g=H(c,function(e){return"DIV"==e.tagName}),w=document.getElementById(n.viewElementId),I=g.offsetWidth+15,x=(void 0!==(l=c.getBoundingClientRect()).y?l.y:l.top)+(void 0!==window.pageYOffset?window.pageYOffset:"CSS1Compat"===(document.compatMode||"")?document.documentElement.scrollTop:document.body.scrollTop);w.style.left=I+"px",w.style.top=x+"px",R("show",w),n.isSelectableFilterOption&&(c.blur(),y.focus())}/**
+if("function"==typeof t.cloneNode&&"function"==typeof t.replaceChild){var n=t.cloneNode(!1);t.parentNode.replaceChild(n,t)}else t.innerHTML=""})(n.listParentElementId);var l,o,s,u,a,c=G(e),d=null,f=null,v=0,p=c.id+"--"+n.listEntryElementIdPrefix,y=null;for(v=0;v<t.length;v+=1)d=t[v],p=c.id+"--"+n.listEntryElementIdPrefix+"--"+(v+1),a=C(d,n,p,i.resolveTemplate),f=O(d,n,p,a),R(k(d,n,i.resolveTemplate),f),B(f,i.onCreatedElement),n.isSelectableFilterOption&&(Z(o=f,m),Y(o,h),j(o,T),q(o,T),W("mousedown",s=f,u=r(t,i,E)),z(s,u),J(s,u)),0===v&&(y=f);var g=H(c,function(e){return"DIV"==e.tagName}),w=document.getElementById(n.viewElementId),I=g.offsetWidth+15,x=(void 0!==(l=c.getBoundingClientRect()).y?l.y:l.top)+(void 0!==window.pageYOffset?window.pageYOffset:"CSS1Compat"===(document.compatMode||"")?document.documentElement.scrollTop:document.body.scrollTop);w.style.left=I+"px",w.style.top=x+"px",R("show",w),n.isSelectableFilterOption&&(c.blur(),y.focus())}/**
    * Exit sub menu from event entry and return to main menu.
    * @param {InputEvent} event
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function T(e){var t,n=K(e),i=l(n.id),r=document.getElementById(i.mainMenuId);n.blur(),r.focus(),null!=(t=H(n,function(e){return U("show",e)}))&&A("show",t)}function x(e,t){D(t)}/**
+   */function T(e){var t,n=G(e),i=l(n.id),r=document.getElementById(i.mainMenuId);n.blur(),r.focus(),null!=(t=H(n,function(e){return U("show",e)}))&&A("show",t)}function x(e,t){L(t)}/**
    * Prevents the given event inside an event handler to get handled anywhere else.
    * Pressing the arrow key up can lead to scrolling up the view. This is not useful,
    * if the arrow key navigates the focus inside a sub menu, that is fully contained inside the current view.
@@ -384,7 +384,7 @@ if("function"==typeof t.cloneNode&&"function"==typeof t.replaceChild){var n=t.cl
    * @param {InputEvent} event
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function b(e){var t,n;S(e),U(t="inactive",n=K(e))?A(t,n):R(t,n)}function P(e,t){var n,i,r;S(e),f(e,t),i=(n=K(e)).parentElement,r=l(n.id).mainMenuIndex,i.removeChild(n),function e(t,n,i,r){!(n>i)&&t.childNodes&&V(t.childNodes,function(t){r(t),e(t,n+1,i,r)})}(i,0,5,function(e){e.id&&(e.id=l(e.id).getNewIndexAfterRemovedMainMenuIndex(r))})}/**
+   */function b(e){var t,n;S(e),U(t="inactive",n=G(e))?A(t,n):R(t,n)}function P(e,t){var n,i,r;S(e),f(e,t),i=(n=G(e)).parentElement,r=l(n.id).mainMenuIndex,i.removeChild(n),function e(t,n,i,r){!(n>i)&&t.childNodes&&V(t.childNodes,function(t){r(t),e(t,n+1,i,r)})}(i,0,5,function(e){e.id&&(e.id=l(e.id).getNewIndexAfterRemovedMainMenuIndex(r))})}/**
    * This function will be called for every found element
    * @callback module:searchmenu.ElementFoundListener
    * @param {Element} foundElement
@@ -410,7 +410,7 @@ if("function"==typeof t.cloneNode&&"function"==typeof t.replaceChild){var n=t.cl
    * @param {String} text text of the list element
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function O(e,t,n,i){var r,l,s=(r=t.listEntryElementTag,(l=document.createElement(r)).id=n,l.tabIndex="0",l.innerHTML=i,l);return document.getElementById(t.listParentElementId).appendChild(s),s}/**
+   */function O(e,t,n,i){var r,l,o=(r=t.listEntryElementTag,(l=document.createElement(r)).id=n,l.tabIndex="0",l.innerHTML=i,l);return document.getElementById(t.listParentElementId).appendChild(o),o}/**
    * Creates the inner HTML Text for a list entry to be used for search results, filter options, details and filters.
    *
    * @param {DescribedEntry} entry entry data
@@ -421,17 +421,17 @@ if("function"==typeof t.cloneNode&&"function"==typeof t.replaceChild){var n=t.cl
    * @memberof module:searchmenu.SearchMenuUI
    */function C(e,t,n,i){//TODO could support template inside html e.g. referenced by id (with convention over code)
 //TODO should limit length of resolved variables
-var r=i(t.listEntryTextTemplate,e);return void 0!==e.summaries&&(r=i(t.listEntrySummaryTemplate,e)),r+='<p id="'+n+'--fields" style="display: none">'+JSON.stringify(e)+"</p>"}function k(e,t,n){var i=n(t.listEntryStyleClassTemplate,e);return n(i,{view:t})}function M(e){L(e.resultsView.viewElementId),L(e.detailView.viewElementId),L(e.filterOptionsView.viewElementId)}function D(e){L(e.detailView.viewElementId),L(e.filterOptionsView.viewElementId)}/**
+var r=i(t.listEntryTextTemplate,e);return void 0!==e.summaries&&(r=i(t.listEntrySummaryTemplate,e)),r+='<p id="'+n+'--fields" style="display: none">'+JSON.stringify(e)+"</p>"}function k(e,t,n){var i=n(t.listEntryStyleClassTemplate,e);return n(i,{view:t})}function M(e){F(e.resultsView.viewElementId),F(e.detailView.viewElementId),F(e.filterOptionsView.viewElementId)}function L(e){F(e.detailView.viewElementId),F(e.filterOptionsView.viewElementId)}/**
    * Shows the element given by its id.
    * @param {Element}  elementId ID of the element that should be shown
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function F(e){var t;R("show",document.getElementById(e))}/**
+   */function D(e){var t;R("show",document.getElementById(e))}/**
    * Hides the element given by its id.
    * @param elementId ID of the element that should be hidden
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function L(e){var t;A("show",document.getElementById(e))}/**
+   */function F(e){var t;A("show",document.getElementById(e))}/**
    * @callback module:searchmenu.ElementPredicate
    * @param {Element} element
    * @returns {boolean} true, when the predicate matches the given element, false otherwise.
@@ -443,19 +443,19 @@ var r=i(t.listEntryTextTemplate,e);return void 0!==e.summaries&&(r=i(t.listEntry
    * @param {module:searchmenu.ElementPredicate} predicate
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function H(e,t){for(var n=e;null!=n;){if(t(n))return n;n=n.parentNode}return null}function R(e,t){A(e,t);var n=t.className.length>0?" ":"";t.className+=n+e}function A(e,t){var n=RegExp("\\s?\\b"+e+"\\b","gi");t.className=t.className.replace(n,"")}function U(e,t){return null!=t.className&&t.className.indexOf(e)>=0}function j(e,t){G("keydown",e,function(e){("Escape"==e.key||"Esc"==e.key||27==Q(e))&&t(e)})}function q(e,t){G("keydown",e,function(e){("Enter"==e.key||13==Q(e))&&t(e)})}function J(e,t){G("keydown",e,function(e){(" "==e.key||"Spacebar"==e.key||32==Q(e))&&t(e)})}function Y(e,t){G("keydown",e,function(e){("ArrowUp"==e.key||"Up"==e.key||38==Q(e))&&t(e)})}function _(e,t){G("keydown",e,function(e){("ArrowDown"==e.key||"Down"==e.key||40==Q(e))&&t(e)})}function W(e,t){G("keydown",e,function(e){("ArrowRight"==e.key||"Right"==e.key||39==Q(e))&&t(e)})}function z(e,t){G("keydown",e,function(e){("ArrowLeft"==e.key||"Left"==e.key||37==Q(e))&&t(e)})}function G(e,t,n){c.addEventListener(e,t,n)}/**
+   */function H(e,t){for(var n=e;null!=n;){if(t(n))return n;n=n.parentNode}return null}function R(e,t){A(e,t);var n=t.className.length>0?" ":"";t.className+=n+e}function A(e,t){var n=RegExp("\\s?\\b"+e+"\\b","gi");t.className=t.className.replace(n,"")}function U(e,t){return null!=t.className&&t.className.indexOf(e)>=0}function q(e,t){W("keydown",e,function(e){("Escape"==e.key||"Esc"==e.key||27==K(e))&&t(e)})}function z(e,t){W("keydown",e,function(e){("Enter"==e.key||13==K(e))&&t(e)})}function J(e,t){W("keydown",e,function(e){(" "==e.key||"Spacebar"==e.key||32==K(e))&&t(e)})}function Y(e,t){W("keydown",e,function(e){("ArrowUp"==e.key||"Up"==e.key||38==K(e))&&t(e)})}function Z(e,t){W("keydown",e,function(e){("ArrowDown"==e.key||"Down"==e.key||40==K(e))&&t(e)})}function _(e,t){W("keydown",e,function(e){("ArrowRight"==e.key||"Right"==e.key||39==K(e))&&t(e)})}function j(e,t){W("keydown",e,function(e){("ArrowLeft"==e.key||"Left"==e.key||37==K(e))&&t(e)})}function W(e,t,n){c.addEventListener(e,t,n)}/**
    * @returns {Element} target of the event
-   */function K(e){return u.getEventTarget(e)}/**
+   */function G(e){return u.getEventTarget(e)}/**
    * Returns the key code of the event or -1 if it is no available.
    * @param {KeyboardEvent} event
    * @return key code or -1 if not available
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function Q(e){return void 0===e.keyCode?-1:e.keyCode}return function(s){/**
+   */function K(e){return void 0===e.keyCode?-1:e.keyCode}return function(o){/**
      * Configuration.
      * @type {module:searchmenu.SearchMenuConfig}
      * @protected 
-     */this.config=s,/**
+     */this.config=o,/**
      * Search text that correspondents to the currently shown results.
      * @type {String}
      * @protected 
@@ -467,8 +467,8 @@ var r=i(t.listEntryTextTemplate,e);return void 0!==e.summaries&&(r=i(t.listEntry
      * Timer that is used to wait before the search service is called.
      * @type {Timer}
      * @protected 
-     */this.waitBeforeSearchTimer=null;var u=document.getElementById(s.inputElementId);j(u,function(e){K(e).value="",M(s)}),_(u,i(s,o)),G("keyup",u,function(i){null!==this.waitBeforeSearchTimer&&clearTimeout(this.waitBeforeSearchTimer);var o=K(i).value;this.waitBeforeSearchTimer=window.setTimeout(function(){(o!==this.currentSearchText||""===this.currentSearchText)&&(function(i,s){var o,u,a;if(document.getElementById(s.resultsView.listParentElementId).innerHTML="",0===i.length){M(s);return}F(s.resultsView.viewElementId),(o=s.filtersView.listParentElementId,u={},y(o,function(e){var t=l(e.id).hiddenFields();if(void 0===t.fieldName||void 0===t.value||U("inactive",e))return null;u[t.fieldName]=t.value}),a=u)[s.searchTextParameterName]=i,s.addPredefinedParametersTo(a),//TODO could provide optional build in search text highlighting
-s.triggerSearch(a,function(i){(function(i,s){var o=0;for(o=0;o<i.length;o+=1)(function(i,s,o){var u=o.resultsView.listEntryElementIdPrefix+"--"+s,a=C(i,o.resultsView,u,o.resolveTemplate),c=O(i,o.resultsView,u,a);if(R(k(i,o.resultsView,o.resolveTemplate),c),B(c,o.onCreatedElement),void 0!==i.details&&(J(c,d=r(i.details,o,g)),W(c,d),function(e,t,n){G("mouseover",e,function(i){this.originalEvent=function(e){for(var t={},n=Object.keys(e),i=0;i<n.length;i++){var r=n[i],l=e[r];t[r]=l}return t}(i),this.delayedHandlerTimer=window.setTimeout(function(){n(void 0!==this.originalEvent?this.originalEvent:i)},t),this.preventEventHandling=function(){null!==this.delayedHandlerTimer&&clearTimeout(this.delayedHandlerTimer)},G("mouseout",e,this.preventEventHandling),G("mousedown",e,this.preventEventHandling),G("keydown",e,this.preventEventHandling)})}(c,o.waitBeforeMouseOver,r(i.details,o,g)),n(c,function(){var e=/**
+     */this.waitBeforeSearchTimer=null;var u=document.getElementById(o.inputElementId);q(u,function(e){G(e).value="",M(o)}),Z(u,i(o,s)),W("keyup",u,function(i){null!==this.waitBeforeSearchTimer&&clearTimeout(this.waitBeforeSearchTimer);var s=G(i).value;this.waitBeforeSearchTimer=window.setTimeout(function(){(s!==this.currentSearchText||""===this.currentSearchText)&&(function(i,o){var s,u,a;if(document.getElementById(o.resultsView.listParentElementId).innerHTML="",0===i.length){M(o);return}D(o.resultsView.viewElementId),(s=o.filtersView.listParentElementId,u={},y(s,function(e){var t=l(e.id).hiddenFields();if(void 0===t.fieldName||void 0===t.value||U("inactive",e))return null;u[t.fieldName]=t.value}),a=u)[o.searchTextParameterName]=i,o.addPredefinedParametersTo(a),//TODO could provide optional build in search text highlighting
+o.triggerSearch(a,function(i){(function(i,o){var s=0;for(s=0;s<i.length;s+=1)(function(i,o,s){var u=s.resultsView.listEntryElementIdPrefix+"--"+o,a=C(i,s.resultsView,u,s.resolveTemplate),c=O(i,s.resultsView,u,a);if(R(k(i,s.resultsView,s.resolveTemplate),c),B(c,s.onCreatedElement),void 0!==i.details&&(J(c,d=r(i.details,s,g)),_(c,d),function(e,t,n){W("mouseover",e,function(i){this.originalEvent=function(e){for(var t={},n=Object.keys(e),i=0;i<n.length;i++){var r=n[i],l=e[r];t[r]=l}return t}(i),this.delayedHandlerTimer=window.setTimeout(function(){n(void 0!==this.originalEvent?this.originalEvent:i)},t),this.preventEventHandling=function(){null!==this.delayedHandlerTimer&&clearTimeout(this.delayedHandlerTimer)},W("mouseout",e,this.preventEventHandling),W("mousedown",e,this.preventEventHandling),W("keydown",e,this.preventEventHandling)})}(c,s.waitBeforeMouseOver,r(i.details,s,g)),n(c,function(){var e=/**
    * Gets the currently selected url template for navigation.
    *
    * @param {String} listParentElementId id of the parent element that child nodes will be searched
@@ -478,8 +478,8 @@ s.triggerSearch(a,function(i){(function(i,s){var o=0;for(o=0;o<i.length;o+=1)(fu
    * @memberof module:searchmenu.SearchMenuUI
    */function(e,t){return y(e,function(e){var n=l(e.id).hiddenFields(),i=p(n,"urltemplate",[""])[0];if(""===i)return null;// entry has no url template
 var r=p(n,t,"");return r!=t&&""!==r||U("inactive",e)?null:i.value// entry belongs to another category
-})}(o.filtersView.listParentElementId,p(i,"category",""));if(e){//TODO should add domain, baseurl, ... as data sources for variables to use inside the template
-var t=o.resolveTemplate(e,i);o.navigateTo(t)}})),void 0!==i.options){var d,f,m=i.options;void 0!==i.default&&(m=/**
+})}(s.filtersView.listParentElementId,p(i,"category",""));if(e){//TODO should add domain, baseurl, ... as data sources for variables to use inside the template
+var t=s.resolveTemplate(e,i);s.navigateTo(t)}})),void 0!==i.options){var d,f,m=i.options;void 0!==i.default&&(m=/**
    * Adds the given entry at be beginning of the given array of entries if it's missing.
    * The equalFunction determines, if the new value is missing (returns false) or not (returns true).
    * If the entry to add is null, the entries are returned directly.
@@ -490,8 +490,8 @@ var t=o.resolveTemplate(e,i);o.navigateTo(t)}})),void 0!==i.options){var d,f,m=i
    * @returns {Object[]}
    * @protected
    * @memberof module:searchmenu.SearchMenuUI
-   */function(e,t,n){if(!t)return e;var i,r=!1;for(i=0;i<e.length;i+=1)if(n(e[i],t)){r=!0;break}if(r)return e;var l=[];for(l.push(t),i=0;i<e.length;i+=1)l.push(e[i]);return l}(i.options,i.default[0],e(["value"])),J(v(i.default[0],m,o.filtersView,o),r(m,o,w))),J(c,f=r(i.options,o,w)),W(c,f),n(c,r(i.options,o,w))}t(c,o)})(i[o],o+1,s)})(s.convertData(i),s)})}(o,s),this.currentSearchText=o)},s.waitBeforeSearch)});var a=document.getElementById(s.searchAreaElementId);G("focusin",a,function(){""!==document.getElementById(s.inputElementId).value&&(null!=this.focusOutTimer&&clearTimeout(this.focusOutTimer),//TODO should only show results if there are some
+   */function(e,t,n){if(!t)return e;var i,r=!1;for(i=0;i<e.length;i+=1)if(n(e[i],t)){r=!0;break}if(r)return e;var l=[];for(l.push(t),i=0;i<e.length;i+=1)l.push(e[i]);return l}(i.options,i.default[0],e(["value"])),J(v(i.default[0],m,s.filtersView,s),r(m,s,w))),J(c,f=r(i.options,s,w)),_(c,f),n(c,r(i.options,s,w))}t(c,s)})(i[s],s+1,o)})(o.convertData(i),o)})}(s,o),this.currentSearchText=s)},o.waitBeforeSearch)});var a=document.getElementById(o.searchAreaElementId);W("focusin",a,function(){""!==document.getElementById(o.inputElementId).value&&(null!=this.focusOutTimer&&clearTimeout(this.focusOutTimer),//TODO should only show results if there are some
 //TODO could add a "spinner" when search is running
-F(s.resultsView.viewElementId))}),G("focusout",a,function(){this.focusOutTimer=window.setTimeout(function(){M(s)},s.waitBeforeClose)})}}();//# sourceMappingURL=search-menu-ui.js.map
+D(o.resultsView.viewElementId))}),W("focusout",a,function(){this.focusOutTimer=window.setTimeout(function(){M(o)},o.waitBeforeClose)})}}();//# sourceMappingURL=search-menu-ui.js.map
 
 //# sourceMappingURL=search-menu-ui.js.map

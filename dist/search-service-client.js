@@ -1,4 +1,4 @@
-var e=globalThis,t={},n={},r=e.parcelRequire6f19;null==r&&((r=function(e){if(e in t)return t[e].exports;if(e in n){var r=n[e];delete n[e];var o={id:e,exports:{}};return t[e]=o,r.call(o.exports,o,o.exports),o.exports}var s=Error("Cannot find module '"+e+"'");throw s.code="MODULE_NOT_FOUND",s}).register=function(e,t){n[e]=t},e.parcelRequire6f19=r),(0,r.register)("5opz4",function(e,t){/**
+var e=globalThis,t={},n={},r=e.parcelRequire6f19;null==r&&((r=function(e){if(e in t)return t[e].exports;if(e in n){var r=n[e];delete n[e];var o={id:e,exports:{}};return t[e]=o,r.call(o.exports,o,o.exports),o.exports}var s=Error("Cannot find module '"+e+"'");throw s.code="MODULE_NOT_FOUND",s}).register=function(e,t){n[e]=t},e.parcelRequire6f19=r),(0,r.register)("1rK4P",function(e,t){/**
  * Provide the XMLHttpRequest constructor for Internet Explorer 5.x-6.x:
  * Other browsers (including Internet Explorer 7.x-9.x) do not redefine
  * XMLHttpRequest if it already exists.
@@ -7,14 +7,14 @@ var e=globalThis,t={},n={},r=e.parcelRequire6f19;null==r&&((r=function(e){if(e i
  * http://blogs.msdn.com/xmlteam/archive/2006/10/23/using-the-right-version-of-msxml-in-internet-explorer.aspx
  * @returns {XMLHttpRequest}
  * @memberof xmlHttpRequest
- */(($3ed30644184af354$var$module||{}).exports={}).getXMLHttpRequest=function(){if("undefined"!=typeof XMLHttpRequest)try{var e=new XMLHttpRequest;return e.status,e}catch(e){console.log("XMLHttpRequest not available: "+e)}try{return new ActiveXObject("Msxml2.XMLHTTP.6.0")}catch(e){console.log("XMLHttpRequest Msxml2.XMLHTTP.6.0 not available: "+e)}try{return new ActiveXObject("Msxml2.XMLHTTP.3.0")}catch(e){console.log("XMLHttpRequest Msxml2.XMLHTTP.3.0 not available: "+e)}try{return new ActiveXObject("Microsoft.XMLHTTP")}catch(e){console.log("XMLHttpRequest Microsoft.XMLHTTP not available: "+e)}// Microsoft.XMLHTTP points to Msxml2.XMLHTTP and is redundant
+ */(($10dc0df5987ff626$var$module||{}).exports={}).getXMLHttpRequest=function(){if("undefined"!=typeof XMLHttpRequest)try{var e=new XMLHttpRequest;return e.status,e}catch(e){console.log("XMLHttpRequest not available: "+e)}try{return new ActiveXObject("Msxml2.XMLHTTP.6.0")}catch(e){console.log("XMLHttpRequest Msxml2.XMLHTTP.6.0 not available: "+e)}try{return new ActiveXObject("Msxml2.XMLHTTP.3.0")}catch(e){console.log("XMLHttpRequest Msxml2.XMLHTTP.3.0 not available: "+e)}try{return new ActiveXObject("Microsoft.XMLHTTP")}catch(e){console.log("XMLHttpRequest Microsoft.XMLHTTP not available: "+e)}// Microsoft.XMLHTTP points to Msxml2.XMLHTTP and is redundant
 throw Error("This browser does not support XMLHttpRequest.")}});var o=s(o);// Fallback for vanilla js without modules
 function s(e){return e||{}}/**
  * Search-Menu Service-Client.
  * It provides the (http) client/connection to the search backend service.
  * @module searchMenuServiceClient
  */var i=o.exports={};// Export module for npm...
-i.internalCreateIfNotExists=s;var c=c||r("5opz4");// supports vanilla js & npm
+i.internalCreateIfNotExists=s;var c=c||r("1rK4P");// supports vanilla js & npm
 i.HttpSearchConfig=function(){/**
    * Resolves variables in the template based on the given search parameters object.
    * The variable {{jsonSearchParameters}} will be replaced by the JSON of all search parameters.

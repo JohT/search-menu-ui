@@ -142,7 +142,7 @@
       this[globalName] = mainExports;
     }
   }
-})({"708Ii":[function(require,module,exports) {
+})({"9TG3g":[function(require,module,exports) {
 /**
  * @file Provides the (http) client/connection to the search backend service.
  * @version {@link https://github.com/JohT/search-menu-ui/releases/latest latest version}
@@ -397,7 +397,7 @@ searchMenuServiceClient.HttpSearchConfig = function() {
     return instance;
 }();
 
-},{"3db002dcb331831a":"1gr42"}],"1gr42":[function(require,module,exports) {
+},{"3db002dcb331831a":"4wXBo"}],"4wXBo":[function(require,module,exports) {
 "use strict";
 var module = module || {}; // Fallback for vanilla js without modules
 /**
@@ -439,5 +439,5 @@ var module = module || {}; // Fallback for vanilla js without modules
     throw new Error("This browser does not support XMLHttpRequest.");
 };
 
-},{}]},["708Ii"], "708Ii", "parcelRequire6f19")
+},{}]},["9TG3g"], "9TG3g", "parcelRequire6f19")
 
