@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update actions/upload-artifact action to v4 [`#450`](https://github.com/JohT/search-menu-ui/pull/450)
 - Update github/codeql-action action to v3 [`#449`](https://github.com/JohT/search-menu-ui/pull/449)
 - Update surefire-plugin.version to v3.2.3 (patch) [`#448`](https://github.com/JohT/search-menu-ui/pull/448)
 - Update Node.js to v20 [`#420`](https://github.com/JohT/search-menu-ui/pull/420)
