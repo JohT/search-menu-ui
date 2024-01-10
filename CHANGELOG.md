@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.6.5 [`#460`](https://github.com/JohT/search-menu-ui/pull/460)
 - Update dependency parcel to v2.11.0 [`#456`](https://github.com/JohT/search-menu-ui/pull/456)
 - Update actions/upload-artifact action to v4 [`#450`](https://github.com/JohT/search-menu-ui/pull/450)
 - Update github/codeql-action action to v3 [`#449`](https://github.com/JohT/search-menu-ui/pull/449)
