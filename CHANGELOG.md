@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.7.1 (minor) [`#468`](https://github.com/JohT/search-menu-ui/pull/468)
 - Update Quarkus to v3.6.9 (patch) [`#473`](https://github.com/JohT/search-menu-ui/pull/473)
 - Update dependency jsdom to v24 [`#466`](https://github.com/JohT/search-menu-ui/pull/466)
 - Update mockito monorepo to v5.9.0 (minor) [`#463`](https://github.com/JohT/search-menu-ui/pull/463)
