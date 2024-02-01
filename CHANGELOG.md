@@ -10,6 +10,10 @@ All notable changes to this project will be documented in this file.
 
 ## [v0.9.2](https://github.com/JohT/search-menu-ui/compare/v0.9.2...master) (upcoming)
 
+### Changes
+
+- Migrate example to Java 17 [`#474`](https://github.com/JohT/search-menu-ui/pull/474)
+
 ### Dependency Updates
 
 - Update Quarkus to v3.6.9 (patch) [`#473`](https://github.com/JohT/search-menu-ui/pull/473)
