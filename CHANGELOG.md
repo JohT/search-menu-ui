@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update mockito monorepo to v5.11.0 (minor) [`#490`](https://github.com/JohT/search-menu-ui/pull/490)
 - Update dependency parcel to v2.12.0 [`#489`](https://github.com/JohT/search-menu-ui/pull/489)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.8.1 [`#488`](https://github.com/JohT/search-menu-ui/pull/488)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.7.4 [`#485`](https://github.com/JohT/search-menu-ui/pull/485)
