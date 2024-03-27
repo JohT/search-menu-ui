@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-universe-bom to v3.9.1 [`#499`](https://github.com/JohT/search-menu-ui/pull/499)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.9.1 [`#498`](https://github.com/JohT/search-menu-ui/pull/498)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.8.3 [`#496`](https://github.com/JohT/search-menu-ui/pull/496)
 - Update dependency org.apache.maven.plugins:maven-compiler-plugin to v3.13.0 [`#495`](https://github.com/JohT/search-menu-ui/pull/495)
