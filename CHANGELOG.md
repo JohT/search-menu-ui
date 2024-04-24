@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency eslint to v9 [`#505`](https://github.com/JohT/search-menu-ui/pull/505)
 - Update dependency inquirer to v9.2.19 [`#508`](https://github.com/JohT/search-menu-ui/pull/508)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.9.2 [`#504`](https://github.com/JohT/search-menu-ui/pull/504)
 - Update dependency inquirer to v9.2.17 [`#500`](https://github.com/JohT/search-menu-ui/pull/500)
