@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changes
 
+- Pin dependency @eslint/js to 9.1.1 [`#513`](https://github.com/JohT/search-menu-ui/pull/513)
 - Migrate example to Java 17 [`#474`](https://github.com/JohT/search-menu-ui/pull/474)
 
 ### Dependency Updates
