@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency jsdoc to v4.0.3 [`#517`](https://github.com/JohT/search-menu-ui/pull/517)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.9.5 [`#516`](https://github.com/JohT/search-menu-ui/pull/516)
 - Update dependency inquirer to v9.2.20 [`#514`](https://github.com/JohT/search-menu-ui/pull/514)
 - Update dependency eslint to v9 [`#505`](https://github.com/JohT/search-menu-ui/pull/505)
