@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update eslint monorepo to v9.3.0 (minor) [`#526`](https://github.com/JohT/search-menu-ui/pull/526)
 - Update dependency inquirer to v9.2.21 [`#523`](https://github.com/JohT/search-menu-ui/pull/523)
 - Update dependency istanbul-badges-readme to v1.9.0 [`#520`](https://github.com/JohT/search-menu-ui/pull/520)
 - Update dependency eslint to v9.2.0 [`#519`](https://github.com/JohT/search-menu-ui/pull/519)
