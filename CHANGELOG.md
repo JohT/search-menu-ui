@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-896 [`#529`](https://github.com/JohT/search-menu-ui/pull/529)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.10.2 [`#530`](https://github.com/JohT/search-menu-ui/pull/530)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.11.0 [`#528`](https://github.com/JohT/search-menu-ui/pull/528)
 - Update eslint monorepo to v9.3.0 (minor) [`#526`](https://github.com/JohT/search-menu-ui/pull/526)
