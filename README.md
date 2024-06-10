@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![Language](https://img.shields.io/github/languages/top/JohT/search-menu-ui)
-![Branches](https://img.shields.io/badge/branches-80.41%25-yellow.svg?style=flat)
+![Branches](https://img.shields.io/badge/branches-80.4%25-yellow.svg?style=flat)
 ![![npm](./src/npm.svg)](https://aleen42.github.io/badges/src/npm.svg)
 ![![jasmine](./src/jasmine.svg)](https://aleen42.github.io/badges/src/jasmine.svg)
 ![![eslint](./src/eslint.svg)](https://aleen42.github.io/badges/src/eslint.svg)
