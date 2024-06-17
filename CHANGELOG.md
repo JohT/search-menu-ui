@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency maven to v3.9.8 [`#546`](https://github.com/JohT/search-menu-ui/pull/546)
 - Update dependency data-restructor to v3.4.3 [`#545`](https://github.com/JohT/search-menu-ui/pull/545)
 
 ## [v0.9.3](https://github.com/JohT/search-menu-ui/compare/v0.9.2...v0.9.3) (15 June 2024)
