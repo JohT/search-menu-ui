@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.12.0 [`#547`](https://github.com/JohT/search-menu-ui/pull/547)
 - Update dependency maven to v3.9.8 [`#546`](https://github.com/JohT/search-menu-ui/pull/546)
 - Update dependency data-restructor to v3.4.3 [`#545`](https://github.com/JohT/search-menu-ui/pull/545)
 
