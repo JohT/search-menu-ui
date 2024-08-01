@@ -20,7 +20,7 @@
     <surefire-plugin.version>3.3.1</surefire-plugin.version>
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <mockito-core.version>5.12.0</mockito-core.version>
-    <hamcrest.version>2.2</hamcrest.version>
+    <hamcrest.version>3.0</hamcrest.version>
   </properties>
   <dependencyManagement>
     <dependencies>
