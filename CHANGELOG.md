@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.13.1 [`#583`](https://github.com/JohT/search-menu-ui/pull/583)
 - Update dependency org.hamcrest:hamcrest to v3 [`#580`](https://github.com/JohT/search-menu-ui/pull/580)
 - Update dependency jsdom to v24.1.1 [`#571`](https://github.com/JohT/search-menu-ui/pull/571)
 - Update dependency inquirer to v10.0.4 [`#569`](https://github.com/JohT/search-menu-ui/pull/569)
