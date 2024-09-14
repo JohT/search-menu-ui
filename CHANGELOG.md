@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.14.4 (patch) [`#609`](https://github.com/JohT/search-menu-ui/pull/609)
 - Update Quarkus to v3.14.3 (patch) [`#607`](https://github.com/JohT/search-menu-ui/pull/607)
 - Update Quarkus to v3.14.2 (patch) [`#602`](https://github.com/JohT/search-menu-ui/pull/602)
 - Update dependency jsdom to v25 [`#596`](https://github.com/JohT/search-menu-ui/pull/596)
