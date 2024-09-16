@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1052.1724178568 [`#611`](https://github.com/JohT/search-menu-ui/pull/611)
 - Update dependency inquirer to v11 [`#610`](https://github.com/JohT/search-menu-ui/pull/610)
 - Update Quarkus to v3.14.4 (patch) [`#609`](https://github.com/JohT/search-menu-ui/pull/609)
 - Update Quarkus to v3.14.3 (patch) [`#607`](https://github.com/JohT/search-menu-ui/pull/607)
