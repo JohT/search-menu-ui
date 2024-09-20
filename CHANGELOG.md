@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update eslint monorepo to v9.11.0 (minor) [`#615`](https://github.com/JohT/search-menu-ui/pull/615)
 - Update dependency nyc to v17.1.0 [`#614`](https://github.com/JohT/search-menu-ui/pull/614)
 - Update dependency inquirer to v11.0.2 [`#612`](https://github.com/JohT/search-menu-ui/pull/612)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1052.1724178568 [`#611`](https://github.com/JohT/search-menu-ui/pull/611)
