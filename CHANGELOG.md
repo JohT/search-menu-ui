@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update mockito monorepo to v5.14.1 (patch) [`#624`](https://github.com/JohT/search-menu-ui/pull/624)
 - Update eslint monorepo to v9.11.0 (minor) [`#615`](https://github.com/JohT/search-menu-ui/pull/615)
 - Update dependency nyc to v17.1.0 [`#614`](https://github.com/JohT/search-menu-ui/pull/614)
 - Update dependency inquirer to v11.0.2 [`#612`](https://github.com/JohT/search-menu-ui/pull/612)
