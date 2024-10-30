@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.16.1 [`#634`](https://github.com/JohT/search-menu-ui/pull/634)
 - Update Node.js to v22 [`#633`](https://github.com/JohT/search-menu-ui/pull/633)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.16.0 [`#631`](https://github.com/JohT/search-menu-ui/pull/631)
 - Update dependency inquirer to v12 [`#627`](https://github.com/JohT/search-menu-ui/pull/627)
