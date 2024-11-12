@@ -73,7 +73,7 @@
         localRequire,
         module,
         module.exports,
-        this
+        globalObject
       );
     }
 
@@ -142,7 +142,7 @@
       this[globalName] = mainExports;
     }
   }
-})({"2L54w":[function(require,module,exports) {
+})({"2L54w":[function(require,module,exports,__globalThis) {
 /**
  * @file Search UI written in vanilla JavaScript. Menu structure for results. Filters are integrated as search results.
  * @version {@link https://github.com/JohT/search-menu-ui/releases/latest latest version}
@@ -1630,7 +1630,7 @@ searchmenu.SearchMenuUI = function() {
     return instance;
 }();
 
-},{"b3cce1c1ec42ba46":"daFPO","451a10c9529ea563":"1gipK","82339b2a189b18c2":"4jWj0"}],"daFPO":[function(require,module,exports) {
+},{"b3cce1c1ec42ba46":"daFPO","451a10c9529ea563":"1gipK","82339b2a189b18c2":"4jWj0"}],"daFPO":[function(require,module,exports,__globalThis) {
 "use strict";
 var module = module || {}; // Fallback for vanilla js without modules
 /**
@@ -1645,7 +1645,7 @@ var module = module || {}; // Fallback for vanilla js without modules
     else throw new Error("Event doesn't contain bounded element: " + event);
 };
 
-},{}],"1gipK":[function(require,module,exports) {
+},{}],"1gipK":[function(require,module,exports,__globalThis) {
 "use strict";
 var module = module || {}; // Fallback for vanilla js without modules
 /**
@@ -1663,7 +1663,7 @@ selectionrange.moveCursorToEndOf = function(element) {
     }
 };
 
-},{}],"4jWj0":[function(require,module,exports) {
+},{}],"4jWj0":[function(require,module,exports,__globalThis) {
 "use strict";
 var module = module || {}; // Fallback for vanilla js without modules
 /**
@@ -1681,5 +1681,5 @@ var module = module || {}; // Fallback for vanilla js without modules
     else element["on" + eventName] = eventHandler;
 };
 
-},{}]},["2L54w"], "2L54w", "parcelRequire6f19")
+},{}]},["2L54w"], "2L54w", "parcelRequire94c2")
 
