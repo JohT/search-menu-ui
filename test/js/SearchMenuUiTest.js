@@ -198,8 +198,6 @@ describe("search.js", function () {
         spyOn(newElement, "focus");
       }
       spyOn(newElement, "appendChild").and.callThrough();
-      spyOn(newElement, "parentElement").and.callThrough();
-      spyOn(newElement, "childNodes").and.callThrough();
       spyOn(newElement, "cloneNode").and.callFake(function () {
         return newElement; // cloneNode needs to return the exact same element here to retain the spies and the register.
       });
