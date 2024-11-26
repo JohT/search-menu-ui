@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency parcel to v2.13.2 [`#650`](https://github.com/JohT/search-menu-ui/pull/650)
 - Update dependency parcel to v2.13.1 [`#649`](https://github.com/JohT/search-menu-ui/pull/649)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.16.4 [`#648`](https://github.com/JohT/search-menu-ui/pull/648)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.17.0 [`#647`](https://github.com/JohT/search-menu-ui/pull/647)
