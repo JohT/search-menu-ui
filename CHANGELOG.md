@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.17.3 [`#657`](https://github.com/JohT/search-menu-ui/pull/657)
 - Update dependency jasmine to v5.5.0 [`#656`](https://github.com/JohT/search-menu-ui/pull/656)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.17.2 [`#655`](https://github.com/JohT/search-menu-ui/pull/655)
 - Update eslint monorepo to v9.16.0 [`#654`](https://github.com/JohT/search-menu-ui/pull/654)
