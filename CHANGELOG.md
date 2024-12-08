@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v12.2.0 [`#659`](https://github.com/JohT/search-menu-ui/pull/659)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.17.3 [`#658`](https://github.com/JohT/search-menu-ui/pull/658)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.17.3 [`#657`](https://github.com/JohT/search-menu-ui/pull/657)
 - Update dependency jasmine to v5.5.0 [`#656`](https://github.com/JohT/search-menu-ui/pull/656)
