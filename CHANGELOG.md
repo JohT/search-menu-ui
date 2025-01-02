@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update mockito monorepo to v5.15.2 [`#669`](https://github.com/JohT/search-menu-ui/pull/669)
 - Update dependency inquirer to v12.3.0 [`#668`](https://github.com/JohT/search-menu-ui/pull/668)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.17.5 [`#667`](https://github.com/JohT/search-menu-ui/pull/667)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.17.5 [`#666`](https://github.com/JohT/search-menu-ui/pull/666)
