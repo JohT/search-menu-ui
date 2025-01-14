@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v12.3.2 [`#674`](https://github.com/JohT/search-menu-ui/pull/674)
 - Update dependency inquirer to v12.3.1 [`#673`](https://github.com/JohT/search-menu-ui/pull/673)
 - Update eslint monorepo to v9.18.0 [`#672`](https://github.com/JohT/search-menu-ui/pull/672)
 - Update dependency jsdom to v26 [`#671`](https://github.com/JohT/search-menu-ui/pull/671)
