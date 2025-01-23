@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.18.0 [`#677`](https://github.com/JohT/search-menu-ui/pull/677)
 - Update Quarkus to v3.17.8 (patch) [`#676`](https://github.com/JohT/search-menu-ui/pull/676)
 - Update Quarkus to v3.17.7 [`#675`](https://github.com/JohT/search-menu-ui/pull/675)
 - Update dependency inquirer to v12.3.2 [`#674`](https://github.com/JohT/search-menu-ui/pull/674)
