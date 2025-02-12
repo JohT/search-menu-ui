@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.18.3 [`#688`](https://github.com/JohT/search-menu-ui/pull/688)
 - Update dependency eslint to v9.20.1 [`#687`](https://github.com/JohT/search-menu-ui/pull/687)
 - Update dependency jasmine to v5.6.0 [`#686`](https://github.com/JohT/search-menu-ui/pull/686)
 - Update eslint monorepo to v9.20.0 [`#685`](https://github.com/JohT/search-menu-ui/pull/685)
