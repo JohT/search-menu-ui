@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update eslint monorepo to v9.21.0 [`#693`](https://github.com/JohT/search-menu-ui/pull/693)
 - Update dependency org.apache.maven.plugins:maven-compiler-plugin to v3.14.0 [`#692`](https://github.com/JohT/search-menu-ui/pull/692)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.19.0 [`#691`](https://github.com/JohT/search-menu-ui/pull/691)
 - Update Quarkus to v3.18.4 [`#690`](https://github.com/JohT/search-menu-ui/pull/690)
