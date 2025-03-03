@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update mockito monorepo to v5.16.0 (minor) [`#697`](https://github.com/JohT/search-menu-ui/pull/697)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.19.1 [`#696`](https://github.com/JohT/search-menu-ui/pull/696)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.19.1 [`#695`](https://github.com/JohT/search-menu-ui/pull/695)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1179.1739286367 [`#694`](https://github.com/JohT/search-menu-ui/pull/694)
