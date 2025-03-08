@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v12.4.3 [`#700`](https://github.com/JohT/search-menu-ui/pull/700)
 - Update eslint monorepo to v9.22.0 [`#699`](https://github.com/JohT/search-menu-ui/pull/699)
 - Update Quarkus to v3.19.2 (patch) [`#698`](https://github.com/JohT/search-menu-ui/pull/698)
 - Update mockito monorepo to v5.16.0 (minor) [`#697`](https://github.com/JohT/search-menu-ui/pull/697)
