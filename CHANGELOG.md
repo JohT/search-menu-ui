@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update eslint monorepo to v9.22.0 [`#699`](https://github.com/JohT/search-menu-ui/pull/699)
 - Update Quarkus to v3.19.2 (patch) [`#698`](https://github.com/JohT/search-menu-ui/pull/698)
 - Update mockito monorepo to v5.16.0 (minor) [`#697`](https://github.com/JohT/search-menu-ui/pull/697)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.19.1 [`#696`](https://github.com/JohT/search-menu-ui/pull/696)
