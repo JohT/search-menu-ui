@@ -10,6 +10,10 @@ All notable changes to this project will be documented in this file.
 
 ## [v0.9.4](https://github.com/JohT/search-menu-ui/compare/v0.9.4...master) (upcoming)
 
+### Changes
+
+- Pin dependency node to 20.18.3 [`#701`](https://github.com/JohT/search-menu-ui/pull/701)
+
 ### Dependency Updates
 
 - Update dependency inquirer to v12.4.3 [`#700`](https://github.com/JohT/search-menu-ui/pull/700)
