@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v12.5.0 [`#706`](https://github.com/JohT/search-menu-ui/pull/706)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1216 [`#705`](https://github.com/JohT/search-menu-ui/pull/705)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.19.3 [`#704`](https://github.com/JohT/search-menu-ui/pull/704)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.19.3 [`#703`](https://github.com/JohT/search-menu-ui/pull/703)
