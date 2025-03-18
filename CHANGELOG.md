@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency parcel to v2.14.0 [`#708`](https://github.com/JohT/search-menu-ui/pull/708)
 - Update mockito monorepo to v5.16.1 [`#707`](https://github.com/JohT/search-menu-ui/pull/707)
 - Update dependency inquirer to v12.5.0 [`#706`](https://github.com/JohT/search-menu-ui/pull/706)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1216 [`#705`](https://github.com/JohT/search-menu-ui/pull/705)
