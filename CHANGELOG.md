@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.19.4 (patch) [`#710`](https://github.com/JohT/search-menu-ui/pull/710)
 - Update dependency parcel to v2.14.1 [`#709`](https://github.com/JohT/search-menu-ui/pull/709)
 - Update dependency parcel to v2.14.0 [`#708`](https://github.com/JohT/search-menu-ui/pull/708)
 - Update mockito monorepo to v5.16.1 [`#707`](https://github.com/JohT/search-menu-ui/pull/707)
