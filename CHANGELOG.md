@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.21.0 [`#711`](https://github.com/JohT/search-menu-ui/pull/711)
 - Update Quarkus to v3.19.4 (patch) [`#710`](https://github.com/JohT/search-menu-ui/pull/710)
 - Update dependency parcel to v2.14.1 [`#709`](https://github.com/JohT/search-menu-ui/pull/709)
 - Update dependency parcel to v2.14.0 [`#708`](https://github.com/JohT/search-menu-ui/pull/708)
