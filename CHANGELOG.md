@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.21.1 [`#718`](https://github.com/JohT/search-menu-ui/pull/718)
 - Update surefire-plugin.version to v3.5.3 (patch) [`#717`](https://github.com/JohT/search-menu-ui/pull/717)
 - Update dependency parcel to v2.14.4 [`#716`](https://github.com/JohT/search-menu-ui/pull/716)
 - Update dependency parcel to v2.14.3 [`#715`](https://github.com/JohT/search-menu-ui/pull/715)
