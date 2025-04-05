@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update eslint monorepo to v9.24.0 [`#722`](https://github.com/JohT/search-menu-ui/pull/722)
 - Update dependency org.mockito:mockito-core to v5.17.0 [`#721`](https://github.com/JohT/search-menu-ui/pull/721)
 - Update dependency inquirer to v12.5.2 [`#720`](https://github.com/JohT/search-menu-ui/pull/720)
 - Update dependency org.jacoco:jacoco-maven-plugin to v0.8.13 [`#719`](https://github.com/JohT/search-menu-ui/pull/719)
