@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency jsdom to v26.1.0 [`#724`](https://github.com/JohT/search-menu-ui/pull/724)
 - Update Quarkus to v3.21.2 [`#723`](https://github.com/JohT/search-menu-ui/pull/723)
 - Update eslint monorepo to v9.24.0 [`#722`](https://github.com/JohT/search-menu-ui/pull/722)
 - Update dependency org.mockito:mockito-core to v5.17.0 [`#721`](https://github.com/JohT/search-menu-ui/pull/721)
