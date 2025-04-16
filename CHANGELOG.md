@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.21.3 [`#725`](https://github.com/JohT/search-menu-ui/pull/725)
 - Update dependency jsdom to v26.1.0 [`#724`](https://github.com/JohT/search-menu-ui/pull/724)
 - Update Quarkus to v3.21.2 [`#723`](https://github.com/JohT/search-menu-ui/pull/723)
 - Update eslint monorepo to v9.24.0 [`#722`](https://github.com/JohT/search-menu-ui/pull/722)
