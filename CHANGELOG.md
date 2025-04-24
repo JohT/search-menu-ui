@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-universe-bom to v3.21.4 [`#728`](https://github.com/JohT/search-menu-ui/pull/728)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.22.0 [`#729`](https://github.com/JohT/search-menu-ui/pull/729)
 - Update eslint monorepo to v9.25.1 (patch) [`#727`](https://github.com/JohT/search-menu-ui/pull/727)
 - Update eslint monorepo to v9.25.0 [`#726`](https://github.com/JohT/search-menu-ui/pull/726)
