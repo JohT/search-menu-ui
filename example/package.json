@@ -32,7 +32,7 @@
   "devDependencies": {
     "eslint": "9.25.1",
     "istanbul-badges-readme": "1.9.0",
-    "jasmine": "5.6.0",
+    "jasmine": "5.7.0",
     "nyc": "17.1.0"
   }
 }
