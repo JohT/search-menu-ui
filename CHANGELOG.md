@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency parcel to v2.15.0 [`#740`](https://github.com/JohT/search-menu-ui/pull/740)
 - Update dependency inquirer to v12.6.1 [`#739`](https://github.com/JohT/search-menu-ui/pull/739)
 - Update Quarkus to v3.22.2 (patch) [`#738`](https://github.com/JohT/search-menu-ui/pull/738)
 - Update eslint monorepo to v9.26.0 [`#737`](https://github.com/JohT/search-menu-ui/pull/737)
