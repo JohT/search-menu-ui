@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency node to v22.16.0 [`#747`](https://github.com/JohT/search-menu-ui/pull/747)
 - Update dependency org.mockito:mockito-core to v5.18.0 [`#746`](https://github.com/JohT/search-menu-ui/pull/746)
 - Update eslint monorepo to v9.27.0 [`#745`](https://github.com/JohT/search-menu-ui/pull/745)
 - Update dependency parcel to v2.15.1 [`#744`](https://github.com/JohT/search-menu-ui/pull/744)
