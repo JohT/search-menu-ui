@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v12.6.3 [`#751`](https://github.com/JohT/search-menu-ui/pull/751)
 - Update dependency parcel to v2.15.2 [`#750`](https://github.com/JohT/search-menu-ui/pull/750)
 - Update dependency inquirer to v12.6.2 [`#749`](https://github.com/JohT/search-menu-ui/pull/749)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.23.0 [`#748`](https://github.com/JohT/search-menu-ui/pull/748)
