@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.23.2 [`#756`](https://github.com/JohT/search-menu-ui/pull/756)
 - Update Quarkus to v3.23.1 [`#755`](https://github.com/JohT/search-menu-ui/pull/755)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1295 [`#754`](https://github.com/JohT/search-menu-ui/pull/754)
 - Update eslint monorepo to v9.28.0 [`#753`](https://github.com/JohT/search-menu-ui/pull/753)
