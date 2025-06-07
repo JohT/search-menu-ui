@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency jasmine to v5.8.0 [`#758`](https://github.com/JohT/search-menu-ui/pull/758)
 - Update dependency maven to v3.9.10 [`#757`](https://github.com/JohT/search-menu-ui/pull/757)
 - Update Quarkus to v3.23.2 [`#756`](https://github.com/JohT/search-menu-ui/pull/756)
 - Update Quarkus to v3.23.1 [`#755`](https://github.com/JohT/search-menu-ui/pull/755)
