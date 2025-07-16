@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency node to v22.17.1 [`#779`](https://github.com/JohT/search-menu-ui/pull/779)
 - Update dependency maven to v3.9.11 [`#778`](https://github.com/JohT/search-menu-ui/pull/778)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1752564239 [`#777`](https://github.com/JohT/search-menu-ui/pull/777)
 - Update eslint monorepo to v9.31.0 [`#776`](https://github.com/JohT/search-menu-ui/pull/776)
