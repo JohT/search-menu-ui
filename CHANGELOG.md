@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1753764099 [`#790`](https://github.com/JohT/search-menu-ui/pull/790)
 - Update dependency inquirer to v12.9.0 [`#789`](https://github.com/JohT/search-menu-ui/pull/789)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1753676782 [`#788`](https://github.com/JohT/search-menu-ui/pull/788)
 - Update eslint monorepo to v9.32.0 [`#787`](https://github.com/JohT/search-menu-ui/pull/787)
