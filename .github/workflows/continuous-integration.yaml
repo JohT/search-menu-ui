@@ -46,7 +46,7 @@ jobs:
     - uses: actions/setup-node@v4
       if: env.is-auto-commit == false
       with:
-        node-version: '22.17.1'
+        node-version: '22.18.0'
     - name: (Main) Install nodes packages
       if: env.is-auto-commit == false
       run: npm ci
