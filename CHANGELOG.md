@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update actions/checkout action to v5 [`#799`](https://github.com/JohT/search-menu-ui/pull/799)
 - Update Quarkus to v3.25.2 [`#796`](https://github.com/JohT/search-menu-ui/pull/796)
 - Update eslint monorepo to v9.33.0 (minor) [`#798`](https://github.com/JohT/search-menu-ui/pull/798)
 - Update dependency inquirer to v12.9.1 [`#797`](https://github.com/JohT/search-menu-ui/pull/797)
