@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v12.9.2 [`#801`](https://github.com/JohT/search-menu-ui/pull/801)
 - Update Quarkus to v3.25.3 [`#800`](https://github.com/JohT/search-menu-ui/pull/800)
 - Update actions/checkout action to v5 [`#799`](https://github.com/JohT/search-menu-ui/pull/799)
 - Update Quarkus to v3.25.2 [`#796`](https://github.com/JohT/search-menu-ui/pull/796)
