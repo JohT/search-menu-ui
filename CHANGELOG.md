@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v12.9.3 [`#804`](https://github.com/JohT/search-menu-ui/pull/804)
 - Update mockito monorepo to v5.19.0 (minor) [`#803`](https://github.com/JohT/search-menu-ui/pull/803)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1755105495 [`#802`](https://github.com/JohT/search-menu-ui/pull/802)
 - Update dependency inquirer to v12.9.2 [`#801`](https://github.com/JohT/search-menu-ui/pull/801)
