@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.25.4 [`#805`](https://github.com/JohT/search-menu-ui/pull/805)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1755695263 [`#806`](https://github.com/JohT/search-menu-ui/pull/806)
 - Update dependency inquirer to v12.9.3 [`#804`](https://github.com/JohT/search-menu-ui/pull/804)
 - Update mockito monorepo to v5.19.0 (minor) [`#803`](https://github.com/JohT/search-menu-ui/pull/803)
