@@ -56,7 +56,7 @@
     "@eslint/js": "9.34.0",
     "auto-changelog": "2.5.0",
     "eslint": "9.34.0",
-    "inquirer": "12.9.3",
+    "inquirer": "12.9.4",
     "istanbul-badges-readme": "1.9.0",
     "jasmine": "5.9.0",
     "jsdoc": "4.0.4",
