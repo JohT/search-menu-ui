@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.26.3 [`#819`](https://github.com/JohT/search-menu-ui/pull/819)
 - Update actions/setup-node action to v5 [`#818`](https://github.com/JohT/search-menu-ui/pull/818)
 - Update eslint monorepo to v9.35.0 (minor) [`#817`](https://github.com/JohT/search-menu-ui/pull/817)
 - Update Quarkus to v3.26.2 [`#816`](https://github.com/JohT/search-menu-ui/pull/816)
