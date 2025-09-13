@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency jsdom to v27 [`#822`](https://github.com/JohT/search-menu-ui/pull/822)
 - Update surefire-plugin.version to v3.5.4 (patch) [`#821`](https://github.com/JohT/search-menu-ui/pull/821)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.26.3 [`#820`](https://github.com/JohT/search-menu-ui/pull/820)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.26.3 [`#819`](https://github.com/JohT/search-menu-ui/pull/819)
