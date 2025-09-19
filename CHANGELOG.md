@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update eslint monorepo to v9.36.0 [`#827`](https://github.com/JohT/search-menu-ui/pull/827)
 - Update dependency parcel to v2.16.0 [`#826`](https://github.com/JohT/search-menu-ui/pull/826)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.26.4 [`#825`](https://github.com/JohT/search-menu-ui/pull/825)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.28.0 [`#824`](https://github.com/JohT/search-menu-ui/pull/824)
