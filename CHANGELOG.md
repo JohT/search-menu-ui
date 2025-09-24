@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.28.1 [`#830`](https://github.com/JohT/search-menu-ui/pull/830)
 - Update dependency org.apache.maven.plugins:maven-compiler-plugin to v3.14.1 [`#829`](https://github.com/JohT/search-menu-ui/pull/829)
 - Update dependency org.mockito:mockito-core to v5.20.0 [`#828`](https://github.com/JohT/search-menu-ui/pull/828)
 - Update eslint monorepo to v9.36.0 [`#827`](https://github.com/JohT/search-menu-ui/pull/827)
