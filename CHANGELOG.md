@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency jasmine to v5.11.0 [`#834`](https://github.com/JohT/search-menu-ui/pull/834)
 - Update dependency maven-wrapper to v3.3.4 [`#833`](https://github.com/JohT/search-menu-ui/pull/833)
 - Update dependency node to v22.20.0 [`#832`](https://github.com/JohT/search-menu-ui/pull/832)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.28.1 [`#831`](https://github.com/JohT/search-menu-ui/pull/831)
