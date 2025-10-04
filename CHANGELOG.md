@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update eslint monorepo to v9.37.0 [`#836`](https://github.com/JohT/search-menu-ui/pull/836)
 - Update Quarkus to v3.28.2 [`#835`](https://github.com/JohT/search-menu-ui/pull/835)
 - Update dependency jasmine to v5.11.0 [`#834`](https://github.com/JohT/search-menu-ui/pull/834)
 - Update dependency maven-wrapper to v3.3.4 [`#833`](https://github.com/JohT/search-menu-ui/pull/833)
