@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update github/codeql-action action to v4 [`#838`](https://github.com/JohT/search-menu-ui/pull/838)
 - Update dependency jasmine to v5.12.0 [`#837`](https://github.com/JohT/search-menu-ui/pull/837)
 - Update eslint monorepo to v9.37.0 [`#836`](https://github.com/JohT/search-menu-ui/pull/836)
 - Update Quarkus to v3.28.2 [`#835`](https://github.com/JohT/search-menu-ui/pull/835)
