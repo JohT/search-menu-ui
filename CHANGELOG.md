@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1759911539 [`#840`](https://github.com/JohT/search-menu-ui/pull/840)
 - Update dependency jsdoc to v4.0.5 [`#839`](https://github.com/JohT/search-menu-ui/pull/839)
 - Update github/codeql-action action to v4 [`#838`](https://github.com/JohT/search-menu-ui/pull/838)
 - Update dependency jasmine to v5.12.0 [`#837`](https://github.com/JohT/search-menu-ui/pull/837)
