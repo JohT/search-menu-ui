@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v12.10.0 [`#843`](https://github.com/JohT/search-menu-ui/pull/843)
 - Update dependency org.jacoco:jacoco-maven-plugin to v0.8.14 [`#842`](https://github.com/JohT/search-menu-ui/pull/842)
 - Update Quarkus to v3.28.3 (patch) [`#841`](https://github.com/JohT/search-menu-ui/pull/841)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1759911539 [`#840`](https://github.com/JohT/search-menu-ui/pull/840)
