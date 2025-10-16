@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.28.4 [`#845`](https://github.com/JohT/search-menu-ui/pull/845)
 - Update actions/setup-node action to v6 [`#844`](https://github.com/JohT/search-menu-ui/pull/844)
 - Update dependency inquirer to v12.10.0 [`#843`](https://github.com/JohT/search-menu-ui/pull/843)
 - Update dependency org.jacoco:jacoco-maven-plugin to v0.8.14 [`#842`](https://github.com/JohT/search-menu-ui/pull/842)
