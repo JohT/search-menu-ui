@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update actions/upload-artifact action to v5 [`#853`](https://github.com/JohT/search-menu-ui/pull/853)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.29.0 [`#852`](https://github.com/JohT/search-menu-ui/pull/852)
 - Update Quarkus to v3.28.5 (patch) [`#851`](https://github.com/JohT/search-menu-ui/pull/851)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1761032271 [`#850`](https://github.com/JohT/search-menu-ui/pull/850)
