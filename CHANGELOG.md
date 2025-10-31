@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency jsdom to v27.1.0 [`#857`](https://github.com/JohT/search-menu-ui/pull/857)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.29.0 [`#856`](https://github.com/JohT/search-menu-ui/pull/856)
 - Update dependency node to v24 [`#854`](https://github.com/JohT/search-menu-ui/pull/854)
 - Update actions/upload-artifact action to v5 [`#853`](https://github.com/JohT/search-menu-ui/pull/853)
