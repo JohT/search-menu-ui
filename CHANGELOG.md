@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update eslint monorepo to v9.39.0 [`#858`](https://github.com/JohT/search-menu-ui/pull/858)
 - Update dependency jsdom to v27.1.0 [`#857`](https://github.com/JohT/search-menu-ui/pull/857)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.29.0 [`#856`](https://github.com/JohT/search-menu-ui/pull/856)
 - Update dependency node to v24 [`#854`](https://github.com/JohT/search-menu-ui/pull/854)
