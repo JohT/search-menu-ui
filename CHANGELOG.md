@@ -17,6 +17,8 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency parcel to v2.16.1 [`#860`](https://github.com/JohT/search-menu-ui/pull/860)
+- Update eslint monorepo to v9.39.1 [`#859`](https://github.com/JohT/search-menu-ui/pull/859)
 - Update eslint monorepo to v9.39.0 [`#858`](https://github.com/JohT/search-menu-ui/pull/858)
 - Update dependency jsdom to v27.1.0 [`#857`](https://github.com/JohT/search-menu-ui/pull/857)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.29.0 [`#856`](https://github.com/JohT/search-menu-ui/pull/856)
