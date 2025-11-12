@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency jsdom to v27.2.0 [`#867`](https://github.com/JohT/search-menu-ui/pull/867)
 - Update dependency inquirer to v12.11.0 [`#865`](https://github.com/JohT/search-menu-ui/pull/865)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.29.2 [`#864`](https://github.com/JohT/search-menu-ui/pull/864)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.29.2 [`#863`](https://github.com/JohT/search-menu-ui/pull/863)
