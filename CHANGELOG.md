@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency parcel to v2.16.3 [`#884`](https://github.com/JohT/search-menu-ui/pull/884)
 - Update Quarkus to v3.30.2 (patch) [`#883`](https://github.com/JohT/search-menu-ui/pull/883)
 - Update dependency inquirer to v13.0.2 [`#882`](https://github.com/JohT/search-menu-ui/pull/882)
 - Update dependency jasmine to v5.13.0 [`#881`](https://github.com/JohT/search-menu-ui/pull/881)
