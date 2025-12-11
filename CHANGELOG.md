@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-universe-bom to v3.30.3 [`#889`](https://github.com/JohT/search-menu-ui/pull/889)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.30.3 [`#888`](https://github.com/JohT/search-menu-ui/pull/888)
 - Update mockito monorepo to v5.21.0 [`#887`](https://github.com/JohT/search-menu-ui/pull/887)
 - Update dependency jsdom to v27.3.0 [`#886`](https://github.com/JohT/search-menu-ui/pull/886)
