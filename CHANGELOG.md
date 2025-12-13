@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update actions/upload-artifact action to v6 [`#891`](https://github.com/JohT/search-menu-ui/pull/891)
 - Update eslint monorepo to v9.39.2 [`#892`](https://github.com/JohT/search-menu-ui/pull/892)
 - Update dependency node to v24.12.0 [`#890`](https://github.com/JohT/search-menu-ui/pull/890)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.30.3 [`#889`](https://github.com/JohT/search-menu-ui/pull/889)
