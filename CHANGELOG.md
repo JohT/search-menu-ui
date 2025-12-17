@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.30.4 (patch) [`#895`](https://github.com/JohT/search-menu-ui/pull/895)
 - Update dependency maven to v3.9.12 [`#894`](https://github.com/JohT/search-menu-ui/pull/894)
 - Update dependency inquirer to v13.1.0 [`#893`](https://github.com/JohT/search-menu-ui/pull/893)
 - Update actions/upload-artifact action to v6 [`#891`](https://github.com/JohT/search-menu-ui/pull/891)
