@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.30.5 [`#897`](https://github.com/JohT/search-menu-ui/pull/897)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1766090732 [`#896`](https://github.com/JohT/search-menu-ui/pull/896)
 - Update Quarkus to v3.30.4 (patch) [`#895`](https://github.com/JohT/search-menu-ui/pull/895)
 - Update dependency maven to v3.9.12 [`#894`](https://github.com/JohT/search-menu-ui/pull/894)
