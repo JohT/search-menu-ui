@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.31.1 [`#911`](https://github.com/JohT/search-menu-ui/pull/911)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1769387960 [`#910`](https://github.com/JohT/search-menu-ui/pull/910)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.30.8 [`#909`](https://github.com/JohT/search-menu-ui/pull/909)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1768971094 [`#908`](https://github.com/JohT/search-menu-ui/pull/908)
