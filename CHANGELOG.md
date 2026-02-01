@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changes
 
+- Migrate master to main branch [`#914`](https://github.com/JohT/search-menu-ui/pull/914)
 - Update Node.js [`#855`](https://github.com/JohT/search-menu-ui/pull/855)
 - Pin dependency node to 20.18.3 [`#701`](https://github.com/JohT/search-menu-ui/pull/701)
 
