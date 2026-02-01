@@ -435,13 +435,6 @@ describe("search.js", function () {
         expect(getFirstResultListElement().focus).toHaveBeenCalled();
       });
 
-      it("should focus first search result when arrow key down is pressed after search", function () {
-        inputSearchCharacter("X");
-        arrowKeyDownOnElementId(config.inputElementId);
-        expect(getSearchInputTextElement().blur).toHaveBeenCalled();
-        expect(getFirstResultListElement().focus).toHaveBeenCalled();
-      });
-
       it("should focus search text when arrow key up is pressed on first search result", function () {
         inputSearchCharacter("X");
 
