@@ -8,7 +8,13 @@ All notable changes to this project will be documented in this file.
 - [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - [`auto-changelog`](https://github.com/CookPete/auto-changelog)
 
-## [v0.9.5](https://github.com/JohT/search-menu-ui/compare/v0.9.4...main) (upcoming)
+## [v0.9.5](https://github.com/JohT/search-menu-ui/compare/v0.9.5...main) (upcoming)
+
+### Dependency Updates
+
+- Update dependency jasmine to v6 [`#917`](https://github.com/JohT/search-menu-ui/pull/917)
+
+## [v0.9.5](https://github.com/JohT/search-menu-ui/compare/v0.9.4...v0.9.5) (1 February 2026)
 
 ### Changes
 
