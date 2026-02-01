@@ -58,7 +58,7 @@
     "eslint": "9.39.2",
     "inquirer": "13.2.2",
     "istanbul-badges-readme": "1.9.0",
-    "jasmine": "5.13.0",
+    "jasmine": "6.0.0",
     "jsdoc": "4.0.5",
     "jsdom": "27.4.0",
     "merger-js": "3.10.3",
