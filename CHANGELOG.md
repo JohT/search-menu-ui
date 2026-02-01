@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency data-restructor to v3.4.5 [`#916`](https://github.com/JohT/search-menu-ui/pull/916)
 - Update dependency inquirer to v13.2.2 [`#913`](https://github.com/JohT/search-menu-ui/pull/913)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.31.1 [`#912`](https://github.com/JohT/search-menu-ui/pull/912)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.31.1 [`#911`](https://github.com/JohT/search-menu-ui/pull/911)
