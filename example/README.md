@@ -53,16 +53,16 @@ More details and all configuration options can be found here: [SearchMenuAPI JSD
 ### Runtime Dependencies
 This project builds upon these great libraries at runtime:
 
-- [elasticsearch] - [Multiple Licenses](https://github.com/elastic/elasticsearch/blob/master/LICENSE.txt)
-- [data-restructor-js](https://joht.github.io/data-restructor-js/) - [Apache Licence 2.0](https://github.com/JohT/data-restructor-js/blob/master/LICENSE)
+- [elasticsearch] - [Multiple Licenses](https://github.com/elastic/elasticsearch/blob/main/LICENSE.txt)
+- [data-restructor-js](https://joht.github.io/data-restructor-js/) - [Apache Licence 2.0](https://github.com/JohT/data-restructor-js/blob/main/LICENSE)
 
 ### Development Dependencies
 This project is created using these great tools as development dependencies:
 
-- [ESLint](https://eslint.org) - [MIT License](https://github.com/eslint/eslint/blob/master/LICENSE)
+- [ESLint](https://eslint.org) - [MIT License](https://github.com/eslint/eslint/blob/main/LICENSE)
 - [istanbul-badges-readme](https://www.npmjs.com/package/istanbul-badges-readme) - [MIT License](https://github.com/olavoparno/istanbul-badges-readme/blob/develop/LICENSE)
 - [Jasmine](https://jasmine.github.io) - [MIT License](https://github.com/jasmine/jasmine/blob/main/MIT.LICENSE)
-- [NYC aka Istanbul](https://istanbul.js.org) - [ISC License](https://github.com/istanbuljs/nyc/blob/master/LICENSE.txt)
+- [NYC aka Istanbul](https://istanbul.js.org) - [ISC License](https://github.com/istanbuljs/nyc/blob/main/LICENSE.txt)
 
 [elasticsearch]: https://www.elastic.co/products/elasticsearch
 [Visual Studio Code]: https://code.visualstudio.com

@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 - [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - [`auto-changelog`](https://github.com/CookPete/auto-changelog)
 
-## [v0.9.4](https://github.com/JohT/search-menu-ui/compare/v0.9.4...master) (upcoming)
+## [v0.9.4](https://github.com/JohT/search-menu-ui/compare/v0.9.4...main) (upcoming)
 
 ### Changes
 

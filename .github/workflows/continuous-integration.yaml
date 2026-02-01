@@ -3,10 +3,10 @@ name: Continuous Integration
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -137,6 +137,6 @@ jobs:
         git status
         git commit -a -m "${{ env.CI_COMMIT_MESSAGE }}"
         git status
-        git rebase --strategy-option=theirs origin/master --verbose
+        git rebase --strategy-option=theirs origin/main --verbose
         git status
         git push --verbose

@@ -328,12 +328,12 @@ options:
 
 Although this project doesn't use any runtime dependencies, it is created using these great tools:
 
-- [ESLint](https://eslint.org) - [MIT License](https://github.com/eslint/eslint/blob/master/LICENSE)
+- [ESLint](https://eslint.org) - [MIT License](https://github.com/eslint/eslint/blob/main/LICENSE)
 - [istanbul-badges-readme](https://www.npmjs.com/package/istanbul-badges-readme) - [MIT License](https://github.com/olavoparno/istanbul-badges-readme/blob/develop/LICENSE)
 - [Jasmine](https://jasmine.github.io) - [MIT License](https://github.com/jasmine/jasmine/blob/main/MIT.LICENSE)
-- [JSDoc](https://jsdoc.app) - [Apache Licence 2.0](https://github.com/jsdoc/jsdoc/blob/master/LICENSE)
-- [JSDom](https://github.com/jsdom/jsdom) - [MIT License](https://github.com/jsdom/jsdom/blob/master/LICENSE.txt)
-- [merger-js](https://github.com/joao-neves95/merger-js) - [GNU General Public License v3.0](https://github.com/joao-neves95/merger-js/blob/master/LICENSE.md)
-- [NYC aka Istanbul](https://istanbul.js.org) - [ISC License](https://github.com/istanbuljs/nyc/blob/master/LICENSE.txt)
+- [JSDoc](https://jsdoc.app) - [Apache Licence 2.0](https://github.com/jsdoc/jsdoc/blob/main/LICENSE)
+- [JSDom](https://github.com/jsdom/jsdom) - [MIT License](https://github.com/jsdom/jsdom/blob/main/LICENSE.txt)
+- [merger-js](https://github.com/joao-neves95/merger-js) - [GNU General Public License v3.0](https://github.com/joao-neves95/merger-js/blob/main/LICENSE.md)
+- [NYC aka Istanbul](https://istanbul.js.org) - [ISC License](https://github.com/istanbuljs/nyc/blob/main/LICENSE.txt)
 - [PARCEL](https://parceljs.org) - [MIT License](https://github.com/parcel-bundler/parcel/blob/v2/LICENSE)
 - [mermaid Javascript based diagramming and charting tool](https://mermaid-js.github.io/mermaid/#/) - [MIT License](https://github.com/mermaid-js/mermaid/blob/develop/LICENSE)
