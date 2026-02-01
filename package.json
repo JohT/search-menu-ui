@@ -1,6 +1,6 @@
 {
   "name": "search-menu-ui",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Search UI written in vanilla JavaScript. Menu structure for results. Filters are integrated as search results.",
   "directories": {
     "test": "test"
@@ -50,7 +50,7 @@
   },
   "homepage": "https://joht.github.io/search-menu-ui",
   "dependencies": {
-    "data-restructor": "3.4.4"
+    "data-restructor": "3.4.5"
   },
   "devDependencies": {
     "@eslint/js": "9.39.2",
