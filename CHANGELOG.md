@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency org.apache.maven.plugins:maven-compiler-plugin to v3.15.0 [`#918`](https://github.com/JohT/search-menu-ui/pull/918)
 - Update dependency jasmine to v6 [`#917`](https://github.com/JohT/search-menu-ui/pull/917)
 
 ## [v0.9.5](https://github.com/JohT/search-menu-ui/compare/v0.9.4...v0.9.5) (1 February 2026)
