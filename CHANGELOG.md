@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency parcel to v2.16.4 [`#919`](https://github.com/JohT/search-menu-ui/pull/919)
 - Update dependency org.apache.maven.plugins:maven-compiler-plugin to v3.15.0 [`#918`](https://github.com/JohT/search-menu-ui/pull/918)
 - Update dependency jasmine to v6 [`#917`](https://github.com/JohT/search-menu-ui/pull/917)
 
