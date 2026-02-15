@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency jsdom to v28.1.0 [`#930`](https://github.com/JohT/search-menu-ui/pull/930)
 - Update dependency inquirer to v13.2.4 [`#929`](https://github.com/JohT/search-menu-ui/pull/929)
 - Update Quarkus to v3.31.3 (patch) [`#928`](https://github.com/JohT/search-menu-ui/pull/928)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1770785328 [`#927`](https://github.com/JohT/search-menu-ui/pull/927)
