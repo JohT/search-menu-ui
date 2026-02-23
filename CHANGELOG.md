@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v13.3.0 [`#937`](https://github.com/JohT/search-menu-ui/pull/937)
 - Update surefire-plugin.version to v3.5.5 (patch) [`#936`](https://github.com/JohT/search-menu-ui/pull/936)
 - Update eslint monorepo to v9.39.3 [`#935`](https://github.com/JohT/search-menu-ui/pull/935)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.31.4 [`#934`](https://github.com/JohT/search-menu-ui/pull/934)
