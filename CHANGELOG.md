@@ -10,6 +10,10 @@ All notable changes to this project will be documented in this file.
 
 ## [v0.9.5](https://github.com/JohT/search-menu-ui/compare/v0.9.5...main) (upcoming)
 
+### Changes
+
+- Update to Java 25 [`#940`](https://github.com/JohT/search-menu-ui/pull/940)
+
 ### Dependency Updates
 
 - Update eslint monorepo to v10 (major) [`#924`](https://github.com/JohT/search-menu-ui/pull/924)
