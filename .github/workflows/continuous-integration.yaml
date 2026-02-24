@@ -112,12 +112,12 @@ jobs:
         path: example/coverage
         retention-days: 31
 
-    - name: (Example Servlet) Set up JDK 17
+    - name: (Example Servlet) Set up JDK 25
       if: env.is-auto-commit == false
       uses: actions/setup-java@v5
       with:
         distribution: 'adopt'
-        java-version: 17
+        java-version: 25
         cache: 'maven'
     - name: (Example Servlet) Build with Maven
       if: env.is-auto-commit == false
