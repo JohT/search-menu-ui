@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update eslint monorepo to v10 (major) [`#924`](https://github.com/JohT/search-menu-ui/pull/924)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1771836450 [`#939`](https://github.com/JohT/search-menu-ui/pull/939)
 - Update dependency jasmine to v6.1.0 [`#938`](https://github.com/JohT/search-menu-ui/pull/938)
 - Update dependency inquirer to v13.3.0 [`#937`](https://github.com/JohT/search-menu-ui/pull/937)
