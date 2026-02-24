@@ -499,8 +499,7 @@ searchmenu.SearchMenuAPI = (function () {
       var config = this.config;
       if (config.createdElementListeners.length > 0) {
         this.setElementCreatedHandler(function (element, isParent) {
-          var index = 0;
-          for (index = 0; index < config.createdElementListeners.length; index += 1) {
+          for (var index = 0; index < config.createdElementListeners.length; index += 1) {
             config.createdElementListeners[index](element, isParent);
           }
         });
@@ -732,8 +731,7 @@ searchmenu.SearchMenuUI = (function () {
   }
 
   function displayResults(jsonResults, config) {
-    var index = 0;
-    for (index = 0; index < jsonResults.length; index += 1) {
+    for (var index = 0; index < jsonResults.length; index += 1) {
       addResult(jsonResults[index], index + 1, config);
     }
   }
@@ -762,13 +760,12 @@ searchmenu.SearchMenuUI = (function () {
       });
     }
     if (isMenuEntryWithOptions(entry)) {
-      var options = entry.options;
       //TODO should support details for filter options.
       //TODO could skip sub menu, if there is only one option (with/without being default).
       //TODO could be used for constants (pre selected single filter options) like "tenant-number", "current-account"
       //TODO could remove the original search result filter when the default option is pre selected (and its options are copied).
       if (isMenuEntryWithDefault(entry)) {
-        options = insertAtBeginningIfMissing(entry.options, entry["default"][0], equalProperties(["value"]));
+        var options = insertAtBeginningIfMissing(entry.options, entry["default"][0], equalProperties(["value"]));
         var filterOptionsElement = createFilterOption(entry["default"][0], options, config.filtersView, config);
         addDefaultFilterOptionModificationHandler(filterOptionsElement, options, config);
       }
@@ -1317,17 +1314,13 @@ searchmenu.SearchMenuUI = (function () {
     clearAllEntriesOfElementWithId(subMenuView.listParentElementId);
     var selectedElement = getEventTarget(event);
 
-    var subMenuEntry = null;
-    var subMenuElement = null;
-    var subMenuIndex = 0;
-    var subMenuEntryId = selectedElement.id + "--" + subMenuView.listEntryElementIdPrefix;
     var subMenuFirstEntry = null;
     var subMenuElementText;
-    for (subMenuIndex = 0; subMenuIndex < entries.length; subMenuIndex += 1) {
-      subMenuEntry = entries[subMenuIndex];
-      subMenuEntryId = selectedElement.id + "--" + subMenuView.listEntryElementIdPrefix + "--" + (subMenuIndex + 1);
+    for (var subMenuIndex = 0; subMenuIndex < entries.length; subMenuIndex += 1) {
+      var subMenuEntry = entries[subMenuIndex];
+      var subMenuEntryId = selectedElement.id + "--" + subMenuView.listEntryElementIdPrefix + "--" + (subMenuIndex + 1);
       subMenuElementText = createListEntryInnerHtmlText(subMenuEntry, subMenuView, subMenuEntryId, config.resolveTemplate);
-      subMenuElement = createListEntryElement(subMenuEntry, subMenuView, subMenuEntryId, subMenuElementText);
+      var subMenuElement = createListEntryElement(subMenuEntry, subMenuView, subMenuEntryId, subMenuElementText);
       addClass(resolveStyleClasses(subMenuEntry, subMenuView, config.resolveTemplate), subMenuElement);
       forEachIdElementIncludingChildren(subMenuElement, config.onCreatedElement);
 
@@ -1510,8 +1503,7 @@ searchmenu.SearchMenuUI = (function () {
   }
 
   function forEachEntryIn(array, callback) {
-    var index = 0;
-    for (index = 0; index < array.length; index += 1) {
+    for (var index = 0; index < array.length; index += 1) {
       callback(array[index], index + 1); //index parameter starts with 1 (1 instead of 0 based)
     }
   }
