@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency nyc to v18 [`#943`](https://github.com/JohT/search-menu-ui/pull/943)
 - Update Node.js to v24.14.0 [`#942`](https://github.com/JohT/search-menu-ui/pull/942)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1771947229 [`#941`](https://github.com/JohT/search-menu-ui/pull/941)
 - Update eslint monorepo to v10 (major) [`#924`](https://github.com/JohT/search-menu-ui/pull/924)
