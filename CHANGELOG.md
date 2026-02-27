@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update actions/upload-artifact action to v7 [`#944`](https://github.com/JohT/search-menu-ui/pull/944)
 - Update Quarkus to v3.32.1 [`#933`](https://github.com/JohT/search-menu-ui/pull/933)
 - Update dependency nyc to v18 [`#943`](https://github.com/JohT/search-menu-ui/pull/943)
 - Update Node.js to v24.14.0 [`#942`](https://github.com/JohT/search-menu-ui/pull/942)
