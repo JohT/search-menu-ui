@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency maven to v3.9.14 [`#953`](https://github.com/JohT/search-menu-ui/pull/953)
 - Update dependency org.mockito:mockito-junit-jupiter to v5.23.0 [`#952`](https://github.com/JohT/search-menu-ui/pull/952)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.32.3 [`#951`](https://github.com/JohT/search-menu-ui/pull/951)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.32.3 [`#950`](https://github.com/JohT/search-menu-ui/pull/950)
