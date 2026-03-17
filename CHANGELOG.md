@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1773723642 [`#956`](https://github.com/JohT/search-menu-ui/pull/956)
 - Update dependency inquirer to v13.3.2 [`#955`](https://github.com/JohT/search-menu-ui/pull/955)
 - Update dependency jsdom to v29 [`#954`](https://github.com/JohT/search-menu-ui/pull/954)
 - Update dependency maven to v3.9.14 [`#953`](https://github.com/JohT/search-menu-ui/pull/953)
