@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.34.1 [`#965`](https://github.com/JohT/search-menu-ui/pull/965)
 - Update Node.js to v24.14.1 [`#964`](https://github.com/JohT/search-menu-ui/pull/964)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1774368033 [`#963`](https://github.com/JohT/search-menu-ui/pull/963)
 - Update dependency eslint to v10.1.0 [`#962`](https://github.com/JohT/search-menu-ui/pull/962)
