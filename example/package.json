@@ -27,7 +27,7 @@
   "author": "JohT",
   "license": "Apache-2.0",
   "dependencies": {
-    "data-restructor": "3.4.5"
+    "data-restructor": "3.4.6"
   },
   "devDependencies": {
     "eslint": "10.1.0",
