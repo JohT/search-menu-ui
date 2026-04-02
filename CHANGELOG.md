@@ -8,7 +8,13 @@ All notable changes to this project will be documented in this file.
 - [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - [`auto-changelog`](https://github.com/CookPete/auto-changelog)
 
-## [v1.0.0](https://github.com/JohT/search-menu-ui/compare/v0.9.5...main) (upcoming)
+## [v1.0.0](https://github.com/JohT/search-menu-ui/compare/v1.0.0...main) (upcoming)
+
+### Dependency Updates
+
+- Update dependency data-restructor to v3.4.6 [`#968`](https://github.com/JohT/search-menu-ui/pull/968)
+
+## [v1.0.0](https://github.com/JohT/search-menu-ui/compare/v0.9.5...v1.0.0) (2 April 2026)
 
 ### Changes
 
