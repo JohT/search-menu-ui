@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.34.2 [`#967`](https://github.com/JohT/search-menu-ui/pull/967)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.34.1 [`#966`](https://github.com/JohT/search-menu-ui/pull/966)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.34.1 [`#965`](https://github.com/JohT/search-menu-ui/pull/965)
 - Update Node.js to v24.14.1 [`#964`](https://github.com/JohT/search-menu-ui/pull/964)
