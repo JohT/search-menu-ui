@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-universe-bom to v3.34.2 [`#969`](https://github.com/JohT/search-menu-ui/pull/969)
 - Update dependency data-restructor to v3.4.6 [`#968`](https://github.com/JohT/search-menu-ui/pull/968)
 
 ## [v1.0.0](https://github.com/JohT/search-menu-ui/compare/v0.9.5...v1.0.0) (2 April 2026)
