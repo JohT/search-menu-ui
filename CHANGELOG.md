@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency eslint to v10.2.0 [`#971`](https://github.com/JohT/search-menu-ui/pull/971)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1775152441 [`#970`](https://github.com/JohT/search-menu-ui/pull/970)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.34.2 [`#969`](https://github.com/JohT/search-menu-ui/pull/969)
 - Update dependency data-restructor to v3.4.6 [`#968`](https://github.com/JohT/search-menu-ui/pull/968)
