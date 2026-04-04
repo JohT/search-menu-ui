@@ -30,7 +30,7 @@
     "data-restructor": "3.4.6"
   },
   "devDependencies": {
-    "eslint": "10.1.0",
+    "eslint": "10.2.0",
     "istanbul-badges-readme": "1.9.0",
     "jasmine": "6.1.0",
     "nyc": "18.0.0"
