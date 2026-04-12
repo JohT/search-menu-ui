@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency jasmine to v6.2.0 [`#976`](https://github.com/JohT/search-menu-ui/pull/976)
 - Update Quarkus to v3.34.3 [`#975`](https://github.com/JohT/search-menu-ui/pull/975)
 - Update dependency inquirer to v13.4.1 [`#974`](https://github.com/JohT/search-menu-ui/pull/974)
 - Update dependency jsdom to v29.0.2 [`#973`](https://github.com/JohT/search-menu-ui/pull/973)
