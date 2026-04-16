@@ -10,6 +10,10 @@ All notable changes to this project will be documented in this file.
 
 ## [v1.0.0](https://github.com/JohT/search-menu-ui/compare/v1.0.0...main) (upcoming)
 
+### Changes
+
+- Pin dependencies [`#981`](https://github.com/JohT/search-menu-ui/pull/981)
+
 ### Dependency Updates
 
 - Update Node.js to v24.15.0 [`#980`](https://github.com/JohT/search-menu-ui/pull/980)
