@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.34.4 [`#978`](https://github.com/JohT/search-menu-ui/pull/978)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1776229095 [`#979`](https://github.com/JohT/search-menu-ui/pull/979)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1776104706 [`#977`](https://github.com/JohT/search-menu-ui/pull/977)
 - Update dependency jasmine to v6.2.0 [`#976`](https://github.com/JohT/search-menu-ui/pull/976)
