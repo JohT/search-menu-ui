@@ -15,7 +15,7 @@ jobs:
       CI_COMMIT_MESSAGE: Continuous Integration Build Artifacts
       CI_COMMIT_AUTHOR: ${{ github.event.repository.name }} Continuous Integration
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v6.0.2
       with:
         ref: ${{ github.event.pull_request.head.ref }}
         token: ${{ secrets.WORKFLOW_GIT_ACCESS_TOKEN }}
@@ -43,7 +43,7 @@ jobs:
       if: env.is-auto-commit
       run: echo "Continuous Integration Auto Commit - The following steps will be skipped"
 
-    - uses: actions/setup-node@v6
+    - uses: actions/setup-node@v6.3.0
       if: env.is-auto-commit == false
       with:
         node-version-file: '.nvmrc'
@@ -56,7 +56,7 @@ jobs:
 
     - name: (Main) Archive test code coverage results
       if: env.is-auto-commit == false
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: test-code-coverage-report
         path: coverage
@@ -64,7 +64,7 @@ jobs:
         if-no-files-found: error
     - name: (Main) Archive documentation
       if: env.is-auto-commit == false
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: documentation
         path: docs
@@ -72,7 +72,7 @@ jobs:
         if-no-files-found: error
     - name: (Main) Archive CHANGELOG.md
       if: env.is-auto-commit == false
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: changelog
         path: CHANGELOG.md
@@ -80,7 +80,7 @@ jobs:
         if-no-files-found: error
     - name: (Main) Archive build artifacts distribution-production
       if: env.is-auto-commit == false
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: distribution-production
         path: dist
@@ -88,7 +88,7 @@ jobs:
         if-no-files-found: error
     - name: (Main) Archive build artifacts distribution-development
       if: env.is-auto-commit == false
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: distribution-development
         path: devdist
@@ -106,7 +106,7 @@ jobs:
 
     - name: (Example) Archive test code coverage results
       if: env.is-auto-commit == false
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: example-test-code-coverage-report
         path: example/coverage
@@ -114,7 +114,7 @@ jobs:
 
     - name: (Example Servlet) Set up JDK 25
       if: env.is-auto-commit == false
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v5.2.0
       with:
         distribution: 'adopt'
         java-version: 25
