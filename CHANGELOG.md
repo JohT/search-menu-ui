@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency maven to v3.9.15 [`#983`](https://github.com/JohT/search-menu-ui/pull/983)
 - Update Quarkus to v3.34.5 [`#982`](https://github.com/JohT/search-menu-ui/pull/982)
 - Update Node.js to v24.15.0 [`#980`](https://github.com/JohT/search-menu-ui/pull/980)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.34.4 [`#978`](https://github.com/JohT/search-menu-ui/pull/978)
