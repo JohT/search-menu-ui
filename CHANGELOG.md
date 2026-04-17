@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.34.5 [`#982`](https://github.com/JohT/search-menu-ui/pull/982)
 - Update Node.js to v24.15.0 [`#980`](https://github.com/JohT/search-menu-ui/pull/980)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.34.4 [`#978`](https://github.com/JohT/search-menu-ui/pull/978)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1776229095 [`#979`](https://github.com/JohT/search-menu-ui/pull/979)
