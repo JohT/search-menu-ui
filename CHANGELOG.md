@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v13.4.2 [`#985`](https://github.com/JohT/search-menu-ui/pull/985)
 - Update dependency eslint to v10.2.1 [`#984`](https://github.com/JohT/search-menu-ui/pull/984)
 - Update dependency maven to v3.9.15 [`#983`](https://github.com/JohT/search-menu-ui/pull/983)
 - Update Quarkus to v3.34.5 [`#982`](https://github.com/JohT/search-menu-ui/pull/982)
