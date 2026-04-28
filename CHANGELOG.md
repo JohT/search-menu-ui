@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1777392407 [`#992`](https://github.com/JohT/search-menu-ui/pull/992)
 - Update dependency jsdom to v29.1.0 [`#991`](https://github.com/JohT/search-menu-ui/pull/991)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1776921438 [`#990`](https://github.com/JohT/search-menu-ui/pull/990)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.35.0 [`#989`](https://github.com/JohT/search-menu-ui/pull/989)
