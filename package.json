@@ -60,7 +60,7 @@
     "istanbul-badges-readme": "1.9.0",
     "jasmine": "6.2.0",
     "jsdoc": "4.0.5",
-    "jsdom": "29.1.0",
+    "jsdom": "29.1.1",
     "merger-js": "3.10.3",
     "node-notifier": "10.0.1",
     "nyc": "18.0.0",
