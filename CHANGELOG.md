@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency eslint to v10.3.0 [`#998`](https://github.com/JohT/search-menu-ui/pull/998)
 - Update github/codeql-action action to v4.35.3 [`#997`](https://github.com/JohT/search-menu-ui/pull/997)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.35.1 [`#996`](https://github.com/JohT/search-menu-ui/pull/996)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.35.1 [`#995`](https://github.com/JohT/search-menu-ui/pull/995)
