@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v3.35.3 [`#1006`](https://github.com/JohT/search-menu-ui/pull/1006)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1778576163 [`#1005`](https://github.com/JohT/search-menu-ui/pull/1005)
 - Update dependency inquirer to v13.4.3 [`#1004`](https://github.com/JohT/search-menu-ui/pull/1004)
 - Update github/codeql-action action to v4.35.4 [`#1003`](https://github.com/JohT/search-menu-ui/pull/1003)
