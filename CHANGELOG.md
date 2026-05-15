@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency eslint to v10.4.0 [`#1010`](https://github.com/JohT/search-menu-ui/pull/1010)
 - Update github/codeql-action action to v4.35.5 [`#1009`](https://github.com/JohT/search-menu-ui/pull/1009)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1778735208 [`#1008`](https://github.com/JohT/search-menu-ui/pull/1008)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.35.3 [`#1007`](https://github.com/JohT/search-menu-ui/pull/1007)
