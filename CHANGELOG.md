@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update surefire-plugin.version to v3.5.6 [`#1020`](https://github.com/JohT/search-menu-ui/pull/1020)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.36.0 [`#1019`](https://github.com/JohT/search-menu-ui/pull/1019)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1779857793 [`#1018`](https://github.com/JohT/search-menu-ui/pull/1018)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1779772676 [`#1017`](https://github.com/JohT/search-menu-ui/pull/1017)
