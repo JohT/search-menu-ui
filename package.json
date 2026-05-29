@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "auto-changelog": "2.5.1",
+    "auto-changelog": "2.6.0",
     "eslint": "10.4.0",
     "inquirer": "14.0.0",
     "istanbul-badges-readme": "1.9.0",
