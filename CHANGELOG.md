@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency auto-changelog to v2.6.0 [`#1021`](https://github.com/JohT/search-menu-ui/pull/1021)
 - Update dependency inquirer to v14 [`#1016`](https://github.com/JohT/search-menu-ui/pull/1016)
 - Update surefire-plugin.version to v3.5.6 [`#1020`](https://github.com/JohT/search-menu-ui/pull/1020)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.36.0 [`#1019`](https://github.com/JohT/search-menu-ui/pull/1019)
