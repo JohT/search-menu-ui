@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v14.0.2 [`#1024`](https://github.com/JohT/search-menu-ui/pull/1024)
 - Update dependency inquirer to v14.0.1 [`#1023`](https://github.com/JohT/search-menu-ui/pull/1023)
 - Update dependency eslint to v10.4.1 [`#1022`](https://github.com/JohT/search-menu-ui/pull/1022)
 - Update dependency auto-changelog to v2.6.0 [`#1021`](https://github.com/JohT/search-menu-ui/pull/1021)
