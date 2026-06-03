@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.36.1 [`#1027`](https://github.com/JohT/search-menu-ui/pull/1027)
 - Update github/codeql-action action to v4.36.1 [`#1026`](https://github.com/JohT/search-menu-ui/pull/1026)
 - Update actions/checkout action to v6.0.3 [`#1025`](https://github.com/JohT/search-menu-ui/pull/1025)
 - Update dependency inquirer to v14.0.2 [`#1024`](https://github.com/JohT/search-menu-ui/pull/1024)
