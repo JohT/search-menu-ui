@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1780550539 [`#1028`](https://github.com/JohT/search-menu-ui/pull/1028)
 - Update Quarkus to v3.36.1 [`#1027`](https://github.com/JohT/search-menu-ui/pull/1027)
 - Update github/codeql-action action to v4.36.1 [`#1026`](https://github.com/JohT/search-menu-ui/pull/1026)
 - Update actions/checkout action to v6.0.3 [`#1025`](https://github.com/JohT/search-menu-ui/pull/1025)
