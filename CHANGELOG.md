@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update jacoco-maven-plugin.version to v0.8.15 [`#1030`](https://github.com/JohT/search-menu-ui/pull/1030)
 - Update github/codeql-action action to v4.36.2 [`#1029`](https://github.com/JohT/search-menu-ui/pull/1029)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1780550539 [`#1028`](https://github.com/JohT/search-menu-ui/pull/1028)
 - Update Quarkus to v3.36.1 [`#1027`](https://github.com/JohT/search-menu-ui/pull/1027)
