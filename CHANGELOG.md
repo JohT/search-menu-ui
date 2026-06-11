@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Quarkus to v3.36.2 [`#1033`](https://github.com/JohT/search-menu-ui/pull/1033)
 - Update Quarkus to v3.36.2 [`#1032`](https://github.com/JohT/search-menu-ui/pull/1032)
 - Update dependency jasmine to v6.3.0 [`#1031`](https://github.com/JohT/search-menu-ui/pull/1031)
 - Update jacoco-maven-plugin.version to v0.8.15 [`#1030`](https://github.com/JohT/search-menu-ui/pull/1030)
