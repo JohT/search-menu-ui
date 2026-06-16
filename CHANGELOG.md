@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update actions/setup-java action to v5.3.0 [`#1035`](https://github.com/JohT/search-menu-ui/pull/1035)
 - Update eslint monorepo to v10.5.0 [`#1034`](https://github.com/JohT/search-menu-ui/pull/1034)
 - Update Quarkus to v3.36.2 [`#1033`](https://github.com/JohT/search-menu-ui/pull/1033)
 - Update Quarkus to v3.36.2 [`#1032`](https://github.com/JohT/search-menu-ui/pull/1032)
