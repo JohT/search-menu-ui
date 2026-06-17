@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1781701121 [`#1037`](https://github.com/JohT/search-menu-ui/pull/1037)
 - Update Quarkus to v3.36.3 [`#1036`](https://github.com/JohT/search-menu-ui/pull/1036)
 - Update actions/setup-java action to v5.3.0 [`#1035`](https://github.com/JohT/search-menu-ui/pull/1035)
 - Update eslint monorepo to v10.5.0 [`#1034`](https://github.com/JohT/search-menu-ui/pull/1034)
