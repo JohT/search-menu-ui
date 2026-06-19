@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update actions/checkout action to v7 [`#1041`](https://github.com/JohT/search-menu-ui/pull/1041)
 - Update Node.js to v24.17.0 [`#1040`](https://github.com/JohT/search-menu-ui/pull/1040)
 - Update Quarkus to v3.37.0 [`#1038`](https://github.com/JohT/search-menu-ui/pull/1038)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1781701121 [`#1037`](https://github.com/JohT/search-menu-ui/pull/1037)
