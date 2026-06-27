@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency eslint to v10.6.0 [`#1045`](https://github.com/JohT/search-menu-ui/pull/1045)
 - Update actions/setup-java action to v5.4.0 [`#1044`](https://github.com/JohT/search-menu-ui/pull/1044)
 - Update Node.js to v24.18.0 [`#1042`](https://github.com/JohT/search-menu-ui/pull/1042)
 - Update Quarkus to v3.36.3 [`#1039`](https://github.com/JohT/search-menu-ui/pull/1039)
