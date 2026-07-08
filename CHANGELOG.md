@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update github/codeql-action action to v4.37.0 [`#1051`](https://github.com/JohT/search-menu-ui/pull/1051)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.37.2 [`#1050`](https://github.com/JohT/search-menu-ui/pull/1050)
 - Update actions/setup-java action to v5.5.0 [`#1049`](https://github.com/JohT/search-menu-ui/pull/1049)
 - Update github/codeql-action action to v4.36.3 [`#1048`](https://github.com/JohT/search-menu-ui/pull/1048)
