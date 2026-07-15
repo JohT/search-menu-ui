@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update actions/setup-node action to v7 [`#1057`](https://github.com/JohT/search-menu-ui/pull/1057)
 - Update actions/setup-node action to v6.5.0 [`#1056`](https://github.com/JohT/search-menu-ui/pull/1056)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1783932150 [`#1055`](https://github.com/JohT/search-menu-ui/pull/1055)
 - Update dependency eslint to v10.7.0 [`#1054`](https://github.com/JohT/search-menu-ui/pull/1054)
