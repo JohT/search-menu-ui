@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update actions/checkout action to v7.0.1 [`#1063`](https://github.com/JohT/search-menu-ui/pull/1063)
 - Update github/codeql-action action to v4.37.1 [`#1061`](https://github.com/JohT/search-menu-ui/pull/1061)
 - Update actions/setup-java action to v5.6.0 [`#1062`](https://github.com/JohT/search-menu-ui/pull/1062)
 - Update dependency io.quarkus:quarkus-universe-bom to v3.37.3 [`#1060`](https://github.com/JohT/search-menu-ui/pull/1060)
