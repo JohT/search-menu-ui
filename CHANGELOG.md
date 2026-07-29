@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency jsdom to v30.0.1 [`#1075`](https://github.com/JohT/search-menu-ui/pull/1075)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1785288620 [`#1074`](https://github.com/JohT/search-menu-ui/pull/1074)
 - Update dependency jsdom to v30 [`#1073`](https://github.com/JohT/search-menu-ui/pull/1073)
 - Update dependency eslint to v10.8.0 [`#1072`](https://github.com/JohT/search-menu-ui/pull/1072)
