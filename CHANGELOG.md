@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1785302592 [`#1076`](https://github.com/JohT/search-menu-ui/pull/1076)
 - Update dependency jsdom to v30.0.1 [`#1075`](https://github.com/JohT/search-menu-ui/pull/1075)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1785288620 [`#1074`](https://github.com/JohT/search-menu-ui/pull/1074)
 - Update dependency jsdom to v30 [`#1073`](https://github.com/JohT/search-menu-ui/pull/1073)
