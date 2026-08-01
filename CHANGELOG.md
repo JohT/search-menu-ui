@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update actions/setup-java action to v5.7.0 [`#1080`](https://github.com/JohT/search-menu-ui/pull/1080)
 - Update github/codeql-action action to v4.37.4 [`#1079`](https://github.com/JohT/search-menu-ui/pull/1079)
 - Update Node.js to v24.18.1 [`#1078`](https://github.com/JohT/search-menu-ui/pull/1078)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1785302592 [`#1076`](https://github.com/JohT/search-menu-ui/pull/1076)
