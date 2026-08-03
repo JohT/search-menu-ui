@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update github/codeql-action action to v4.37.5 [`#1081`](https://github.com/JohT/search-menu-ui/pull/1081)
 - Update actions/setup-java action to v5.7.0 [`#1080`](https://github.com/JohT/search-menu-ui/pull/1080)
 - Update github/codeql-action action to v4.37.4 [`#1079`](https://github.com/JohT/search-menu-ui/pull/1079)
 - Update Node.js to v24.18.1 [`#1078`](https://github.com/JohT/search-menu-ui/pull/1078)
