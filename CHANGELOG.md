@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1786322860 [`#1087`](https://github.com/JohT/search-menu-ui/pull/1087)
 - Update dependency eslint to v10.8.1 [`#1086`](https://github.com/JohT/search-menu-ui/pull/1086)
 - Update github/codeql-action action to v4.37.6 [`#1085`](https://github.com/JohT/search-menu-ui/pull/1085)
 - Update dependency io.quarkus:quarkus-maven-plugin to v3.38.1 [`#1084`](https://github.com/JohT/search-menu-ui/pull/1084)
