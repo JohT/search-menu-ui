@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Node.js to v24.20.0 [`#1101`](https://github.com/JohT/search-menu-ui/pull/1101)
 - Update github/codeql-action action to v4.37.9 [`#1100`](https://github.com/JohT/search-menu-ui/pull/1100)
 - Update dependency eslint to v10.9.1 [`#1097`](https://github.com/JohT/search-menu-ui/pull/1097)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1787646721 [`#1098`](https://github.com/JohT/search-menu-ui/pull/1098)
