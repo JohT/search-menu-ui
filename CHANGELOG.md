@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1788165882 [`#1103`](https://github.com/JohT/search-menu-ui/pull/1103)
 - Update dependency inquirer to v14.2.0 [`#1102`](https://github.com/JohT/search-menu-ui/pull/1102)
 - Update Node.js to v24.20.0 [`#1101`](https://github.com/JohT/search-menu-ui/pull/1101)
 - Update github/codeql-action action to v4.37.9 [`#1100`](https://github.com/JohT/search-menu-ui/pull/1100)
