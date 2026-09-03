@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v14.2.1 [`#1106`](https://github.com/JohT/search-menu-ui/pull/1106)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1788329306 [`#1105`](https://github.com/JohT/search-menu-ui/pull/1105)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1788246577 [`#1104`](https://github.com/JohT/search-menu-ui/pull/1104)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1788165882 [`#1103`](https://github.com/JohT/search-menu-ui/pull/1103)
