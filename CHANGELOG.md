@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency org.apache.maven.plugins:maven-compiler-plugin to v3.16.0 [`#1107`](https://github.com/JohT/search-menu-ui/pull/1107)
 - Update dependency inquirer to v14.2.1 [`#1106`](https://github.com/JohT/search-menu-ui/pull/1106)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1788329306 [`#1105`](https://github.com/JohT/search-menu-ui/pull/1105)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1788246577 [`#1104`](https://github.com/JohT/search-menu-ui/pull/1104)
