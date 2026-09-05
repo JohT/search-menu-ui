@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency auto-changelog to v2.6.1 [`#1110`](https://github.com/JohT/search-menu-ui/pull/1110)
 - Update dependency eslint to v10.10.0 [`#1109`](https://github.com/JohT/search-menu-ui/pull/1109)
 - Update surefire-plugin.version to v3.6.0 [`#1108`](https://github.com/JohT/search-menu-ui/pull/1108)
 - Update dependency org.apache.maven.plugins:maven-compiler-plugin to v3.16.0 [`#1107`](https://github.com/JohT/search-menu-ui/pull/1107)
