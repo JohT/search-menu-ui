@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update Node.js to v24.21.0 [`#1113`](https://github.com/JohT/search-menu-ui/pull/1113)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1788741895 [`#1112`](https://github.com/JohT/search-menu-ui/pull/1112)
 - Update dependency inquirer to v14.2.2 [`#1111`](https://github.com/JohT/search-menu-ui/pull/1111)
 - Update dependency auto-changelog to v2.6.1 [`#1110`](https://github.com/JohT/search-menu-ui/pull/1110)
