@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changes
 
+- Pin dependency java-jdk to 25.0.4+7.0.LTS [`#1119`](https://github.com/JohT/search-menu-ui/pull/1119)
 - Update Quarkus [`#1043`](https://github.com/JohT/search-menu-ui/pull/1043)
 - Pin dependencies [`#981`](https://github.com/JohT/search-menu-ui/pull/981)
 
