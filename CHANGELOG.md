@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency jsdom to v30.1.1 [`#1124`](https://github.com/JohT/search-menu-ui/pull/1124)
 - Update dependency eslint to v10.11.0 [`#1123`](https://github.com/JohT/search-menu-ui/pull/1123)
 - Update github/codeql-action action to v4.38.1 [`#1122`](https://github.com/JohT/search-menu-ui/pull/1122)
 - Update dependency jsdom to v30.1.0 [`#1121`](https://github.com/JohT/search-menu-ui/pull/1121)
