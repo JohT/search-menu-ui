@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update mockito monorepo to v5.24.0 [`#1126`](https://github.com/JohT/search-menu-ui/pull/1126)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1790071118 [`#1125`](https://github.com/JohT/search-menu-ui/pull/1125)
 - Update dependency jsdom to v30.1.1 [`#1124`](https://github.com/JohT/search-menu-ui/pull/1124)
 - Update dependency eslint to v10.11.0 [`#1123`](https://github.com/JohT/search-menu-ui/pull/1123)
