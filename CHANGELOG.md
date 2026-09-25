@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency auto-changelog to v2.7.0 [`#1129`](https://github.com/JohT/search-menu-ui/pull/1129)
 - Update github/codeql-action action to v4.38.2 [`#1128`](https://github.com/JohT/search-menu-ui/pull/1128)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1790175679 [`#1127`](https://github.com/JohT/search-menu-ui/pull/1127)
 - Update mockito monorepo to v5.24.0 [`#1126`](https://github.com/JohT/search-menu-ui/pull/1126)
