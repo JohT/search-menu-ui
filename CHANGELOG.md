@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency maven to v3.10.0 [`#1133`](https://github.com/JohT/search-menu-ui/pull/1133)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1790840782 [`#1132`](https://github.com/JohT/search-menu-ui/pull/1132)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1790666041 [`#1131`](https://github.com/JohT/search-menu-ui/pull/1131)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1790571603 [`#1130`](https://github.com/JohT/search-menu-ui/pull/1130)
