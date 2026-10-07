@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update actions/upload-artifact action to v7.0.2 [`#1137`](https://github.com/JohT/search-menu-ui/pull/1137)
 - Update dependency inquirer to v14.2.3 [`#1136`](https://github.com/JohT/search-menu-ui/pull/1136)
 - Update dependency jsdom to v30.1.2 [`#1135`](https://github.com/JohT/search-menu-ui/pull/1135)
 - Update dependency eslint to v10.12.0 [`#1134`](https://github.com/JohT/search-menu-ui/pull/1134)
