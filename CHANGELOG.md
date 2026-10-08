@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1791442285 [`#1139`](https://github.com/JohT/search-menu-ui/pull/1139)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1791395196 [`#1138`](https://github.com/JohT/search-menu-ui/pull/1138)
 - Update actions/upload-artifact action to v7.0.2 [`#1137`](https://github.com/JohT/search-menu-ui/pull/1137)
 - Update dependency inquirer to v14.2.3 [`#1136`](https://github.com/JohT/search-menu-ui/pull/1136)
