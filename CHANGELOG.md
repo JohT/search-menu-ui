@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update github/codeql-action action to v4.39.0 [`#1147`](https://github.com/JohT/search-menu-ui/pull/1147)
 - Update dependency jsdom to v30.1.3 [`#1146`](https://github.com/JohT/search-menu-ui/pull/1146)
 - Update Node.js to v24.22.0 [`#1145`](https://github.com/JohT/search-menu-ui/pull/1145)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1791896186 [`#1144`](https://github.com/JohT/search-menu-ui/pull/1144)
