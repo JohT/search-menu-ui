@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1792385393 [`#1149`](https://github.com/JohT/search-menu-ui/pull/1149)
 - Update dependency eslint to v10.13.0 [`#1148`](https://github.com/JohT/search-menu-ui/pull/1148)
 - Update github/codeql-action action to v4.39.0 [`#1147`](https://github.com/JohT/search-menu-ui/pull/1147)
 - Update dependency jsdom to v30.1.3 [`#1146`](https://github.com/JohT/search-menu-ui/pull/1146)
