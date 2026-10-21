@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v14.2.4 [`#1150`](https://github.com/JohT/search-menu-ui/pull/1150)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1792456504 [`#1151`](https://github.com/JohT/search-menu-ui/pull/1151)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1792385393 [`#1149`](https://github.com/JohT/search-menu-ui/pull/1149)
 - Update dependency eslint to v10.13.0 [`#1148`](https://github.com/JohT/search-menu-ui/pull/1148)
