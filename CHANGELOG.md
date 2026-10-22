@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency java-jdk to v25.0.5+8.0.LTS [`#1154`](https://github.com/JohT/search-menu-ui/pull/1154)
 - Update github/codeql-action action to v4.39.1 [`#1153`](https://github.com/JohT/search-menu-ui/pull/1153)
 - Update Node.js to v24.22.1 [`#1152`](https://github.com/JohT/search-menu-ui/pull/1152)
 - Update dependency inquirer to v14.2.4 [`#1150`](https://github.com/JohT/search-menu-ui/pull/1150)
