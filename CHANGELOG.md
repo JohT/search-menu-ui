@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v14.2.5 [`#1158`](https://github.com/JohT/search-menu-ui/pull/1158)
 - Update dependency org.jacoco:jacoco-maven-plugin to v0.8.16 [`#1157`](https://github.com/JohT/search-menu-ui/pull/1157)
 - Update surefire-plugin.version to v3.6.1 [`#1156`](https://github.com/JohT/search-menu-ui/pull/1156)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1792742827 [`#1155`](https://github.com/JohT/search-menu-ui/pull/1155)
