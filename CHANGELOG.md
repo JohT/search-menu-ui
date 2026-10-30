@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency eslint to v10.14.0 [`#1165`](https://github.com/JohT/search-menu-ui/pull/1165)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1793307920 [`#1164`](https://github.com/JohT/search-menu-ui/pull/1164)
 - Update dependency node-notifier to v12 [`#1162`](https://github.com/JohT/search-menu-ui/pull/1162)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1793205688 [`#1161`](https://github.com/JohT/search-menu-ui/pull/1161)
