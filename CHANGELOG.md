@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v14.3.0 [`#1172`](https://github.com/JohT/search-menu-ui/pull/1172)
 - Update Node.js to v26 [`#1163`](https://github.com/JohT/search-menu-ui/pull/1163)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1794244899 [`#1171`](https://github.com/JohT/search-menu-ui/pull/1171)
 - Update dependency jsdom to v31 [`#1170`](https://github.com/JohT/search-menu-ui/pull/1170)
