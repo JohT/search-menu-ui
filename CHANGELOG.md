@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency java-jdk to v25.0.5+100000002.0.LTS [`#1179`](https://github.com/JohT/search-menu-ui/pull/1179)
 - Update dependency io.quarkus:quarkus-maven-plugin to v4 [`#1178`](https://github.com/JohT/search-menu-ui/pull/1178)
 - Update dependency maven to v3.10.1 [`#1177`](https://github.com/JohT/search-menu-ui/pull/1177)
 - Update dependency eslint to v10.15.0 [`#1176`](https://github.com/JohT/search-menu-ui/pull/1176)
