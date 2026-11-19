@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency io.quarkus:quarkus-maven-plugin to v4 [`#1178`](https://github.com/JohT/search-menu-ui/pull/1178)
 - Update dependency maven to v3.10.1 [`#1177`](https://github.com/JohT/search-menu-ui/pull/1177)
 - Update dependency eslint to v10.15.0 [`#1176`](https://github.com/JohT/search-menu-ui/pull/1176)
 - Update dependency jsdom to v31.0.1 [`#1175`](https://github.com/JohT/search-menu-ui/pull/1175)
