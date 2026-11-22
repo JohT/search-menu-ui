@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency inquirer to v14.3.1 [`#1182`](https://github.com/JohT/search-menu-ui/pull/1182)
 - Update registry.access.redhat.com/ubi8/ubi-minimal Docker tag to v8.10-1795196953 [`#1181`](https://github.com/JohT/search-menu-ui/pull/1181)
 - Update github/codeql-action action to v4.39.4 [`#1180`](https://github.com/JohT/search-menu-ui/pull/1180)
 - Update dependency java-jdk to v25.0.5+100000002.0.LTS [`#1179`](https://github.com/JohT/search-menu-ui/pull/1179)
