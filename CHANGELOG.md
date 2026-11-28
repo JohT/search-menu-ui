@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependency Updates
 
+- Update dependency eslint to v10.16.0 [`#1190`](https://github.com/JohT/search-menu-ui/pull/1190)
 - Update mockito monorepo to v5.25.0 [`#1189`](https://github.com/JohT/search-menu-ui/pull/1189)
 - Update dependency io.quarkus:quarkus-maven-plugin to v4.0.1 [`#1187`](https://github.com/JohT/search-menu-ui/pull/1187)
 - Update github/codeql-action action to v4.39.5 [`#1186`](https://github.com/JohT/search-menu-ui/pull/1186)
